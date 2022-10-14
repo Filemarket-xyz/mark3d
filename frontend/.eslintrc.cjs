@@ -17,9 +17,18 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': ['error'],
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/triple-slash-reference': 'off',
-    'max-len': ['warn', {
-      'code': 80
-    }]
+    'react/display-name': 'off',
+    'react/prop-types': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    'max-len': [
+      'warn',
+      {
+        code: 120,
+        ignoreStrings: true,
+        ignorePattern: '^\\s*var\\s.+=\\s*require\\s*\\(',
+        ignoreUrls: true,
+      },
+    ],
   },
   settings: {
     react: {
