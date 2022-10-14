@@ -1,13 +1,31 @@
-# Sample Hardhat Project
+# Mark3d transfer protocol
+|Author|Oleg Shatniuk, Andrey Korolov, Stanislav Santalov, Ilya Orlov, Mikhail Korolov|
+|Status|Idea|
+|Type|Standard|
+|Category|Standard|
+|Created|28-08-2022|
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+## Table of contents
+* [](#simple-summary)
+* [](#abstract)
+* [](#motivation)
+* [](#specification)
+* [](#implementation)
+* [](#history)
+* [](#copyright)
+## Simple Summary
+A standard interface for NFT with encrypted image or hidden file
+## Abstract
+The following standard allows for implementation of a standard API for Non Fungible Tokens(NFT) with encrypted image or hidden file.
+The standard is an extension of ERC721 standard.
+## Motivation
 
-Try running some of the following tasks:
+## Specification
+The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in RFC 2119.
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+[HiddenFilesToken interface draft](./contracts/IHiddenFilesToken.sol)
+[FraudDecider interface draft](./contracts/IFraudDecider.sol)
+[HiddenFilesTokenOnTransfer interface draft](./contracts/IHiddenFilesTokenOnTransfer.sol)
+## Implementation
+## History
+## Copyright
