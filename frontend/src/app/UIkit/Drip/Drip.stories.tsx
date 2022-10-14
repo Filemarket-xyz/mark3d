@@ -12,10 +12,10 @@ export default story
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof Drip> = () => {
   const ref = useRef<HTMLDivElement>(null)
-  const { onClick: onDripClickHandler, ...dripBindings } = useDrip(false)
+  const { onClick: onDripClickHandler, ...dripBindings } = useDrip(ref, false)
   return (
     <div style={{ width: 150, height: 60, backgroundColor: '#7D9EFF' }} ref={ref} onClick={onDripClickHandler}>
-      <Drip {...dripBindings} color="white" />
+      <Drip {...dripBindings} color="white"/>
     </div>
   )
 }

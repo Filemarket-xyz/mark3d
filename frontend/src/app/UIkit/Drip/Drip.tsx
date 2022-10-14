@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef } from 'react'
+import React, { memo, MouseEvent, useEffect, useRef } from 'react'
 import { keyframes, styled } from '../../../styles'
 
 const dripExpand = keyframes({
@@ -40,6 +40,9 @@ export interface DripProps {
   onCompleted: () => void
   color?: string
   className?: string
+  top?: number // px
+  left?: number // px
+  onClick?: (event: MouseEvent<HTMLDivElement>, dripRect?: DOMRect) => void
 }
 
 export const Drip = memo<DripProps>((
@@ -48,6 +51,9 @@ export const Drip = memo<DripProps>((
     color,
     onCompleted,
     className = '',
+    top = 0,
+    left = 0,
+    onClick,
     ...props
   }
 ) => {
@@ -75,7 +81,7 @@ export const Drip = memo<DripProps>((
 
   return (
     <DripStyled ref={dripRef} className={className} {...props}>
-      <svg height="20" style={{ top: 0, left: 0 }} viewBox="0 0 20 20" width="20">
+      <svg height="20" style={{ top, left }} viewBox="0 0 20 20" width="20">
         <g fill="none" fillRule="evenodd" stroke="none" strokeWidth="1">
           <g className="nextui-drip-filler" fill={color}>
             <rect height="100%" rx="10" width="100%"/>
