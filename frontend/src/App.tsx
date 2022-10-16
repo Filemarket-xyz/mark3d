@@ -1,9 +1,12 @@
 import React, { FC } from 'react'
 import './App.css'
+import { Providers } from './providers'
 
 export const App: FC = () => {
   return (
-    <div className="App">
-    </div>
+    <Providers>
+      <div className="App">
+      </div>
+    </Providers>
   )
 }

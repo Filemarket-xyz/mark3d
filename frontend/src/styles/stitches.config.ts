@@ -13,7 +13,7 @@ export const {
   theme: {
     colors: {
       blue300: '#00DCFF', // Color: Sky Blue Crayola
-      blue400: '#94bde6', // From the squares
+      blue400: '#94bde6', // 70% blue500 30% white
       blue500: '#66A0DB', // Color: Little Boy Blue
       blue600: '#655BE5', // Color: Slate Blue
       blue700: '#4160ED', // Color: Ultramarine Blue
@@ -24,6 +24,7 @@ export const {
       pink: '#F4CFF3', // Color: Pink Lace
 
       black: '#1A1A1A', // Color: Eerie Black
+      white: '#ffffff',
 
       gray100: '#F9F9F9',
       gray200: '#F3F3F4',
@@ -47,8 +48,14 @@ export const {
       5: '40px'
     },
 
-    // rem = 16px
+    fonts: {
+      primary: 'Montserrat, sans-serif'
+    },
+
+    // 1rem = 16px
     fontSizes: {
+      html: '16px', // defines 1rem
+
       h1: '3rem', // 48px
       h2: '2.5rem', // 40px
       h3: '2rem', // 32px
@@ -60,7 +67,7 @@ export const {
       body3: '1.125rem', // 18px
       body4: '1rem', // 16px
 
-      button: '1rem', // 16px
+      button1: '1rem', // 16px
 
       primary1: '1rem', // 16px
       primary2: '0.875rem', // 14px
@@ -72,7 +79,7 @@ export const {
     },
 
     fontWeights: {
-      header: 700,
+      h: 700, // header
       body: 400,
       button: 600,
       primary: 600,
@@ -91,7 +98,7 @@ export const {
       body3: 1.2777, // 18px
       body4: 1.21875, // 16px
 
-      button: 1.5, // 16px
+      button1: 1.5, // 16px
 
       primary1: 1.25, // 16px
       primary2: 1.4285714, // 14px
@@ -115,5 +122,12 @@ export const {
     md: '(max-width: 900px)',
     lg: '(max-width: 1200px)',
     xl: '(max-width: 1536px)'
+  },
+
+  utils: {
+    focusRing: (color: string) => ({
+      outline: `2px solid ${color}`,
+      outlineOffset: '2px'
+    })
   }
 })
