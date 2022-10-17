@@ -6,8 +6,9 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "./Mark3dAccessToken.sol";
 import "./IFraudDecider.sol";
+import "./IHiddenFilesToken.sol";
 import "./IHiddenFilesTokenUpgradeable.sol";
-import "./IHiddenFilesTokenOnTransfer.sol";
+import "./IHiddenFilesTokenCallbackReceiver.sol";
 
 contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgradeable, OwnableUpgradeable {
     /// @dev TokenData - struct with basic token data
@@ -22,7 +23,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         uint256 id;                                       // token id
         address initiator;                                // transfer initiator
         address to;                                       // transfer target
-        IHiddenFilesTokenOnTransfer callbackReceiver;     // callback receiver
+        IHiddenFilesTokenCallbackReceiver callbackReceiver;     // callback receiver
         bytes data;                                       // transfer data
         bytes publicKey;                                  // public key of receiver
         bytes encryptedPassword;                          // encrypted password
@@ -79,6 +80,16 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         fraudDecider_ = _fraudDecider;
         fraudLateDecisionEnabled = _fraudLateDecisionEnabled;
         _transferOwnership(_owner);
+    }
+
+    /**
+     * @dev See {IERC165-supportsInterface}.
+     */
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721EnumerableUpgradeable, IERC165Upgradeable) returns (bool) {
+        return
+        interfaceId == type(IHiddenFilesTokenUpgradeable).interfaceId ||
+        interfaceId == type(IHiddenFilesToken).interfaceId ||
+        super.supportsInterface(interfaceId);
     }
 
     /// @dev Function to detect if fraud decision instant. Should return false in EVM chains and true in Filecoin
@@ -153,7 +164,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         uint256 tokenId,
         address to,
         bytes calldata data,
-        IHiddenFilesTokenOnTransfer callbackReceiver
+        IHiddenFilesTokenCallbackReceiver callbackReceiver
     ) external {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "Mark3dCollection: caller is not token owner or approved");
         require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
@@ -166,7 +177,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
      */
     function draftTransfer(
         uint256 tokenId,
-        IHiddenFilesTokenOnTransfer callbackReceiver
+        IHiddenFilesTokenCallbackReceiver callbackReceiver
     ) external {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "Mark3dCollection: caller is not token owner or approved");
         require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
@@ -180,6 +191,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
     function completeTransferDraft(
         uint256 tokenId,
         address to,
+        bytes calldata publicKey,
         bytes calldata data
     ) external {
         TransferInfo storage info = transfers[tokenId];
@@ -188,6 +200,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         require(info.to == address(0), "Mark3dCollection: draft already complete");
         info.to = to;
         info.data = data;
+        info.publicKey = publicKey;
     }
 
     /**

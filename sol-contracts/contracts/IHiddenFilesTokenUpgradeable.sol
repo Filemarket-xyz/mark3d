@@ -2,7 +2,8 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
-import "./IHiddenFilesTokenOnTransfer.sol";
+import "@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable.sol";
+import "./IHiddenFilesTokenCallbackReceiver.sol";
 import "./IFraudDecider.sol";
 
 interface IHiddenFilesTokenUpgradeable is IERC721Upgradeable {
@@ -25,7 +26,7 @@ interface IHiddenFilesTokenUpgradeable is IERC721Upgradeable {
         uint256 tokenId,
         address to,
         bytes calldata data,
-        IHiddenFilesTokenOnTransfer callbackReceiver
+        IHiddenFilesTokenCallbackReceiver callbackReceiver
     ) external;
 
     /// @dev Draft transfer. This method is useful if some third party need to lock NFT before receiver will be defined
@@ -35,7 +36,7 @@ interface IHiddenFilesTokenUpgradeable is IERC721Upgradeable {
     /// @param callbackReceiver is contract on which callbacks will be called. zero address if not needed
     function draftTransfer(
         uint256 tokenId,
-        IHiddenFilesTokenOnTransfer callbackReceiver
+        IHiddenFilesTokenCallbackReceiver callbackReceiver
     ) external;
 
     /// @dev Complete transfer draft
@@ -48,6 +49,7 @@ interface IHiddenFilesTokenUpgradeable is IERC721Upgradeable {
     function completeTransferDraft(
         uint256 tokenId,
         address to,
+        bytes calldata publicKey,
         bytes calldata data
     ) external;
 

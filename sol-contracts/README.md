@@ -25,7 +25,7 @@ The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL 
 
 [HiddenFilesToken interface draft](./contracts/IHiddenFilesToken.sol)
 [FraudDecider interface draft](./contracts/IFraudDecider.sol)
-[HiddenFilesTokenOnTransfer interface draft](./contracts/IHiddenFilesTokenOnTransfer.sol)
+[HiddenFilesTokenOnTransfer interface draft](./contracts/IHiddenFilesTokenCallbackReceiver.sol)
 ## Implementation
 ## History
 ## Copyright

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 /// @dev Interface for third party to receive transfer updates from token contract instances
-interface IHiddenFilesTokenOnTransfer {
+interface IHiddenFilesTokenCallbackReceiver {
     /// @dev This function MUST be called if transfer is cancelled
     /// @param tokenId Id of token for which transfer was cancelled
     function transferCancelled(uint256 tokenId) external;
