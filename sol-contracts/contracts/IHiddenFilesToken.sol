@@ -7,6 +7,30 @@ import "./IHiddenFilesTokenCallbackReceiver.sol";
 import "./IFraudDecider.sol";
 
 interface IHiddenFilesToken is IERC721 {
+    /// @dev Event emitted after transfer creation
+    event TransferInit(uint256 indexed tokenId, address from, address to);
+
+    /// @dev Event emitted after transfer draft creation
+    event TransferDraft(uint256 indexed tokenId, address from);
+
+    /// @dev Event emitted after transfer draft completion
+    event TransferDraftCompletion(uint256 indexed tokenId, address to);
+
+    /// @dev Event emitted after setting receiver's public key
+    event TransferPublicKeySet(uint256 indexed tokenId, bytes publicKey);
+
+    /// @dev Event emitted after setting encrypted file password
+    event TransferPasswordSet(uint256 indexed tokenId, bytes encryptedPassword);
+
+    /// @dev Event emitted after transfer successful finish
+    event TransferFinished(uint256 indexed tokenId);
+
+    /// @dev Event emitted after fraud was reported
+    event TransferFraudReported(uint256 indexed tokenId, bool decided, bool approved);
+
+    /// @dev Event emitted after transfer was cancelled
+    event TransferCancellation(uint256 indexed tokenId);
+
     /// @dev Function to detect if fraud decision instant. Should return false in EVM chains and true in Filecoin
     /// @return Boolean indicating if fraud decision will be instant
     function fraudDecisionInstant() external view returns (bool);

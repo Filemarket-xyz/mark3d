@@ -170,6 +170,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
         transfers[tokenId] = TransferInfo(tokenId, _msgSender(), to,
             callbackReceiver, data, bytes(""), bytes(""), false);
+        emit TransferInit(tokenId, ownerOf(tokenId), to);
     }
 
     /**
@@ -183,6 +184,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
         transfers[tokenId] = TransferInfo(tokenId, _msgSender(), address(0), callbackReceiver, bytes(""),
             bytes(""), bytes(""), false);
+        emit TransferDraft(tokenId, ownerOf(tokenId));
     }
 
     /**
@@ -201,6 +203,8 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         info.to = to;
         info.data = data;
         info.publicKey = publicKey;
+        emit TransferDraftCompletion(tokenId, to);
+        emit TransferPublicKeySet(tokenId, publicKey);
     }
 
     /**
@@ -212,6 +216,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         require(info.to == _msgSender(), "Mark3dCollection: permission denied");
         require(info.publicKey.length == 0, "Mark3dCollection: public key was already set");
         info.publicKey = publicKey;
+        emit TransferPublicKeySet(tokenId, publicKey);
     }
 
     /**
@@ -224,6 +229,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         require(info.publicKey.length != 0, "Mark3dCollection: public key wasn't set yet");
         require(info.encryptedPassword.length == 0, "Mark3dCollection: encrypted password was already set");
         info.encryptedPassword = encryptedPassword;
+        emit TransferPasswordSet(tokenId, encryptedPassword);
     }
 
     /**
@@ -235,6 +241,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         require(info.to == _msgSender(), "Mark3dCollection: permission denied");
         require(info.encryptedPassword.length != 0, "Mark3dCollection: encrypted password wasn't set yet");
         _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
+        emit TransferFinished(tokenId);
     }
 
     /**
@@ -262,6 +269,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
             }
             delete transfers[tokenId];
         }
+        emit TransferFraudReported(tokenId, decided, approve);
     }
 
     /**
@@ -283,6 +291,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
             _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
         }
         delete transfers[tokenId];
+        emit TransferFraudReported(tokenId, true, approve);
     }
 
     /**
@@ -300,6 +309,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
             info.callbackReceiver.transferCancelled(tokenId);
         }
         delete transfers[tokenId];
+        emit TransferCancellation(tokenId);
     }
 
     /// @dev function for transferring all owned tokens in collection
