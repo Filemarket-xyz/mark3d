@@ -2,11 +2,14 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "./Mark3dAccessToken.sol";
 import "./IFraudDecider.sol";
+import "./IHiddenFilesTokenUpgradeable.sol";
+import "./IHiddenFilesTokenOnTransfer.sol";
 
-contract Mark3dCollection is ERC721EnumerableUpgradeable, AccessControl {
+contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgradeable, OwnableUpgradeable {
     /// @dev TokenData - struct with basic token data
     struct TokenData {
         uint256 id;             // token id
@@ -16,26 +19,33 @@ contract Mark3dCollection is ERC721EnumerableUpgradeable, AccessControl {
 
     /// @dev
     struct TransferInfo {
-        uint256 id;                // token id
-        address initiator;         // transfer initiator
-        address to;                // transfer target
-        bytes data;                // transfer data
-        bytes publicKey;           // public key of receiver
-        bytes encryptedPassword;   // encrypted password
-        bool fraudReported;        // if fraud reported while finalizing transfer
+        uint256 id;                                       // token id
+        address initiator;                                // transfer initiator
+        address to;                                       // transfer target
+        IHiddenFilesTokenOnTransfer callbackReceiver;     // callback receiver
+        bytes data;                                       // transfer data
+        bytes publicKey;                                  // public key of receiver
+        bytes encryptedPassword;                          // encrypted password
+        bool fraudReported;                               // if fraud reported while finalizing transfer
     }
 
-    bytes32 public FRAUD_DECIDER_ADMIN_ROLE;
     uint256 public accessTokenId;                              // access token id
     Mark3dAccessToken public accessToken;                      // Access token contract address
-    bytes public data;                                         // collection additional data
+    bytes public collectionData;                               // collection additional data
     string private contractMetaUri;                            // contract-level metadata
     mapping(uint256 => string) public tokenUris;               // mapping of token metadata uri
     mapping(uint256 => bytes) public tokenData;                // mapping of token additional data
-    uint256 tokensLimit;                                       // mint limit
-    mapping(uint256 => TransferInfo) transfers;                // transfer details
-    bool fraudLateDecisionEnabled;
-    FraudDecider fraudDecider;
+    uint256 public tokensCount;                                // count of minted tokens
+    uint256 public tokensLimit;                                // mint limit
+    mapping(uint256 => TransferInfo) private transfers;        // transfer details
+    bool private fraudLateDecisionEnabled;                     // false if fraud decision is instant
+    IFraudDecider private fraudDecider_;                       // fraud decider
+
+    /// @dev modifier for checking if call is from the access token contract
+    modifier onlyAccessToken() {
+        require(_msgSender() == address(accessToken), "Mark3dCollection: allowed to call only from access token");
+        _;
+    }
 
     /// @dev initialize function
     /// @param name - name of the token
@@ -45,6 +55,8 @@ contract Mark3dCollection is ERC721EnumerableUpgradeable, AccessControl {
     /// @param _accessTokenId - access token id
     /// @param _owner - collection creator
     /// @param _data - additional collection data
+    /// @param _fraudDecider - fraud decider instance
+    /// @param _fraudLateDecisionEnabled - if fraud decision is not instant
     function initialize(
         string memory name,
         string memory symbol,
@@ -52,26 +64,33 @@ contract Mark3dCollection is ERC721EnumerableUpgradeable, AccessControl {
         Mark3dAccessToken _accessToken,
         uint256 _accessTokenId,
         address _owner,
-        FraudDecider _fraudDecider,
-        bool _fraudLateDecisionEnabled,
-        bytes memory _data
+        bytes memory _data,
+        IFraudDecider _fraudDecider,
+        bool _fraudLateDecisionEnabled
     ) external initializer {
         __ERC721_init(name, symbol);
-        _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
         tokensCount = 0;
         contractMetaUri = _contractMetaUri;
         accessTokenId = _accessTokenId;
         accessToken = _accessToken;
-        data = _data;
-        tokensLimit = 100;
-        fraudDecider = _fraudDecider;
+        collectionData = _data;
+        tokensLimit = 10000;
+        fraudDecider_ = _fraudDecider;
         fraudLateDecisionEnabled = _fraudLateDecisionEnabled;
+        _transferOwnership(_owner);
     }
 
-    /// @dev inheritance conflict solving
-    function supportsInterface(bytes4 interfaceId) public view override(AccessControl, ERC721Enumerable) returns (bool) {
-        return AccessControl.supportsInterface(interfaceId) || ERC721Enumerable.supportsInterface(interfaceId);
+    /// @dev Function to detect if fraud decision instant. Should return false in EVM chains and true in Filecoin
+    /// @return Boolean indicating if fraud decision will be instant
+    function fraudDecisionInstant() external view returns (bool) {
+        return !fraudLateDecisionEnabled;
+    }
+
+    /// @dev Function to get fraud decider instance for this token
+    /// @return IFraudDecider instance
+    function fraudDecider() external view returns (IFraudDecider) {
+        return fraudDecider_;
     }
 
     /// @dev Mint function. Can called only by the owner
@@ -127,60 +146,188 @@ contract Mark3dCollection is ERC721EnumerableUpgradeable, AccessControl {
         _burn(id);
     }
 
-    function initTransfer(uint256 tokenId, address to, bytes calldata data) external {
+    /**
+     * @dev See {IHiddenFilesToken-initTransfer}.
+     */
+    function initTransfer(
+        uint256 tokenId,
+        address to,
+        bytes calldata data,
+        IHiddenFilesTokenOnTransfer callbackReceiver
+    ) external {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "Mark3dCollection: caller is not token owner or approved");
-        require(transfers[tokenId].to == address(0), "Mark3dCollection: transfer for this token was already created");
-        transfers[tokenId] = TransferInfo(tokenId, _msgSender(), to, data, bytes(""), bytes(""), false);
+        require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
+        transfers[tokenId] = TransferInfo(tokenId, _msgSender(), to,
+            callbackReceiver, data, bytes(""), bytes(""), false);
     }
 
+    /**
+     * @dev See {IHiddenFilesToken-draftTransfer}.
+     */
+    function draftTransfer(
+        uint256 tokenId,
+        IHiddenFilesTokenOnTransfer callbackReceiver
+    ) external {
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "Mark3dCollection: caller is not token owner or approved");
+        require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
+        transfers[tokenId] = TransferInfo(tokenId, _msgSender(), address(0), callbackReceiver, bytes(""),
+            bytes(""), bytes(""), false);
+    }
+
+    /**
+     * @dev See {IHiddenFilesToken-completeTransferDraft}.
+     */
+    function completeTransferDraft(
+        uint256 tokenId,
+        address to,
+        bytes calldata data
+    ) external {
+        TransferInfo storage info = transfers[tokenId];
+        require(info.initiator != address(0), "Mark3dCollection: transfer for this token wasn't created");
+        require(_msgSender() == info.initiator, "Mark3dCollection: permission denied");
+        require(info.to == address(0), "Mark3dCollection: draft already complete");
+        info.to = to;
+        info.data = data;
+    }
+
+    /**
+     * @dev See {IHiddenFilesToken-setTransferPublicKey}.
+     */
     function setTransferPublicKey(uint256 tokenId, bytes calldata publicKey) external {
         TransferInfo storage info = transfers[tokenId];
-        require(info.to != address(0), "Mark3dCollection: transfer for this token wasn't created");
+        require(info.initiator != address(0), "Mark3dCollection: transfer for this token wasn't created");
         require(info.to == _msgSender(), "Mark3dCollection: permission denied");
-        require(string(info.publicKey) == "", "Mark3dCollection: public key was already set");
+        require(info.publicKey.length == 0, "Mark3dCollection: public key was already set");
         info.publicKey = publicKey;
     }
 
+    /**
+     * @dev See {IHiddenFilesToken-approveTransfer}.
+     */
     function approveTransfer(uint256 tokenId, bytes calldata encryptedPassword) external {
         TransferInfo storage info = transfers[tokenId];
-        require(transfers[tokenId].to != address(0), "Mark3dCollection: transfer for this token wasn't created");
+        require(info.initiator != address(0), "Mark3dCollection: transfer for this token wasn't created");
         require(ownerOf(tokenId) == _msgSender(), "Mark3dCollection: permission denied");
-        require(string(info.publicKey) != "", "Mark3dCollection: public key wasn't set yet");
-        require(string(info.encryptedPassword) == "", "Mark3dCollection: encrypted password was already set");
+        require(info.publicKey.length != 0, "Mark3dCollection: public key wasn't set yet");
+        require(info.encryptedPassword.length == 0, "Mark3dCollection: encrypted password was already set");
         info.encryptedPassword = encryptedPassword;
     }
 
-    function finalizeTransfer(uint256 tokenId, bool success) external {
+    /**
+     * @dev See {IHiddenFilesToken-finalizeTransfer}.
+     */
+    function finalizeTransfer(uint256 tokenId) external {
         TransferInfo storage info = transfers[tokenId];
-        require(transfers[tokenId].to != address(0), "Mark3dCollection: transfer for this token wasn't created");
+        require(info.initiator != address(0), "Mark3dCollection: transfer for this token wasn't created");
         require(info.to == _msgSender(), "Mark3dCollection: permission denied");
-        require(string(info.encryptedPassword) != "", "Mark3dCollection: encrypted password wasn't set yet");
-        if (success) {
-            _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
-        } else {
-            info.fraudReported = true;
-            (bool decided, bool approve) = fraudDecider.decide(tokenId);
-            require(fraudLateDecisionEnabled || decided, "Mark3dCollection: late decision disabled");
-            info.fraudReported = true;
+        require(info.encryptedPassword.length != 0, "Mark3dCollection: encrypted password wasn't set yet");
+        _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
+    }
+
+    /**
+     * @dev See {IHiddenFilesToken-reportFraud}.
+     */
+    function reportFraud(
+        uint256 tokenId,
+        bytes calldata privateKey
+    ) external {
+        TransferInfo storage info = transfers[tokenId];
+        require(info.initiator != address(0), "Mark3dCollection: transfer for this token wasn't created");
+        require(info.to == _msgSender(), "Mark3dCollection: permission denied");
+        require(info.encryptedPassword.length != 0, "Mark3dCollection: encrypted password wasn't set yet");
+
+        info.fraudReported = true;
+        (bool decided, bool approve) = fraudDecider_.decide(tokenId,
+            tokenUris[tokenId], info.publicKey, privateKey, info.encryptedPassword);
+        require(fraudLateDecisionEnabled || decided, "Mark3dCollection: late decision disabled");
+        if (decided) {
+            if (address(info.callbackReceiver) != address(0)) {
+                info.callbackReceiver.transferFraudDetected(tokenId, approve);
+            }
+            if (approve) {
+                _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
+            }
+            delete transfers[tokenId];
         }
     }
 
-    function fraudLateDecision(uint256 tokenId, bool approve) external {
+    /**
+     * @dev See {IHiddenFilesToken-applyFraudDecision}.
+     */
+    function applyFraudDecision(
+        uint256 tokenId,
+        bool approve
+    ) external {
+        require(fraudLateDecisionEnabled, "Mark3dCollection: late decision disabled");
         TransferInfo storage info = transfers[tokenId];
-        require(transfers[tokenId].to != address(0), "Mark3dCollection: transfer for this token wasn't created");
-        require(_msgSender() == address(FraudDecider), "Mark3dCollection: permission denied");
+        require(info.initiator != address(0), "Mark3dCollection: transfer for this token wasn't created");
+        require(_msgSender() == address(fraudDecider_), "Mark3dCollection: permission denied");
         require(info.fraudReported, "Mark3dCollection: fraud was not reported");
+        if (address(info.callbackReceiver) != address(0)) {
+            info.callbackReceiver.transferFraudDetected(tokenId, approve);
+        }
+        if (approve) {
+            _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
+        }
+        delete transfers[tokenId];
     }
 
-    function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes data) external payable override {
+    /**
+     * @dev See {IHiddenFilesToken-cancelTransfer}.
+     */
+    function cancelTransfer(
+        uint256 tokenId
+    ) external {
+        TransferInfo storage info = transfers[tokenId];
+        require(info.initiator != address(0), "Mark3dCollection: transfer for this token wasn't created");
+        require(!info.fraudReported, "Mark3dCollection: fraud reported");
+        require(_msgSender() == ownerOf(tokenId) || (info.to == address(0) && _msgSender() == info.initiator),
+            "Mark3dCollection: permission denied");
+        if (address(info.callbackReceiver) != address(0)) {
+            info.callbackReceiver.transferCancelled(tokenId);
+        }
+        delete transfers[tokenId];
+    }
+
+    /// @dev function for transferring all owned tokens in collection
+    function transferOwnership(address to) public virtual override onlyAccessToken {
+        _transferOwnership(to);
+    }
+
+    function safeTransferFrom(address, address, uint256,
+        bytes memory) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IHiddenFilesTokenUpgradeable) {
         revert("common transfer disabled");
     }
 
-    function safeTransferFrom(address _from, address _to, uint256 _tokenId) external payable override {
+    function safeTransferFrom(address, address,
+        uint256) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IHiddenFilesTokenUpgradeable) {
         revert("common transfer disabled");
     }
 
-    function transferFrom(address _from, address _to, uint256 _tokenId) external payable override {
+    function transferFrom(address, address,
+        uint256) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IHiddenFilesTokenUpgradeable) {
         revert("common transfer disabled");
+    }
+
+    /// @dev mint function for using in inherited contracts
+    /// @param to - token receiver
+    /// @param id - token id
+    /// @param metaUri - metadata uri
+    /// @param data - additional token data
+    function _mint(address to, uint256 id, string memory metaUri, bytes memory data) internal {
+        require(id == tokensCount, "MinterGuruBaseCollection: wrong id");
+        tokensCount++;
+        _safeMint(to, id);
+        tokenUris[id] = metaUri;
+        tokenData[id] = data;
+    }
+
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual override {
+        super._afterTokenTransfer(from, to, tokenId);
+        accessToken.updateCollectionIndex(from, to, accessTokenId);
     }
 }

@@ -10,7 +10,7 @@ interface IFraudDecider {
     /// @param privateKey Corresponding private key
     /// @param encryptedPassword Password to unlock file encrypted by current token owner with receiver's public key
     /// @return Boolean indicated if decision was made and boolean indicating if there was really act of the fraud
-    /// @note As this standard was developing in early stages of FVM, we've allowed this function to just record,
+    /// @notice As this standard was developing in early stages of FVM, we've allowed this function to just record,
     /// if some transfer needs further investigation, because without FVM we are not able to make instant decision.
     /// However, with FVM we will be able to verify fraud report instantly
     function decide(
@@ -19,5 +19,5 @@ interface IFraudDecider {
         bytes calldata publicKey,
         bytes calldata privateKey,
         bytes calldata encryptedPassword
-    ) external view returns (bool, bool);
+    ) external returns (bool, bool);
 }

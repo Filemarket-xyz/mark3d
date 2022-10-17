@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 import "./IHiddenFilesTokenOnTransfer.sol";
 import "./IFraudDecider.sol";
 
-interface IHiddenFilesToken is IERC721 {
+interface IHiddenFilesTokenUpgradeable is IERC721Upgradeable {
     /// @dev Function to detect if fraud decision instant. Should return false in EVM chains and true in Filecoin
     /// @return Boolean indicating if fraud decision will be instant
     function fraudDecisionInstant() external view returns (bool);
@@ -122,19 +122,19 @@ interface IHiddenFilesToken is IERC721 {
         address to,
         uint256 tokenId,
         bytes memory data
-    ) external override;
+    ) external override(IERC721Upgradeable);
 
     /// @dev MUST revert always
     function safeTransferFrom(
         address from,
         address to,
         uint256 tokenId
-    ) external override;
+    ) external override(IERC721Upgradeable);
 
     /// @dev MUST revert always
     function transferFrom(
         address from,
         address to,
         uint256 tokenId
-    ) external override;
+    ) external override(IERC721Upgradeable);
 }
