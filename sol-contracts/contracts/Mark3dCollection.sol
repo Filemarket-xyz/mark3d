@@ -115,6 +115,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         string memory metaUri,
         bytes memory _data
     ) external onlyOwner {
+        require(bytes(metaUri).length > 0, "Mark3dCollection: empty meta uri");
         require(id < tokensLimit, "Mark3dCollection: limit reached");
         _mint(to, id, metaUri, _data);
     }
@@ -128,6 +129,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         string memory metaUri,
         bytes memory _data
     ) external onlyOwner returns (uint256) {
+        require(bytes(metaUri).length > 0, "Mark3dCollection: empty meta uri");
         uint256 id = tokensCount;
         require(id < tokensLimit, "Mark3dCollection: limit reached");
         _mint(to, id, metaUri, _data);
@@ -196,6 +198,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         bytes calldata publicKey,
         bytes calldata data
     ) external {
+        require(publicKey.length > 0, "Mark3dCollection: empty public key");
         TransferInfo storage info = transfers[tokenId];
         require(info.initiator != address(0), "Mark3dCollection: transfer for this token wasn't created");
         require(_msgSender() == info.initiator, "Mark3dCollection: permission denied");
@@ -211,6 +214,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
      * @dev See {IHiddenFilesToken-setTransferPublicKey}.
      */
     function setTransferPublicKey(uint256 tokenId, bytes calldata publicKey) external {
+        require(publicKey.length > 0, "Mark3dCollection: empty public key");
         TransferInfo storage info = transfers[tokenId];
         require(info.initiator != address(0), "Mark3dCollection: transfer for this token wasn't created");
         require(info.to == _msgSender(), "Mark3dCollection: permission denied");
@@ -223,6 +227,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
      * @dev See {IHiddenFilesToken-approveTransfer}.
      */
     function approveTransfer(uint256 tokenId, bytes calldata encryptedPassword) external {
+        require(encryptedPassword.length > 0, "Mark3dCollection: empty password");
         TransferInfo storage info = transfers[tokenId];
         require(info.initiator != address(0), "Mark3dCollection: transfer for this token wasn't created");
         require(ownerOf(tokenId) == _msgSender(), "Mark3dCollection: permission denied");
@@ -241,6 +246,10 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         require(info.to == _msgSender(), "Mark3dCollection: permission denied");
         require(info.encryptedPassword.length != 0, "Mark3dCollection: encrypted password wasn't set yet");
         _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
+        if (address(info.callbackReceiver) != address(0)) {
+            info.callbackReceiver.transferFinished(tokenId);
+        }
+        delete transfers[tokenId];
         emit TransferFinished(tokenId);
     }
 
@@ -251,6 +260,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         uint256 tokenId,
         bytes calldata privateKey
     ) external {
+        require(privateKey.length > 0, "Mark3dCollection: private key is empty");
         TransferInfo storage info = transfers[tokenId];
         require(info.initiator != address(0), "Mark3dCollection: transfer for this token wasn't created");
         require(info.to == _msgSender(), "Mark3dCollection: permission denied");
@@ -287,7 +297,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         if (address(info.callbackReceiver) != address(0)) {
             info.callbackReceiver.transferFraudDetected(tokenId, approve);
         }
-        if (approve) {
+        if (!approve) {
             _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
         }
         delete transfers[tokenId];
@@ -338,7 +348,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
     /// @param metaUri - metadata uri
     /// @param data - additional token data
     function _mint(address to, uint256 id, string memory metaUri, bytes memory data) internal {
-        require(id == tokensCount, "MinterGuruBaseCollection: wrong id");
+        require(id == tokensCount, "Mark3dCollection: wrong id");
         tokensCount++;
         _safeMint(to, id);
         tokenUris[id] = metaUri;
