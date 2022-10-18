@@ -84,6 +84,27 @@ describe("Success transfer", async () => {
       .emit(collectionInstance, "Transfer")
       .withArgs(await accounts[1].getAddress(), await accounts[2].getAddress(), BN.from(0));
   });
+
+  it("self collections should be not empty after transfer", async () => {
+    const collections = await accessToken
+      .connect(accounts[2])
+      .getSelfCollections(BN.from(0), BN.from(10));
+    expect(collections).deep.eq([
+      [[BN.from(0), collectionInstance.address, "0x"]],
+      [BN.from(1)],
+    ]);
+  });
+
+  it("self tokens should be correct after transfer", async () => {
+    const tokens = await accessToken
+      .connect(accounts[2])
+      .getSelfTokens([BN.from(0)], [BN.from(0)], [BN.from(10)]);
+    expect(tokens).deep.eq([
+      [
+        [BN.from(0), "a", "0x"],
+      ],
+    ]);
+  });
 });
 
 describe("Transfer with fraud", async () => {
