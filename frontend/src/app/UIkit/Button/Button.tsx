@@ -1,5 +1,5 @@
 import { ComponentProps, forwardRef, MouseEventHandler, useCallback } from 'react'
-import { AriaButtonProps, HoverProps, useButton, useFocusRing, useHover } from 'react-aria'
+import { AriaButtonProps, HoverProps, mergeProps, useButton, useFocusRing, useHover } from 'react-aria'
 import { styled } from '../../../styles'
 import { useDrip } from '../Drip/Drip.hooks'
 import { useDOMRef } from '../../hooks'
@@ -108,9 +108,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <ButtonStyled
         {...other}
-        {...buttonProps}
-        {...focusProps}
-        {...hoverProps}
+        {...mergeProps(buttonProps, focusProps, hoverProps)}
         onClick={clickHandler}
         data-pressed={isPressed}
         data-hovered={isHovered}
