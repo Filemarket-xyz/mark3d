@@ -114,6 +114,13 @@ export const {
       2: '12px',
       3: '16px',
       4: '32px'
+    },
+
+    shadows: {
+      // names of shadows are from the figma
+      form: '0px 0px 15px rgba(19, 19, 45, 0.05)',
+      header: 'box-shadow: 0px 4px 15px rgba(19, 19, 45, 0.05)',
+      low: '0px 4px 15px rgba(19, 19, 45, 0.1)'
     }
   },
 
