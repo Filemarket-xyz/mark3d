@@ -1,12 +1,12 @@
 import React, { FC } from 'react'
-import './App.css'
 import { Providers } from './providers'
+import { RouterProvider } from 'react-router-dom'
+import { router } from './app/pages/routes'
 
 export const App: FC = () => {
   return (
     <Providers>
-      <div className="App">
-      </div>
+      <RouterProvider router={router} />
     </Providers>
   )
 }
