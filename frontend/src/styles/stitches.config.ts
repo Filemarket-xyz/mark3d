@@ -121,14 +121,21 @@ export const {
       form: '0px 0px 15px rgba(19, 19, 45, 0.05)',
       header: 'box-shadow: 0px 4px 15px rgba(19, 19, 45, 0.05)',
       low: '0px 4px 15px rgba(19, 19, 45, 0.1)'
+    },
+
+    breakpoints: {
+      sm: '600px',
+      md: '900px',
+      lg: '1200px',
+      xl: '1536px'
     }
   },
 
   media: {
-    sm: '(max-width: 600px)',
-    md: '(max-width: 900px)',
-    lg: '(max-width: 1200px)',
-    xl: '(max-width: 1536px)'
+    sm: '(max-width: $breakpoints$sm)',
+    md: '(max-width: $breakpoint$md)',
+    lg: '(max-width: $breakpoint$lg)',
+    xl: '(max-width: $breakpoint$xl)'
   },
 
   utils: {

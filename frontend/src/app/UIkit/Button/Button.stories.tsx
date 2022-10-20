@@ -8,16 +8,21 @@ const story: ComponentMeta<typeof Button> = {
 }
 export default story
 
-const Template: ComponentStory<typeof Button> = (props) => (
-  <StitchesProvider>
-    <div style={{ marginBottom: 20 }}>
-      <Button {...props}>Button</Button>
-    </div>
-    <div>
-      <Button {...props} isDisabled={true}>Disabled</Button>
-    </div>
-  </StitchesProvider>
-)
+const Template: ComponentStory<typeof Button> = (props) => {
+  const pressHandler = () => {
+    alert('button clicked!')
+  }
+  return (
+    <StitchesProvider>
+      <div style={{ marginBottom: 20 }}>
+        <Button {...props} onPress={pressHandler}>Button</Button>
+      </div>
+      <div>
+        <Button {...props} isDisabled={true}>Disabled</Button>
+      </div>
+    </StitchesProvider>
+  )
+}
 
 export const Primary = Template.bind({})
 Primary.args = {
