@@ -1,3 +1,5 @@
+import { styled } from '../../../styles'
+
 const headItems = [
   'Type',
   'Blockchains',
@@ -22,17 +24,24 @@ const rowItems = [
   'quality'
 ]
 
+const _Table = styled('div')
+
+const TableHead = styled('div', {
+  color: '$lightGray'
+})
+
 export default function Table () {
   return (
-    <div className="table">
-        <div className="table__head">
+    <_Table>
+        <TableHead>
             {headItems.map((item, i) => <div className="head__item" key={i}>{item}</div>)}
-        </div>
+        </TableHead>
         <div className="table__body">
             <div className="table__row">
                 {rowItems.map((item, i) => <div className="head__item" key={i}>{item}</div>)}
             </div>
         </div>
-    </div>
+    </_Table>
+
   )
 }

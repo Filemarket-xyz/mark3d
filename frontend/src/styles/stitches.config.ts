@@ -24,6 +24,8 @@ export const {
       pink: '#F4CFF3', // Color: Pink Lace
 
       black: '#1A1A1A', // Color: Eerie Black
+      lightGray: '#8F8F8F',
+
       white: '#ffffff',
 
       gray100: '#F9F9F9',
