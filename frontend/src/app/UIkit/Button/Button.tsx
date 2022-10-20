@@ -79,9 +79,7 @@ const ButtonStyled = styled('button', {
         padding: '0 18px'
       }
     }
-  },
-  defaultVariants: { primary: true }
-
+  }
 })
 
 export type ButtonProps = AriaButtonProps & ComponentProps<typeof ButtonStyled>
