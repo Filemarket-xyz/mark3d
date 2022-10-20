@@ -24,24 +24,26 @@ const rowItems = [
   'quality'
 ]
 
-const _Table = styled('div')
+const TableWrapper = styled('div')
 
 const TableHead = styled('div', {
-  color: '$lightGray'
+  color: '#8F8F8F'
 })
+
+const TableBody = styled('div')
 
 export default function Table () {
   return (
-    <_Table>
+    <TableWrapper>
         <TableHead>
             {headItems.map((item, i) => <div className="head__item" key={i}>{item}</div>)}
         </TableHead>
-        <div className="table__body">
-            <div className="table__row">
-                {rowItems.map((item, i) => <div className="head__item" key={i}>{item}</div>)}
-            </div>
-        </div>
-    </_Table>
+        <TableBody>
+          <div className="table__row">
+            {rowItems.map((item, i) => <div className="head__item" key={i}>{item}</div>)}
+          </div>
+        </TableBody>
+    </TableWrapper>
 
   )
 }
