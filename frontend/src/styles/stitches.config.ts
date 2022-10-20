@@ -132,16 +132,20 @@ export const {
   },
 
   media: {
-    sm: '(max-width: $breakpoints$sm)',
-    md: '(max-width: $breakpoint$md)',
-    lg: '(max-width: $breakpoint$lg)',
-    xl: '(max-width: $breakpoint$xl)'
+    sm: '(max-width: 600px)',
+    md: '(max-width: 900px)',
+    lg: '(max-width: 1200px)',
+    xl: '(max-width: 1536px)'
   },
 
   utils: {
     focusRing: (color: string) => ({
       outline: `2px solid ${color}`,
       outlineOffset: '2px'
+    }),
+    paddingLR: (padding: string) => ({
+      paddingLeft: padding,
+      paddingRight: padding
     })
   }
 })
