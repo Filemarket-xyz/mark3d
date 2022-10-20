@@ -49,7 +49,11 @@ export const {
     },
 
     fonts: {
-      primary: 'Montserrat, sans-serif'
+      h: 'Sora, sans-serif',
+      body: 'Montserrat, sans-serif',
+      button: 'Montserrat, sans-serif',
+      primary: 'Montserrat, sans-serif',
+      secondary: 'Inter, sans-serif'
     },
 
     // 1rem = 16px

@@ -28,7 +28,8 @@ const variant = (token: string) => ({
   true: {
     fontSize: `$${token}`,
     fontWeight: `$${token.slice(0, -1)}`,
-    lineHeight: `$${token}`
+    lineHeight: `$${token}`,
+    fontFamily: `$${token.slice(0, -1)}`
   }
 })
 
@@ -58,8 +59,5 @@ export const Txt = styled('span', {
     secondary1: variant('secondary1'),
     secondary2: variant('secondary2'),
     secondary3: variant('secondary3')
-  },
-  defaultVariants: {
-    body1: true
   }
 })
