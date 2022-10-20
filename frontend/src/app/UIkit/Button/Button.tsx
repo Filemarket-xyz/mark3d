@@ -1,5 +1,5 @@
 import { ComponentProps, forwardRef, MouseEventHandler, useCallback } from 'react'
-import { AriaButtonProps, HoverProps, mergeProps, useButton, useFocusRing, useHover } from 'react-aria'
+import { AriaButtonProps, mergeProps, useButton, useFocusRing, useHover } from 'react-aria'
 import { styled } from '../../../styles'
 import { useDrip } from '../Drip/Drip.hooks'
 import { useDOMRef } from '../../hooks'
@@ -71,18 +71,31 @@ const ButtonStyled = styled('button', {
           cursor: 'not-allowed'
         }
       }
+    },
+    small: {
+      true: {
+        height: '36px',
+        minWidth: 0,
+        padding: '0 18px'
+      }
     }
-  }
+  },
+  defaultVariants: { primary: true }
+
 })
 
-export type ButtonProps = AriaButtonProps & HoverProps & ComponentProps<typeof ButtonStyled>
+export type ButtonProps = AriaButtonProps & ComponentProps<typeof ButtonStyled>
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({
     children,
-    onPress,
     isDisabled,
-    ...other
+    onPress,
+    onPressStart,
+    onPressEnd,
+    onPressChange,
+    onPressUp,
+    ...btnProps
   },
   ref
   ) => {
@@ -92,7 +105,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const { isPressed, buttonProps } = useButton(
       {
         isDisabled,
-        ...other
+        onPress,
+        onPressStart,
+        onPressEnd,
+        onPressChange,
+        onPressUp
       },
       buttonRef
     )
@@ -104,10 +121,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     }, [onClick, onDripClickHandler])
 
     const { isFocusVisible, focusProps } = useFocusRing()
-    const { hoverProps, isHovered } = useHover({ isDisabled, ...other })
+    const { hoverProps, isHovered } = useHover({ isDisabled })
     return (
       <ButtonStyled
-        {...other}
+        {...btnProps}
         {...mergeProps(buttonProps, focusProps, hoverProps)}
         onClick={clickHandler}
         data-pressed={isPressed}

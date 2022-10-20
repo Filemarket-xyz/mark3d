@@ -20,7 +20,6 @@ export const useDrip = (
 
   const clickHandler: MouseEventHandler = (event) => {
     const dripRect = ref.current?.getBoundingClientRect()
-    console.log('clientX', event.clientX, 'clientY', event.clientY, 'rect', dripRect)
     const top = (dripRect != null) ? event.clientY - dripRect.y : 0
     const left = (dripRect != null) ? event.clientX - dripRect.x : 0
     setTop(top)
