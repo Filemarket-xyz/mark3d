@@ -32,18 +32,25 @@ const TableHead = styled('div', {
 
 const TableBody = styled('div')
 
-export default function Table () {
+export default function Table() {
   return (
     <TableWrapper>
-        <TableHead>
-            {headItems.map((item, i) => <div className="head__item" key={i}>{item}</div>)}
-        </TableHead>
-        <TableBody>
-          <div className="table__row">
-            {rowItems.map((item, i) => <div className="head__item" key={i}>{item}</div>)}
+      <TableHead>
+        {headItems.map((item, i) => (
+          <div className='head__item' key={i}>
+            {item}
           </div>
-        </TableBody>
+        ))}
+      </TableHead>
+      <TableBody>
+        <div className='table__row'>
+          {rowItems.map((item, i) => (
+            <div className='head__item' key={i}>
+              {item}
+            </div>
+          ))}
+        </div>
+      </TableBody>
     </TableWrapper>
-
   )
 }

@@ -3,7 +3,11 @@ module.exports = {
     browser: true,
     es2021: true
   },
-  extends: ['plugin:react/recommended', 'standard-with-typescript', 'plugin:storybook/recommended'],
+  extends: [
+    'plugin:react/recommended',
+    'standard-with-typescript',
+    'plugin:storybook/recommended'
+  ],
   ignorePatterns: ['vite.config.ts'],
   overrides: [],
   parserOptions: {
@@ -20,19 +24,20 @@ module.exports = {
     'react/display-name': 'off',
     'react/prop-types': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/space-before-function-paren': 'off',
     'max-len': [
       'warn',
       {
         code: 120,
         ignoreStrings: true,
         ignorePattern: '^\\s*var\\s.+=\\s*require\\s*\\(',
-        ignoreUrls: true,
-      },
-    ],
+        ignoreUrls: true
+      }
+    ]
   },
   settings: {
     react: {
-      version: "detect"
+      version: 'detect'
     }
   }
-};
+}
