@@ -1,4 +1,5 @@
 import { styled } from '../../../styles'
+import { TableItem } from './TableItem/TableItem'
 
 const headItems = [
   'Type',
@@ -30,7 +31,11 @@ const TableHead = styled('div', {
   color: '#8F8F8F'
 })
 
-const TableBody = styled('div')
+const TableBody = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$3'
+})
 
 export default function Table() {
   return (
@@ -43,13 +48,11 @@ export default function Table() {
         ))}
       </TableHead>
       <TableBody>
-        <div className='table__row'>
-          {rowItems.map((item, i) => (
-            <div className='head__item' key={i}>
-              {item}
-            </div>
-          ))}
-        </div>
+        {rowItems.map((item, i) => (
+          <TableItem title='beb' key={i}>
+            <div>hi</div>
+          </TableItem>
+        ))}
       </TableBody>
     </TableWrapper>
   )
