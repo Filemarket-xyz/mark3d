@@ -38,8 +38,12 @@ export const globalStyles = globalCss({
       src: `local(''), url('${interRegular}') format('truetype')`
     }
   ],
-  'body, html': {
+  'html, body': {
     fontFamily: '$primary',
-    fontSize: '$html'
+    fontSize: '$html',
+    height: '100%'
+  },
+  '#root': {
+    height: '100%'
   }
 })

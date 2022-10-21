@@ -20,6 +20,7 @@
     "react": "^18.2.0",
     "react-aria": "^3.20.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.4.2",
     "reseter.css": "^2.0.0"
   },
   "devDependencies": {
@@ -43,6 +44,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.31.10",
     "eslint-plugin-storybook": "^0.6.6",
+    "prettier": "2.7.1",
     "typescript": "*",
     "vite": "^3.1.0",
     "vite-plugin-eslint": "^1.8.1"
