@@ -1,13 +1,12 @@
 import React, { FC } from 'react'
 import { Providers } from './providers'
-import { ConnectButton } from './app/components'
+import { RouterProvider } from 'react-router-dom'
+import { router } from './app/pages/router'
 
 export const App: FC = () => {
   return (
     <Providers>
-      <div className="App">
-        <ConnectButton/>
-      </div>
+      <RouterProvider router={router} />
     </Providers>
   )
 }
