@@ -1,5 +1,5 @@
-import { createBrowserRouter, RouteObject, Outlet as RouterOutlet } from 'react-router-dom'
-import { Outlet } from '../components/Outlet/Outlet'
+import { createBrowserRouter, RouteObject, Outlet } from 'react-router-dom'
+import { AppLayout } from '../components/Outlet/AppLayout'
 import ExplorerPage from './ExplorerPage/ExplorerPage'
 
 const routes: RouteObject[] = [
@@ -14,9 +14,10 @@ export const router = createBrowserRouter([
     path: '/',
     element: (
     <>
-      <Outlet>
-        <RouterOutlet/>
-      </Outlet>
+      <AppLayout>
+        {/* TODO HEADER, FOOTER, ETC. */}
+        <Outlet/>
+      </AppLayout>
     </>),
     children: routes
   }

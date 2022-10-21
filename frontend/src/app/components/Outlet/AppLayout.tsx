@@ -1,6 +1,6 @@
 import { styled } from '../../../styles'
 
-export const Outlet = styled('section', {
+export const AppLayout = styled('section', {
   backgroundColor: '$gray100',
   minHeight: '100%'
 })
