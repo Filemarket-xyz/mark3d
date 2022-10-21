@@ -7,7 +7,7 @@
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\"",
+    "lint:fix": "eslint --fix \"**/*.{ts,tsx}\" --ignore-pattern node_modules/",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },

@@ -4,7 +4,7 @@ module.exports = {
     es2021: true
   },
   extends: ['plugin:react/recommended', 'standard-with-typescript', 'plugin:storybook/recommended'],
-  ignorePatterns: ['vite.config.ts'],
+  ignorePatterns: ['vite.config.ts', 'node_modules/*', 'dist/*'],
   overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
@@ -20,6 +20,7 @@ module.exports = {
     'react/display-name': 'off',
     'react/prop-types': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/strict-boolean-expressions': 'off',
     'max-len': [
       'warn',
       {

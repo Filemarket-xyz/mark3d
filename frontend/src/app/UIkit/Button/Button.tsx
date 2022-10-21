@@ -28,6 +28,9 @@ const ButtonStyled = styled('button', {
   '&[data-hovered=true]': {
     opacity: 0.7
   },
+  '&[data-disabled=true]': {
+    cursor: 'not-allowed'
+  },
   variants: {
     primary: {
       true: {
