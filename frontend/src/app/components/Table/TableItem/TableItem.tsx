@@ -35,6 +35,11 @@ const ItemProperty = styled('div', {
   }
 })
 
+const Icon = styled('img', {
+  width: '20px',
+  height: '20px'
+})
+
 interface Props {
   title?: string
   children: JSX.Element
@@ -50,10 +55,10 @@ export const TableItem: FC<Props> = ({ children }) => {
         <ItemProperty>.glb, .gltf, .fbx, .obj, .dae, .pcd, </ItemProperty>
         <ItemProperty>100 MB 60 MB (.dae) 500 MB (.zip)</ItemProperty>
         <ItemProperty>
-          <img src={check} alt='' />
+          <Icon src={check} />
         </ItemProperty>
         <ItemProperty>
-          <img src={cross} alt='' />
+          <Icon src={cross} />
         </ItemProperty>
         <ItemProperty>4/10</ItemProperty>
       </ItemBody>
