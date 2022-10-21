@@ -25,6 +25,8 @@ export const {
 
       black: '#1A1A1A', // Color: Eerie Black
       white: '#ffffff',
+      whiteOp50: 'rgba(255, 255, 255, 0.5)',
+      whiteOp75: 'rgba(255, 255, 255, 0.75)',
 
       gray100: '#F9F9F9',
       gray200: '#F3F3F4',
@@ -123,7 +125,7 @@ export const {
     shadows: {
       // names of shadows are from the figma
       form: '0px 0px 15px rgba(19, 19, 45, 0.05)',
-      header: 'box-shadow: 0px 4px 15px rgba(19, 19, 45, 0.05)',
+      header: '0px 4px 15px rgba(19, 19, 45, 0.05)',
       low: '0px 4px 15px rgba(19, 19, 45, 0.1)'
     },
 
@@ -132,6 +134,10 @@ export const {
       md: '900px',
       lg: '1200px',
       xl: '1536px'
+    },
+
+    gradients: {
+      main: 'linear-gradient(270deg, $colors$gradient0 0%, $colors$gradient1 85.65%)'
     }
   },
 
@@ -150,6 +156,10 @@ export const {
     paddingLR: (padding: string) => ({
       paddingLeft: padding,
       paddingRight: padding
+    }),
+    paddingTB: (padding: string) => ({
+      paddingTop: padding,
+      paddingBottom: padding
     })
   }
 })
