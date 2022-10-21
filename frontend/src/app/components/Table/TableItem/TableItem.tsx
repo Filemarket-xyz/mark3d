@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC, ReactNode } from 'react'
 import { styled } from '../../../../styles'
 import cross from './img/cross.svg'
 import check from './img/check.svg'
@@ -25,7 +25,7 @@ const ItemArrow = styled('div', {
   padding: '$4'
 })
 
-const ItemProperty = styled('div', {
+export const ItemProperty = styled('div', {
   variants: {
     title: {
       true: {
@@ -41,36 +41,19 @@ const Icon = styled('img', {
   height: '20px'
 })
 
+export const CheckIcon = () => <Icon src={check} alt='Check icon' />
+
+export const CrossIcon = () => <Icon src={cross} alt='Cross icon' />
+
 interface Props {
   title?: string
-  children: JSX.Element
+  children: ReactNode | JSX.Element | JSX.Element[]
 }
 
 export const TableItem: FC<Props> = ({ children }) => {
   return (
     <ItemWrapper>
-      <ItemBody>
-        <ItemProperty title css={{ width: '112px' }}>
-          Spatial
-        </ItemProperty>
-        <ItemProperty css={{ width: '174px' }}>Separated world</ItemProperty>
-        <ItemProperty css={{ width: '174px' }}>Etherium</ItemProperty>
-        <ItemProperty css={{ width: '174px' }}>
-          .glb, .gltf, .fbx, .obj, .dae, .pcd,{' '}
-        </ItemProperty>
-        <ItemProperty css={{ width: '109px', marginLeft: '$3' }}>
-          100 MB
-          <br /> 60 MB (.dae)
-          <br /> 500 MB (.zip)
-        </ItemProperty>
-        <ItemProperty css={{ width: '50px', marginLeft: '$3' }}>
-          <Icon src={check} alt='Check icon' />
-        </ItemProperty>
-        <ItemProperty css={{ width: '109px', marginLeft: '$3' }}>
-          <Icon src={cross} alt='Cross icon' />
-        </ItemProperty>
-        <ItemProperty>4/10</ItemProperty>
-      </ItemBody>
+      <ItemBody>{children}</ItemBody>
       <ItemArrow>
         <img src={arrow} alt='' />
       </ItemArrow>

@@ -1,5 +1,10 @@
 import { styled } from '../../../styles'
-import { TableItem } from './TableItem/TableItem'
+import {
+  CheckIcon,
+  CrossIcon,
+  ItemProperty,
+  TableItem
+} from './TableItem/TableItem'
 
 const headItems = [
   'Type',
@@ -48,9 +53,30 @@ export default function Table() {
         ))}
       </TableHead>
       <TableBody>
-        {rowItems.map((item, i) => (
-          <TableItem title='beb' key={i}>
-            <div>hi</div>
+        {rowItems.map((row, i) => (
+          <TableItem key={i}>
+            <ItemProperty title css={{ width: '112px' }}>
+              Spatial
+            </ItemProperty>
+            <ItemProperty css={{ width: '174px' }}>
+              Separated world
+            </ItemProperty>
+            <ItemProperty css={{ width: '174px' }}>Etherium</ItemProperty>
+            <ItemProperty css={{ width: '174px' }}>
+              .glb, .gltf, .fbx, .obj, .dae, .pcd,{' '}
+            </ItemProperty>
+            <ItemProperty css={{ width: '109px', marginLeft: '$3' }}>
+              100 MB
+              <br /> 60 MB (.dae)
+              <br /> 500 MB (.zip)
+            </ItemProperty>
+            <ItemProperty css={{ width: '50px', marginLeft: '$3' }}>
+              <CheckIcon />
+            </ItemProperty>
+            <ItemProperty css={{ width: '109px', marginLeft: '$3' }}>
+              <CrossIcon />
+            </ItemProperty>
+            <ItemProperty>4/10</ItemProperty>
           </TableItem>
         ))}
       </TableBody>
