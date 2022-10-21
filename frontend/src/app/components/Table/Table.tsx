@@ -63,7 +63,7 @@ export default function Table() {
             </ItemProperty>
             <ItemProperty css={{ width: '174px' }}>Etherium</ItemProperty>
             <ItemProperty css={{ width: '174px' }}>
-              .glb, .gltf, .fbx, .obj, .dae, .pcd,{' '}
+              .glb, .gltf, .fbx, .obj, .dae, .pcd,
             </ItemProperty>
             <ItemProperty css={{ width: '109px', marginLeft: '$3' }}>
               100 MB
