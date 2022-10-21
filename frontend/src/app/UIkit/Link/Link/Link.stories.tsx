@@ -1,5 +1,5 @@
-import {ComponentMeta, ComponentStory} from '@storybook/react';
-import {Link} from './Link';
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Link } from './Link'
 
 const story: ComponentMeta<typeof Link> = {
   title: 'UIKit/Link',
@@ -10,14 +10,10 @@ export default story
 
 const Template: ComponentStory<typeof Link> = (props) => (
   <>
-    <div style={{marginBottom: 10}}>
+    <div style={{ marginBottom: 10 }}>
       <Link {...props}>Click me!</Link>
-    </div>
-    <div>
-      <Link as="span">I am a span actually</Link>
     </div>
   </>
 )
 
 export const Default = Template.bind({})
-
