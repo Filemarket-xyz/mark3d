@@ -156,6 +156,10 @@ export const {
     paddingLR: (padding: string) => ({
       paddingLeft: padding,
       paddingRight: padding
+    }),
+    paddingTB: (padding: string) => ({
+      paddingTop: padding,
+      paddingBottom: padding
     })
   }
 })

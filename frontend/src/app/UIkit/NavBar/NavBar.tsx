@@ -8,9 +8,11 @@ export interface NavBarProps {
   actions?: ReactNode
 }
 
+export const navBarHeightPx = 80
+
 const NavBarStyled = styled('nav', {
   width: '100%',
-  height: '80px',
+  height: navBarHeightPx,
   position: 'fixed',
   top: 0,
   left: 0,
