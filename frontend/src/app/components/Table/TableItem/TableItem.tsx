@@ -54,7 +54,13 @@ export const TableItem: FC<Props> = ({ children }) => {
   return (
     <ItemWrapper>
       <ItemBody>{children}</ItemBody>
-      <ItemArrow>
+      <ItemArrow
+        css={{
+          '@md': {
+            display: 'none'
+          }
+        }}
+      >
         <img src={arrow} alt='' />
       </ItemArrow>
     </ItemWrapper>

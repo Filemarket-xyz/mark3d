@@ -70,13 +70,37 @@ export default function Table() {
               <br /> 60 MB (.dae)
               <br /> 500 MB (.zip)
             </ItemProperty>
-            <ItemProperty css={{ width: '50px', marginLeft: '$3' }}>
+            <ItemProperty
+              css={{
+                width: '50px',
+                marginLeft: '$3',
+                '@md': {
+                  display: 'none'
+                }
+              }}
+            >
               <CheckIcon />
             </ItemProperty>
-            <ItemProperty css={{ width: '109px', marginLeft: '$3' }}>
+            <ItemProperty
+              css={{
+                width: '109px',
+                marginLeft: '$3',
+                '@md': {
+                  display: 'none'
+                }
+              }}
+            >
               <CrossIcon />
             </ItemProperty>
-            <ItemProperty>4/10</ItemProperty>
+            <ItemProperty
+              css={{
+                '@md': {
+                  display: 'none'
+                }
+              }}
+            >
+              4/10
+            </ItemProperty>
           </TableItem>
         ))}
       </TableBody>
