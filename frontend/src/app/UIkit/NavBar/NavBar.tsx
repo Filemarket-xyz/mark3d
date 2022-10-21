@@ -23,6 +23,7 @@ const NavBarStyled = styled('nav', {
 })
 
 const NavBarSpacer = styled('div', {
+  height: '100%',
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'center',
@@ -34,7 +35,7 @@ const NavBarSpacer = styled('div', {
 export const NavBar: FC<NavBarProps> = ({ brand, items, actions }) => {
   return (
     <NavBarStyled>
-      <Container>
+      <Container css={{ height: '100%' }}>
         <NavBarSpacer>
           {brand}
           {items && (

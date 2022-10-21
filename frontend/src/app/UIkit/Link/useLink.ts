@@ -2,7 +2,10 @@ import { useDOMRef } from '../../hooks'
 import { mergeProps, useFocusRing, useHover, usePress } from 'react-aria'
 import { ForwardedRef } from 'react'
 
-export const useLink = <T extends { isDisabled?: boolean }, >({ isDisabled, ...other }: T, ref: ForwardedRef<HTMLAnchorElement>) => {
+export const useLink = <T extends { isDisabled?: boolean }, >(
+  { isDisabled, ...other }: T,
+  ref: ForwardedRef<HTMLAnchorElement>
+) => {
   const linkRef = useDOMRef(ref)
   const { isHovered, hoverProps } = useHover({ isDisabled })
   const { isFocusVisible, focusProps } = useFocusRing()

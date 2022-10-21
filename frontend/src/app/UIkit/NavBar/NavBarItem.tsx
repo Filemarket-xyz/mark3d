@@ -1,33 +1,30 @@
 import { styled } from '../../../styles'
-import { ComponentProps, FC, PropsWithChildren, useRef } from 'react'
+import { ComponentProps, FC, PropsWithChildren } from 'react'
 import { Txt } from '../Txt'
-import { mergeProps, useFocusRing, useHover, usePress } from 'react-aria'
-import {Link} from '../Link';
+import { NavLink } from '../Link'
 
-export const NavLinkStyled = styled(Link, {
+export const NavLinkStyled = styled(NavLink, {
   color: '$blue900',
-  '&.active:after': {
-
+  position: 'relative',
+  '&.active::after': {
+    content: '',
+    display: 'block',
+    position: 'absolute',
+    bottom: '-4px',
+    left: 0,
+    right: 0,
+    height: '2px',
+    background: '$gradients$main',
+    filter: 'blur(0.5px)'
   }
 })
 
-export type NavBarItemProps = PropsWithChildren<ComponentProps<typeof NavLinkStyled>> & {
-  isDisabled?: boolean
-}
+export type NavBarItemProps = PropsWithChildren<ComponentProps<typeof NavLinkStyled>>
 
-export const NavBarItem: FC<NavBarItemProps> = ({ children, isDisabled, ...navLinkProps }) => {
-  const ref = useRef<HTMLAnchorElement>(null)
-  const { isHovered, hoverProps } = useHover({ isDisabled })
-  const { isPressed, pressProps } = usePress({ isDisabled, ref })
-  const { isFocusVisible, focusProps } = useFocusRing()
+export const NavBarItem: FC<NavBarItemProps> = ({ children, ...navLinkProps }) => {
   return (
     <NavLinkStyled
       {...navLinkProps}
-      {...mergeProps(hoverProps, pressProps, focusProps)}
-      ref={ref}
-      data-hovered={isHovered}
-      data-pressed={isPressed}
-      data-focus-visible={isFocusVisible}
     >
       <Txt button1>
         {children}

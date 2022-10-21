@@ -35,7 +35,7 @@ const ButtonStyled = styled('button', {
     primary: {
       true: {
         color: '$white',
-        background: 'linear-gradient(270deg, $blue300 0%, $magenta 85.65%)',
+        background: '$gradients$main',
         '&[data-focus-ring=true]': {
           focusRing: '$blue300'
         },
