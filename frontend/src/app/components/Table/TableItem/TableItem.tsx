@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { styled } from '../../../../styles'
 import cross from './img/cross.svg'
 import check from './img/check.svg'
+import arrow from './img/arrow.svg'
 
 const ItemWrapper = styled('div', {
   backgroundColor: '#fff',
@@ -56,7 +57,9 @@ export const TableItem: FC<Props> = ({ children }) => {
         </ItemProperty>
         <ItemProperty>4/10</ItemProperty>
       </ItemBody>
-      <ItemArrow>s</ItemArrow>
+      <ItemArrow>
+        <img src={arrow} alt='' />
+      </ItemArrow>
     </ItemWrapper>
   )
 }
