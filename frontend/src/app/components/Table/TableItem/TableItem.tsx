@@ -9,6 +9,7 @@ const ItemWrapper = styled('div', {
   borderRadius: '$3',
   height: '80px',
   color: '$gray500',
+  fontSize: '14px',
   display: 'flex',
   justifyContent: 'space-between'
 })
@@ -49,16 +50,24 @@ export const TableItem: FC<Props> = ({ children }) => {
   return (
     <ItemWrapper>
       <ItemBody>
-        <ItemProperty title>Spatial</ItemProperty>
-        <ItemProperty>Separated world</ItemProperty>
-        <ItemProperty>Etherium</ItemProperty>
-        <ItemProperty>.glb, .gltf, .fbx, .obj, .dae, .pcd, </ItemProperty>
-        <ItemProperty>100 MB 60 MB (.dae) 500 MB (.zip)</ItemProperty>
-        <ItemProperty>
-          <Icon src={check} />
+        <ItemProperty title css={{ width: '112px' }}>
+          Spatial
         </ItemProperty>
-        <ItemProperty>
-          <Icon src={cross} />
+        <ItemProperty css={{ width: '174px' }}>Separated world</ItemProperty>
+        <ItemProperty css={{ width: '174px' }}>Etherium</ItemProperty>
+        <ItemProperty css={{ width: '174px' }}>
+          .glb, .gltf, .fbx, .obj, .dae, .pcd,{' '}
+        </ItemProperty>
+        <ItemProperty css={{ width: '109px', marginLeft: '$3' }}>
+          100 MB
+          <br /> 60 MB (.dae)
+          <br /> 500 MB (.zip)
+        </ItemProperty>
+        <ItemProperty css={{ width: '50px', marginLeft: '$3' }}>
+          <Icon src={check} alt='Check icon' />
+        </ItemProperty>
+        <ItemProperty css={{ width: '109px', marginLeft: '$3' }}>
+          <Icon src={cross} alt='Cross icon' />
         </ItemProperty>
         <ItemProperty>4/10</ItemProperty>
       </ItemBody>
