@@ -1,5 +1,7 @@
 import React, { FC } from 'react'
 import { styled } from '../../../../styles'
+import cross from './img/cross.svg'
+import check from './img/check.svg'
 
 const ItemWrapper = styled('div', {
   backgroundColor: '#fff',
@@ -11,6 +13,7 @@ const ItemWrapper = styled('div', {
 })
 
 const ItemBody = styled('div', {
+  display: 'flex',
   padding: '$3 $4',
   alignItems: 'center'
 })
@@ -18,6 +21,17 @@ const ItemBody = styled('div', {
 const ItemArrow = styled('div', {
   alignItems: 'center',
   padding: '$4'
+})
+
+const ItemProperty = styled('div', {
+  variants: {
+    title: {
+      true: {
+        color: '$blue500',
+        fontWeight: 600
+      }
+    }
+  }
 })
 
 interface Props {
@@ -28,7 +42,20 @@ interface Props {
 export const TableItem: FC<Props> = ({ children }) => {
   return (
     <ItemWrapper>
-      <ItemBody>hello world</ItemBody>
+      <ItemBody>
+        <ItemProperty title>Spatial</ItemProperty>
+        <ItemProperty>Separated world</ItemProperty>
+        <ItemProperty>Etherium</ItemProperty>
+        <ItemProperty>.glb, .gltf, .fbx, .obj, .dae, .pcd, </ItemProperty>
+        <ItemProperty>100 MB 60 MB (.dae) 500 MB (.zip)</ItemProperty>
+        <ItemProperty>
+          <img src={check} alt='' />
+        </ItemProperty>
+        <ItemProperty>
+          <img src={cross} alt='' />
+        </ItemProperty>
+        <ItemProperty>4/10</ItemProperty>
+      </ItemBody>
       <ItemArrow>s</ItemArrow>
     </ItemWrapper>
   )
