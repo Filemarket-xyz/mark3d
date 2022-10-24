@@ -33,6 +33,9 @@ const ItemArrow = styled('div', {
 })
 
 export const RowProperty = styled('div', {
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
   variants: {
     title: {
       true: {

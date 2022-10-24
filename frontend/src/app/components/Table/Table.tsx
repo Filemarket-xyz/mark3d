@@ -31,7 +31,7 @@ const TableBody = styled('div', {
 
 const HeadItem = styled('div', {
   position: 'absolute',
-  top: 'calc(-46px - $3)',
+  top: 'calc(-$4 - $3)',
   color: '#8F8F8F'
 })
 
