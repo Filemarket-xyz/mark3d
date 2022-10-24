@@ -55,52 +55,22 @@ export default function Table() {
       <TableBody>
         {rowItems.map((row, i) => (
           <TableItem key={i}>
-            <ItemProperty title css={{ width: '112px' }}>
-              Spatial
-            </ItemProperty>
-            <ItemProperty css={{ width: '174px' }}>
-              Separated world
-            </ItemProperty>
-            <ItemProperty css={{ width: '174px' }}>Etherium</ItemProperty>
-            <ItemProperty css={{ width: '174px' }}>
-              .glb, .gltf, .fbx, .obj, .dae, .pcd,
-            </ItemProperty>
-            <ItemProperty css={{ width: '109px', marginLeft: '$3' }}>
+            <ItemProperty title>Spatial</ItemProperty>
+            <ItemProperty>Separated world</ItemProperty>
+            <ItemProperty>Etherium</ItemProperty>
+            <ItemProperty>.glb, .gltf, .fbx, .obj, .dae, .pcd,</ItemProperty>
+            <ItemProperty>
               100 MB
               <br /> 60 MB (.dae)
               <br /> 500 MB (.zip)
             </ItemProperty>
-            <ItemProperty
-              css={{
-                width: '50px',
-                marginLeft: '$3',
-                '@md': {
-                  display: 'none'
-                }
-              }}
-            >
+            <ItemProperty>
               <CheckIcon />
             </ItemProperty>
-            <ItemProperty
-              css={{
-                width: '109px',
-                marginLeft: '$3',
-                '@md': {
-                  display: 'none'
-                }
-              }}
-            >
+            <ItemProperty>
               <CrossIcon />
             </ItemProperty>
-            <ItemProperty
-              css={{
-                '@md': {
-                  display: 'none'
-                }
-              }}
-            >
-              4/10
-            </ItemProperty>
+            <ItemProperty>4/10</ItemProperty>
           </TableItem>
         ))}
       </TableBody>

@@ -17,7 +17,9 @@ const ItemWrapper = styled('div', {
 const ItemBody = styled('div', {
   display: 'flex',
   padding: '$3 $4',
-  alignItems: 'center'
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  flex: '1 1 auto'
 })
 
 const ItemArrow = styled('div', {
