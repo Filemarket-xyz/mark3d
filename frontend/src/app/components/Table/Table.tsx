@@ -58,19 +58,19 @@ export default function Table() {
             <ItemProperty title>Spatial</ItemProperty>
             <ItemProperty>Separated world</ItemProperty>
             <ItemProperty>Etherium</ItemProperty>
-            <ItemProperty>.glb, .gltf, .fbx, .obj, .dae, .pcd,</ItemProperty>
-            <ItemProperty>
+            <ItemProperty hide={'sm'}>.glb, .gltf, .fbx, .obj, .dae, .pcd,</ItemProperty>
+            <ItemProperty hide={'md'}>
               100 MB
               <br /> 60 MB (.dae)
               <br /> 500 MB (.zip)
             </ItemProperty>
-            <ItemProperty>
+            <ItemProperty hide={'md'}>
               <CheckIcon />
             </ItemProperty>
-            <ItemProperty>
+            <ItemProperty hide={'md'}>
               <CrossIcon />
             </ItemProperty>
-            <ItemProperty>4/10</ItemProperty>
+            <ItemProperty hide={'md'}>4/10</ItemProperty>
           </TableItem>
         ))}
       </TableBody>

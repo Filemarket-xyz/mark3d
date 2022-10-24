@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react'
+import React, { FC, ReactNode } from 'react'
 import { styled } from '../../../../styles'
 import cross from './img/cross.svg'
 import check from './img/check.svg'
@@ -19,12 +19,17 @@ const ItemBody = styled('div', {
   padding: '$3 $4',
   alignItems: 'center',
   justifyContent: 'space-between',
-  flex: '1 1 auto'
+  flex: '1 1 auto',
+  gap: '$3'
 })
 
 const ItemArrow = styled('div', {
   alignItems: 'center',
-  padding: '$4'
+  padding: '$4',
+  '@md': {
+    paddingLeft: 0
+  },
+  flexShrink: 0
 })
 
 export const ItemProperty = styled('div', {
@@ -33,6 +38,28 @@ export const ItemProperty = styled('div', {
       true: {
         color: '$blue500',
         fontWeight: 600
+      }
+    },
+    hide: {
+      sm: {
+        '@sm': {
+          display: 'none'
+        }
+      },
+      md: {
+        '@md': {
+          display: 'none'
+        }
+      },
+      lg: {
+        '@lg': {
+          display: 'none'
+        }
+      },
+      xl: {
+        '@xl': {
+          display: 'none'
+        }
       }
     }
   }
@@ -56,13 +83,7 @@ export const TableItem: FC<Props> = ({ children }) => {
   return (
     <ItemWrapper>
       <ItemBody>{children}</ItemBody>
-      <ItemArrow
-        css={{
-          '@md': {
-            display: 'none'
-          }
-        }}
-      >
+      <ItemArrow>
         <img src={arrow} alt='' />
       </ItemArrow>
     </ItemWrapper>
