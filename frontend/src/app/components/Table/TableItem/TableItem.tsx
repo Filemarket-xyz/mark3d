@@ -5,7 +5,7 @@ import check from './img/check.svg'
 import arrow from './img/arrow.svg'
 
 const ItemWrapper = styled('div', {
-  backgroundColor: '#fff',
+  backgroundColor: '$white',
   borderRadius: '$3',
   height: '80px',
   color: '$gray500',
