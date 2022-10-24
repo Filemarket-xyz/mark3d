@@ -32,7 +32,8 @@ const TableBody = styled('div', {
 const HeadItem = styled('div', {
   position: 'absolute',
   top: 'calc(-$4 - $3)',
-  color: '#8F8F8F'
+  color: '#8F8F8F',
+  fontWeight: '600'
 })
 
 function renderRowPropertiesWithHeaderItems() {
