@@ -32,7 +32,7 @@ const ItemArrow = styled('div', {
   flexShrink: 0
 })
 
-export const ItemProperty = styled('div', {
+export const RowProperty = styled('div', {
   variants: {
     title: {
       true: {
@@ -79,7 +79,7 @@ interface Props {
   children: ReactNode | JSX.Element | JSX.Element[]
 }
 
-export const TableItem: FC<Props> = ({ children }) => {
+export const TableRow: FC<Props> = ({ children }) => {
   return (
     <ItemWrapper>
       <ItemBody>{children}</ItemBody>

@@ -2,9 +2,9 @@ import { styled } from '../../../styles'
 import {
   CheckIcon,
   CrossIcon,
-  ItemProperty,
-  TableItem
-} from './TableItem/TableItem'
+  RowProperty,
+  TableRow
+} from './TableRow/TableRow'
 
 const headItems = [
   'Type',
@@ -54,24 +54,24 @@ export default function Table() {
       </TableHead>
       <TableBody>
         {rowItems.map((row, i) => (
-          <TableItem key={i}>
-            <ItemProperty title>Spatial</ItemProperty>
-            <ItemProperty>Separated world</ItemProperty>
-            <ItemProperty>Etherium</ItemProperty>
-            <ItemProperty hide={'sm'}>.glb, .gltf, .fbx, .obj, .dae, .pcd,</ItemProperty>
-            <ItemProperty hide={'md'}>
+          <TableRow key={i}>
+            <RowProperty title>Spatial</RowProperty>
+            <RowProperty>Separated world</RowProperty>
+            <RowProperty>Etherium</RowProperty>
+            <RowProperty hide={'sm'}>.glb, .gltf, .fbx, .obj, .dae, .pcd,</RowProperty>
+            <RowProperty hide={'md'}>
               100 MB
               <br /> 60 MB (.dae)
               <br /> 500 MB (.zip)
-            </ItemProperty>
-            <ItemProperty hide={'md'}>
+            </RowProperty>
+            <RowProperty hide={'md'}>
               <CheckIcon />
-            </ItemProperty>
-            <ItemProperty hide={'md'}>
+            </RowProperty>
+            <RowProperty hide={'md'}>
               <CrossIcon />
-            </ItemProperty>
-            <ItemProperty hide={'md'}>4/10</ItemProperty>
-          </TableItem>
+            </RowProperty>
+            <RowProperty hide={'md'}>4/10</RowProperty>
+          </TableRow>
         ))}
       </TableBody>
     </TableWrapper>
