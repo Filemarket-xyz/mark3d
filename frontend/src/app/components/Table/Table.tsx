@@ -11,7 +11,7 @@ const TableBody = styled('div', {
   gap: '$3'
 })
 
-export const HeadItem = styled('div', {
+export const HeadItem = styled('p', {
   position: 'absolute',
   bottom: 'calc($4 + $4 + $3)',
   color: '#8F8F8F',
@@ -19,9 +19,6 @@ export const HeadItem = styled('div', {
 })
 
 export default function Table(props: PropsWithChildren) {
-  React.Children.map(props.children, (child) => {
-    console.log(child)
-  })
   return (
     <TableWrapper>
       <TableBody>{props.children}</TableBody>
