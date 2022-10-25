@@ -44,8 +44,7 @@ const ItemArrow = styled('button', {
   background: 'inherit',
   border: 'none',
   borderRadius: 'inherit',
-  outline: 'none'
-  // TODO implement outline or smth else for focused elements
+  outline: 'none' // TODO implement outline or smth else for focused elements
 })
 
 export const RowProperty = styled('div', {
