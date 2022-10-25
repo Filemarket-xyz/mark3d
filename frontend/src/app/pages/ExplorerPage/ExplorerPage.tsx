@@ -1,5 +1,8 @@
 import Table from '../../components/Table/Table'
-import { RowProp, TableBuilder } from '../../components/Table/utils/tableBuilder'
+import {
+  RowProp,
+  TableBuilder
+} from '../../components/Table/utils/tableBuilder'
 import { PageLayout } from '../../UIkit/PageLayout'
 
 const testProps: RowProp[] = [
@@ -17,19 +20,26 @@ const testProps: RowProp[] = [
   },
   {
     hide: false,
-    value: 'Etherium'
+    value: '.glb, .gltf, .fbx, .obj, .dae, .pcd, '
   },
   {
     hide: 'lg',
-    value: 'Etherium'
+    value: (
+      <>
+        100 MB
+        <br />
+        60 MB (.dae) <br />
+        500 MB (.zip)
+      </>
+    )
   },
   {
     hide: 'lg',
-    value: 'Etherium'
+    value: true
   },
   {
     hide: 'lg',
-    value: 'Etherium'
+    value: false
   },
   {
     hide: 'lg',
@@ -52,9 +62,7 @@ export default function ExplorerPage() {
   const table = new TableBuilder(headerItems, [testProps])
   return (
     <PageLayout>
-      <Table>
-        {table.renderRows()}
-      </Table>
+      <Table>{table.renderRows()}</Table>
     </PageLayout>
   )
 }
