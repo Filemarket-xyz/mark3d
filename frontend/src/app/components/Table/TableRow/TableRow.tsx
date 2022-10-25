@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import React, { FC, ReactNode, useState } from 'react'
 import { styled } from '../../../../styles'
 import cross from './img/cross.svg'
 import check from './img/check.svg'
@@ -23,13 +23,29 @@ const ItemBody = styled('div', {
   gap: '$3'
 })
 
-const ItemArrow = styled('div', {
+const ArrowImg = styled('img', {
+  variants: {
+    up: {
+      true: {
+        transform: 'rotateX(180deg)'
+      }
+    }
+  }
+})
+
+const ItemArrow = styled('button', {
   alignItems: 'center',
   padding: '$4',
   '@md': {
     paddingLeft: 0
   },
-  flexShrink: 0
+  flexShrink: 0,
+  cursor: 'pointer',
+  background: 'inherit',
+  border: 'none',
+  borderRadius: 'inherit',
+  outline: 'none'
+  // TODO implement outline or smth else for focused elements
 })
 
 export const RowProperty = styled('div', {
@@ -83,11 +99,15 @@ interface Props {
 }
 
 export const TableRow: FC<Props> = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const toggleRow = () => setIsOpen((isOpen) => !isOpen)
+
   return (
     <ItemWrapper>
       <ItemBody>{children}</ItemBody>
-      <ItemArrow>
-        <img src={arrow} alt='' />
+      <ItemArrow onClick={toggleRow} >
+        <ArrowImg up={isOpen} src={arrow} alt='' />
       </ItemArrow>
     </ItemWrapper>
   )
