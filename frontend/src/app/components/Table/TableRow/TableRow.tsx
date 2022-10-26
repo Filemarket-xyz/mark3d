@@ -121,6 +121,9 @@ const Hr = styled('hr', {
 const Content = styled('section', {
   paddingTop: '$4',
   display: 'flex',
+  '@md': {
+    flexDirection: 'column-reverse'
+  },
   justifyContent: 'space-between',
   gap: '$4'
 })
@@ -137,7 +140,10 @@ const MainInfo = styled('div', {
 })
 
 const Preview = styled('div', {
-  width: '50%'
+  width: '50%',
+  '@md': {
+    width: '100%'
+  }
 })
 
 export const CheckIcon = () => <Icon src={check} alt='Check icon' />

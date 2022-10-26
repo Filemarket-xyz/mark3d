@@ -1,28 +1,38 @@
-// Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react'
 
-// Import Swiper styles
 import 'swiper/css'
 import 'swiper/css/navigation'
-
 import './styles.css'
 
-// import required modules
 import { Navigation } from 'swiper'
 
 export default function Carousel() {
   return (
     <>
-      <Swiper loop navigation={true} modules={[Navigation]} className='mySwiper'>
-        <SwiperSlide>Slide 1</SwiperSlide>
-        <SwiperSlide>Slide 2</SwiperSlide>
-        <SwiperSlide>Slide 3</SwiperSlide>
-        <SwiperSlide>Slide 4</SwiperSlide>
-        <SwiperSlide>Slide 5</SwiperSlide>
-        <SwiperSlide>Slide 6</SwiperSlide>
-        <SwiperSlide>Slide 7</SwiperSlide>
-        <SwiperSlide>Slide 8</SwiperSlide>
-        <SwiperSlide>Slide 9</SwiperSlide>
+      <Swiper
+        loop
+        navigation={true}
+        modules={[Navigation]}
+        className='mySwiper'
+      >
+        <SwiperSlide>
+          <img
+            src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpkr5DeFDSovK8qwXEboMHpVepp1IjRRcaM_6hayCYAw&s'
+            alt=''
+          />
+        </SwiperSlide>
+        <SwiperSlide>
+          <img
+            src='https://image.shutterstock.com/image-photo/mountains-under-mist-morning-amazing-260nw-1725825019.jpg'
+            alt=''
+          />
+        </SwiperSlide>
+        <SwiperSlide>
+          <img
+            src='https://www.whatsappimages.in/wp-content/uploads/2021/07/Top-HD-sad-quotes-for-whatsapp-status-in-hindi-Pics-Images-Download-Free.gif'
+            alt=''
+          />
+        </SwiperSlide>
       </Swiper>
     </>
   )

@@ -1,7 +1,20 @@
 .swiper {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  width: 540px;
+  height: 300px;
+  border-radius: 16px;
+  margin-top: var(--space-3);
+}
+@media (max-width: 1200px) {
+  .swiper {
+    width: 363px;
+    height: 240px;
+  }
+}
+@media (max-width: 900px) {
+  .swiper {
+    width: 100%;
+    height: 240px;
+  }
 }
 
 .swiper-slide {
