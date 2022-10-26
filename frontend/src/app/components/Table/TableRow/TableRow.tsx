@@ -60,7 +60,7 @@ const ItemArrow = styled('button', {
   outline: 'none' // TODO implement outline or smth else for focused elements
 })
 
-export const RowProperty = styled('div', {
+export const RowCell = styled('div', {
   height: '100%',
   display: 'flex',
   alignItems: 'center',

@@ -1,51 +1,9 @@
 import Table from '../../components/Table/Table'
 import {
-  RowProp,
+  IRow,
   TableBuilder
 } from '../../components/Table/utils/tableBuilder'
 import { PageLayout } from '../../UIkit/PageLayout'
-
-const testProps: RowProp[] = [
-  {
-    hide: false,
-    value: 'Spatial'
-  },
-  {
-    hide: false,
-    value: 'Separated World'
-  },
-  {
-    hide: 'sm',
-    value: 'Etherium'
-  },
-  {
-    hide: 'md',
-    value: '.glb, .gltf, .fbx, .obj, .dae, .pcd, '
-  },
-  {
-    hide: 'lg',
-    value: (
-      <>
-        100 MB
-        <br />
-        60 MB (.dae) <br />
-        500 MB (.zip)
-      </>
-    )
-  },
-  {
-    hide: 'lg',
-    value: true
-  },
-  {
-    hide: 'lg',
-    value: false
-  },
-  {
-    hide: 'lg',
-    value: '4/10'
-  }
-]
 
 const headerItems = [
   'Name',
@@ -58,8 +16,59 @@ const headerItems = [
   'Visual quality'
 ]
 
+const mockRows: IRow[] = [
+  {
+    cells: [
+      {
+        hide: false,
+        value: 'Spatial'
+      },
+      {
+        hide: false,
+        value: 'Separated World'
+      },
+      {
+        hide: 'sm',
+        value: 'Etherium'
+      },
+      {
+        hide: 'md',
+        value: '.glb, .gltf, .fbx, .obj, .dae, .pcd, '
+      },
+      {
+        hide: 'lg',
+        value: (
+          <>
+            100 MB
+            <br />
+            60 MB (.dae) <br />
+            500 MB (.zip)
+          </>
+        )
+      },
+      {
+        hide: 'lg',
+        value: true
+      },
+      {
+        hide: 'lg',
+        value: false
+      },
+      {
+        hide: 'lg',
+        value: '4/10'
+      }
+    ],
+    content: {
+      description:
+        'Spatial is dedicated to helping creators and brands build their own spaces in the metaverse to share culture together. We empower our users to leverage their beautiful spaces to share eye popping content, build a tight knit community, and drive meaningful sales of their creative works and products. We also empower our users to create beautiful and functional 3D spaces that they can mint as NFTs and sell/rent to others looking to host mind blowing experiences.',
+      imageURLS: []
+    }
+  }
+]
+
 export default function ExplorerPage() {
-  const table = new TableBuilder(headerItems, [testProps])
+  const table = new TableBuilder(headerItems, mockRows)
   return (
     <PageLayout>
       <Table>{table.renderRows()}</Table>

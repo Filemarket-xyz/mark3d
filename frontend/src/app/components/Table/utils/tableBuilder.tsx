@@ -3,37 +3,48 @@ import {
   TableRow,
   CheckIcon,
   CrossIcon,
-  RowProperty
+  RowCell
 } from '../TableRow/TableRow'
 import { HeadItem } from '../Table'
 
-export interface RowProp {
+export interface IRowCell {
   hide: 'sm' | 'md' | 'lg' | 'xl' | false
   value: ReactNode
+}
+
+export interface IRow {
+  cells: IRowCell[]
+  content: IRowContent
+}
+
+/** Defines content when row is expanded */
+export interface IRowContent {
+  description: string
+  imageURLS: string[]
 }
 
 export class TableBuilder {
   constructor(
     private readonly headItems: string[],
-    private readonly rows: RowProp[][]
+    private readonly rows: IRow[]
   ) {}
 
   public renderRows() {
-    return this.rows.map((rowProps, index) => this.renderRow(index, rowProps))
+    return this.rows.map((rowCells, index) => this.renderRow(index, rowCells.cells))
   }
 
-  private renderRow(rowId: number, rowProps: RowProp[]) {
+  private renderRow(rowId: number, rowCells: IRowCell[]) {
     if (rowId === 0) {
       return (
         <TableRow key={rowId}>
-          {this.renderFirstRow(rowProps, this.headItems)}
+          {this.renderFirstRow(rowCells, this.headItems)}
         </TableRow>
       )
     }
-    return <TableRow key={rowId}>{this.renderDefaultRow(rowProps)}</TableRow>
+    return <TableRow key={rowId}>{this.renderDefaultRow(rowCells)}</TableRow>
   }
 
-  private renderFirstRow(props: RowProp[], headItems: string[]) {
+  private renderFirstRow(cells: IRowCell[], headItems: string[]) {
     const renderProp = (value: ReactNode) => {
       if (typeof value === 'boolean') {
         return value ? <CheckIcon /> : <CrossIcon />
@@ -42,9 +53,9 @@ export class TableBuilder {
     }
     return (
       <>
-        {props.map((p, index) => {
+        {cells.map((p, index) => {
           return (
-            <RowProperty
+            <RowCell
               title={index === 0}
               key={index}
               css={{ position: 'relative' }}
@@ -52,14 +63,14 @@ export class TableBuilder {
             >
               <HeadItem>{headItems[index]}</HeadItem>
               {renderProp(p.value)}
-            </RowProperty>
+            </RowCell>
           )
         })}
       </>
     )
   }
 
-  private renderDefaultRow(props: RowProp[]) {
+  private renderDefaultRow(cells: IRowCell[]) {
     const renderProp = (value: ReactNode) => {
       if (typeof value === 'boolean') {
         return value ? <CheckIcon /> : <CrossIcon />
@@ -68,16 +79,16 @@ export class TableBuilder {
     }
     return (
       <>
-        {props.map((p, index) => {
+        {cells.map((p, index) => {
           return (
-            <RowProperty
+            <RowCell
               title={index === 0}
               key={index}
               css={{ position: 'relative' }}
               {...(p.hide && { hide: p.hide })}
             >
               {renderProp(p.value)}
-            </RowProperty>
+            </RowCell>
           )
         })}
       </>
