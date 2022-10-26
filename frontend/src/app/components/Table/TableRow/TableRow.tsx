@@ -4,6 +4,7 @@ import cross from './img/cross.svg'
 import check from './img/check.svg'
 import arrow from './img/arrow.svg'
 import { Button, Txt } from '../../../UIkit'
+import Carousel from '../../Swiper/Swiper'
 
 const ItemWrapper = styled('div', {
   backgroundColor: '$white',
@@ -131,9 +132,13 @@ const Description = styled('p', {
   marginBottom: '$4'
 })
 
-const MainInfo = styled('div', {})
+const MainInfo = styled('div', {
+  flexGrow: '1'
+})
 
-const Preview = styled('div', {})
+const Preview = styled('div', {
+  width: '50%'
+})
 
 export const CheckIcon = () => <Icon src={check} alt='Check icon' />
 
@@ -189,6 +194,7 @@ export const TableRow: FC<Props> = ({ children }) => {
               <Txt h3 css={{ fontSize: '$body2' }}>
                 Visual preview
               </Txt>
+              <Carousel />
             </Preview>
           </Content>
         </ContentWrapper>
