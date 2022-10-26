@@ -107,8 +107,7 @@ export const CheckIcon = () => <Icon src={check} alt='Check icon' />
 export const CrossIcon = () => <Icon src={cross} alt='Cross icon' />
 
 interface Props {
-  title?: string
-  children: ReactNode | JSX.Element | JSX.Element[]
+  children: ReactNode
 }
 
 export const TableRow: FC<Props> = ({ children }) => {
@@ -124,7 +123,15 @@ export const TableRow: FC<Props> = ({ children }) => {
           <ArrowImg up={isOpen} src={arrow} alt='' />
         </ItemArrow>
       </ItemWrapper>
-      {isOpen && <RowContent />}
+      {isOpen && (
+        <RowContent
+          title={'something here'}
+          description='something'
+          imageURLS={[
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpkr5DeFDSovK8qwXEboMHpVepp1IjRRcaM_6hayCYAw&s'
+          ]}
+        />
+      )}
     </ItemWithContent>
   )
 }

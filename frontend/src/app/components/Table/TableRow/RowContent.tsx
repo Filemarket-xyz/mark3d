@@ -1,7 +1,7 @@
-import React from 'react'
 import { styled } from '../../../../styles'
 import { Button, Txt } from '../../../UIkit'
 import Carousel from '../../Swiper/Swiper'
+import { IRowContent } from '../utils/tableBuilder'
 
 const ContentWrapper = styled('div', {
   backgroundColor: '$white',
@@ -52,30 +52,27 @@ const Preview = styled('div', {
   }
 })
 
-export default function RowContent() {
+interface Props extends IRowContent {
+  title: string
+}
+
+export default function RowContent({ description, imageURLS, title }: Props) {
   return (
     <ContentWrapper>
       <Hr />
       <Content>
         <MainInfo>
           <Txt h3 css={{ fontSize: '$body1', display: 'block' }}>
-            Spatial
+            {title}
           </Txt>
+
           <Txt
             h4
             css={{ fontSize: '$body4', display: 'block', marginTop: '$4' }}
           >
             Description
           </Txt>
-          <Description>
-            Spatial is dedicated to helping creators and brands build their own
-            spaces in the metaverse to share culture together. We empower our
-            users to leverage their beautiful spaces to share eye popping
-            content, build a tight knit community, and drive meaningful sales of
-            their creative works and products. We also empower our users to
-            create beautiful and functional 3D spaces that they can mint as NFTs
-            and sell/rent to others looking to host mind blowing experiences.
-          </Description>
+          <Description>{description}</Description>
           <Button css={{ background: '$gradients$main', color: '$white' }}>
             Explore
           </Button>
@@ -84,7 +81,7 @@ export default function RowContent() {
           <Txt h3 css={{ fontSize: '$body2' }}>
             Visual preview
           </Txt>
-          <Carousel />
+          <Carousel imageURLS={imageURLS}/>
         </Preview>
       </Content>
     </ContentWrapper>

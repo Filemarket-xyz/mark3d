@@ -5,8 +5,11 @@ import 'swiper/css/navigation'
 import './styles.css'
 
 import { Navigation } from 'swiper'
+import { IRowContent } from '../Table/utils/tableBuilder'
 
-export default function Carousel() {
+type Props = Pick<IRowContent, 'imageURLS'>
+
+export default function Carousel({ imageURLS }: Props) {
   return (
     <>
       <Swiper
@@ -19,24 +22,11 @@ export default function Carousel() {
           '--swiper-navigation-size': '20px'
         }}
       >
-        <SwiperSlide className='__swiper-slide'>
-          <img
-            src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpkr5DeFDSovK8qwXEboMHpVepp1IjRRcaM_6hayCYAw&s'
-            alt=''
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img
-            src='https://image.shutterstock.com/image-photo/mountains-under-mist-morning-amazing-260nw-1725825019.jpg'
-            alt=''
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img
-            src='https://www.whatsappimages.in/wp-content/uploads/2021/07/Top-HD-sad-quotes-for-whatsapp-status-in-hindi-Pics-Images-Download-Free.gif'
-            alt=''
-          />
-        </SwiperSlide>
+        {imageURLS.map((url) => (
+          <SwiperSlide className='__swiper-slide' key={url}>
+            <img src={url} />
+          </SwiperSlide>
+        ))}
       </Swiper>
     </>
   )

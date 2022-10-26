@@ -13,6 +13,7 @@ export interface IRowCell {
 }
 
 export interface IRow {
+  title: string
   cells: IRowCell[]
   content: IRowContent
 }

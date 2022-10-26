@@ -18,6 +18,7 @@ const headerItems = [
 
 const mockRows: IRow[] = [
   {
+    title: 'Spatial',
     cells: [
       {
         hide: false,
