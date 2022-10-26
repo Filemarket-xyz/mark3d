@@ -30,7 +30,10 @@ const ItemBody = styled('div', {
   alignItems: 'center',
   justifyContent: 'space-between',
   flex: '1 1 auto',
-  gap: '$3'
+  gap: '$3',
+  '@sm': {
+    paddingLR: '$3'
+  }
 })
 
 const ArrowImg = styled('img', {
@@ -106,6 +109,9 @@ const ContentWrapper = styled('div', {
   borderBottomRightRadius: '$3',
   fontSize: '14px',
   padding: '$4',
+  '@sm': {
+    paddingLR: '$3'
+  },
   paddingTop: 0
 })
 

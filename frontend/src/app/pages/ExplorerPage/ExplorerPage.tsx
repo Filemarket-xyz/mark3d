@@ -15,11 +15,11 @@ const testProps: RowProp[] = [
     value: 'Separated World'
   },
   {
-    hide: false,
+    hide: 'sm',
     value: 'Etherium'
   },
   {
-    hide: false,
+    hide: 'md',
     value: '.glb, .gltf, .fbx, .obj, .dae, .pcd, '
   },
   {
