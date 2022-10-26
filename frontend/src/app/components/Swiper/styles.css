@@ -1,23 +1,29 @@
-.swiper {
+.__swiper {
   width: 540px;
   height: 300px;
   border-radius: 16px;
   margin-top: var(--space-3);
+  z-index: 0;
 }
 @media (max-width: 1200px) {
-  .swiper {
+  .__swiper {
     width: 363px;
     height: 240px;
   }
 }
 @media (max-width: 900px) {
-  .swiper {
+  .__swiper {
     width: 100%;
     height: 240px;
   }
 }
+@media (max-width: 420px) {
+  .__swiper {
+    aspect-ratio: 9 / 16;
+  }
+}
 
-.swiper-slide {
+.__swiper .swiper-slide {
   text-align: center;
   font-size: 18px;
   background: #fff;
@@ -37,7 +43,7 @@
   align-items: center;
 }
 
-.swiper-slide img {
+.__swiper .swiper-slide img {
   display: block;
   width: 100%;
   height: 100%;

@@ -13,13 +13,13 @@ export default function Carousel() {
         loop
         navigation={true}
         modules={[Navigation]}
-        className='mySwiper'
+        className='__swiper'
         style={{
           '--swiper-navigation-color': 'var(--colors-gray300)',
           '--swiper-navigation-size': '20px'
         }}
       >
-        <SwiperSlide>
+        <SwiperSlide className='__swiper-slide'>
           <img
             src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpkr5DeFDSovK8qwXEboMHpVepp1IjRRcaM_6hayCYAw&s'
             alt=''
