@@ -18,6 +18,8 @@ export const HeadItem = styled('p', {
   fontWeight: '600'
 })
 
+// TODO we should pass rows with defined interfaces, not children
+
 export default function Table(props: PropsWithChildren) {
   return (
     <TableWrapper>
