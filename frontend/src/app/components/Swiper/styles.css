@@ -43,11 +43,3 @@
   height: 100%;
   object-fit: cover;
 }
-
-.swiper-button-next {
-    color: var(--colors-gray300);
-}
-
-.swiper-button-prev {
-    color: var(--colors-gray300);
-}

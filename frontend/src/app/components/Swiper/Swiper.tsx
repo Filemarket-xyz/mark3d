@@ -14,6 +14,10 @@ export default function Carousel() {
         navigation={true}
         modules={[Navigation]}
         className='mySwiper'
+        style={{
+          '--swiper-navigation-color': 'var(--colors-gray300)',
+          '--swiper-navigation-size': '20px'
+        }}
       >
         <SwiperSlide>
           <img
