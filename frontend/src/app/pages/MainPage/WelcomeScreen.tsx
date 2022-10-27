@@ -29,7 +29,6 @@ const ToolCard = styled(Card, {
 
 const ToolTitle = styled('h4', {
   fontSize: '$body1',
-  color: '$blue300',
   fontWeight: '700'
 })
 
@@ -56,7 +55,7 @@ export default function WelcomeScreen() {
         <Title>ESSENTIAL TOOLS FOR 3D INTERNET</Title>
         <ToolsContainer>
           <ToolCard css={{ border: '6px solid $blue300' }}>
-            <ToolTitle>For 3D creators</ToolTitle>
+            <ToolTitle css={{ color: '$gradient0' }}>For 3D creators</ToolTitle>
             <ToolDescription>
               DAO-governed Platform for metaverse builders
             </ToolDescription>
@@ -65,7 +64,9 @@ export default function WelcomeScreen() {
             </Button>
           </ToolCard>
           <ToolCard css={{ border: '6px solid $magenta' }}>
-            <ToolTitle>For virtual worlds</ToolTitle>
+            <ToolTitle css={{ color: '$gradient1' }}>
+              For virtual worlds
+            </ToolTitle>
             <ToolDescription>
               SDK, smartontracts, API and oracle for games and virtual worlds
             </ToolDescription>
