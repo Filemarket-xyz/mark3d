@@ -1,4 +1,4 @@
-import { styled } from '../../../styles'
+import { styled, theme } from '../../../styles'
 
 /**
  * works under condition, that config looks like this:
@@ -24,7 +24,7 @@ import { styled } from '../../../styles'
  * })
  * ```
  */
-const variant = (token: string) => ({
+export const textVariant = (token: keyof typeof theme['fontSizes']) => ({
   true: {
     fontSize: `$${token}`,
     fontWeight: `$${token.slice(0, -1)}`,
@@ -39,25 +39,25 @@ export const Txt = styled('span', {
   variants: {
     // Явное перечисление вариантов,
     // чтобы тайпскрипт выводил их в подсказках
-    h1: variant('h1'),
-    h2: variant('h2'),
-    h3: variant('h3'),
-    h4: variant('h4'),
-    h5: variant('h5'),
+    h1: textVariant('h1'),
+    h2: textVariant('h2'),
+    h3: textVariant('h3'),
+    h4: textVariant('h4'),
+    h5: textVariant('h5'),
 
-    body1: variant('body1'),
-    body2: variant('body2'),
-    body3: variant('body3'),
-    body4: variant('body4'),
+    body1: textVariant('body1'),
+    body2: textVariant('body2'),
+    body3: textVariant('body3'),
+    body4: textVariant('body4'),
 
-    button1: variant('button1'),
+    button1: textVariant('button1'),
 
-    primary1: variant('primary1'),
-    primary2: variant('primary2'),
-    primary3: variant('primary3'),
+    primary1: textVariant('primary1'),
+    primary2: textVariant('primary2'),
+    primary3: textVariant('primary3'),
 
-    secondary1: variant('secondary1'),
-    secondary2: variant('secondary2'),
-    secondary3: variant('secondary3')
+    secondary1: textVariant('secondary1'),
+    secondary2: textVariant('secondary2'),
+    secondary3: textVariant('secondary3')
   }
 })
