@@ -4,6 +4,7 @@ import cross from './img/cross.svg'
 import check from './img/check.svg'
 import arrow from './img/arrow.svg'
 import RowContent from './RowContent'
+import { IRowContent } from '../utils/tableBuilder'
 
 const ItemWrapper = styled('div', {
   backgroundColor: '$white',
@@ -108,9 +109,11 @@ export const CrossIcon = () => <Icon src={cross} alt='Cross icon' />
 
 interface Props {
   children: ReactNode
+  content: IRowContent
+  contentTitle: string
 }
 
-export const TableRow: FC<Props> = ({ children }) => {
+export const TableRow: FC<Props> = ({ children, content, contentTitle }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const toggleRow = () => setIsOpen((isOpen) => !isOpen)
@@ -125,11 +128,9 @@ export const TableRow: FC<Props> = ({ children }) => {
       </ItemWrapper>
       {isOpen && (
         <RowContent
-          title={'something here'}
-          description='something'
-          imageURLS={[
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpkr5DeFDSovK8qwXEboMHpVepp1IjRRcaM_6hayCYAw&s'
-          ]}
+          title={contentTitle}
+          description={content.description}
+          imageURLS={content.imageURLS}
         />
       )}
     </ItemWithContent>

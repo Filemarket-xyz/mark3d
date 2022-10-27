@@ -1,10 +1,5 @@
 import { ReactNode } from 'react'
-import {
-  TableRow,
-  CheckIcon,
-  CrossIcon,
-  RowCell
-} from '../TableRow/TableRow'
+import { TableRow, CheckIcon, CrossIcon, RowCell } from '../TableRow/TableRow'
 import { HeadItem } from '../Table'
 
 export interface IRowCell {
@@ -31,21 +26,30 @@ export class TableBuilder {
   ) {}
 
   public renderRows() {
-    return this.rows.map((rowCells, index) => this.renderRow(index, rowCells.cells))
+    console.log(this.rows[0].content.imageURLS)
+
+    return this.rows.map((row, index) => this.renderRow(index, row))
   }
 
-  private renderRow(rowId: number, rowCells: IRowCell[]) {
+  private renderRow(rowId: number, row: IRow) {
     if (rowId === 0) {
       return (
-        <TableRow key={rowId}>
-          {this.renderFirstRow(rowCells, this.headItems)}
+        <TableRow content={row.content} contentTitle={row.title} key={rowId}>
+          {this.renderRowPropsWithHeaderItems(row.cells, this.headItems)}
         </TableRow>
       )
     }
-    return <TableRow key={rowId}>{this.renderDefaultRow(rowCells)}</TableRow>
+    return (
+      <TableRow content={row.content} contentTitle={row.title} key={rowId}>
+        {this.renderRowProps(row.cells)}
+      </TableRow>
+    )
   }
 
-  private renderFirstRow(cells: IRowCell[], headItems: string[]) {
+  private renderRowPropsWithHeaderItems(
+    cells: IRowCell[],
+    headItems: string[]
+  ) {
     const renderProp = (value: ReactNode) => {
       if (typeof value === 'boolean') {
         return value ? <CheckIcon /> : <CrossIcon />
@@ -71,7 +75,7 @@ export class TableBuilder {
     )
   }
 
-  private renderDefaultRow(cells: IRowCell[]) {
+  private renderRowProps(cells: IRowCell[]) {
     const renderProp = (value: ReactNode) => {
       if (typeof value === 'boolean') {
         return value ? <CheckIcon /> : <CrossIcon />
