@@ -26,8 +26,6 @@ export class TableBuilder {
   ) {}
 
   public renderRows() {
-    console.log(this.rows[0].content.imageURLS)
-
     return this.rows.map((row, index) => this.renderRow(index, row))
   }
 
