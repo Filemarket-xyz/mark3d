@@ -1,5 +1,5 @@
-import React, { PropsWithChildren } from 'react'
 import { styled } from '../../../styles'
+import { IRow, TableBuilder } from './utils/tableBuilder'
 
 const TableWrapper = styled('div', {
   paddingTop: '$4'
@@ -18,12 +18,16 @@ export const HeadItem = styled('p', {
   fontWeight: '600'
 })
 
-// TODO we should pass rows with defined interfaces, not children
+interface Props {
+  rows: IRow[]
+  headItems: string[]
+}
 
-export default function Table(props: PropsWithChildren) {
+export default function Table({ rows, headItems }: Props) {
+  const table = new TableBuilder(headItems, rows)
   return (
     <TableWrapper>
-      <TableBody>{props.children}</TableBody>
+      <TableBody>{table.renderRows()}</TableBody>
     </TableWrapper>
   )
 }

@@ -1,8 +1,5 @@
 import Table from '../../components/Table/Table'
-import {
-  IRow,
-  TableBuilder
-} from '../../components/Table/utils/tableBuilder'
+import { IRow } from '../../components/Table/utils/tableBuilder'
 import { PageLayout } from '../../UIkit/PageLayout'
 
 const headerItems = [
@@ -69,10 +66,9 @@ const mockRows: IRow[] = [
 ]
 
 export default function ExplorerPage() {
-  const table = new TableBuilder(headerItems, mockRows)
   return (
     <PageLayout>
-      <Table>{table.renderRows()}</Table>
+      <Table headItems={headerItems} rows={mockRows}></Table>
     </PageLayout>
   )
 }
