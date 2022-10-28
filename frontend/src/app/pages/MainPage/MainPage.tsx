@@ -1,5 +1,5 @@
-import ToolsScreen from './ToolsScreen'
-import WelcomeScreen from './WelcomeScreen'
+import ToolsBlock from './ToolsBlock'
+import WelcomeBlock from './WelcomeBlock'
 import gradient from './img/Gradient.jpg'
 import { styled } from '../../../styles'
 
@@ -13,8 +13,8 @@ const GradientWrapper = styled('div', {
 export default function MainPage() {
   return (
     <GradientWrapper>
-      <WelcomeScreen />
-      <ToolsScreen />
+      <WelcomeBlock />
+      <ToolsBlock />
     </GradientWrapper>
   )
 }
