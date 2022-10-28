@@ -39,7 +39,7 @@ const ToolDescription = styled('p', {
 })
 
 const WelcomeInfo = styled(Container, {
-  paddingTop: `calc(${navBarHeightPx}px + 20%)`
+  paddingTop: `calc(${navBarHeightPx}px + 25%)`
 })
 
 const ToolsContainer = styled('div', {
@@ -51,7 +51,7 @@ const ToolsContainer = styled('div', {
 export default function WelcomeBlock() {
   return (
     <WelcomeScreenWrapper>
-      <WelcomeInfo>
+      <WelcomeInfo css={{ paddingBottom: '190px' }}>
         <Title>ESSENTIAL TOOLS FOR 3D INTERNET</Title>
         <ToolsContainer>
           <ToolCard css={{ border: '6px solid $blue300' }}>
