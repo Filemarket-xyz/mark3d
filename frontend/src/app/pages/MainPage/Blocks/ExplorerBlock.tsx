@@ -1,9 +1,9 @@
 import React from 'react'
 import { styled } from '../../../../styles'
-import sandbox from './img/sandbox.png'
-import arrowLeft from './img/arrow-left.svg'
+import sandbox from '../img/sandbox.png'
+import arrowLeft from '../img/arrow-left.svg'
 
-import sandboxTitle from './img/sandbox-title.svg'
+import sandboxTitle from '../img/sandbox-title.svg'
 
 import { BlockWrapper, Subtitle } from './ToolsBlock'
 import { Button } from '../../../UIkit'

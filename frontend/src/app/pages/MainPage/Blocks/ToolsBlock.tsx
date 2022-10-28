@@ -1,9 +1,9 @@
 import React from 'react'
-import { styled } from '../../../styles'
-import explorer from './img/explorer.png'
-import market3d from './img/3dmarket.png'
-import namespaces from './img/namespaces.png'
-import metaedem from './img/metaedem.png'
+import { styled } from '../../../../styles'
+import explorer from '../img/explorer.png'
+import market3d from '../img/3dmarket.png'
+import namespaces from '../img/namespaces.png'
+import metaedem from '../img/metaedem.png'
 
 export const BlockWrapper = styled('section', {
   paddingTop: '128px',

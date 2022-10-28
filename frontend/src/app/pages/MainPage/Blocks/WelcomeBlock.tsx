@@ -1,7 +1,7 @@
 import React from 'react'
-import { styled } from '../../../styles'
-import { Card, Container, navBarHeightPx, Button } from '../../UIkit'
-import bg from './img/bg.jpg'
+import { styled } from '../../../../styles'
+import { Card, Container, navBarHeightPx, Button } from '../../../UIkit'
+import bg from '../img/bg.jpg'
 
 const WelcomeScreenWrapper = styled('section', {
   background: `url(${bg})`,
