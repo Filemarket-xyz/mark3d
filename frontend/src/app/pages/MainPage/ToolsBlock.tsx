@@ -10,7 +10,13 @@ export const BlockWrapper = styled('section', {
   maxWidth: '730px',
   marginLeft: 'auto',
   marginRight: 'auto',
-  paddingLR: '$3'
+  paddingLR: '$3',
+  '@md': {
+    paddingTop: '64px'
+  },
+  '@sm': {
+    paddingTop: '40px'
+  }
 })
 
 export const Subtitle = styled('h2', {
@@ -35,6 +41,9 @@ const Tool = styled('div', {
         flexDirection: 'row-reverse'
       }
     }
+  },
+  '@sm': {
+    gap: '$3'
   }
 })
 
@@ -47,7 +56,16 @@ const ToolImgContainer = styled('div', {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  background: 'rgba(255, 255, 255, 0.5)'
+  background: 'rgba(255, 255, 255, 0.5)',
+  '@md': {
+    width: '140px',
+    height: '140px',
+    borderRadius: '$4'
+  },
+  '@sm': {
+    width: '110px',
+    height: '110px'
+  }
 })
 
 const ToolImg = styled('img')
@@ -56,19 +74,28 @@ const ToolBody = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  gap: '$3'
+  gap: '$3',
+  '@sm': {
+    gap: '$2'
+  }
 })
 
 const ToolTitle = styled('h4', {
   color: '$blue900',
   fontSize: '$body1',
-  fontWeight: '700'
+  fontWeight: '700',
+  '@sm': {
+    fontSize: '$body2'
+  }
 })
 
 const ToolDescription = styled('p', {
   color: '$blue900',
   fontWeight: '400',
-  fontSize: '$body2'
+  fontSize: '$body2',
+  '@sm': {
+    fontSize: '$body4'
+  }
 })
 
 interface ITool {
