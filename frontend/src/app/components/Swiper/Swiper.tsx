@@ -2,7 +2,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 
 import 'swiper/css'
 import 'swiper/css/navigation'
-import './styles.css'
+import * as css from './styles.module.css'
 
 import { Navigation } from 'swiper'
 import { IRowContent } from '../Table/utils/tableBuilder'
@@ -16,7 +16,7 @@ export default function Carousel({ imageURLS }: Props) {
         loop
         navigation={true}
         modules={[Navigation]}
-        className='__swiper'
+        className={css.__swiper}
         style={{
           '--swiper-navigation-color': 'var(--colors-gray300)',
           '--swiper-navigation-size': '20px'
@@ -24,7 +24,7 @@ export default function Carousel({ imageURLS }: Props) {
       >
         {imageURLS.map((url) => (
           <SwiperSlide className='__swiper-slide' key={url}>
-            <img src={url} />
+            <img className={css.img} src={url} />
           </SwiperSlide>
         ))}
       </Swiper>
