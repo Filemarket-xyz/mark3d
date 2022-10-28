@@ -23,7 +23,10 @@ export const Subtitle = styled('h2', {
   fontSize: '$h2',
   color: '$blue900',
   fontWeight: '700',
-  textAlign: 'center'
+  textAlign: 'center',
+  '@sm': {
+    fontSize: '$h3'
+  }
 })
 
 const ToolsContainer = styled('div', {
