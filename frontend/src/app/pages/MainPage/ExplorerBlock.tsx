@@ -13,7 +13,13 @@ const ExplorerImg = styled('img', {
   objectFit: 'contain'
 })
 const ExplorerInfo = styled('div', {
-  marginTop: '-64px'
+  marginTop: '-64px',
+  '@md': {
+    marginTop: '-48px'
+  },
+  '@sm': {
+    marginTop: '-32px'
+  }
 })
 const ExplorerTitle = styled('div', {
   marginLeft: 'auto',
@@ -23,7 +29,13 @@ const ExplorerTitle = styled('div', {
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center',
   maxWidth: '130px',
-  height: '64px'
+  height: '64px',
+  '@md': {
+    maxWidth: '115px'
+  },
+  '@sm': {
+    maxWidth: '100px'
+  }
 })
 
 const ExploreControls = styled('div', {
@@ -36,7 +48,10 @@ const ExploreControls = styled('div', {
 const ExplorerDescription = styled('p', {
   fontSize: '$body1',
   maxWidth: '730px',
-  textAlign: 'center'
+  textAlign: 'center',
+  '@md': {
+    fontSize: '$body2'
+  }
 })
 
 const ArrowButton = styled('div', {
@@ -54,6 +69,11 @@ const ArrowButton = styled('div', {
         transform: 'rotate(180deg)'
       }
     }
+  },
+  flexShrink: 0,
+  '@sm': {
+    width: '48px',
+    height: '48px'
   }
 })
 
