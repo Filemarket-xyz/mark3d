@@ -4,7 +4,8 @@ import explorer from './img/explorer.png'
 import market3d from './img/3dmarket.png'
 import namespaces from './img/namespaces.png'
 import metaedem from './img/metaedem.png'
-const ToolsScreenWrapper = styled('section', {
+
+export const BlockWrapper = styled('section', {
   paddingTop: '128px',
   maxWidth: '730px',
   marginLeft: 'auto',
@@ -12,7 +13,7 @@ const ToolsScreenWrapper = styled('section', {
   paddingLR: '$3'
 })
 
-const Subtitle = styled('h2', {
+export const Subtitle = styled('h2', {
   fontSize: '$h2',
   color: '$blue900',
   fontWeight: '700',
@@ -105,7 +106,7 @@ const tools: ITool[] = [
 
 export default function ToolsBlock() {
   return (
-    <ToolsScreenWrapper>
+    <BlockWrapper>
       <Subtitle css={{ marginBottom: '48px' }}>Mark3d tools</Subtitle>
       <ToolsContainer>
         {tools.map((t, index) => (
@@ -120,6 +121,6 @@ export default function ToolsBlock() {
           </Tool>
         ))}
       </ToolsContainer>
-    </ToolsScreenWrapper>
+    </BlockWrapper>
   )
 }
