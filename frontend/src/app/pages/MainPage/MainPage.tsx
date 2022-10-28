@@ -1,5 +1,5 @@
-import ToolsBlock from './ToolsBlock'
-import WelcomeBlock from './WelcomeBlock'
+import ToolsBlock from './Blocks/ToolsBlock'
+import WelcomeBlock from './Blocks/WelcomeBlock'
 import gradient from './img/Gradient.jpg'
 import { styled } from '../../../styles'
 import ExplorerBlock from './Blocks/ExplorerBlock'
