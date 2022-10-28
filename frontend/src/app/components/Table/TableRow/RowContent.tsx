@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import { styled } from '../../../../styles'
 import { Button, Txt } from '../../../UIkit'
 import Carousel from '../../Swiper/Swiper'
@@ -53,7 +54,7 @@ const Preview = styled('div', {
 })
 
 interface Props extends IRowContent {
-  title: string
+  title: ReactNode
 }
 
 export default function RowContent({ description, imageURLS, title }: Props) {
