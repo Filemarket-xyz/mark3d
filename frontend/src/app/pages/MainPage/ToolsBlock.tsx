@@ -1,9 +1,9 @@
 import React from 'react'
 import { styled } from '../../../styles'
 import explorer from './img/explorer.png'
-// import market3d from './img/3dmarket.jpg'
-// import namespaces from './img/namespaces.jpg'
-// import metaedem from './img/metaedem.jpg'
+import market3d from './img/3dmarket.png'
+import namespaces from './img/namespaces.png'
+import metaedem from './img/metaedem.png'
 const ToolsScreenWrapper = styled('section', {
   paddingTop: '128px',
   maxWidth: '730px',
@@ -70,24 +70,55 @@ const ToolDescription = styled('p', {
   fontSize: '$body2'
 })
 
+interface ITool {
+  title: string
+  description: string
+  imgURL: string
+}
+
+const tools: ITool[] = [
+  {
+    title: 'Explorer',
+    imgURL: explorer,
+    description:
+      'Explorer is an info service that provides the list of all existing and coming soon Metaverse Virtual spaces projects with characteristics'
+  },
+  {
+    title: '3D Market',
+    imgURL: market3d,
+    description:
+      '3D Market is an NFT marketplace for any type of 3D models or virtual spaces. Mint, List, Sell your 3d creations or buy them from other artists'
+  },
+  {
+    title: 'Namespases',
+    imgURL: namespaces,
+    description:
+      'Namespases .3d is a decentralized domain name service. Your .3d domain will contain your links to all kinds of virtual spaces, that you own'
+  },
+  {
+    title: 'MetaEdem',
+    imgURL: metaedem,
+    description:
+      'MetaEdem is our own virtual space which is a 3D part of our website to give a touch and feel of Metaverse. Soon available in VR'
+  }
+]
+
 export default function ToolsBlock() {
   return (
     <ToolsScreenWrapper>
       <Subtitle css={{ marginBottom: '48px' }}>Mark3d tools</Subtitle>
       <ToolsContainer>
-        <Tool>
-          <ToolImgContainer>
-            <ToolImg src={explorer}></ToolImg>
-          </ToolImgContainer>
-          <ToolBody>
-            <ToolTitle>Explorer</ToolTitle>
-            <ToolDescription>
-              Explorer is an info service that provides the list of all existing
-              and coming soon Metaverse Virtual spaces projects with
-              characteristics
-            </ToolDescription>
-          </ToolBody>
-        </Tool>
+        {tools.map((t, index) => (
+          <Tool reversed={index % 2 !== 0} key={t.title}>
+            <ToolImgContainer>
+              <ToolImg src={t.imgURL}></ToolImg>
+            </ToolImgContainer>
+            <ToolBody>
+              <ToolTitle>{t.title}</ToolTitle>
+              <ToolDescription>{t.description}</ToolDescription>
+            </ToolBody>
+          </Tool>
+        ))}
       </ToolsContainer>
     </ToolsScreenWrapper>
   )
