@@ -1,6 +1,12 @@
 import React from 'react'
 import { styled } from '../../../../styles'
-import { Card, Container, navBarHeightPx, Button } from '../../../UIkit'
+import {
+  Card,
+  Container,
+  navBarHeightPx,
+  Button,
+  textVariant
+} from '../../../UIkit'
 import bg from '../img/bg.jpg'
 
 const WelcomeScreenWrapper = styled('section', {
@@ -11,13 +17,16 @@ const WelcomeScreenWrapper = styled('section', {
 })
 
 const Title = styled('h1', {
-  fontSize: '80px',
+  ...textVariant('h1').true,
+  fontSize: '70px',
   color: '$white',
-  fontWeight: '700',
+  fontWeight: '600',
+  textShadow: '1px 1px 0 #00DCFF80, -1px -1px 0 #E14BEC80',
   '@lg': {
-    fontSize: 'calc(4vw + 35px)',
+    fontSize: 'calc(3vw + 35px)',
     textAlign: 'center'
-  }
+  },
+  maxWidth: '755px'
 })
 
 const ToolCard = styled(Card, {
@@ -35,14 +44,13 @@ const ToolCard = styled(Card, {
 })
 
 const ToolTitle = styled('h4', {
-  fontSize: '$body1',
-  fontWeight: '700',
   '@md': {
     fontSize: '$body2'
   },
   '@sm': {
     fontSize: '$body3'
-  }
+  },
+  ...textVariant('h4').true
 })
 
 const ToolDescription = styled('p', {
