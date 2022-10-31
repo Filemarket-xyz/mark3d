@@ -5,6 +5,7 @@ import check from './img/check.svg'
 import arrow from './img/arrow.svg'
 import RowContent from './RowContent'
 import { IRowContent } from '../utils/tableBuilder'
+import { textVariant } from '../../../UIkit'
 
 const ItemWrapper = styled('div', {
   backgroundColor: '$white',
@@ -66,9 +67,10 @@ export const RowCell = styled('div', {
   alignItems: 'center',
   variants: {
     title: {
-      true: {
-        color: '$blue500',
-        fontWeight: 600
+      ...textVariant('primary2'),
+      false: {
+        ...textVariant('secondary1').true,
+        fontSize: '14px'
       }
     },
     hide: {
