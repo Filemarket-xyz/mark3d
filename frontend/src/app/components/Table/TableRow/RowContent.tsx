@@ -40,7 +40,8 @@ const Description = styled('p', {
   marginTop: '$3',
   marginBottom: '$4',
   ...textVariant('secondary1').true,
-  fontSize: '14px'
+  fontSize: '14px',
+  lineHeight: '129%'
 })
 
 const MainInfo = styled('div', {
