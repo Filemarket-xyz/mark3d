@@ -11,8 +11,8 @@ export const Background = styled('section', {
 export const AppLayout: FC = () => {
   return (
     <>
-      <AppNav/>
-      <Outlet/>
+      <AppNav />
+      <Outlet />
     </>
   )
 }

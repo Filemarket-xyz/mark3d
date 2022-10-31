@@ -1,56 +1,33 @@
 import { styled } from '../../../styles'
+import { IRow, TableBuilder } from './utils/tableBuilder'
 
-const headItems = [
-  'Type',
-  'Blockchains',
-  '3D formats compatibility',
-  'Max file size',
-  'Show NFTs',
-  'Create',
-  'NFTs',
-  'Visual ',
-  'quality'
-]
-
-const rowItems = [
-  'Type',
-  'Blockchains',
-  '3D formats compatibility',
-  'Max file size',
-  'Show NFTs',
-  'Create',
-  'NFTs',
-  'Visual ',
-  'quality'
-]
-
-const TableWrapper = styled('div')
-
-const TableHead = styled('div', {
-  color: '#8F8F8F'
+const TableWrapper = styled('div', {
+  paddingTop: '$4'
 })
 
-const TableBody = styled('div')
+const TableBody = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$3'
+})
 
-export default function Table() {
+export const HeadItem = styled('p', {
+  position: 'absolute',
+  bottom: 'calc($4 + $4 + $3)',
+  color: '#8F8F8F',
+  fontWeight: '600'
+})
+
+interface Props {
+  rows: IRow[]
+  headItems: string[]
+}
+
+export default function Table({ rows, headItems }: Props) {
+  const table = new TableBuilder(headItems, rows)
   return (
     <TableWrapper>
-      <TableHead>
-        {headItems.map((item, i) => (
-          <div className='head__item' key={i}>
-            {item}
-          </div>
-        ))}
-      </TableHead>
-      <TableBody>
-        <div className='table__row'>
-          {rowItems.map((item, i) => (
-            <div className='head__item' key={i}>
-              {item}
-            </div>
-          ))}
-        </div>
-      </TableBody>
+      <TableBody>{table.renderRows()}</TableBody>
     </TableWrapper>
   )
 }
