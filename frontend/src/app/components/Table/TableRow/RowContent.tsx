@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { styled } from '../../../../styles'
-import { Button, Txt } from '../../../UIkit'
+import { Button, textVariant, Txt } from '../../../UIkit'
 import Carousel from '../../Swiper/Swiper'
 import { IRowContent } from '../utils/tableBuilder'
 
@@ -37,9 +37,10 @@ const Content = styled('section', {
 
 const Description = styled('p', {
   color: '$gray500',
-  fontSize: '$primary2',
   marginTop: '$3',
-  marginBottom: '$4'
+  marginBottom: '$4',
+  ...textVariant('secondary1').true,
+  fontSize: '14px'
 })
 
 const MainInfo = styled('div', {
