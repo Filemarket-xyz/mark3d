@@ -1,4 +1,5 @@
 import { styled } from '../../../styles'
+import { textVariant } from '../../UIkit'
 import { IRow, TableBuilder } from './utils/tableBuilder'
 
 const TableWrapper = styled('div', {
@@ -15,16 +16,17 @@ export const HeadItem = styled('p', {
   position: 'absolute',
   bottom: 'calc($4 + $4 + $3)',
   color: '#8F8F8F',
-  fontWeight: '600'
+  ...textVariant('primary1').true,
+  fontSize: '12px'
 })
 
 interface Props {
   rows: IRow[]
-  headItems: string[]
+  columnsToDisplay: string[]
 }
 
-export default function Table({ rows, headItems }: Props) {
-  const table = new TableBuilder(headItems, rows)
+export default function Table({ rows, columnsToDisplay }: Props) {
+  const table = new TableBuilder(rows, columnsToDisplay)
   return (
     <TableWrapper>
       <TableBody>{table.renderRows()}</TableBody>

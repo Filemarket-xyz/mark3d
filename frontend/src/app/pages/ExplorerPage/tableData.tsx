@@ -1,6 +1,6 @@
-import { IRow } from '../../components/Table/utils/tableBuilder'
+import { IRow, IRowCell } from '../../components/Table/utils/tableBuilder'
 
-export const headerItems = [
+export const columnNames = [
   'Name',
   'Type',
   'Blockchains',
@@ -11,50 +11,56 @@ export const headerItems = [
   'Visual quality'
 ]
 
+const cellsWithoutColumnNames: Array<Omit<IRowCell, 'columnName'>> = [
+  {
+    hide: false,
+    value: 'Spatial'
+  },
+  {
+    hide: false,
+    value: 'Separated World'
+  },
+  {
+    hide: 'sm',
+    value: 'Etherium'
+  },
+  {
+    hide: 'md',
+    value: '.glb, .gltf, .fbx, .obj, .dae, .pcd, '
+  },
+  {
+    hide: 'lg',
+    value: (
+      <>
+        100 MB
+        <br />
+        60 MB (.dae) <br />
+        500 MB (.zip)
+      </>
+    )
+  },
+  {
+    hide: 'lg',
+    value: true
+  },
+  {
+    hide: 'lg',
+    value: false
+  },
+  {
+    hide: 'lg',
+    value: '4/10'
+  }
+]
+
+const cells: IRowCell[] = cellsWithoutColumnNames.map(
+  (cell, i): IRowCell => ({ ...cell, columnName: columnNames[i] })
+)
+
 export const mockRows: IRow[] = [
   {
     title: 'Spatial',
-    cells: [
-      {
-        hide: false,
-        value: 'Spatial'
-      },
-      {
-        hide: false,
-        value: 'Separated World'
-      },
-      {
-        hide: 'sm',
-        value: 'Etherium'
-      },
-      {
-        hide: 'md',
-        value: '.glb, .gltf, .fbx, .obj, .dae, .pcd, '
-      },
-      {
-        hide: 'lg',
-        value: (
-          <>
-            100 MB
-            <br />
-            60 MB (.dae) <br />
-            500 MB (.zip)
-          </>
-        )
-      },
-      {
-        hide: 'lg',
-        value: true
-      },
-      {
-        hide: 'lg',
-        value: false
-      },
-      {
-        hide: 'lg',
-        value: '4/10'
-      }
-    ],
+    cells,
     content: {
       description:
         'Spatial is dedicated to helping creators and brands build their own spaces in the metaverse to share culture together. We empower our users to leverage their beautiful spaces to share eye popping content, build a tight knit community, and drive meaningful sales of their creative works and products. We also empower our users to create beautiful and functional 3D spaces that they can mint as NFTs and sell/rent to others looking to host mind blowing experiences.',

@@ -3,6 +3,7 @@ import { TableRow, CheckIcon, CrossIcon, RowCell } from '../TableRow/TableRow'
 import { HeadItem } from '../Table'
 
 export interface IRowCell {
+  columnName: string
   hide: 'sm' | 'md' | 'lg' | 'xl' | false
   value: ReactNode
 }
@@ -21,8 +22,8 @@ export interface IRowContent {
 
 export class TableBuilder {
   constructor(
-    private readonly headItems: string[],
-    private readonly rows: IRow[]
+    private readonly rows: IRow[],
+    private readonly columnsToDisplay: string[]
   ) {}
 
   public renderRows() {
@@ -30,10 +31,12 @@ export class TableBuilder {
   }
 
   private renderRow(rowId: number, row: IRow) {
-    if (rowId === 0) {
+    const isRowFirst = rowId === 0
+
+    if (isRowFirst) {
       return (
         <TableRow content={row.content} contentTitle={row.title} key={rowId}>
-          {this.renderRowPropsWithHeaderItems(row.cells, this.headItems)}
+          {this.renderRowPropsWithColumnNames(row.cells)}
         </TableRow>
       )
     }
@@ -44,10 +47,7 @@ export class TableBuilder {
     )
   }
 
-  private renderRowPropsWithHeaderItems(
-    cells: IRowCell[],
-    headItems: string[]
-  ) {
+  private renderRowPropsWithColumnNames(cells: IRowCell[]) {
     const renderProp = (value: ReactNode) => {
       if (typeof value === 'boolean') {
         return value ? <CheckIcon /> : <CrossIcon />
@@ -56,17 +56,19 @@ export class TableBuilder {
     }
     return (
       <>
-        {cells.map((p, index) => {
+        {cells.map((cell, index) => {
           return (
-            <RowCell
-              title={index === 0}
-              key={index}
-              css={{ position: 'relative' }}
-              {...(p.hide && { hide: p.hide })}
-            >
-              <HeadItem>{headItems[index]}</HeadItem>
-              {renderProp(p.value)}
-            </RowCell>
+            this.columnsToDisplay.includes(cell.columnName) && (
+              <RowCell
+                title={index === 0}
+                key={index}
+                css={{ position: 'relative' }}
+                {...(cell.hide && { hide: cell.hide })}
+              >
+                <HeadItem>{cell.columnName}</HeadItem>
+                {renderProp(cell.value)}
+              </RowCell>
+            )
           )
         })}
       </>
@@ -82,16 +84,18 @@ export class TableBuilder {
     }
     return (
       <>
-        {cells.map((p, index) => {
+        {cells.map((cell, index) => {
           return (
-            <RowCell
-              title={index === 0}
-              key={index}
-              css={{ position: 'relative' }}
-              {...(p.hide && { hide: p.hide })}
-            >
-              {renderProp(p.value)}
-            </RowCell>
+            this.columnsToDisplay.includes(cell.columnName) && (
+              <RowCell
+                title={index === 0}
+                key={index}
+                css={{ position: 'relative' }}
+                {...(cell.hide && { hide: cell.hide })}
+              >
+                {renderProp(cell.value)}
+              </RowCell>
+            )
           )
         })}
       </>
