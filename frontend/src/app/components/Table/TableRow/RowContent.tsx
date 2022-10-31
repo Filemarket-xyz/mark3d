@@ -74,7 +74,7 @@ export default function RowContent({ description, imageURLS, title }: Props) {
             Description
           </Txt>
           <Description>{description}</Description>
-          <Button css={{ background: '$gradients$main', color: '$white' }}>
+          <Button primary>
             Explore
           </Button>
         </MainInfo>
