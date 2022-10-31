@@ -79,7 +79,7 @@ export default function RowContent({ description, imageURLS, title }: Props) {
           </Button>
         </MainInfo>
         <Preview>
-          <Txt h3 css={{ fontSize: '$body2' }}>
+          <Txt primary1>
             Visual preview
           </Txt>
           <Carousel imageURLS={imageURLS}/>
