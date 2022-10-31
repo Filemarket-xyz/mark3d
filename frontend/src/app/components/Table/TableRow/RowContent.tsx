@@ -66,23 +66,15 @@ export default function RowContent({ description, imageURLS, title }: Props) {
           <Txt h3 css={{ fontSize: '$body1', display: 'block' }}>
             {title}
           </Txt>
-
-          <Txt
-            h4
-            css={{ fontSize: '$body4', display: 'block', marginTop: '$4' }}
-          >
+          <Txt primary1 css={{ display: 'block', marginTop: '$4' }}>
             Description
           </Txt>
           <Description>{description}</Description>
-          <Button primary>
-            Explore
-          </Button>
+          <Button primary>Explore</Button>
         </MainInfo>
         <Preview>
-          <Txt primary1>
-            Visual preview
-          </Txt>
-          <Carousel imageURLS={imageURLS}/>
+          <Txt primary1>Visual preview</Txt>
+          <Carousel imageURLS={imageURLS} />
         </Preview>
       </Content>
     </ContentWrapper>
