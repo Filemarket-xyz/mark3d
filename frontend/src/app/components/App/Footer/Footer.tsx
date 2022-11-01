@@ -1,6 +1,12 @@
 import React from 'react'
 import { styled } from '../../../../styles'
-import { Container, Txt } from '../../../UIkit'
+import { Container, textVariant, Txt } from '../../../UIkit'
+import Discord from './img/Discord.svg'
+import Instagram from './img/Instagram.svg'
+import Linkedin from './img/Linkedin.svg'
+import Telegram from './img/Telegram.svg'
+import Twitter from './img/Twitter.svg'
+import Youtube from './img/Youtube.svg'
 
 const FooterWrapper = styled('footer', {
   width: '100%',
@@ -22,15 +28,24 @@ const FooterContainer = styled(Container, {
   alignItems: 'center'
 })
 
-const SocialsContainer = styled('div')
+const SocialsContainer = styled('div', {
+  display: 'flex',
+  gap: '10px'
+})
 
-const Link = styled('a', {})
+const Link = styled('a', {
+  ...textVariant('primary1'),
+  fontSize: 14,
+  color: '$gray500',
+  fontWeight: 600
+})
 
-const SocialImage = styled('img')
+const SocialImage = styled('img', { width: '32px', height: '32px' })
 
-const Options = styled('div')
-
-const Info = styled('div')
+const Info = styled('div', {
+  display: 'flex',
+  gap: '$4'
+})
 
 const Divider = styled('div', {
   width: '2px',
@@ -48,13 +63,27 @@ export default function Footer() {
             Copyright © 2022 Mark3d
           </Txt>
           <Divider />
-          <Options>
-            <Txt primary1>Privacy policy</Txt>
-          </Options>
+          <Link>Privacy policy</Link>
+          <Link>Terms of Service</Link>
         </Info>
         <SocialsContainer>
           <Link>
-            <SocialImage />
+            <SocialImage src={Discord} />
+          </Link>
+          <Link>
+            <SocialImage src={Instagram} />
+          </Link>
+          <Link>
+            <SocialImage src={Linkedin} />
+          </Link>
+          <Link>
+            <SocialImage src={Telegram} />
+          </Link>
+          <Link>
+            <SocialImage src={Twitter} />
+          </Link>
+          <Link>
+            <SocialImage src={Youtube} />
           </Link>
         </SocialsContainer>
       </FooterContainer>
