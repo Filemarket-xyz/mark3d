@@ -18,14 +18,28 @@ const FooterWrapper = styled('footer', {
   backdropFilter: 'blur(12.5px)',
   boxShadow: '$footer',
   color: '$blue900',
-  background: '$colors$whiteOp50'
+  background: '$colors$whiteOp50',
+  '@sm': {
+    position: 'static',
+    height: '128px'
+  }
 })
 
 const FooterContainer = styled(Container, {
   height: '100%',
   display: 'flex',
   justifyContent: 'space-between',
-  alignItems: 'center'
+  alignItems: 'center',
+  '@md': {
+    justifyContent: 'center',
+    flexDirection: 'column',
+    gap: '$1'
+  },
+  '@sm': {
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '$3'
+  }
 })
 
 const SocialsContainer = styled('div', {
@@ -37,21 +51,31 @@ const Link = styled('a', {
   ...textVariant('primary1'),
   fontSize: 14,
   color: '$gray500',
-  fontWeight: 600
+  fontWeight: 600,
+  display: 'flex',
+  alignItems: 'center'
 })
 
 const SocialImage = styled('img', { width: '32px', height: '32px' })
 
 const Info = styled('div', {
   display: 'flex',
-  gap: '$4'
+  gap: '$4',
+  '@sm': {
+    flexDirection: 'column',
+    gap: '0',
+    alignItems: 'center'
+  }
 })
 
 const Divider = styled('div', {
   width: '2px',
   height: '18px',
   background: 'linear-gradient(180deg, #00DCFF 0%, #E14BEC 85.65%)',
-  borderRadius: '2px'
+  borderRadius: '2px',
+  '@sm': {
+    display: 'none'
+  }
 })
 
 export default function Footer() {
