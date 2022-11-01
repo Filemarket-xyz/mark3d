@@ -1,5 +1,16 @@
-import { ComponentProps, forwardRef, MouseEventHandler, useCallback } from 'react'
-import { AriaButtonProps, mergeProps, useButton, useFocusRing, useHover } from 'react-aria'
+import {
+  ComponentProps,
+  forwardRef,
+  MouseEventHandler,
+  useCallback
+} from 'react'
+import {
+  AriaButtonProps,
+  mergeProps,
+  useButton,
+  useFocusRing,
+  useHover
+} from 'react-aria'
 import { styled } from '../../../styles'
 import { useDrip } from '../Drip/Drip.hooks'
 import { useDOMRef } from '../../hooks'
@@ -88,20 +99,24 @@ const ButtonStyled = styled('button', {
 export type ButtonProps = AriaButtonProps & ComponentProps<typeof ButtonStyled>
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({
-    children,
-    isDisabled,
-    onPress,
-    onPressStart,
-    onPressEnd,
-    onPressChange,
-    onPressUp,
-    ...btnProps
-  },
-  ref
+  (
+    {
+      children,
+      isDisabled,
+      onPress,
+      onPressStart,
+      onPressEnd,
+      onPressChange,
+      onPressUp,
+      ...btnProps
+    },
+    ref
   ) => {
     const buttonRef = useDOMRef(ref)
-    const { onClick: onDripClickHandler, ...dripProps } = useDrip(buttonRef, false)
+    const { onClick: onDripClickHandler, ...dripProps } = useDrip(
+      buttonRef,
+      false
+    )
 
     const { isPressed, buttonProps } = useButton(
       {
@@ -116,10 +131,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     )
     const { onClick } = buttonProps
 
-    const clickHandler = useCallback<MouseEventHandler<HTMLButtonElement>>((event) => {
-      onClick?.(event)
-      onDripClickHandler(event)
-    }, [onClick, onDripClickHandler])
+    const clickHandler = useCallback<MouseEventHandler<HTMLButtonElement>>(
+      (event) => {
+        onClick?.(event)
+        onDripClickHandler(event)
+      },
+      [onClick, onDripClickHandler]
+    )
 
     const { isFocusVisible, focusProps } = useFocusRing()
     const { hoverProps, isHovered } = useHover({ isDisabled })
@@ -134,10 +152,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         data-disabled={isDisabled}
         ref={buttonRef}
       >
-        <Txt button1>
-          {children}
-        </Txt>
-        <Drip {...dripProps} color="white"/>
+        <Txt button1>{children}</Txt>
+        <Drip {...dripProps} color='white' />
       </ButtonStyled>
     )
-  })
+  }
+)
