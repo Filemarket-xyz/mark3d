@@ -26,7 +26,8 @@
     "react-aria": "^3.20.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.2",
-    "reseter.css": "^2.0.0"
+    "reseter.css": "^2.0.0",
+    "swiper": "^8.4.4"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",

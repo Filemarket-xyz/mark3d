@@ -5,14 +5,14 @@ import { AppLayout } from '../components/App'
 const routes: RouteObject[] = [
   {
     path: 'explorer',
-    element: <ExplorerPage/>
+    element: <ExplorerPage />
   }
 ]
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <AppLayout/>,
+    element: <AppLayout />,
     children: routes
   }
 ])
