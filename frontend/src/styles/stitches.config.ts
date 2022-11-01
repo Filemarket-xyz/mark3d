@@ -126,6 +126,7 @@ export const {
       // names of shadows are from the figma
       form: '0px 0px 15px rgba(19, 19, 45, 0.05)',
       header: '0px 4px 15px rgba(19, 19, 45, 0.05)',
+      footer: '0px -4px 15px rgba(19, 19, 45, 0.05)',
       low: '0px 4px 15px rgba(19, 19, 45, 0.1)'
     },
 
