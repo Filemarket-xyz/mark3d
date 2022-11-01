@@ -2,6 +2,7 @@ import { createBrowserRouter, RouteObject } from 'react-router-dom'
 import ExplorerPage from './ExplorerPage/ExplorerPage'
 import { AppLayout } from '../components/App'
 import MainPage from './MainPage/MainPage'
+import MarketPage from './MarketPage/MarketPage'
 
 const routes: RouteObject[] = [
   {
@@ -11,6 +12,10 @@ const routes: RouteObject[] = [
   {
     path: '/',
     element: <MainPage/>
+  },
+  {
+    path: 'market',
+    element: <MarketPage/>
   }
 ]
 
