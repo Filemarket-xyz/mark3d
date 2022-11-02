@@ -34,7 +34,8 @@ const styles: any = {
   height: '320px',
   borderRadius: '$3',
   position: 'relative',
-  overflow: 'hidden'
+  overflow: 'hidden',
+  filter: 'drop-shadow(0px 4px 15px rgba(19, 19, 45, 0.1))'
 }
 styles[`&:hover ${CardControls.selector}`] = {
   transform: 'translateY(-48px)',
