@@ -1,17 +1,11 @@
-import { NavLink } from '../../Link'
 import { ComponentProps, FC, useMemo } from 'react'
-import { styled } from '../../../../styles'
+import { NavLinkStyled } from '../NavBarItem'
 
 const transitionDelay = 0
 const transitionTime = 350
 const transitionMatrix = { in: 'matrix(1, 0, 0, 1, 0, 0)', out: 'matrix(0.97, 0, 0, 1, 0, 20)' }
 
-const StyledNavLink = styled(NavLink, {
-  color: '$blue900',
-  display: 'block'
-})
-
-type NavBarCollapseItemProps = ComponentProps<typeof StyledNavLink> & {
+type NavBarCollapseItemProps = ComponentProps<typeof NavLinkStyled> & {
   index: number
   length: number
   isVisible?: boolean // for animation purposes
@@ -33,7 +27,7 @@ export const NavBarCollapseItem: FC<NavBarCollapseItemProps> = ({
   )
 
   return (
-    <StyledNavLink
+    <NavLinkStyled
       css={{
         opacity: isVisible ? 1 : 0,
         transform: isVisible ? transitionMatrix.in : transitionMatrix.out,
@@ -43,6 +37,6 @@ export const NavBarCollapseItem: FC<NavBarCollapseItemProps> = ({
       {...otherProps}
     >
       {children}
-    </StyledNavLink>
+    </NavLinkStyled>
   )
 }

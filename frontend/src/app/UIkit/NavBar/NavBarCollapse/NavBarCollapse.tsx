@@ -1,10 +1,6 @@
-import { FC, PropsWithChildren } from 'react'
+import { ComponentProps, FC } from 'react'
 import { styled } from '../../../../styles'
 import { Container } from '../../Container'
-
-export type NavBarCollapseProps = PropsWithChildren<{
-  isOpen?: boolean
-}>
 
 const StyledNavBarCollapse = styled('div', {
   position: 'fixed',
@@ -26,6 +22,10 @@ const StyledNavBarCollapse = styled('div', {
     }
   }
 })
+
+export type NavBarCollapseProps = ComponentProps<typeof StyledNavBarCollapse> & {
+  isOpen?: boolean
+}
 
 const StyledScrollContainer = styled('div', {
   overflowY: 'hidden', // make scroll if nav overflows

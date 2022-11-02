@@ -1,10 +1,11 @@
-import { FC, ReactNode, useState } from 'react'
+import { FC, ReactNode, useEffect, useState } from 'react'
 import { BreakpointsOptions, styled } from '../../../../styles'
 import { Container } from '../../Container'
 import { NavBarCollapse } from '../NavBarCollapse'
 import { NavBarToggle } from '../NavBarToggle'
 import { NavBarItem } from '../NavBarItem'
 import { NavBarCollapseItem } from '../NavBarCollapseItem'
+import { useLocation } from 'react-router-dom'
 
 export interface NavBarItemData {
   to: string
@@ -57,6 +58,10 @@ export const NavBar: FC<NavBarProps> = ({
   mobileBp
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
+  const { pathname } = useLocation()
+  useEffect(() => {
+    setIsExpanded(false)
+  }, [pathname])
   return (
     <>
       <NavBarStyled>
@@ -86,7 +91,9 @@ export const NavBar: FC<NavBarProps> = ({
         </Container>
       </NavBarStyled>
       {items && items.length > 0 && (
-        <NavBarCollapse isOpen={isExpanded}>
+        <NavBarCollapse
+          isOpen={isExpanded}
+        >
           <NavBarVerticalSpacer>
             {items.map((item, index) => (
               <NavBarCollapseItem
