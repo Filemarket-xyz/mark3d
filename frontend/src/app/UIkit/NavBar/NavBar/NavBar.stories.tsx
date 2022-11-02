@@ -1,6 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { NavBar } from './NavBar'
-import { NavBarItem } from '../NavBarItem'
 import { BrowserRouter } from 'react-router-dom'
 
 const story: ComponentMeta<typeof NavBar> = {
@@ -14,15 +13,16 @@ const Template: ComponentStory<typeof NavBar> = () => {
     <BrowserRouter>
       <div style={{ width: 'calc(100% + 40px)', height: '400px', backgroundColor: 'lightgray', margin: '-20px' }}>
         <NavBar
-          items={
-            <>
-              <NavBarItem to="/home">
-                Home
-              </NavBarItem>
-              <NavBarItem to="/house">
-                House
-              </NavBarItem>
-            </>
+          items={[
+            {
+              to: '/home',
+              label: 'Home'
+            },
+            {
+              to: '/house',
+              label: 'House'
+            }
+          ]
           }
         />
       </div>

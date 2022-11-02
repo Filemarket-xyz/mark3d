@@ -3,10 +3,17 @@ import { styled } from '../../../../styles'
 import { Container } from '../../Container'
 import { NavBarCollapse } from '../NavBarCollapse'
 import { NavBarToggle } from '../NavBarToggle'
+import { NavBarItem } from '../NavBarItem'
+import { NavBarCollapseItem } from '../NavBarCollapseItem'
+
+export interface NavBarItemData {
+  to: string
+  label?: ReactNode
+}
 
 export interface NavBarProps {
   brand?: ReactNode
-  items?: ReactNode
+  items?: NavBarItemData[]
   actions?: ReactNode
 }
 
@@ -25,7 +32,7 @@ const NavBarStyled = styled('nav', {
   color: '$blue900'
 })
 
-const NavBarSpacer = styled('div', {
+const NavBarHorizontalSpacer = styled('div', {
   height: '100%',
   display: 'flex',
   justifyContent: 'flex-start',
@@ -35,30 +42,54 @@ const NavBarSpacer = styled('div', {
   gap: '30px'
 })
 
+const NavBarVerticalSpacer = styled('div', {
+  dflex: 'start',
+  flexDirection: 'column',
+  flexWrap: 'nowrap',
+  gap: '$3'
+})
+
 export const NavBar: FC<NavBarProps> = ({ brand, items, actions }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   return (
     <>
       <NavBarStyled>
         <Container css={{ height: '100%' }}>
-          <NavBarSpacer>
+          <NavBarHorizontalSpacer>
             <NavBarToggle
               isSelected={isExpanded}
               onChange={setIsExpanded}
             />
             {brand}
             {items && (
-              <NavBarSpacer css={{ flexGrow: 1 }}>
-                {items}
-              </NavBarSpacer>
+              <NavBarHorizontalSpacer css={{ flexGrow: 1 }}>
+                {items.map(item => (
+                  <NavBarItem key={item.to} to={item.to}>
+                    {item.label}
+                  </NavBarItem>
+                ))}
+              </NavBarHorizontalSpacer>
             )}
             {actions}
-          </NavBarSpacer>
+          </NavBarHorizontalSpacer>
         </Container>
       </NavBarStyled>
-      <NavBarCollapse isOpen={isExpanded}>
-        <div color="black">Content</div>
-      </NavBarCollapse>
+      {items && items.length > 0 && (
+        <NavBarCollapse isOpen={isExpanded}>
+          <NavBarVerticalSpacer>
+            {items.map((item, index) => (
+              <NavBarCollapseItem
+                index={index}
+                length={items?.length}
+                key={item.to}
+                to={item.to}
+              >
+                {item.label}
+              </NavBarCollapseItem>
+            ))}
+          </NavBarVerticalSpacer>
+        </NavBarCollapse>
+      )}
     </>
   )
 }

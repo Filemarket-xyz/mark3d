@@ -43,7 +43,7 @@ export const NavBarCollapse: FC<NavBarCollapseProps> = ({ children, isOpen }) =>
     >
       {isOpen && (
         <StyledContent>
-          {children}
+            {children}
         </StyledContent>
       )}
     </StyledNavBarCollapse>
