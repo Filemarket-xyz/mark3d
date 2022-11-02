@@ -19,6 +19,16 @@ const CardControls = styled('div', {
   transitionDelay: '0.35s'
 })
 
+const CardTitle = styled('h5', {
+  ...textVariant('primary2').true,
+  marginBottom: '$1',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  color: '$gray500',
+  transitionDelay: '0.35s'
+})
+
 const styles: any = {
   maxWidth: '255px',
   height: '320px',
@@ -31,6 +41,11 @@ styles[`&:hover ${CardControls.selector}`] = {
   transitionDelay: '0s'
 }
 
+styles[`&:hover ${CardTitle.selector}`] = {
+  color: '$blue900',
+  transitionDelay: '0s'
+}
+
 const Card = styled('div', styles)
 
 const CardImg = styled('img', {
@@ -40,14 +55,6 @@ const CardImg = styled('img', {
   borderBottomLeftRadius: '0',
   borderBottomRightRadius: '0',
   border: '1px solid rgba(255, 255, 255, 0.5)'
-})
-
-const CardTitle = styled('h5', {
-  ...textVariant('primary2').true,
-  marginBottom: '$1',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap'
 })
 
 const CardCollection = styled('p', {
