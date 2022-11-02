@@ -1,7 +1,7 @@
 import { ComponentProps, forwardRef } from 'react'
 import { Link } from 'react-router-dom'
 import { AriaButtonProps } from 'react-aria'
-import { styled } from '../../../../styles'
+import { BreakpointsOptions, cssShowHideIn, styled } from '../../../../styles'
 import { Drip, useButton } from '../../../UIkit'
 import logo from '../../../../assets/logo.png'
 import mark3dBlack from '../../../../assets/mark3d.svg'
@@ -14,7 +14,7 @@ const Logo = styled('img', {
   objectFit: 'contain'
 })
 
-const NameContainer = styled('div', {
+const NameContainer = styled('div', cssShowHideIn, {
   width: '92px',
   height,
   position: 'relative'
@@ -74,10 +74,13 @@ const LinkStyled = styled(Link, {
   }
 })
 
-export type AppLogoButtonProps = AriaButtonProps & ComponentProps<typeof LinkStyled>
+export type AppLogoButtonProps = AriaButtonProps & ComponentProps<typeof LinkStyled> & {
+  hideNameIn?: BreakpointsOptions
+}
 
 export const AppLogoButton = forwardRef<HTMLAnchorElement, AppLogoButtonProps>((
   {
+    hideNameIn,
     ...otherProps
   },
   ref
@@ -94,7 +97,9 @@ export const AppLogoButton = forwardRef<HTMLAnchorElement, AppLogoButtonProps>((
       ref={buttonRef}
     >
       <Logo src={logo}/>
-      <NameContainer>
+      <NameContainer
+        hideIn={hideNameIn}
+      >
         <Name
           src={mark3dBlack}
           className="black"

@@ -22,8 +22,7 @@ const Template: ComponentStory<typeof NavBar> = () => {
               to: '/house',
               label: 'House'
             }
-          ]
-          }
+          ]}
         />
       </div>
     </BrowserRouter>

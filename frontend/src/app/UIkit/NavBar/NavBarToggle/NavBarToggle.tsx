@@ -1,11 +1,11 @@
-import { styled } from '../../../../styles'
+import { cssShowHideIn, styled } from '../../../../styles'
 import { ComponentProps, forwardRef } from 'react'
 import { AriaToggleButtonProps, mergeProps, useFocusRing, useToggleButton } from 'react-aria'
 import { ToggleProps, useToggleState } from 'react-stately'
 import { useDOMRef } from '../../../hooks'
 import { NavbarToggleIcon } from './NavBarToggleIcon'
 
-const StyledNavBarToggle = styled('button', {
+const StyledNavBarToggle = styled('button', cssShowHideIn, {
   // reset button styles
   appearance: 'none',
   background: 'transparent',
@@ -20,8 +20,7 @@ const StyledNavBarToggle = styled('button', {
   '&[data-focus-ring]=true': {
     focusRing: '$blue500'
   }
-}
-)
+})
 
 export type NavBarToggleProps = Omit<ComponentProps<typeof StyledNavBarToggle>, 'onChange'> &
 AriaToggleButtonProps &

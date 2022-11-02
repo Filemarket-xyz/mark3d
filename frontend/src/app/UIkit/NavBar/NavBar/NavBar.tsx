@@ -1,5 +1,5 @@
 import { FC, ReactNode, useState } from 'react'
-import { styled } from '../../../../styles'
+import { BreakpointsOptions, styled } from '../../../../styles'
 import { Container } from '../../Container'
 import { NavBarCollapse } from '../NavBarCollapse'
 import { NavBarToggle } from '../NavBarToggle'
@@ -15,6 +15,7 @@ export interface NavBarProps {
   brand?: ReactNode
   items?: NavBarItemData[]
   actions?: ReactNode
+  mobileBp?: BreakpointsOptions
 }
 
 const NavBarStyled = styled('nav', {
@@ -49,7 +50,12 @@ const NavBarVerticalSpacer = styled('div', {
   gap: '$3'
 })
 
-export const NavBar: FC<NavBarProps> = ({ brand, items, actions }) => {
+export const NavBar: FC<NavBarProps> = ({
+  brand,
+  items,
+  actions,
+  mobileBp
+}) => {
   const [isExpanded, setIsExpanded] = useState(false)
   return (
     <>
@@ -59,12 +65,17 @@ export const NavBar: FC<NavBarProps> = ({ brand, items, actions }) => {
             <NavBarToggle
               isSelected={isExpanded}
               onChange={setIsExpanded}
+              showIn={mobileBp}
             />
             {brand}
             {items && (
               <NavBarHorizontalSpacer css={{ flexGrow: 1 }}>
                 {items.map(item => (
-                  <NavBarItem key={item.to} to={item.to}>
+                  <NavBarItem
+                    key={item.to}
+                    to={item.to}
+                    hideIn={mobileBp}
+                  >
                     {item.label}
                   </NavBarItem>
                 ))}

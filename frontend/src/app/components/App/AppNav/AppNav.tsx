@@ -1,17 +1,15 @@
 import { FC } from 'react'
-import { NavBar, NavBarItem } from '../../../UIkit'
+import { NavBar } from '../../../UIkit'
 import { paths } from './paths'
+import { AppLogoButton } from '../AppLogoButton'
+import { BreakpointsOptions } from '../../../../styles'
+
+const mobileBp: BreakpointsOptions = 'md'
 
 export const AppNav: FC = () => (
   <NavBar
-    items={
-    <>
-      {paths.map(({ to, label }) => (
-        <NavBarItem to={to} key={to}>
-          {label}
-        </NavBarItem>
-      ))}
-    </>
-  }
+    mobileBp={mobileBp}
+    brand={<AppLogoButton to="/"/>}
+    items={paths}
   />
 )

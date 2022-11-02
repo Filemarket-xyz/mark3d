@@ -150,7 +150,12 @@ export const {
     sm: '(max-width: 600px)',
     md: '(max-width: 900px)',
     lg: '(max-width: 1200px)',
-    xl: '(max-width: 1536px)'
+    xl: '(max-width: 1536px)',
+
+    smUp: '(min-width: 600px)',
+    mdUp: '(min-width: 900px)',
+    lgUp: '(min-width: 1200px)',
+    xlUp: '(min-width: 1536px)'
   },
 
   utils: {

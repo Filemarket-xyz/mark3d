@@ -1,9 +1,9 @@
-import { styled } from '../../../../styles'
+import { cssShowHideIn, styled } from '../../../../styles'
 import { ComponentProps, FC, PropsWithChildren } from 'react'
 import { Txt } from '../../Txt'
 import { NavLink } from '../../Link'
 
-export const NavLinkStyled = styled(NavLink, {
+export const NavLinkStyled = styled(NavLink, cssShowHideIn, {
   color: '$blue900',
   position: 'relative',
   '&.active::after': {
