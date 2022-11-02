@@ -15,7 +15,6 @@ import { styled } from '../../../styles'
 import { useDrip } from '../Drip/Drip.hooks'
 import { useDOMRef } from '../../hooks'
 import { Drip } from '../Drip'
-// import { Txt } from '../Txt'
 
 const ButtonStyled = styled('button', {
   height: '48px',

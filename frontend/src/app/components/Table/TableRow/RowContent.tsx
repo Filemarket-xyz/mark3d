@@ -72,7 +72,9 @@ export default function RowContent({ description, imageURLS, title }: Props) {
             Description
           </Txt>
           <Description>{description}</Description>
-          <Button primary>Explore</Button>
+          <Button primary>
+            <Txt button1>Explore</Txt>
+          </Button>
         </MainInfo>
         <Preview>
           <Txt primary1>Visual preview</Txt>
