@@ -29,7 +29,7 @@ const TabContent = (props: TabProps) => (
   </TabWrapper>
 )
 
-export default function TabsUnstyled() {
+export default function Tabs() {
   const [tab, setTab] = useState(0)
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
