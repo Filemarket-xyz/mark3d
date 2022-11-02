@@ -29,30 +29,34 @@ const CardTitle = styled('h5', {
   transitionDelay: '0.35s'
 })
 
-const styles: any = {
+const generateHoverStylesForCard = () => {
+  const hoverStyles: any = {}
+  hoverStyles[`&:hover ${CardControls.selector}`] = {
+    transform: 'translateY(-48px)',
+    transitionDelay: '0s'
+  }
+
+  hoverStyles[`&:hover ${CardTitle.selector}`] = {
+    color: '$blue900',
+    transitionDelay: '0s'
+  }
+
+  hoverStyles['&:hover'] = {
+    filter: 'drop-shadow(0px 12px 25px rgba(19, 19, 45, 0.35))'
+  }
+
+  return hoverStyles
+}
+
+const Card = styled('div', {
   maxWidth: '255px',
   height: '320px',
   borderRadius: '$3',
   position: 'relative',
   overflow: 'hidden',
-  filter: 'drop-shadow(0px 4px 15px rgba(19, 19, 45, 0.1))'
-}
-styles[`&:hover ${CardControls.selector}`] = {
-  transform: 'translateY(-48px)',
-  transitionDelay: '0s'
-}
-
-styles[`&:hover ${CardTitle.selector}`] = {
-  color: '$blue900',
-  transitionDelay: '0s'
-}
-
-styles['&:hover'] = {
-  borderWidth: '5px',
-  filter: 'drop-shadow(0px 12px 25px rgba(19, 19, 45, 0.35))'
-}
-
-const Card = styled('div', styles)
+  filter: 'drop-shadow(0px 4px 15px rgba(19, 19, 45, 0.1))',
+  ...generateHoverStylesForCard()
+})
 
 const CardImg = styled('img', {
   width: '100%',
