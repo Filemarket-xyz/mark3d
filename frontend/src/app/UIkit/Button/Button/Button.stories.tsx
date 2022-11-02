@@ -2,6 +2,8 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Button } from './Button'
 import { StitchesProvider } from '../../../../styles'
 import Logo from '../../../../assets/Logo.png'
+import Plus from '../../../../assets/icons/Plus.svg'
+import BearJedi from '../../../../assets/img/BearJedi.jpg'
 
 const story: ComponentMeta<typeof Button> = {
   component: Button,
@@ -25,7 +27,9 @@ const Template: ComponentStory<typeof Button> = (props) => {
   )
 }
 
-const IconTemplate: ComponentStory<typeof Button> = (props) => {
+const Mark3d = () => <img src={Logo} alt="logo"/>
+
+const IconTemplate: ComponentStory<typeof Button> = ({ children, ...props }) => {
   const pressHandler = () => {
     alert('button clicked!')
   }
@@ -33,12 +37,12 @@ const IconTemplate: ComponentStory<typeof Button> = (props) => {
     <StitchesProvider>
       <div style={{ marginBottom: 20 }}>
         <Button {...props} onPress={pressHandler}>
-          <img src={Logo} alt="logo"/>
+          {children}
         </Button>
       </div>
       <div>
         <Button {...props} isDisabled={true}>
-          <img src={Logo} alt="logo"/>
+          {children}
         </Button>
       </div>
     </StitchesProvider>
@@ -62,11 +66,36 @@ Tertiary.args = {
 
 export const Icon = IconTemplate.bind({})
 Icon.args = {
+  children: <Mark3d/>,
   icon: true
 }
 
 export const IconSmall = IconTemplate.bind({})
 IconSmall.args = {
+  children: <Mark3d/>,
   icon: true,
   small: true
+}
+
+export const IconPrimary = IconTemplate.bind({})
+IconPrimary.args = {
+  children: <img src={Plus} alt="plus"/>,
+  icon: true,
+  primary: true
+}
+
+export const IconPrimarySmall = IconTemplate.bind({})
+IconPrimarySmall.args = {
+  children: <img src={Plus} alt="plus"/>,
+  icon: true,
+  primary: true,
+  small: true
+}
+
+export const IconCover = IconTemplate.bind({})
+IconCover.args = {
+  children: <img src={BearJedi} alt="plus"/>,
+  icon: true,
+  primary: true,
+  iconCover: true
 }

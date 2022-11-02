@@ -99,6 +99,15 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
               cursor: 'not-allowed'
             }
           }
+        },
+        iconCover: {
+          true: {
+            '& *': {
+              borderRadius: '50%',
+              size: 'calc(100% - 4px)', // позиционирование должно пофикситься, когда Txt уберется
+              objectFit: 'cover'
+            }
+          }
         }
       },
       compoundVariants: [
@@ -106,11 +115,19 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           icon: true,
           small: true,
           css: {
-            height: '36px',
+            size: '36px',
             padding: 0,
             '& *': {
               height: '20px'
             }
+          }
+        },
+        {
+          icon: true,
+          primary: true,
+          css: {
+            color: '$white',
+            background: '$gradients$main'
           }
         }
       ]
