@@ -1,8 +1,6 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { styled } from '../../../styles'
 import { Button, textVariant, Txt } from '../../UIkit'
-import cardImg from './img/cardImg.jpg'
-import userimg from './img/userImg.jpg'
 
 const CardControls = styled('div', {
   width: '100%',
@@ -93,19 +91,34 @@ const ButtonContainer = styled('div', {
   justifyContent: 'center'
 })
 
-export default function NFTCard() {
+export interface Props {
+  imageURL: string
+  title: string
+  collection: string
+  user: {
+    img: string
+    username: string
+  }
+  price: number
+}
+
+export default function NFTCard(props: Props) {
+  const formatPrice = useCallback((price: number) => {
+    return `${price.toFixed(3)} ETH`
+  }, [])
+
   return (
     <Card>
-      <CardImg src={cardImg} />
+      <CardImg src={props.imageURL} />
       <CardControls>
-        <CardTitle>Ultra mega super VR Glassessssssssssssssssssssss...</CardTitle>
-        <CardCollection>VR Glasses collection</CardCollection>
+        <CardTitle title={props.title}>{props.title}</CardTitle>
+        <CardCollection>{props.collection}</CardCollection>
         <PriceInfo>
           <UserContainer>
-            <UserImg src={userimg} />
-            <UserName>UnderKong</UserName>
+            <UserImg src={props.user.img} />
+            <UserName>{props.user.username}</UserName>
           </UserContainer>
-          <Price>0.666 ETH</Price>
+          <Price>{formatPrice(props.price)}</Price>
         </PriceInfo>
         <ButtonContainer>
           <Button
