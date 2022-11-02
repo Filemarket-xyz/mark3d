@@ -34,7 +34,8 @@ module.exports = {
         ignorePattern: '^\\s*var\\s.+=\\s*require\\s*\\(',
         ignoreUrls: true
       }
-    ]
+    ],
+    '@typescript-eslint/restrict-template-expressions': 'off',
   },
   settings: {
     react: {

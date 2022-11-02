@@ -3,9 +3,9 @@ import { MouseEventHandler, Ref, RefObject, useCallback } from 'react'
 import { useDOMRef } from '../../hooks'
 import { useDrip } from '../Drip/Drip.hooks'
 
-export function useButton<Props extends AriaButtonProps>(
+export function useButton<Props extends AriaButtonProps, Elem extends HTMLElement>(
   props: Props,
-  ref?: RefObject<HTMLButtonElement | null> | Ref<HTMLButtonElement | null>
+  ref?: RefObject<Elem | null> | Ref<Elem | null>
 ) {
   const {
     isDisabled,
