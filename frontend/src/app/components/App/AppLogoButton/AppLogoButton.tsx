@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import { AriaButtonProps } from 'react-aria'
 import { BreakpointsOptions, cssShowHideIn, styled } from '../../../../styles'
 import { Drip, useButton } from '../../../UIkit'
-import logo from '../../../../assets/logo.png'
-import mark3dBlack from '../../../../assets/mark3d.svg'
-import mark3dGradient from '../../../../assets/mark3d-gradient.svg'
+import LogoIcon from '../../../../assets/Logo.png'
+import Mark3dBlackIcon from '../../../../assets/Mark3d.svg'
+import Mark3dGradientIcon from '../../../../assets/Mark3dGradient.svg'
 
 const height = 36
 
@@ -96,17 +96,22 @@ export const AppLogoButton = forwardRef<HTMLAnchorElement, AppLogoButtonProps>((
       {...buttonProps}
       ref={buttonRef}
     >
-      <Logo src={logo}/>
+      <Logo
+        src={LogoIcon}
+        alt="Mark3d logo"
+      />
       <NameContainer
         hideIn={hideNameIn}
       >
         <Name
-          src={mark3dBlack}
+          src={Mark3dBlackIcon}
           className="black"
+          alt="Mark3d"
         />
         <Name
-          src={mark3dGradient}
+          src={Mark3dGradientIcon}
           className="gradient"
+          alt="Mark3d"
         />
       </NameContainer>
       <Drip {...dripProps}/>
