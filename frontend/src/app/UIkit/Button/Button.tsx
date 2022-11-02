@@ -1,21 +1,14 @@
 import {
   ComponentProps,
-  forwardRef,
-  MouseEventHandler,
-  useCallback
+  forwardRef
 } from 'react'
 import {
-  AriaButtonProps,
-  mergeProps,
-  useButton,
-  useFocusRing,
-  useHover
+  AriaButtonProps
 } from 'react-aria'
 import { styled } from '../../../styles'
-import { useDrip } from '../Drip/Drip.hooks'
-import { useDOMRef } from '../../hooks'
 import { Drip } from '../Drip'
 import { Txt } from '../Txt'
+import { useButton } from './useButton'
 
 const ButtonStyled = styled('button', {
   height: '48px',
@@ -102,54 +95,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       children,
-      isDisabled,
-      onPress,
-      onPressStart,
-      onPressEnd,
-      onPressChange,
-      onPressUp,
-      ...btnProps
+      ...props
     },
     ref
   ) => {
-    const buttonRef = useDOMRef(ref)
-    const { onClick: onDripClickHandler, ...dripProps } = useDrip(
-      buttonRef,
-      false
-    )
-
-    const { isPressed, buttonProps } = useButton(
-      {
-        isDisabled,
-        onPress,
-        onPressStart,
-        onPressEnd,
-        onPressChange,
-        onPressUp
-      },
-      buttonRef
-    )
-    const { onClick } = buttonProps
-
-    const clickHandler = useCallback<MouseEventHandler<HTMLButtonElement>>(
-      (event) => {
-        onClick?.(event)
-        onDripClickHandler(event)
-      },
-      [onClick, onDripClickHandler]
-    )
-
-    const { isFocusVisible, focusProps } = useFocusRing()
-    const { hoverProps, isHovered } = useHover({ isDisabled })
+    const { buttonRef, buttonProps, dripProps } = useButton(props, ref)
     return (
       <ButtonStyled
-        {...btnProps}
-        {...mergeProps(buttonProps, focusProps, hoverProps)}
-        onClick={clickHandler}
-        data-pressed={isPressed}
-        data-hovered={isHovered}
-        data-focus-ring={isFocusVisible}
-        data-disabled={isDisabled}
+        {...buttonProps}
         ref={buttonRef}
       >
         <Txt button1>{children}</Txt>
