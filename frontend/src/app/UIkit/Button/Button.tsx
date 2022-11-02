@@ -15,7 +15,7 @@ import { styled } from '../../../styles'
 import { useDrip } from '../Drip/Drip.hooks'
 import { useDOMRef } from '../../hooks'
 import { Drip } from '../Drip'
-import { Txt } from '../Txt'
+// import { Txt } from '../Txt'
 
 const ButtonStyled = styled('button', {
   height: '48px',
@@ -152,7 +152,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         data-disabled={isDisabled}
         ref={buttonRef}
       >
-        <Txt button1>{children}</Txt>
+        {children}
         <Drip {...dripProps} color='white' />
       </ButtonStyled>
     )
