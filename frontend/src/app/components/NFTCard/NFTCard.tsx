@@ -47,6 +47,11 @@ styles[`&:hover ${CardTitle.selector}`] = {
   transitionDelay: '0s'
 }
 
+styles['&:hover'] = {
+  borderWidth: '5px',
+  filter: 'drop-shadow(0px 12px 25px rgba(19, 19, 45, 0.35))'
+}
+
 const Card = styled('div', styles)
 
 const CardImg = styled('img', {
