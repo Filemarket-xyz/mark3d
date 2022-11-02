@@ -1,6 +1,8 @@
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode, useState } from 'react'
 import { styled } from '../../../../styles'
 import { Container } from '../../Container'
+import { NavBarCollapse } from '../NavBarCollapse'
+import { NavBarToggle } from '../NavBarToggle'
 
 export interface NavBarProps {
   brand?: ReactNode
@@ -8,11 +10,9 @@ export interface NavBarProps {
   actions?: ReactNode
 }
 
-export const navBarHeightPx = 80
-
 const NavBarStyled = styled('nav', {
   width: '100%',
-  height: navBarHeightPx,
+  height: '$layout$navBarHeight',
   position: 'fixed',
   zIndex: '1',
   top: 0,
@@ -36,19 +36,29 @@ const NavBarSpacer = styled('div', {
 })
 
 export const NavBar: FC<NavBarProps> = ({ brand, items, actions }) => {
+  const [isExpanded, setIsExpanded] = useState(false)
   return (
-    <NavBarStyled>
-      <Container css={{ height: '100%' }}>
-        <NavBarSpacer>
-          {brand}
-          {items && (
-            <NavBarSpacer css={{ flexGrow: 1 }}>
-              {items}
-            </NavBarSpacer>
-          )}
-          {actions}
-        </NavBarSpacer>
-      </Container>
-    </NavBarStyled>
+    <>
+      <NavBarStyled>
+        <Container css={{ height: '100%' }}>
+          <NavBarSpacer>
+            <NavBarToggle
+              isSelected={isExpanded}
+              onChange={setIsExpanded}
+            />
+            {brand}
+            {items && (
+              <NavBarSpacer css={{ flexGrow: 1 }}>
+                {items}
+              </NavBarSpacer>
+            )}
+            {actions}
+          </NavBarSpacer>
+        </Container>
+      </NavBarStyled>
+      <NavBarCollapse isOpen={isExpanded}>
+        <div color="black">Content</div>
+      </NavBarCollapse>
+    </>
   )
 }

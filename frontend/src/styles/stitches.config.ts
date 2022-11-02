@@ -139,6 +139,10 @@ export const {
 
     gradients: {
       main: 'linear-gradient(270deg, $colors$gradient0 0%, $colors$gradient1 85.65%)'
+    },
+
+    layout: {
+      navBarHeight: '80px'
     }
   },
 

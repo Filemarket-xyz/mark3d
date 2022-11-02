@@ -5,24 +5,22 @@ import { ToggleProps, useToggleState } from 'react-stately'
 import { useDOMRef } from '../../../hooks'
 import { NavbarToggleIcon } from './NavBarToggleIcon'
 
-const StyledNavBarToggle = styled(
-  'button',
-  {
-    // reset button styles
-    appearance: 'none',
-    background: 'transparent',
-    outline: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    padding: '$2',
-    transition: 'box-shadow 0.25s ease 0s, opacity 0.25s ease 0s',
-    '&[data-pressed=true]': {
-      opacity: 0.7
-    },
-    '&[data-focus-ring]=true': {
-      focusRing: '$blue500'
-    }
+const StyledNavBarToggle = styled('button', {
+  // reset button styles
+  appearance: 'none',
+  background: 'transparent',
+  outline: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  padding: '$2',
+  transition: 'box-shadow 0.25s ease 0s, opacity 0.25s ease 0s',
+  '&[data-pressed=true]': {
+    opacity: 0.7
+  },
+  '&[data-focus-ring]=true': {
+    focusRing: '$blue500'
   }
+}
 )
 
 export type NavBarToggleProps = Omit<ComponentProps<typeof StyledNavBarToggle>, 'onChange'> &
