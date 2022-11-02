@@ -1,14 +1,9 @@
 import React, { useCallback } from 'react'
 import { styled } from '../../../styles'
 import { Button, textVariant, Txt } from '../../UIkit'
-import BasicCard from './BasicCard'
+import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
 
-const CardControls = styled('div', {
-  width: '100%',
-  borderRadius: 'inherit',
-  borderBottomLeftRadius: '0',
-  borderBottomRightRadius: '0',
-  backgroundColor: '$white',
+const CardControls = styled(BasicCardControls, {
   height: '144px',
   position: 'absolute',
   left: 0,
@@ -16,7 +11,6 @@ const CardControls = styled('div', {
   transform: 'translateY(0)',
   transition: 'all 0.25s ease-in-out',
   bottom: '-48px',
-  padding: '$3 11px',
   transitionDelay: '0.35s'
 })
 
@@ -44,15 +38,6 @@ const generateHoverStylesForCard = () => {
 
   return hoverStyles
 }
-
-const CardImg = styled('img', {
-  width: '100%',
-  height: '255px',
-  borderRadius: 'inherit',
-  borderBottomLeftRadius: '0',
-  borderBottomRightRadius: '0',
-  border: '1px solid rgba(255, 255, 255, 0.5)'
-})
 
 const CardCollection = styled('p', {
   ...textVariant('secondary3').true,
@@ -117,7 +102,7 @@ export default function NFTCard(props: Props) {
 
   return (
     <Card>
-      <CardImg src={props.imageURL} />
+      <BasicCardSquareImg src={props.imageURL} />
       <CardControls>
         <CardTitle title={props.title}>{props.title}</CardTitle>
         <CardCollection>{props.collection}</CardCollection>
