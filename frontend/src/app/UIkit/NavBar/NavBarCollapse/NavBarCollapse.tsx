@@ -41,11 +41,9 @@ export const NavBarCollapse: FC<NavBarCollapseProps> = ({ children, isOpen }) =>
     <StyledNavBarCollapse
       isOpen={isOpen}
     >
-      {isOpen && (
-        <StyledContent>
-            {children}
-        </StyledContent>
-      )}
+      <StyledContent>
+        {children}
+      </StyledContent>
     </StyledNavBarCollapse>
   )
 }

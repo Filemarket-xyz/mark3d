@@ -79,6 +79,7 @@ export const NavBar: FC<NavBarProps> = ({ brand, items, actions }) => {
           <NavBarVerticalSpacer>
             {items.map((item, index) => (
               <NavBarCollapseItem
+                isVisible={isExpanded}
                 index={index}
                 length={items?.length}
                 key={item.to}

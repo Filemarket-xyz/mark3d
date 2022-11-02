@@ -14,9 +14,16 @@ const StyledNavLink = styled(NavLink, {
 type NavBarCollapseItemProps = ComponentProps<typeof StyledNavLink> & {
   index: number
   length: number
+  isVisible?: boolean // for animation purposes
 }
 
-export const NavBarCollapseItem: FC<NavBarCollapseItemProps> = ({ index, children, ...otherProps }) => {
+export const NavBarCollapseItem: FC<NavBarCollapseItemProps> = ({
+  index,
+  length,
+  isVisible,
+  children,
+  ...otherProps
+}) => {
   const timeDelay = useMemo(
     () =>
       index > -1 && length > 0
@@ -28,7 +35,8 @@ export const NavBarCollapseItem: FC<NavBarCollapseItemProps> = ({ index, childre
   return (
     <StyledNavLink
       css={{
-        transform: transitionMatrix.in,
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? transitionMatrix.in : transitionMatrix.out,
         // eslint-disable-next-line max-len
         transition: `opacity ${transitionTime}ms cubic-bezier(0.5, 0, 0, 1) ${timeDelay}ms, transform ${transitionTime}ms cubic-bezier(0.5, 0, 0, 1) ${timeDelay}ms`
       }}

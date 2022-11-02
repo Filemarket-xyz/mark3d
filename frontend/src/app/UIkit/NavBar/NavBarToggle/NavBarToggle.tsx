@@ -33,12 +33,13 @@ export const NavBarToggle = forwardRef<HTMLButtonElement, NavBarToggleProps>((pr
     className,
     autoFocus,
     onChange,
+    isSelected,
     css,
     ...otherProps
   } = props
   const domRef = useDOMRef(ref)
-  const state = useToggleState(props)
-  const { buttonProps, isPressed } = useToggleButton(props, state, domRef)
+  const state = useToggleState({ isSelected, ...props })
+  const { buttonProps, isPressed } = useToggleButton({ ...props, isSelected }, state, domRef)
   const { isFocusVisible, focusProps } = useFocusRing({ autoFocus })
   return (
     <StyledNavBarToggle
