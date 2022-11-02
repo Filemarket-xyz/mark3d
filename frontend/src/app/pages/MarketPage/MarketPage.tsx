@@ -26,12 +26,16 @@ export default function MarketPage() {
         user={{ img: userimg, username: 'UnderKong' }}
       ></NFTCard>
       <CollectionCard
+<<<<<<< HEAD
         description={
           <>
             Mark3d NFT collection for
             <br /> 3D Internet and virtual worlds
           </>
         }
+=======
+        description={<>Mark3d NFT collection for<br/> 3D Internet and virtual worlds</>}
+>>>>>>> 52f1fae (implemented collection card)
         iconURL={collectionIcon}
         imageUrl={cardImg}
       />
