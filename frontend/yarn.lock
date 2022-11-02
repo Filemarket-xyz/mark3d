@@ -2598,14 +2598,6 @@
     "@react-types/combobox" "^3.5.4"
     "@react-types/shared" "^3.15.0"
 
-"@react-stately/data@^3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@react-stately/data/-/data-3.7.0.tgz#dc7267d8fa58537880bb23ad8d62cb38b295ae82"
-  integrity sha512-+u5rKjraR7R6aMMXSDwH61jRRELnGGWr6xMFlk6G9fr8uAmil+AWrv8Dh8nZlJfy5I2hT1d8lbS9j5TRp/QFKg==
-  dependencies:
-    "@babel/runtime" "^7.6.2"
-    "@react-types/shared" "^3.15.0"
-
 "@react-stately/datepicker@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@react-stately/datepicker/-/datepicker-3.1.0.tgz#2128afaed3c3a16197d2cdcd62f3c407140eb0c7"
@@ -6728,6 +6720,13 @@ dom-walk@^0.1.0:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/dom-walk/-/dom-walk-0.1.2.tgz#0c548bef048f4d1f2a97249002236060daa3fd84"
   integrity sha512-6QvTW9mrGeIegrFXdtQi9pk7O/nSK6lSdXW2eqUspN5LWD7UTji2Fqw5V2YLjBpHEoU9Xl/eUWNpDeZvoyOv2w==
+
+dom7@^4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/dom7/-/dom7-4.0.4.tgz#8b68c5d8e5e2ed0fddb1cb93e433bc9060c8f3fb"
+  integrity sha512-DSSgBzQ4rJWQp1u6o+3FVwMNnT5bzQbMb+o31TjYYeRi05uAcpF8koxdfzeoe5ElzPmua7W7N28YJhF7iEKqIw==
+  dependencies:
+    ssr-window "^4.0.0"
 
 domain-browser@^1.1.1:
   version "1.2.0"
@@ -11365,33 +11364,6 @@ react-router@6.4.2:
   dependencies:
     "@remix-run/router" "1.0.2"
 
-react-stately@^3.18.0:
-  version "3.18.0"
-  resolved "https://registry.yarnpkg.com/react-stately/-/react-stately-3.18.0.tgz#206e334effeb2d42ea8fe091aefaf7a03c2e6d5e"
-  integrity sha512-oNh/GzmCU5hVxDsaOeBCzrtvIp+48vCuGqeUd/eYux+ehpZmGVxrMxUqyDfVg7rp+s51b5MMUFZRFTURsyFDSg==
-  dependencies:
-    "@react-stately/calendar" "^3.0.3"
-    "@react-stately/checkbox" "^3.3.0"
-    "@react-stately/collections" "^3.4.4"
-    "@react-stately/combobox" "^3.2.2"
-    "@react-stately/data" "^3.7.0"
-    "@react-stately/datepicker" "^3.1.0"
-    "@react-stately/list" "^3.5.4"
-    "@react-stately/menu" "^3.4.2"
-    "@react-stately/numberfield" "^3.2.2"
-    "@react-stately/overlays" "^3.4.2"
-    "@react-stately/radio" "^3.6.0"
-    "@react-stately/searchfield" "^3.3.2"
-    "@react-stately/select" "^3.3.2"
-    "@react-stately/selection" "^3.11.0"
-    "@react-stately/slider" "^3.2.2"
-    "@react-stately/table" "^3.5.0"
-    "@react-stately/tabs" "^3.2.2"
-    "@react-stately/toggle" "^3.4.2"
-    "@react-stately/tooltip" "^3.2.2"
-    "@react-stately/tree" "^3.3.4"
-    "@react-types/shared" "^3.15.0"
-
 react@^18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
@@ -12225,6 +12197,11 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
+ssr-window@^4.0.0, ssr-window@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/ssr-window/-/ssr-window-4.0.2.tgz#dc6b3ee37be86ac0e3ddc60030f7b3bc9b8553be"
+  integrity sha512-ISv/Ch+ig7SOtw7G2+qkwfVASzazUnvlDTwypdLoPoySv+6MqlOV10VwPSE6EWkGjhW50lUmghPmpYZXMu/+AQ==
+
 ssri@^6.0.1:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/ssri/-/ssri-6.0.2.tgz#157939134f20464e7301ddba3e90ffa8f7728ac5"
@@ -12522,6 +12499,14 @@ sveltedoc-parser@^4.2.1:
     eslint "8.4.1"
     espree "9.2.0"
     htmlparser2-svelte "4.1.0"
+
+swiper@^8.4.4:
+  version "8.4.4"
+  resolved "https://registry.yarnpkg.com/swiper/-/swiper-8.4.4.tgz#868ccad5384624e84143b469c75bc54ba004e668"
+  integrity sha512-jA/8BfOZwT8PqPSnMX0TENZYitXEhNa7ZSNj1Diqh5LZyUJoBQaZcqAiPQ/PIg1+IPaRn/V8ZYVb0nxHMh51yw==
+  dependencies:
+    dom7 "^4.0.4"
+    ssr-window "^4.0.2"
 
 symbol.prototype.description@^1.0.0:
   version "1.0.5"

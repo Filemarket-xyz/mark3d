@@ -1,0 +1,40 @@
+.__swiper {
+  width: 540px;
+  height: 300px;
+  border-radius: 16px;
+  margin-top: var(--space-3);
+  z-index: 0;
+
+  /* disable abillity to select images inside */
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+@media (max-width: 1200px) {
+  .__swiper {
+    width: 363px;
+    height: 240px;
+  }
+}
+@media (max-width: 900px) {
+  .__swiper {
+    width: 100%;
+    height: 240px;
+  }
+}
+@media (max-width: 420px) {
+  .__swiper {
+    aspect-ratio: 9 / 16;
+  }
+}
+
+.img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
