@@ -1,6 +1,5 @@
 import { FC } from 'react'
-import { NavBar } from '../../../UIkit'
-import { NavBarItem } from '../../../UIkit/NavBar/NavBarItem'
+import { NavBar, NavBarItem } from '../../../UIkit'
 import { paths } from './paths'
 
 export const AppNav: FC = () => (

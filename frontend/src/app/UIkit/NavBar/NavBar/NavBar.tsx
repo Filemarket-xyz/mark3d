@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react'
-import { styled } from '../../../styles'
-import { Container } from '../Container'
+import { styled } from '../../../../styles'
+import { Container } from '../../Container'
 
 export interface NavBarProps {
   brand?: ReactNode

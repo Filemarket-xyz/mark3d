@@ -1,4 +1,4 @@
-import { createStitches } from '@stitches/react'
+import { createStitches, PropertyValue } from '@stitches/react'
 
 export const {
   styled,
@@ -153,13 +153,22 @@ export const {
       outline: `2px solid ${color}`,
       outlineOffset: '2px'
     }),
-    paddingLR: (padding: string) => ({
+    paddingLR: (padding: PropertyValue<'paddingLeft'>) => ({
       paddingLeft: padding,
       paddingRight: padding
     }),
-    paddingTB: (padding: string) => ({
+    paddingTB: (padding: PropertyValue<'paddingTop'>) => ({
       paddingTop: padding,
       paddingBottom: padding
+    }),
+    dflex: (value: PropertyValue<'alignItems'>) => ({
+      display: 'flex',
+      alignItems: value,
+      justifyContent: value
+    }),
+    size: (value: PropertyValue<'width'>) => ({
+      width: value,
+      height: value
     })
   }
 })

@@ -1,7 +1,7 @@
-import { styled } from '../../../styles'
+import { styled } from '../../../../styles'
 import { ComponentProps, FC, PropsWithChildren } from 'react'
-import { Txt } from '../Txt'
-import { NavLink } from '../Link'
+import { Txt } from '../../Txt'
+import { NavLink } from '../../Link'
 
 export const NavLinkStyled = styled(NavLink, {
   color: '$blue900',

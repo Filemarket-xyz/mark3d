@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { NavBar } from './NavBar'
-import { NavBarItem } from './NavBarItem'
+import { NavBarItem } from '../NavBarItem'
 import { BrowserRouter } from 'react-router-dom'
 
 const story: ComponentMeta<typeof NavBar> = {
