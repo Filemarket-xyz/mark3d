@@ -18,6 +18,10 @@ checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 name = "backend"
 version = "0.1.0"
 dependencies = [
+ "dotenvy",
+ "serde",
+ "serde_json",
+ "tokio",
  "web3",
 ]
 
@@ -184,6 +188,12 @@ dependencies = [
  "block-buffer 0.10.3",
  "crypto-common",
 ]
+
+[[package]]
+name = "dotenvy"
+version = "0.15.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03d8c417d7a8cb362e0c37e5d815f5eb7c37f79ff93707329d5a194e42e54ca0"
 
 [[package]]
 name = "encoding_rs"
