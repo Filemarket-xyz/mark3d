@@ -16,6 +16,9 @@ const FooterWrapper = styled('footer', {
   color: '$blue900',
   background: '$colors$whiteOp50',
   '@md': {
+    height: '96px'
+  },
+  '@sm': {
     height: '128px'
   }
 })
@@ -31,9 +34,7 @@ const FooterContainer = styled(Container, {
     gap: '$3'
   },
   '@sm': {
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: '$3'
+    alignItems: 'center'
   }
 })
 
