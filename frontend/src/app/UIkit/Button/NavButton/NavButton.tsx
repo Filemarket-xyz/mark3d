@@ -6,7 +6,6 @@ import {
   AriaButtonProps
 } from 'react-aria'
 import { Drip } from '../../Drip'
-import { Txt } from '../../Txt'
 import { useButton } from '../useButton'
 import { buttonStyled } from '../Button.styles'
 import { Link } from 'react-router-dom'
@@ -28,7 +27,7 @@ export const NavButton = forwardRef<HTMLAnchorElement, ButtonProps>(
         {...buttonProps}
         ref={buttonRef}
       >
-        <Txt button1>{children}</Txt>
+        {children}
         <Drip {...dripProps} color='white'/>
       </NavButtonStyled>
     )
