@@ -11,7 +11,7 @@ async function main() {
   let accounts = await hre.ethers.getSigners();
   const collectionFactory = new Mark3dCollection__factory(accounts[0]);
   const collection = collectionFactory.attach(args.collection);
-  const tx = await collection.connect(accounts[1]).finalizeTransfer(hre.ethers.BigNumber.from(args.id));
+  const tx = await collection.connect(accounts[2]).finalizeTransfer(hre.ethers.BigNumber.from(args.id));
   console.log("finish transfer txid: ", tx.hash);
 }
 
