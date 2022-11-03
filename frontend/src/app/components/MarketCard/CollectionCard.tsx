@@ -35,9 +35,12 @@ const CardImg = styled(BasicCardSquareImg, {
 })
 
 const CardIcon = styled('img', {
+  width: 49,
+  height: 48,
   borderRadius: '$2',
   position: 'absolute',
-  top: -20
+  top: -24,
+  objectPosition: 'center'
 })
 
 export default function CollectionCard(props: Props) {
