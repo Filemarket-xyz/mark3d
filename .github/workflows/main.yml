@@ -1,0 +1,49 @@
+name: MAIN CI
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  build-frontend:
+    runs-on: [self-hosted, main]
+    if: ${{ !failure() && !cancelled() }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-main-node-${{ hashFiles('frontend/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-main-node
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        working-directory: frontend/
+      - name: Build frontend
+        run: |
+          yarn build
+          zip -r frontend.zip dist
+        working-directory: frontend/
+      - name: Save artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: main-frontend
+          path: frontend/frontend.zip
+  update:
+    runs-on: [self-hosted, main]
+    needs: [ build-frontend ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Load frontend artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: main-frontend
+      - name: Update frontend
+        run: |
+          unzip frontend.zip
+          sudo rm -r /usr/share/nginx/mark3d.xyz/*
+          sudo mv dist/frontend/* /usr/share/nginx/mark3d.xyz/
+      - name: update nginx
+        run: |
+          sudo mv nginx.conf /etc/nginx/conf.d/mark3d.conf
+          sudo nginx -s reload
