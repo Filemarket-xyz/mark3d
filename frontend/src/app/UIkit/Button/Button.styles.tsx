@@ -89,7 +89,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             size: '48px',
             borderRadius: '50%',
             background: 'transparent',
-            '& *': {
+            '& > *': {
               height: '26px'
             },
             '&[data-focus-ring=true]': {
@@ -103,7 +103,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
         },
         iconCover: {
           true: {
-            '& *': {
+            '& > *': {
               borderRadius: '50%',
               size: 'calc(100% - 4px)', // позиционирование должно пофикситься, когда Txt уберется
               objectFit: 'cover'
@@ -118,7 +118,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           css: {
             size: '36px',
             padding: 0,
-            '& *': {
+            '& > *': {
               height: '20px'
             }
           }
