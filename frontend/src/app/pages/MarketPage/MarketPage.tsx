@@ -7,6 +7,9 @@ import cardImg from './img/cardImg.jpg'
 import userimg from './img/userImg.jpg'
 import Tabs from './Tabs'
 import collectionIcon from './img/icon.jpg'
+import CreatorCard from '../../components/MarketCard/CreatorCard'
+import bg from './img/bg.jpg'
+import largerUserImg from './img/largerUserImg.jpg'
 
 const TabsContainer = styled('div', {
   marginBottom: '$4'
@@ -26,9 +29,29 @@ export default function MarketPage() {
         user={{ img: userimg, username: 'UnderKong' }}
       ></NFTCard>
       <CollectionCard
-        description={<>Mark3d NFT collection for<br/> 3D Internet and virtual worlds</>}
+        description={
+          <>
+            Mark3d NFT collection for
+            <br /> 3D Internet and virtual worlds
+          </>
+        }
         iconURL={collectionIcon}
         imageUrl={cardImg}
+      />
+      <CreatorCard
+        bgImageUrl={bg}
+        description={
+          <>
+            UnderKong.eth Meta Jedi / Council of MetaLegends / Founder of
+            DAOart. UnderKong.eth Meta Jedi / Council of MetaLegends / Founder
+            of DAOart.
+          </>
+        }
+        user={{
+          imageUrl: largerUserImg,
+          name: 'UnderKong',
+          social: '@UnderKong`s twitter'
+        }}
       />
     </PageLayout>
   )
