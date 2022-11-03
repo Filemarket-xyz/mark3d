@@ -1,6 +1,6 @@
 import { Tabs as MUITabs, Tab } from '@mui/material'
 import React, { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { styled } from '../../../styles'
 import { textVariant } from '../../UIkit'
 
@@ -54,7 +54,6 @@ const LinkTab = (props: LinkTabProps) => {
 
 export default function Tabs() {
   const [tab, setTab] = useState(0)
-  const location = useLocation()
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue)
@@ -80,19 +79,19 @@ export default function Tabs() {
       }}
     >
       <LinkTab
-        href={`${location.pathname}/nfts`}
+        href={'/market/nfts'}
         content={<TabContent name='NFTs' amount={123456} />}
       />
       <LinkTab
-        href={`${location.pathname}/collections`}
+        href={'/market/collections'}
         content={<TabContent name='Collections' amount={1234} />}
       />
       <LinkTab
-        href={`${location.pathname}/creators`}
+        href={'/market/creators'}
         content={<TabContent name='Creators' amount={123} />}
       />
       <LinkTab
-        href={`${location.pathname}/namespaces`}
+        href={'/market/namespaces'}
         content={<TabContent name='Namespaces' amount={123} />}
       />
     </MUITabs>
