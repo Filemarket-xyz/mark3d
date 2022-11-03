@@ -11631,6 +11631,33 @@ react-router@6.4.2:
   dependencies:
     "@remix-run/router" "1.0.2"
 
+react-stately@^3.18.0:
+  version "3.18.0"
+  resolved "https://registry.yarnpkg.com/react-stately/-/react-stately-3.18.0.tgz#206e334effeb2d42ea8fe091aefaf7a03c2e6d5e"
+  integrity sha512-oNh/GzmCU5hVxDsaOeBCzrtvIp+48vCuGqeUd/eYux+ehpZmGVxrMxUqyDfVg7rp+s51b5MMUFZRFTURsyFDSg==
+  dependencies:
+    "@react-stately/calendar" "^3.0.3"
+    "@react-stately/checkbox" "^3.3.0"
+    "@react-stately/collections" "^3.4.4"
+    "@react-stately/combobox" "^3.2.2"
+    "@react-stately/data" "^3.7.0"
+    "@react-stately/datepicker" "^3.1.0"
+    "@react-stately/list" "^3.5.4"
+    "@react-stately/menu" "^3.4.2"
+    "@react-stately/numberfield" "^3.2.2"
+    "@react-stately/overlays" "^3.4.2"
+    "@react-stately/radio" "^3.6.0"
+    "@react-stately/searchfield" "^3.3.2"
+    "@react-stately/select" "^3.3.2"
+    "@react-stately/selection" "^3.11.0"
+    "@react-stately/slider" "^3.2.2"
+    "@react-stately/table" "^3.5.0"
+    "@react-stately/tabs" "^3.2.2"
+    "@react-stately/toggle" "^3.4.2"
+    "@react-stately/tooltip" "^3.2.2"
+    "@react-stately/tree" "^3.3.4"
+    "@react-types/shared" "^3.15.0"
+
 react-transition-group@^4.4.5:
   version "4.4.5"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.5.tgz#e53d4e3f3344da8521489fbef8f2581d42becdd1"
