@@ -6,7 +6,6 @@ import {
   AriaButtonProps
 } from 'react-aria'
 import { Drip } from '../../Drip'
-import { Txt } from '../../Txt'
 import { useButton } from '../useButton'
 import { buttonStyled } from '../Button.styles'
 
@@ -27,7 +26,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...buttonProps}
         ref={buttonRef}
       >
-        <Txt button1>{children}</Txt>
+        {children}
         <Drip {...dripProps} color='white' />
       </ButtonStyled>
     )

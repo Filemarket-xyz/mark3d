@@ -1,6 +1,7 @@
 import React from 'react'
 import * as Util from '@stitches/react/types/util'
 import { styled } from '../../../styles'
+import { textVariant } from '../Txt'
 
 export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.ComponentType<any> | Util.Function,
   >(type: Type) =>
@@ -18,8 +19,8 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
       position: 'relative',
       overflow: 'hidden',
       cursor: 'pointer',
-      fontFamily: '$primary',
       transition: 'transform 0.25s ease 0s, opacity 0.25s ease 0s',
+      ...textVariant('button1').true,
       '&[data-pressed=true]': {
         transform: 'scale(0.97)'
       },
