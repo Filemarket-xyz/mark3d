@@ -1,5 +1,6 @@
 import { Tabs as MUITabs, Tab } from '@mui/material'
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { styled } from '../../../styles'
 import { textVariant } from '../../UIkit'
 
@@ -29,6 +30,27 @@ const TabContent = (props: TabProps) => (
   </TabWrapper>
 )
 
+interface LinkTabProps {
+  href: string
+  content: JSX.Element
+}
+
+const LinkTab = (props: LinkTabProps) => {
+  const navigate = useNavigate()
+  return (
+    <Tab
+      sx={{ textTransform: 'none' }}
+      LinkComponent={'a'}
+      onClick={(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        event.preventDefault()
+        navigate(props.href)
+      }}
+      icon={props.content}
+      {...props}
+    />
+  )
+}
+
 export default function Tabs() {
   const [tab, setTab] = useState(0)
 
@@ -39,7 +61,9 @@ export default function Tabs() {
     <MUITabs
       value={tab}
       onChange={handleChange}
-      scrollButtons={true}
+      scrollButtons
+      variant={'scrollable'}
+      allowScrollButtonsMobile
       sx={{
         'span.MuiTabs-indicator': {
           height: '4px !important',
@@ -53,10 +77,22 @@ export default function Tabs() {
         }
       }}
     >
-      <Tab icon={<TabContent name='NFTs' amount={123456} />} />
-      <Tab icon={<TabContent name='Collections' amount={1234} />} />
-      <Tab icon={<TabContent name='Creators' amount={123} />} />
-      <Tab icon={<TabContent name='Namespaces' amount={123} />} />
+      <LinkTab
+        href='/nfts'
+        content={<TabContent name='NFTs' amount={123456} />}
+      />
+      <LinkTab
+        href='/collections'
+        content={<TabContent name='Collections' amount={1234} />}
+      />
+      <LinkTab
+        href='/creators'
+        content={<TabContent name='Creators' amount={123} />}
+      />
+      <LinkTab
+        href='/namespaces'
+        content={<TabContent name='Namespaces' amount={123} />}
+      />
     </MUITabs>
   )
 }
