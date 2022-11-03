@@ -10,6 +10,8 @@ import collectionIcon from './img/icon.jpg'
 import CreatorCard from '../../components/MarketCard/CreatorCard'
 import bg from './img/bg.jpg'
 import largerUserImg from './img/largerUserImg.jpg'
+import NamespaceCard from '../../components/MarketCard/NamespaceCard'
+import namespace from './img/namespace.jpg'
 
 const TabsContainer = styled('div', {
   marginBottom: '$4'
@@ -52,6 +54,12 @@ export default function MarketPage() {
           name: 'UnderKong',
           social: '@UnderKong`s twitter'
         }}
+      />
+      <NamespaceCard
+        imageURL={namespace}
+        price={0.6665}
+        title={'Mark3dNamespace.3d'}
+        user={{ img: userimg, username: 'UnderKong' }}
       />
     </PageLayout>
   )

@@ -3,7 +3,7 @@ import { styled } from '../../../styles'
 import { Button, textVariant, Txt } from '../../UIkit'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
 
-const CardControls = styled(BasicCardControls, {
+export const CardControls = styled(BasicCardControls, {
   height: '144px',
   position: 'absolute',
   left: 0,
@@ -14,7 +14,7 @@ const CardControls = styled(BasicCardControls, {
   transitionDelay: '0.35s'
 })
 
-const CardTitle = styled('h5', {
+export const CardTitle = styled('h5', {
   ...textVariant('primary2').true,
   marginBottom: '$1',
   overflow: 'hidden',
@@ -39,43 +39,43 @@ const generateHoverStylesForCard = () => {
   return hoverStyles
 }
 
-const CardCollection = styled('p', {
+export const CardCollection = styled('p', {
   ...textVariant('secondary3').true,
   marginBottom: '$1'
 })
 
-const PriceInfo = styled('div', {
+export const PriceInfo = styled('div', {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   marginBottom: '$3'
 })
 
-const UserContainer = styled('div', {
+export const UserContainer = styled('div', {
   display: 'flex',
   alignItems: 'center',
   gap: '$1',
   color: '$gray500'
 })
 
-const UserImg = styled('img', {
+export const UserImg = styled('img', {
   width: '20px',
   height: '20px',
   borderRadius: '50%'
 })
 
-const UserName = styled('p', {
+export const UserName = styled('p', {
   ...textVariant('primary3').true,
   lineHeight: '50%'
 })
 
-const Price = styled('span', {
+export const Price = styled('span', {
   ...textVariant('primary1'),
   color: '$blue900',
   fontWeight: '600'
 })
 
-const ButtonContainer = styled('div', {
+export const ButtonContainer = styled('div', {
   display: 'flex',
   justifyContent: 'center'
 })
@@ -91,7 +91,7 @@ export interface Props {
   price: number
 }
 
-const Card = styled(BasicCard, {
+export const Card = styled(BasicCard, {
   ...generateHoverStylesForCard()
 })
 
