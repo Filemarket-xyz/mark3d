@@ -42,7 +42,7 @@ jobs:
         run: |
           unzip frontend.zip
           sudo rm -r /usr/share/nginx/mark3d.xyz/*
-          sudo mv dist/frontend/* /usr/share/nginx/mark3d.xyz/
+          sudo mv dist/* /usr/share/nginx/mark3d.xyz/
       - name: update nginx
         run: |
           sudo mv nginx.conf /etc/nginx/conf.d/mark3d.conf
