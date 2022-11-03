@@ -4,6 +4,7 @@ import { paths } from './paths'
 import { AppLogoButton } from '../AppLogoButton'
 import { BreakpointsOptions } from '../../../../styles'
 import { ConnectWidget } from '../../Web3'
+import { AppPlusNav } from '../AppPlusNav'
 
 const mobileBp: BreakpointsOptions = 'md'
 
@@ -12,6 +13,10 @@ export const AppNav: FC = () => (
     mobileBp={mobileBp}
     brand={<AppLogoButton to="/"/>}
     items={paths}
-    actions={<ConnectWidget/>}
+    actions={
+      <ConnectWidget
+        connectedContent={<AppPlusNav/>}
+      />
+    }
   />
 )
