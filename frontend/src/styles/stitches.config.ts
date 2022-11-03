@@ -1,4 +1,4 @@
-import { createStitches } from '@stitches/react'
+import { createStitches, PropertyValue } from '@stitches/react'
 
 export const {
   styled,
@@ -139,6 +139,10 @@ export const {
 
     gradients: {
       main: 'linear-gradient(270deg, $colors$gradient0 0%, $colors$gradient1 85.65%)'
+    },
+
+    layout: {
+      navBarHeight: '80px'
     }
   },
 
@@ -146,7 +150,12 @@ export const {
     sm: '(max-width: 600px)',
     md: '(max-width: 900px)',
     lg: '(max-width: 1200px)',
-    xl: '(max-width: 1536px)'
+    xl: '(max-width: 1536px)',
+
+    smUp: '(min-width: 600px)',
+    mdUp: '(min-width: 900px)',
+    lgUp: '(min-width: 1200px)',
+    xlUp: '(min-width: 1536px)'
   },
 
   utils: {
@@ -154,13 +163,22 @@ export const {
       outline: `2px solid ${color}`,
       outlineOffset: '2px'
     }),
-    paddingLR: (padding: string) => ({
+    paddingLR: (padding: PropertyValue<'paddingLeft'>) => ({
       paddingLeft: padding,
       paddingRight: padding
     }),
-    paddingTB: (padding: string) => ({
+    paddingTB: (padding: PropertyValue<'paddingTop'>) => ({
       paddingTop: padding,
       paddingBottom: padding
+    }),
+    dflex: (value: PropertyValue<'alignItems'>) => ({
+      display: 'flex',
+      alignItems: value,
+      justifyContent: value
+    }),
+    size: (value: PropertyValue<'width'>) => ({
+      width: value,
+      height: value
     })
   }
 })

@@ -3,7 +3,6 @@ import { styled } from '../../../../styles'
 import {
   Card,
   Container,
-  navBarHeightPx,
   Button,
   textVariant
 } from '../../../UIkit'
@@ -66,7 +65,7 @@ const ToolDescription = styled('p', {
 })
 
 const WelcomeInfo = styled(Container, {
-  paddingTop: `calc(${navBarHeightPx}px + 25%)`,
+  paddingTop: 'calc($layout$navBarHeight + 25%)',
   paddingBottom: '140px',
   '@sm': {
     paddingBottom: '$5'

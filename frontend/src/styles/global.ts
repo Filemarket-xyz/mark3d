@@ -43,6 +43,9 @@ export const globalStyles = globalCss({
     fontSize: '$html',
     height: '100%'
   },
+  body: {
+    overflowY: 'scroll'
+  },
   '#root': {
     height: '100%'
   }
