@@ -1,6 +1,6 @@
 import { Tabs as MUITabs, Tab } from '@mui/material'
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { styled } from '../../../styles'
 import { textVariant } from '../../UIkit'
 
@@ -52,10 +52,23 @@ const LinkTab = (props: LinkTabProps) => {
   )
 }
 
+enum TABS {
+  'nfts',
+  'collections',
+  'creators',
+  'namespaces'
+}
+
 export default function Tabs() {
-  const [tab, setTab] = useState(0)
+  const [tab, setTab] = useState<false | number>(false)
+  const location = useLocation()
+  useEffect(() => {
+    setTab(TABS[location.pathname.split('/').at(-1) as keyof typeof TABS])
+  }, [])
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    console.log(newValue)
+
     setTab(newValue)
   }
   return (
