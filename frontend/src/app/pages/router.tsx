@@ -2,27 +2,28 @@ import { createBrowserRouter, RouteObject } from 'react-router-dom'
 import ExplorerPage from './ExplorerPage/ExplorerPage'
 import { AppLayout } from '../components/App'
 import MainPage from './MainPage/MainPage'
-import MarketPage from './MarketPage/MarketPage'
+import MarketPage, { marketRoutes } from './MarketPage/MarketPage'
 
 const routes: RouteObject[] = [
   {
     path: 'explorer',
-    element: <ExplorerPage/>
+    element: <ExplorerPage />
   },
   {
     path: '/',
-    element: <MainPage/>
+    element: <MainPage />
   },
   {
     path: 'market',
-    element: <MarketPage/>
+    element: <MarketPage />,
+    children: marketRoutes
   }
 ]
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <AppLayout/>,
+    element: <AppLayout />,
     children: routes
   }
 ])
