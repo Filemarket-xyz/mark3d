@@ -105,7 +105,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           true: {
             '& > *': {
               borderRadius: '50%',
-              size: 'calc(100% - 4px)', // позиционирование должно пофикситься, когда Txt уберется
+              size: 'calc(100% - 4px)',
               objectFit: 'cover'
             }
           }
@@ -120,6 +120,15 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             padding: 0,
             '& > *': {
               height: '20px'
+            }
+          }
+        },
+        {
+          icon: true,
+          iconCover: true,
+          css: {
+            '& > *': {
+              size: 'calc(100% - 4px)'
             }
           }
         },
