@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react'
-import { styled } from '../../../styles'
 import { Button, Txt } from '../../UIkit'
 import { BasicCardSquareImg } from './BasicCard'
 import {
@@ -24,10 +23,6 @@ export interface Props {
   price: number
 }
 
-const NamespaceCardControls = styled(CardControls, {
-  height: 128
-})
-
 export default function NamespaceCard(props: Props) {
   const formatPrice = useCallback((price: number) => {
     return `${price.toFixed(3)} ETH`
@@ -36,7 +31,11 @@ export default function NamespaceCard(props: Props) {
   return (
     <Card>
       <BasicCardSquareImg src={props.imageURL} />
-      <NamespaceCardControls>
+      <CardControls
+        css={{
+          height: 128
+        }}
+      >
         <CardTitle css={{ marginBottom: '$2' }} title={props.title}>
           {props.title}
         </CardTitle>
@@ -56,7 +55,7 @@ export default function NamespaceCard(props: Props) {
             <Txt primary3>Buy now</Txt>
           </Button>
         </ButtonContainer>
-      </NamespaceCardControls>
+      </CardControls>
     </Card>
   )
 }
