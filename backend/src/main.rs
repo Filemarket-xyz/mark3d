@@ -23,9 +23,10 @@ async fn main() -> Result<(), web3::Error> {
     let mut blocks = web3.eth_subscribe().subscribe_new_heads().await?;
 
     let mut c = 0;
-    while let Some(Ok(b)) = blocks.next().await {
+    while let Some(b) = blocks.next().await {
         c += 1;
-        println!("{c}\n\n{b:#?}\n");
+        let block = b?;
+        println!("{c}\n\n{block:#?}\n");
     }
 
     // blocks
