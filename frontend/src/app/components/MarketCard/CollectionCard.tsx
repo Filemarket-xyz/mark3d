@@ -3,7 +3,7 @@ import { styled } from '../../../styles'
 import { textVariant } from '../../UIkit'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
 
-interface Props {
+export interface CollectionCardProps {
   imageUrl: string
   iconURL: string
   description: ReactNode
@@ -43,7 +43,7 @@ const CardIcon = styled('img', {
   objectPosition: 'center'
 })
 
-export default function CollectionCard(props: Props) {
+export default function CollectionCard(props: CollectionCardProps) {
   return (
     <BasicCard>
       <CardImg src={props.imageUrl} />
