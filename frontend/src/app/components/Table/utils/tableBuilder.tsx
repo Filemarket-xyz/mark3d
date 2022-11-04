@@ -18,6 +18,7 @@ export interface IRow {
 export interface IRowContent {
   description: string
   imageURLS: string[]
+  link: string
 }
 
 export class TableBuilder {

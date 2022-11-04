@@ -133,6 +133,7 @@ export const TableRow: FC<Props> = ({ children, content, contentTitle }) => {
           title={contentTitle}
           description={content.description}
           imageURLS={content.imageURLS}
+          link={content.link}
         />
       )}
     </ItemWithContent>
