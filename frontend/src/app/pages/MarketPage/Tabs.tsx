@@ -63,7 +63,7 @@ export default function Tabs() {
   const [tab, setTab] = useState<false | number>(false)
   const location = useLocation()
   useEffect(() => {
-    setTab(TABS[location.pathname.split('/').at(-1) as keyof typeof TABS])
+    setTab(TABS[location.pathname.split('/').at(-1) as keyof typeof TABS] ?? TABS.nfts)
   }, [])
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {

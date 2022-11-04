@@ -1,8 +1,8 @@
 import { styled } from '../../../styles'
 import { PageLayout } from '../../UIkit/PageLayout'
 import Tabs from './Tabs'
+import { Navigate, Outlet, RouteObject } from 'react-router'
 import NftSection from './NftSection'
-import { Outlet, RouteObject } from 'react-router'
 import CollectionSection from './CollectionSection'
 import CreatorSection from './CreatorSection'
 import NamespaceSection from './NamespaceSection'
@@ -12,6 +12,10 @@ const TabsContainer = styled('div', {
 })
 
 export const marketRoutes: RouteObject[] = [
+  {
+    path: '',
+    element: <Navigate to={'nfts'} />
+  },
   {
     path: 'nfts',
     element: <NftSection />
