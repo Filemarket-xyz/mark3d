@@ -1,5 +1,5 @@
-use web3::futures::StreamExt;
-use web3::types::{BlockId, BlockNumber};
+use web3::futures::{future, StreamExt};
+
 struct OraculConf {
     eth_api_url: String,
     contract_address: String,
@@ -20,13 +20,28 @@ async fn main() -> Result<(), web3::Error> {
             .unwrap(),
     );
 
-    let mut block_stream = web3.eth_subscribe().subscribe_new_heads().await?;
+    let mut blocks = web3.eth_subscribe().subscribe_new_heads().await?;
 
-    loop {
-        match block_stream.next().await {
-            Some(Ok(b)) => println!("{:#?}", b),
-            None => continue,
-            Some(Err(e)) => panic!("{}", e),
-        }
+    let mut c = 0;
+    while let Some(Ok(b)) = blocks.next().await {
+        c += 1;
+        println!("{c}\n\n{b:#?}\n");
     }
+
+    // blocks
+    //     .for_each_concurrent(1, |b| async move {
+    //         println!("{:#?}", b);
+    //         Ok(())
+    //     })
+    //     .await?;
+
+    // (&mut blocks)
+    //     .take(15)
+    //     .for_each(|x| {
+    //         println!("{:#?}", x);
+    //         future::ready(())
+    //     })
+    //     .await;
+
+    Ok(())
 }
