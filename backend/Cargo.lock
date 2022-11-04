@@ -19,6 +19,7 @@ name = "backend"
 version = "0.1.0"
 dependencies = [
  "dotenvy",
+ "hex",
  "serde",
  "serde_json",
  "tokio",

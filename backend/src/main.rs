@@ -20,27 +20,6 @@ async fn main() -> Result<(), web3::Error> {
             .unwrap(),
     );
 
-    let latest_block = web3
-        .eth()
-        .block(BlockId::Number(BlockNumber::Latest))
-        .await
-        .unwrap()
-        .unwrap();
-
-    for transaction_hash in latest_block.transactions {
-        if let Ok(Some(eth_tx)) = web3.eth().transaction_receipt(transaction_hash).await {
-            if let Some(to) = eth_tx.to {
-                let to: String = format!("{:x}", to);
-                println!("{}", to);
-            } else {
-                continue;
-            }
-        } else {
-            println!("An error occurred.");
-            continue;
-        }
-    }
-
     let mut block_stream = web3.eth_subscribe().subscribe_new_heads().await?;
 
     loop {
