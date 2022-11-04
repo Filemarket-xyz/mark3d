@@ -13,7 +13,7 @@ import {
   UserName
 } from './NFTCard'
 
-export interface Props {
+export interface NamespaceCardProps {
   imageURL: string
   title: string
   user: {
@@ -23,7 +23,7 @@ export interface Props {
   price: number
 }
 
-export default function NamespaceCard(props: Props) {
+export default function NamespaceCard(props: NamespaceCardProps) {
   const formatPrice = useCallback((price: number) => {
     return `${price.toFixed(3)} ETH`
   }, [])

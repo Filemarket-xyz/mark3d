@@ -3,7 +3,7 @@ import { styled } from '../../../styles'
 import { textVariant } from '../../UIkit'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
 
-interface Props {
+export interface CreatorCardProps {
   bgImageUrl: string
   user: {
     imageUrl: string
@@ -67,7 +67,7 @@ const Description = styled('p', {
   maxWidth: 215
 })
 
-export default function CreatorCard(props: Props) {
+export default function CreatorCard(props: CreatorCardProps) {
   return (
     <BasicCard>
       <BgImage src={props.bgImageUrl} />

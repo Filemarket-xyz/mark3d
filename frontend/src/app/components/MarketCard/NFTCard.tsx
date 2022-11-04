@@ -80,7 +80,7 @@ export const ButtonContainer = styled('div', {
   justifyContent: 'center'
 })
 
-export interface Props {
+export interface NFTCardProps {
   imageURL: string
   title: string
   collection: string
@@ -95,7 +95,7 @@ export const Card = styled(BasicCard, {
   ...generateHoverStylesForCard()
 })
 
-export default function NFTCard(props: Props) {
+export default function NFTCard(props: NFTCardProps) {
   const formatPrice = useCallback((price: number) => {
     return `${price.toFixed(3)} ETH`
   }, [])
