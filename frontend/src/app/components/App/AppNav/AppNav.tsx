@@ -11,7 +11,7 @@ const mobileBp: BreakpointsOptions = 'md'
 export const AppNav: FC = () => (
   <NavBar
     mobileBp={mobileBp}
-    brand={<AppLogoButton to="/"/>}
+    brand={<AppLogoButton to="/" hideNameIn={mobileBp}/>}
     items={paths}
     actions={
       <ConnectWidget
