@@ -9,6 +9,7 @@
     "node": ">= 18.12.0"
   },
   "scripts": {
+    "prepare": "cd ../sol-contracts && yarn && yarn hardhat compile && cp -r artifacts ../frontend/src/artifacts && cp -r typechain-types ../frontend/src/typechain-types",
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
@@ -24,6 +25,8 @@
     "@web3modal/react": "^2.0.0-alpha.7",
     "ethers": "^5.7.2",
     "jdenticon": "^3.2.0",
+    "node-rsa": "^1.1.1",
+    "openpgp": "^5.5.0",
     "react": "^18.2.0",
     "react-aria": "^3.20.0",
     "react-dom": "^18.2.0",
