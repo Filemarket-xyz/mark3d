@@ -1,6 +1,6 @@
 use web3::{
     transports::WebSocket,
-    types::{Block, BlockId, BlockNumber, TransactionId, H256},
+    types::{Block, BlockId, BlockNumber, Transaction},
     Web3,
 };
 
@@ -28,7 +28,7 @@ async fn main() -> Result<(), web3::Error> {
         let new_block_num: u64 = match get_latest_block_num(&web3).await {
             Ok(n) => {
                 if n == old_block_num {
-                    tokio::time::sleep(tokio::time::Duration::from_millis(20000)).await;
+                    tokio::time::sleep(tokio::time::Duration::from_millis(200)).await;
                     continue;
                 } else {
                     n
@@ -37,34 +37,22 @@ async fn main() -> Result<(), web3::Error> {
             Err(_) => continue,
         };
 
-        for i in old_block_num..=new_block_num {
-            let block = match get_block(i+1, &web3).await {
+        for i in old_block_num + 1..=new_block_num {
+            let block = match get_block(i, &web3).await {
                 Ok(b) => b,
                 Err(_) => continue,
             };
 
             println!("BLOCK: {:#?}", block);
 
-            for transaction_hash in block.transactions {
-                if let Ok(Some(eth_tx)) = web3
-                    .eth()
-                    .transaction(TransactionId::Hash(transaction_hash))
-                    .await
-                {
-                    println!("TX: {:#?}", eth_tx);
-                } else {
-                    println!("An error occurred.");
-                    continue;
-                }
+            for tx in block.transactions {
+                println!("TX: {:#?}", tx);
             }
 
-            old_block_num = match block.number {
-                Some(n) => n.as_u64(),
-                None => continue,
-            };
+            old_block_num = new_block_num;
         }
 
-        tokio::time::sleep(tokio::time::Duration::from_millis(20000)).await;
+        tokio::time::sleep(tokio::time::Duration::from_millis(200)).await;
     }
 }
 
@@ -83,11 +71,14 @@ async fn get_latest_block_num(web3: &Web3<WebSocket>) -> Result<u64, web3::Error
     }
 }
 
-async fn get_block(block_num: u64, web3: &Web3<WebSocket>) -> Result<Block<H256>, web3::Error> {
+async fn get_block(
+    block_num: u64,
+    web3: &Web3<WebSocket>,
+) -> Result<Block<Transaction>, web3::Error> {
     let block_num: [u64; 1] = [block_num];
     let block = web3
         .eth()
-        .block(BlockId::Number(BlockNumber::Number(web3::types::U64(
+        .block_with_txs(BlockId::Number(BlockNumber::Number(web3::types::U64(
             block_num,
         ))))
         .await;
