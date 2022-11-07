@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react'
 import { styled } from '../../../styles'
 import { textVariant } from '../../UIkit'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
+import { BorderLayout } from './NFTCard'
 
 export interface CreatorCardProps {
   bgImageUrl: string
@@ -69,16 +70,18 @@ const Description = styled('p', {
 
 export default function CreatorCard(props: CreatorCardProps) {
   return (
-    <BasicCard>
-      <BgImage src={props.bgImageUrl} />
-      <Controls>
-        <UserImg src={props.user.imageUrl} />
-        <UserContainer>
-          <UserName>={props.user.name}</UserName>
-          <UserSocial>{props.user.social}</UserSocial>
-        </UserContainer>
-        <Description>{props.description}</Description>
-      </Controls>
-    </BasicCard>
+    <BorderLayout>
+      <BasicCard>
+        <BgImage src={props.bgImageUrl} />
+        <Controls>
+          <UserImg src={props.user.imageUrl} />
+          <UserContainer>
+            <UserName>={props.user.name}</UserName>
+            <UserSocial>{props.user.social}</UserSocial>
+          </UserContainer>
+          <Description>{props.description}</Description>
+        </Controls>
+      </BasicCard>
+    </BorderLayout>
   )
 }

@@ -2,6 +2,7 @@ import React, { useCallback } from 'react'
 import { Button, Txt } from '../../UIkit'
 import { BasicCardSquareImg } from './BasicCard'
 import {
+  BorderLayout,
   ButtonContainer,
   Card,
   CardControls,
@@ -29,33 +30,35 @@ export default function NamespaceCard(props: NamespaceCardProps) {
   }, [])
 
   return (
-    <Card>
-      <BasicCardSquareImg src={props.imageURL} />
-      <CardControls
-        css={{
-          height: 128
-        }}
-      >
-        <CardTitle css={{ marginBottom: '$2' }} title={props.title}>
-          {props.title}
-        </CardTitle>
-        <PriceInfo>
-          <UserContainer>
-            <UserImg src={props.user.img} />
-            <UserName>{props.user.username}</UserName>
-          </UserContainer>
-          <Price>{formatPrice(props.price)}</Price>
-        </PriceInfo>
-        <ButtonContainer>
-          <Button
-            primary
-            small={'true'}
-            css={{ marginLeft: 'auto', marginRight: 'auto' }}
-          >
-            <Txt primary3>Buy now</Txt>
-          </Button>
-        </ButtonContainer>
-      </CardControls>
-    </Card>
+    <BorderLayout>
+      <Card>
+        <BasicCardSquareImg src={props.imageURL} />
+        <CardControls
+          css={{
+            height: 128
+          }}
+        >
+          <CardTitle css={{ marginBottom: '$2' }} title={props.title}>
+            {props.title}
+          </CardTitle>
+          <PriceInfo>
+            <UserContainer>
+              <UserImg src={props.user.img} />
+              <UserName>{props.user.username}</UserName>
+            </UserContainer>
+            <Price>{formatPrice(props.price)}</Price>
+          </PriceInfo>
+          <ButtonContainer>
+            <Button
+              primary
+              small={'true'}
+              css={{ marginLeft: 'auto', marginRight: 'auto' }}
+            >
+              <Txt primary3>Buy now</Txt>
+            </Button>
+          </ButtonContainer>
+        </CardControls>
+      </Card>
+    </BorderLayout>
   )
 }

@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react'
 import { styled } from '../../../styles'
 import { textVariant } from '../../UIkit'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
+import { BorderLayout } from './NFTCard'
 
 export interface CollectionCardProps {
   imageUrl: string
@@ -45,12 +46,14 @@ const CardIcon = styled('img', {
 
 export default function CollectionCard(props: CollectionCardProps) {
   return (
-    <BasicCard>
-      <CardImg src={props.imageUrl} />
-      <CardControls>
-        <CardIcon src={props.iconURL} />
-        <Description>{props.description}</Description>
-      </CardControls>
-    </BasicCard>
+    <BorderLayout>
+      <BasicCard>
+        <CardImg src={props.imageUrl} />
+        <CardControls>
+          <CardIcon src={props.iconURL} />
+          <Description>{props.description}</Description>
+        </CardControls>
+      </BasicCard>
+    </BorderLayout>
   )
 }

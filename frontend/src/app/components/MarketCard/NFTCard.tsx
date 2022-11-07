@@ -99,7 +99,7 @@ export interface NFTCardProps {
 
 export const Card = styled(BasicCard, {})
 
-const BorderLayout = styled('div', {
+export const BorderLayout = styled('div', {
   background: 'transparent',
   width: '259px',
   height: '324px',
