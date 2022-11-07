@@ -36,6 +36,11 @@ const generateHoverStylesForCard = () => {
     transitionDelay: '0s'
   }
 
+  hoverStyles['&:hover'] = {
+    background: '$gradients$main',
+    transitionDelay: '0s'
+  }
+
   return hoverStyles
 }
 
@@ -92,7 +97,16 @@ export interface NFTCardProps {
   price: number
 }
 
-export const Card = styled(BasicCard, {
+export const Card = styled(BasicCard, {})
+
+const BorderLayout = styled('div', {
+  background: 'transparent',
+  width: '259px',
+  height: '324px',
+  borderRadius: 'calc($3 + 2px)',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
   ...generateHoverStylesForCard()
 })
 
@@ -102,28 +116,30 @@ export default function NFTCard(props: NFTCardProps) {
   }, [])
 
   return (
-    <Card>
-      <BasicCardSquareImg src={props.imageURL} />
-      <CardControls>
-        <CardTitle title={props.title}>{props.title}</CardTitle>
-        <CardCollection>{props.collection}</CardCollection>
-        <PriceInfo>
-          <UserContainer>
-            <UserImg src={props.user.img} />
-            <UserName>{props.user.username}</UserName>
-          </UserContainer>
-          <Price>{formatPrice(props.price)}</Price>
-        </PriceInfo>
-        <ButtonContainer>
-          <Button
-            primary
-            small={'true'}
-            css={{ marginLeft: 'auto', marginRight: 'auto' }}
-          >
-            <Txt primary3>Buy now</Txt>
-          </Button>
-        </ButtonContainer>
-      </CardControls>
-    </Card>
+    <BorderLayout>
+      <Card>
+        <BasicCardSquareImg src={props.imageURL} />
+        <CardControls>
+          <CardTitle title={props.title}>{props.title}</CardTitle>
+          <CardCollection>{props.collection}</CardCollection>
+          <PriceInfo>
+            <UserContainer>
+              <UserImg src={props.user.img} />
+              <UserName>{props.user.username}</UserName>
+            </UserContainer>
+            <Price>{formatPrice(props.price)}</Price>
+          </PriceInfo>
+          <ButtonContainer>
+            <Button
+              primary
+              small={'true'}
+              css={{ marginLeft: 'auto', marginRight: 'auto' }}
+            >
+              <Txt primary3>Buy now</Txt>
+            </Button>
+          </ButtonContainer>
+        </CardControls>
+      </Card>
+    </BorderLayout>
   )
 }
