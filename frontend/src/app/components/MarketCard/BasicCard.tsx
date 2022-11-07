@@ -18,7 +18,8 @@ export const BasicCardSquareImg = styled('img', {
   borderRadius: 'inherit',
   borderBottomLeftRadius: '0',
   borderBottomRightRadius: '0',
-  border: '1px solid rgba(255, 255, 255, 0.5)'
+  outline: '1px solid rgba(255, 255, 255, 0.5)',
+  outlineOffset: '-1px'
 })
 
 export const BasicCardControls = styled('div', {
