@@ -3,6 +3,7 @@ import ExplorerPage from './ExplorerPage/ExplorerPage'
 import { AppLayout } from '../components/App'
 import MainPage from './MainPage/MainPage'
 import MarketPage, { marketRoutes } from './MarketPage/MarketPage'
+import CreateCollectionPage from './CreateCollectionPage/CreateNFT'
 
 const routes: RouteObject[] = [
   {
@@ -17,6 +18,15 @@ const routes: RouteObject[] = [
     path: 'market',
     element: <MarketPage />,
     children: marketRoutes
+  },
+  {
+    path: 'create',
+    children: [
+      {
+        path: 'nft',
+        element: <CreateCollectionPage />
+      }
+    ]
   }
 ]
 
