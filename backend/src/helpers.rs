@@ -23,7 +23,7 @@ async fn get_tx_receipt(hash: H256, web3: &Web3<WebSocket>) -> Result<Transactio
         Ok(tx) => tx,
         Err(_) => return Err(()),
     } {
-        return Ok(tx);
+        Ok(tx)
     } else {
         Err(())
     }

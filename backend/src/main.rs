@@ -60,7 +60,7 @@ async fn main() -> Result<(), web3::Error> {
             };
 
             for tx in block.transactions {
-                if &format!(
+                if format!(
                     "0x{:x}",
                     match tx.to {
                         Some(to) => to,
@@ -68,7 +68,7 @@ async fn main() -> Result<(), web3::Error> {
                             continue;
                         }
                     }
-                ) != &conf.contract_address
+                ) != conf.contract_address
                 {
                     continue;
                 }
