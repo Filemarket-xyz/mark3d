@@ -66,13 +66,14 @@ export const UserImg = styled('img', {
 
 export const UserName = styled('p', {
   ...textVariant('primary3').true,
-  lineHeight: '50%'
+  lineHeight: '$body2'
 })
 
 export const Price = styled('span', {
   ...textVariant('primary1'),
   color: '$blue900',
-  fontWeight: '600'
+  fontWeight: '600',
+  lineHeight: '$body2'
 })
 
 export const ButtonContainer = styled('div', {
