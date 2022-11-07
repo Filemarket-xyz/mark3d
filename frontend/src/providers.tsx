@@ -7,7 +7,7 @@ import { NextUIProvider } from '@nextui-org/react'
 export const Providers: FC<PropsWithChildren> = ({ children }) => {
   return (
     <>
-      <NextUIProvider>
+      <NextUIProvider disableBaseline>
         <StitchesProvider>
           {children}
         </StitchesProvider>
