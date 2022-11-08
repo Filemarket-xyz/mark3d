@@ -1,7 +1,6 @@
-import { Input } from '@nextui-org/react'
 import React from 'react'
 import { styled } from '../../../styles'
-import { PageLayout, textVariant } from '../../UIkit'
+import { Container, PageLayout, textVariant } from '../../UIkit'
 import ImgIcon from './img/image-icon.svg'
 
 const Title = styled('h1', {
@@ -12,12 +11,6 @@ const Title = styled('h1', {
 const SubTitle = styled('h2', {
   ...textVariant('primary1').true,
   marginBottom: '$3'
-})
-
-const Description = styled('p', {
-  fontSize: '12px',
-  color: '$gray500',
-  marginBottom: '$2'
 })
 
 const Empowered = styled('span', {
@@ -66,37 +59,61 @@ const FileDescriptionList = styled('ul', {
 
 const FileDescriptionItem = styled('li', {})
 
+const Input = styled('input', {
+  backgroundColor: '$white',
+  borderRadius: '$3',
+  padding: '14px $3',
+  outline: 'none',
+  ...textVariant('secondary1').true,
+  color: '$blue900',
+  border: '2px solid transparent',
+  boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)',
+  '&:placeholder': {
+    color: 'rgba($white, 0.6)'
+  },
+  '&:focus': {
+    background:
+      'linear-gradient($white 0 0) padding-box, linear-gradient(to right, #00DCFF80, #E14BEC80) border-box',
+    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)'
+  },
+  width: '100%'
+})
+
 export default function CreateCollectionPage() {
   return (
     <PageLayout css={{ minHeight: '100vh' }}>
-      <Title>Create New Collection</Title>
+      <Container
+        css={{
+          maxWidth: '$breakpoints$sm',
+          marginLeft: 'auto',
+          marginRight: 'auto'
+        }}
+      >
+        <Title>Create New Collection</Title>
 
-      <SubTitle>Upload a Logo</SubTitle>
-      <Description>
-        <Empowered>Formats:</Empowered> FBX, 3DS, MAX, BLEND, OBJ, C4D, MB, MA,
-        LWO, LXO, SKP, STL, UASSET, DAE, PLY, GLB, GLTF, USDF, UNITYPACKAGE.{' '}
-        <Empowered>Max size:</Empowered> 100 MB.
-      </Description>
-      <File htmlFor='inputTag'>
-        <FileImageContainer>
-          <ImageIcon src={ImgIcon} />
-          <p>Choose photo</p>
-        </FileImageContainer>
-        <FileDescriptionList>
-          <FileDescriptionItem>
-            <Empowered>Recommended size:</Empowered> 300x300 px
-          </FileDescriptionItem>
-          <FileDescriptionItem>
-            <Empowered>Formats:</Empowered> JPG, PNG, or GIF
-          </FileDescriptionItem>
-          <FileDescriptionItem>
-            <Empowered>Max size:</Empowered> 100 MB
-          </FileDescriptionItem>
-        </FileDescriptionList>
-        <FileInput id='inputTag' type='file' />
-      </File>
-      <SubTitle>Name</SubTitle>
-      <Input css={{ backgroundColor: '#fff' }} placeholder='Item name' />
+        <SubTitle>Upload a Logo</SubTitle>
+
+        <File htmlFor='inputTag'>
+          <FileImageContainer>
+            <ImageIcon src={ImgIcon} />
+            <p>Choose photo</p>
+          </FileImageContainer>
+          <FileDescriptionList>
+            <FileDescriptionItem>
+              <Empowered>Recommended size:</Empowered> 300x300 px
+            </FileDescriptionItem>
+            <FileDescriptionItem>
+              <Empowered>Formats:</Empowered> JPG, PNG, or GIF
+            </FileDescriptionItem>
+            <FileDescriptionItem>
+              <Empowered>Max size:</Empowered> 100 MB
+            </FileDescriptionItem>
+          </FileDescriptionList>
+          <FileInput id='inputTag' type='file' />
+        </File>
+        <SubTitle>Name</SubTitle>
+        <Input placeholder='Collection name' />
+      </Container>
     </PageLayout>
   )
 }
