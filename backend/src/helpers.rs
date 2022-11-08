@@ -32,9 +32,10 @@ pub struct FraudReported {
 }
 
 pub async fn get_contract(env_var: &str) -> web3::ethabi::Contract {
-    let abi_bytes = tokio::fs::read(env::var(env_var).expect(&format!("env err ({env_var})")))
-        .await
-        .expect("invalid hex");
+    let abi_bytes =
+        tokio::fs::read(env::var(env_var).unwrap_or_else(|_| panic!("env err ({env_var})")))
+            .await
+            .expect("invalid hex");
 
     let full_json_with_abi: serde_json::Value =
         serde_json::from_slice(&abi_bytes).expect("parse json abi failed");
