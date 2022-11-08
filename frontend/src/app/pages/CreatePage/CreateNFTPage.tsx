@@ -2,6 +2,7 @@ import React from 'react'
 import { styled } from '../../../styles'
 import { Button, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
+import PostfixedInput from '../../UIkit/Form/PostfixedInput'
 import { TextArea } from '../../UIkit/Form/Textarea'
 import {
   Form,
@@ -78,8 +79,7 @@ export default function CreateNftPage() {
 
         <FormControl>
           <Label>Price</Label>
-          {/* TODO MAKE INPUT WITH POSTFIX */}
-          <Input placeholder='Enter price for one piece' />
+          <PostfixedInput placeholder='Enter price for one piece' postfix='ETH'/>
         </FormControl>
 
         <FormControl>
