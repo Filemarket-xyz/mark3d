@@ -8,10 +8,11 @@ const Title = styled('h1', {
   marginBottom: '$4'
 })
 
-const SubTitle = styled('h2', {
+const SubTitle = styled('label', {
   ...textVariant('primary1').true,
   marginBottom: '$3',
-  color: '$blue900'
+  color: '$blue900',
+  display: 'block'
 })
 
 const Empowered = styled('span', {
@@ -85,6 +86,27 @@ const Input = styled('input', {
   width: '100%'
 })
 
+const TextArea = styled('textarea', {
+  backgroundColor: '$white',
+  borderRadius: '$3',
+  padding: '14px $3',
+  outline: 'none',
+  ...textVariant('secondary1').true,
+  color: '$blue900',
+  border: '2px solid transparent',
+  boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)',
+  '&:placeholder': {
+    color: '#a1a1ab'
+  },
+  '&:focus': {
+    background:
+      'linear-gradient($white 0 0) padding-box, linear-gradient(to right, #00DCFF80, #E14BEC80) border-box',
+    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)'
+  },
+  width: '100%',
+  resize: 'vertical'
+})
+
 const FormControl = styled('div', {
   marginBottom: '$4'
 })
@@ -136,7 +158,7 @@ export default function CreateCollectionPage() {
           <SubTitle>
             Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
           </SubTitle>
-          <Input placeholder='Description of your token collection' />
+          <TextArea placeholder='Description of your token collection' />
         </FormControl>
 
         <FormControl>
@@ -144,7 +166,9 @@ export default function CreateCollectionPage() {
           <Input placeholder='Short url' />
         </FormControl>
 
-        <Button type='submit' primary>Mint</Button>
+        <Button type='submit' primary>
+          Mint
+        </Button>
       </Form>
     </PageLayout>
   )
