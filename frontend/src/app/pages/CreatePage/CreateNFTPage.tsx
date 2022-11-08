@@ -1,27 +1,22 @@
-import { Input } from '@nextui-org/react'
 import React from 'react'
 import { styled } from '../../../styles'
-import { PageLayout, textVariant } from '../../UIkit'
+import { Button, PageLayout, textVariant } from '../../UIkit'
+import { Input } from '../../UIkit/Form/Input'
+import { TextArea } from '../../UIkit/Form/Textarea'
+import {
+  Form,
+  FormControl,
+  Label,
+  TextBold,
+  TextGray,
+  Title
+} from './CreateCollectionPage'
 import BoxImage from './img/box.svg'
-
-const Title = styled('h1', {
-  ...textVariant('h3').true,
-  marginBottom: '$4'
-})
-
-const SubTitle = styled('h2', {
-  ...textVariant('primary1').true,
-  marginBottom: '$3'
-})
 
 const Description = styled('p', {
   fontSize: '12px',
   color: '$gray500',
   marginBottom: '$2'
-})
-
-const Empowered = styled('span', {
-  fontWeight: 600
 })
 
 const File = styled('label', {
@@ -58,22 +53,55 @@ const BoxLabel = styled('span', {
 
 export default function CreateNftPage() {
   return (
-    <PageLayout css={{ minHeight: '100vh' }}>
-      <Title>Create New NFT</Title>
+    <PageLayout css={{ minHeight: '100vh', paddingBottom: '$4' }}>
+      <Form>
+        <Title>Create New NFT</Title>
+        <FormControl>
+          <Label css={{ marginBottom: '$3' }}>Upload a 3D model</Label>
+          <Description>
+            <TextBold>Formats:</TextBold> FBX, 3DS, MAX, BLEND, OBJ, C4D, MB,
+            MA, LWO, LXO, SKP, STL, UASSET, DAE, PLY, GLB, GLTF, USDF,
+            UNITYPACKAGE.
+            <TextBold>Max size:</TextBold> 100 MB.
+          </Description>
+          <File htmlFor='inputTag'>
+            <Box src={BoxImage} />
+            <BoxLabel>Choose File</BoxLabel>
+            <FileInput id='inputTag' type='file' />
+          </File>
+        </FormControl>
 
-      <SubTitle>Upload a 3D model</SubTitle>
-      <Description>
-        <Empowered>Formats:</Empowered> FBX, 3DS, MAX, BLEND, OBJ, C4D, MB, MA,
-        LWO, LXO, SKP, STL, UASSET, DAE, PLY, GLB, GLTF, USDF, UNITYPACKAGE.{' '}
-        <Empowered>Max size:</Empowered> 100 MB.
-      </Description>
-      <File htmlFor='inputTag'>
-        <Box src={BoxImage} />
-        <BoxLabel>Choose File</BoxLabel>
-        <FileInput id='inputTag' type='file' />
-      </File>
-      <SubTitle>Name</SubTitle>
-      <Input css={{ backgroundColor: '#fff' }} placeholder='Item name' />
+        <FormControl>
+          <Label>Name</Label>
+          <Input placeholder='Item name' />
+        </FormControl>
+
+        <FormControl>
+          <Label>Price</Label>
+          {/* TODO MAKE INPUT WITH POSTFIX */}
+          <Input placeholder='Enter price for one piece' />
+        </FormControl>
+
+        <FormControl>
+          <Label>Collection</Label>
+          {/* TODO MAKE SELECT */}
+          <Input placeholder='Select collection' />
+        </FormControl>
+
+        <FormControl>
+          <Label>
+            Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
+          </Label>
+          <TextArea placeholder='Description of your item' />
+        </FormControl>
+
+        <FormControl>
+          <Label>Supply</Label>
+          <Input type={'number'} placeholder='Number of copies' />
+        </FormControl>
+
+        <Button primary type='submit'>Mint</Button>
+      </Form>
     </PageLayout>
   )
 }

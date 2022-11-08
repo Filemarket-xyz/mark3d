@@ -22,4 +22,9 @@ export const inputStyles = {
   width: '100%'
 }
 
-export const Input = styled('input', { ...inputStyles })
+export const Input = styled('input', {
+  ...inputStyles,
+  '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button,': {
+    appearance: 'none'
+  }
+})

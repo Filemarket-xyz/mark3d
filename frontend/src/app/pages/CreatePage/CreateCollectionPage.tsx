@@ -6,23 +6,23 @@ import PrefixedInput from '../../UIkit/Form/PrefixedInput'
 import { TextArea } from '../../UIkit/Form/Textarea'
 import ImgIcon from './img/image-icon.svg'
 
-const Title = styled('h1', {
+export const Title = styled('h1', {
   ...textVariant('h3').true,
   marginBottom: '$4'
 })
 
-const Label = styled('label', {
+export const Label = styled('label', {
   ...textVariant('primary1').true,
-  marginBottom: '$3',
+  marginBottom: '$2',
   color: '$blue900',
   display: 'block'
 })
 
-const TextBold = styled('span', {
+export const TextBold = styled('span', {
   fontWeight: 600
 })
 
-const TextGray = styled('span', {
+export const TextGray = styled('span', {
   color: '#a1a1ab'
 })
 
@@ -31,7 +31,6 @@ const File = styled('label', {
   display: 'inline-flex',
   gap: '$4',
   alignItems: 'center',
-  marginBottom: '$4',
   cursor: 'pointer',
   '@sm': {
     flexDirection: 'column',
@@ -73,11 +72,11 @@ const FileDescriptionList = styled('ul', {
 
 const FileDescriptionItem = styled('li', {})
 
-const FormControl = styled('div', {
+export const FormControl = styled('div', {
   marginBottom: '$4'
 })
 
-const Form = styled('form', {
+export const Form = styled('form', {
   maxWidth: '$breakpoints$sm',
   marginLeft: 'auto',
   marginRight: 'auto'
@@ -89,26 +88,28 @@ export default function CreateCollectionPage() {
       <Form>
         <Title>Create New Collection</Title>
 
-        <Label>Upload a Logo</Label>
+        <FormControl>
+          <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
 
-        <File htmlFor='inputTag'>
-          <FileImageContainer>
-            <ImageIcon src={ImgIcon} />
-            <p>Choose photo</p>
-          </FileImageContainer>
-          <FileDescriptionList>
-            <FileDescriptionItem>
-              <TextBold>Recommended size:</TextBold> 300x300 px
-            </FileDescriptionItem>
-            <FileDescriptionItem>
-              <TextBold>Formats:</TextBold> JPG, PNG, or GIF
-            </FileDescriptionItem>
-            <FileDescriptionItem>
-              <TextBold>Max size:</TextBold> 100 MB
-            </FileDescriptionItem>
-          </FileDescriptionList>
-          <FileInput id='inputTag' type='file' />
-        </File>
+          <File htmlFor='inputTag'>
+            <FileImageContainer>
+              <ImageIcon src={ImgIcon} />
+              <p>Choose photo</p>
+            </FileImageContainer>
+            <FileDescriptionList>
+              <FileDescriptionItem>
+                <TextBold>Recommended size:</TextBold> 300x300 px
+              </FileDescriptionItem>
+              <FileDescriptionItem>
+                <TextBold>Formats:</TextBold> JPG, PNG, or GIF
+              </FileDescriptionItem>
+              <FileDescriptionItem>
+                <TextBold>Max size:</TextBold> 100 MB
+              </FileDescriptionItem>
+            </FileDescriptionList>
+            <FileInput id='inputTag' type='file' />
+          </File>
+        </FormControl>
 
         <FormControl>
           <Label>Name</Label>
