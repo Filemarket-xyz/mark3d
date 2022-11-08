@@ -1,6 +1,9 @@
 import React from 'react'
 import { styled } from '../../../styles'
 import { Button, PageLayout, textVariant } from '../../UIkit'
+import { Input } from '../../UIkit/Form/Input'
+import PrefixedInput from '../../UIkit/Form/PrefixedInput'
+import { TextArea } from '../../UIkit/Form/Textarea'
 import ImgIcon from './img/image-icon.svg'
 
 const Title = styled('h1', {
@@ -8,14 +11,14 @@ const Title = styled('h1', {
   marginBottom: '$4'
 })
 
-const SubTitle = styled('label', {
+const Label = styled('label', {
   ...textVariant('primary1').true,
   marginBottom: '$3',
   color: '$blue900',
   display: 'block'
 })
 
-const Empowered = styled('span', {
+const TextBold = styled('span', {
   fontWeight: 600
 })
 
@@ -70,48 +73,6 @@ const FileDescriptionList = styled('ul', {
 
 const FileDescriptionItem = styled('li', {})
 
-const Input = styled('input', {
-  backgroundColor: '$white',
-  borderRadius: '$3',
-  height: 48,
-  paddingLR: '$3',
-  outline: 'none',
-  ...textVariant('secondary1').true,
-  color: '$blue900',
-  border: '2px solid transparent',
-  boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)',
-  '&:placeholder': {
-    color: '#a1a1ab'
-  },
-  '&:focus': {
-    background:
-      'linear-gradient($white 0 0) padding-box, linear-gradient(to right, #00DCFF80, #E14BEC80) border-box',
-    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)'
-  },
-  width: '100%'
-})
-
-const TextArea = styled('textarea', {
-  backgroundColor: '$white',
-  borderRadius: '$3',
-  padding: '14px $3',
-  outline: 'none',
-  ...textVariant('secondary1').true,
-  color: '$blue900',
-  border: '2px solid transparent',
-  boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)',
-  '&:placeholder': {
-    color: '#a1a1ab'
-  },
-  '&:focus': {
-    background:
-      'linear-gradient($white 0 0) padding-box, linear-gradient(to right, #00DCFF80, #E14BEC80) border-box',
-    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)'
-  },
-  width: '100%',
-  resize: 'vertical'
-})
-
 const FormControl = styled('div', {
   marginBottom: '$4'
 })
@@ -122,43 +83,13 @@ const Form = styled('form', {
   marginRight: 'auto'
 })
 
-const InputWithPrefix = styled('div', {
-  backgroundColor: '$white',
-  borderRadius: '$3',
-  height: 48,
-  paddingLR: '$3',
-  outline: 'none',
-  ...textVariant('secondary1').true,
-  color: '$blue900',
-  border: '2px solid transparent',
-  boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)',
-  '&:placeholder': {
-    color: '#a1a1ab'
-  },
-  '&:focus-within': {
-    background:
-      'linear-gradient($white 0 0) padding-box, linear-gradient(to right, #00DCFF80, #E14BEC80) border-box',
-    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)'
-  },
-  width: '100%',
-  display: 'flex',
-  gap: '$2',
-  alignItems: 'center'
-})
-
-const InputPrefix = styled('span', {
-  color: '$gray500',
-  ...textVariant('secondary1').true,
-  fontWeight: 600
-})
-
 export default function CreateCollectionPage() {
   return (
     <PageLayout css={{ minHeight: '100vh', paddingBottom: '$4' }}>
       <Form>
         <Title>Create New Collection</Title>
 
-        <SubTitle>Upload a Logo</SubTitle>
+        <Label>Upload a Logo</Label>
 
         <File htmlFor='inputTag'>
           <FileImageContainer>
@@ -167,54 +98,41 @@ export default function CreateCollectionPage() {
           </FileImageContainer>
           <FileDescriptionList>
             <FileDescriptionItem>
-              <Empowered>Recommended size:</Empowered> 300x300 px
+              <TextBold>Recommended size:</TextBold> 300x300 px
             </FileDescriptionItem>
             <FileDescriptionItem>
-              <Empowered>Formats:</Empowered> JPG, PNG, or GIF
+              <TextBold>Formats:</TextBold> JPG, PNG, or GIF
             </FileDescriptionItem>
             <FileDescriptionItem>
-              <Empowered>Max size:</Empowered> 100 MB
+              <TextBold>Max size:</TextBold> 100 MB
             </FileDescriptionItem>
           </FileDescriptionList>
           <FileInput id='inputTag' type='file' />
         </File>
 
         <FormControl>
-          <SubTitle>Name</SubTitle>
+          <Label>Name</Label>
           <Input placeholder='Collection name' />
         </FormControl>
 
         <FormControl>
-          <SubTitle>Symbol</SubTitle>
+          <Label>Symbol</Label>
           <Input placeholder='Token symbol' />
         </FormControl>
 
         <FormControl>
-          <SubTitle>
+          <Label>
             Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
-          </SubTitle>
+          </Label>
           <TextArea placeholder='Description of your token collection' />
         </FormControl>
 
         <FormControl>
-          <SubTitle>URL</SubTitle>
-          <InputWithPrefix>
-            <InputPrefix>mark.3d/</InputPrefix>
-            <Input
-              css={{
-                paddingLR: 0,
-                borderRadius: 0,
-                border: 'none',
-                flexGrow: 1,
-                height: '100%',
-                boxShadow: 'none',
-                '&:focus': {
-                  boxShadow: 'none'
-                }
-              }}
-              placeholder='Short url'
-            />
-          </InputWithPrefix>
+          <Label>URL</Label>
+          <PrefixedInput
+            prefix='mark.3d/'
+            placeholder='Short URL'
+          ></PrefixedInput>
         </FormControl>
 
         <Button type='submit' primary>

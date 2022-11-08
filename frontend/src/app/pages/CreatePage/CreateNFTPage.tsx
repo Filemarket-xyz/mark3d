@@ -56,7 +56,7 @@ const BoxLabel = styled('span', {
   fontWeight: 600
 })
 
-export default function CreateNFTPage() {
+export default function CreateNftPage() {
   return (
     <PageLayout css={{ minHeight: '100vh' }}>
       <Title>Create New NFT</Title>
