@@ -2,7 +2,7 @@ import { Input } from '@nextui-org/react'
 import React from 'react'
 import { styled } from '../../../styles'
 import { PageLayout, textVariant } from '../../UIkit'
-import BoxImage from './img/box.svg'
+import ImgIcon from './img/image-icon.svg'
 
 const Title = styled('h1', {
   ...textVariant('h3').true,
@@ -25,51 +25,74 @@ const Empowered = styled('span', {
 })
 
 const File = styled('label', {
-  width: '100%',
-  height: '232px',
-  backgroundColor: '$white',
-  borderRadius: '16px',
-  backgroundImage: 'url("./img/box.svg")',
-  backgroundSize: '56px 45px',
-  backgroundPosition: 'center',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
+  borderRadius: '$3',
+  display: 'inline-flex',
+  gap: '$4',
   alignItems: 'center',
-  gap: '$3',
-  marginBottom: '$2',
+  marginBottom: '$4',
   cursor: 'pointer'
 })
 
-const Box = styled('img', {
-  width: 80,
-  height: 80
+const FileImageContainer = styled('div', {
+  width: 160,
+  height: 152,
+  backgroundColor: '$white',
+  color: '$blue500',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: '$2',
+  flexDirection: 'column',
+  borderRadius: '$3',
+  ...textVariant('primary1').true
+})
+
+const ImageIcon = styled('img', {
+  width: 64,
+  heigth: 64
 })
 
 const FileInput = styled('input', {
   display: 'none'
 })
 
-const BoxLabel = styled('span', {
-  ...textVariant('primary1').true,
-  color: '$blue500',
-  fontWeight: 600
+const FileDescriptionList = styled('ul', {
+  ...textVariant('secondary2').true,
+  color: '$gray500',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$2'
 })
+
+const FileDescriptionItem = styled('li', {})
 
 export default function CreateCollectionPage() {
   return (
     <PageLayout css={{ minHeight: '100vh' }}>
-      <Title>Create New NFT</Title>
+      <Title>Create New Collection</Title>
 
-      <SubTitle>Upload a 3D model</SubTitle>
+      <SubTitle>Upload a Logo</SubTitle>
       <Description>
         <Empowered>Formats:</Empowered> FBX, 3DS, MAX, BLEND, OBJ, C4D, MB, MA,
         LWO, LXO, SKP, STL, UASSET, DAE, PLY, GLB, GLTF, USDF, UNITYPACKAGE.{' '}
         <Empowered>Max size:</Empowered> 100 MB.
       </Description>
       <File htmlFor='inputTag'>
-        <Box src={BoxImage} />
-        <BoxLabel>Choose File</BoxLabel>
+        <FileImageContainer>
+          <ImageIcon src={ImgIcon} />
+          <p>Choose photo</p>
+        </FileImageContainer>
+        <FileDescriptionList>
+          <FileDescriptionItem>
+            <Empowered>Recommended size:</Empowered> 300x300 px
+          </FileDescriptionItem>
+          <FileDescriptionItem>
+            <Empowered>Formats:</Empowered> JPG, PNG, or GIF
+          </FileDescriptionItem>
+          <FileDescriptionItem>
+            <Empowered>Max size:</Empowered> 100 MB
+          </FileDescriptionItem>
+        </FileDescriptionList>
         <FileInput id='inputTag' type='file' />
       </File>
       <SubTitle>Name</SubTitle>
