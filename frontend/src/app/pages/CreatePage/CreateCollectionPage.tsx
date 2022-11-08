@@ -1,6 +1,6 @@
 import React from 'react'
 import { styled } from '../../../styles'
-import { Container, PageLayout, textVariant } from '../../UIkit'
+import { Button, PageLayout, textVariant } from '../../UIkit'
 import ImgIcon from './img/image-icon.svg'
 
 const Title = styled('h1', {
@@ -10,11 +10,16 @@ const Title = styled('h1', {
 
 const SubTitle = styled('h2', {
   ...textVariant('primary1').true,
-  marginBottom: '$3'
+  marginBottom: '$3',
+  color: '$blue900'
 })
 
 const Empowered = styled('span', {
   fontWeight: 600
+})
+
+const TextGray = styled('span', {
+  color: '#a1a1ab'
 })
 
 const File = styled('label', {
@@ -70,7 +75,7 @@ const Input = styled('input', {
   border: '2px solid transparent',
   boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)',
   '&:placeholder': {
-    color: 'rgba($white, 0.6)'
+    color: '#a1a1ab'
   },
   '&:focus': {
     background:
@@ -80,16 +85,20 @@ const Input = styled('input', {
   width: '100%'
 })
 
+const FormControl = styled('div', {
+  marginBottom: '$4'
+})
+
+const Form = styled('form', {
+  maxWidth: '$breakpoints$sm',
+  marginLeft: 'auto',
+  marginRight: 'auto'
+})
+
 export default function CreateCollectionPage() {
   return (
-    <PageLayout css={{ minHeight: '100vh' }}>
-      <Container
-        css={{
-          maxWidth: '$breakpoints$sm',
-          marginLeft: 'auto',
-          marginRight: 'auto'
-        }}
-      >
+    <PageLayout css={{ minHeight: '100vh', paddingBottom: '$4' }}>
+      <Form>
         <Title>Create New Collection</Title>
 
         <SubTitle>Upload a Logo</SubTitle>
@@ -112,9 +121,31 @@ export default function CreateCollectionPage() {
           </FileDescriptionList>
           <FileInput id='inputTag' type='file' />
         </File>
-        <SubTitle>Name</SubTitle>
-        <Input placeholder='Collection name' />
-      </Container>
+
+        <FormControl>
+          <SubTitle>Name</SubTitle>
+          <Input placeholder='Collection name' />
+        </FormControl>
+
+        <FormControl>
+          <SubTitle>Symbol</SubTitle>
+          <Input placeholder='Token symbol' />
+        </FormControl>
+
+        <FormControl>
+          <SubTitle>
+            Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
+          </SubTitle>
+          <Input placeholder='Description of your token collection' />
+        </FormControl>
+
+        <FormControl>
+          <SubTitle>URL</SubTitle>
+          <Input placeholder='Short url' />
+        </FormControl>
+
+        <Button type='submit' primary>Mint</Button>
+      </Form>
     </PageLayout>
   )
 }
