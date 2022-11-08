@@ -12,7 +12,7 @@ const InputWithPrefix = styled('div', {
 })
 
 const InputPostfix = styled('span', {
-  color: '#a1a1ab',
+  color: '$gray400',
   ...textVariant('primary1').true,
   fontWeight: 600
 })

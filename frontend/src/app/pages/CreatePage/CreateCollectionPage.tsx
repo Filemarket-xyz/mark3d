@@ -23,7 +23,7 @@ export const TextBold = styled('span', {
 })
 
 export const TextGray = styled('span', {
-  color: '#a1a1ab'
+  color: '$gray400'
 })
 
 const File = styled('label', {

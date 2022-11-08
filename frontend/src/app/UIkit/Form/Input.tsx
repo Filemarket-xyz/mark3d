@@ -12,7 +12,7 @@ export const inputStyles = {
   border: '2px solid transparent',
   boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)',
   '&:placeholder': {
-    color: '#a1a1ab'
+    color: '$gray400'
   },
   '&:focus': {
     background:
