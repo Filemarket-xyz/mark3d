@@ -1,4 +1,5 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom'
 import { styled } from '../../../styles'
 import { Button, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
@@ -15,6 +16,7 @@ import {
   Title
 } from './CreateCollectionPage'
 import BoxImage from './img/box.svg'
+import PlusIcon from './img/plus-icon.svg'
 
 const Description = styled('p', {
   fontSize: '12px',
@@ -54,6 +56,23 @@ const BoxLabel = styled('span', {
   fontWeight: 600
 })
 
+const AddCollectionButton = styled(Button, {
+  width: 48,
+  height: 48,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '$3',
+  minWidth: 0,
+  padding: 0,
+  backgroundColor: '$white'
+})
+
+const Icon = styled('img', {
+  width: 16,
+  height: 16
+})
+
 export default function CreateNftPage() {
   return (
     <PageLayout css={{ minHeight: '100vh', paddingBottom: '$4' }}>
@@ -91,6 +110,11 @@ export default function CreateNftPage() {
           <Label>Collection</Label>
           {/* TODO MAKE SELECT */}
           <Input placeholder='Select collection' />
+          <NavLink to={'../collection'}>
+            <AddCollectionButton>
+              <Icon src={PlusIcon} />
+            </AddCollectionButton>
+          </NavLink>
         </FormControl>
 
         <FormControl>
