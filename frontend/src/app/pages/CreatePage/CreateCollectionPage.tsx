@@ -62,7 +62,8 @@ const FileDescriptionItem = styled('li', {})
 const Input = styled('input', {
   backgroundColor: '$white',
   borderRadius: '$3',
-  padding: '14px $3',
+  height: 48,
+  paddingLR: '$3',
   outline: 'none',
   ...textVariant('secondary1').true,
   color: '$blue900',
