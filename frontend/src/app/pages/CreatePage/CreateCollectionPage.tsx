@@ -29,7 +29,12 @@ const File = styled('label', {
   gap: '$4',
   alignItems: 'center',
   marginBottom: '$4',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  '@sm': {
+    flexDirection: 'column',
+    alignItems: 'center',
+    display: 'flex'
+  }
 })
 
 const FileImageContainer = styled('div', {
