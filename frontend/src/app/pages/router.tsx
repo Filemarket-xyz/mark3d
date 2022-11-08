@@ -1,10 +1,9 @@
-import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom'
+import { createBrowserRouter, RouteObject } from 'react-router-dom'
 import ExplorerPage from './ExplorerPage/ExplorerPage'
 import { AppLayout } from '../components/App'
 import MainPage from './MainPage/MainPage'
 import MarketPage, { marketRoutes } from './MarketPage/MarketPage'
-import CreateNFTPage from './CreatePage/CreateNFTPage'
-import CreateCollectionPage from './CreatePage/CreateCollectionPage'
+import { createRoutes } from './CreatePage/routes'
 
 const routes: RouteObject[] = [
   {
@@ -22,20 +21,7 @@ const routes: RouteObject[] = [
   },
   {
     path: 'create',
-    children: [
-      {
-        path: 'nft',
-        element: <CreateNFTPage />
-      },
-      {
-        path: 'collection',
-        element: <CreateCollectionPage />
-      },
-      {
-        path: '',
-        element: <Navigate to={'collection'} />
-      }
-    ]
+    children: createRoutes
   }
 ]
 
