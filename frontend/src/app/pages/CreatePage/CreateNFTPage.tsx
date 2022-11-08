@@ -8,6 +8,8 @@ import {
   Form,
   FormControl,
   Label,
+  LabelWithCounter,
+  LetterCounter,
   TextBold,
   TextGray,
   Title
@@ -79,7 +81,10 @@ export default function CreateNftPage() {
 
         <FormControl>
           <Label>Price</Label>
-          <PostfixedInput placeholder='Enter price for one piece' postfix='ETH'/>
+          <PostfixedInput
+            placeholder='Enter price for one piece'
+            postfix='ETH'
+          />
         </FormControl>
 
         <FormControl>
@@ -89,9 +94,13 @@ export default function CreateNftPage() {
         </FormControl>
 
         <FormControl>
-          <Label>
-            Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
-          </Label>
+          <LabelWithCounter>
+            <Label>
+              Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
+            </Label>
+            <LetterCounter>0/1000</LetterCounter>
+          </LabelWithCounter>
+
           <TextArea placeholder='Description of your item' />
         </FormControl>
 
@@ -100,7 +109,9 @@ export default function CreateNftPage() {
           <Input type={'number'} placeholder='Number of copies' />
         </FormControl>
 
-        <Button primary type='submit'>Mint</Button>
+        <Button primary type='submit'>
+          Mint
+        </Button>
       </Form>
     </PageLayout>
   )

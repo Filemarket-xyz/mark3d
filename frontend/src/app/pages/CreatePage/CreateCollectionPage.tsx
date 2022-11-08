@@ -72,6 +72,18 @@ const FileDescriptionList = styled('ul', {
 
 const FileDescriptionItem = styled('li', {})
 
+export const LabelWithCounter = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between'
+})
+
+export const LetterCounter = styled('span', {
+  display: 'block',
+  ...textVariant('secondary3').true,
+  color: '$gray400'
+})
+
 export const FormControl = styled('div', {
   marginBottom: '$4'
 })
@@ -122,9 +134,13 @@ export default function CreateCollectionPage() {
         </FormControl>
 
         <FormControl>
-          <Label>
-            Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
-          </Label>
+          <LabelWithCounter>
+            <Label>
+              Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
+            </Label>
+            <LetterCounter>0/1000</LetterCounter>
+          </LabelWithCounter>
+
           <TextArea placeholder='Description of your token collection' />
         </FormControl>
 
