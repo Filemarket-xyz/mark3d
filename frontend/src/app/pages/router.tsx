@@ -2,8 +2,9 @@ import { createBrowserRouter, RouteObject } from 'react-router-dom'
 import ExplorerPage from './ExplorerPage/ExplorerPage'
 import { AppLayout } from '../components/App'
 import MainPage from './MainPage/MainPage'
-import MarketPage, { marketRoutes } from './MarketPage/MarketPage'
+import MarketPage from './MarketPage/MarketPage'
 import { createRoutes } from './CreatePage/routes'
+import { marketRoutes } from './MarketPage/routes'
 
 const routes: RouteObject[] = [
   {
