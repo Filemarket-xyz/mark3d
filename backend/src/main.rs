@@ -1,6 +1,9 @@
 mod helpers;
 
-use helpers::{get_block, get_event_logs, get_latest_block_num, OraculConf, TransferFraudReported};
+use helpers::{
+    get_block, get_contract, get_event_logs, get_latest_block_num, FraudReported, OraculConf,
+    TransferFraudReported,
+};
 use std::env;
 
 #[tokio::main]
@@ -18,20 +21,8 @@ async fn main() -> Result<(), web3::Error> {
             }
             addr
         },
-        contract: {
-            let abi_bytes = tokio::fs::read(env::var("ABI_PATH").expect("env err (ABI_PATH)"))
-                .await
-                .expect("invalid hex");
-
-            let full_json_with_abi: serde_json::Value =
-                serde_json::from_slice(&abi_bytes).expect("parse json abi failed");
-
-            let x =
-                serde_json::to_vec(full_json_with_abi.get("abi").expect("create abi bytes err"))
-                    .expect("create abi err");
-
-            web3::ethabi::Contract::load(&*x).expect("load contract err")
-        },
+        mark_3d_collection_contract: get_contract("MARK_3D_COLLECTION_PATH").await,
+        fraud_decider_web2_contract: get_contract("FRAUD_DECIDER_WEB2_PATH").await,
     };
 
     let web3 = web3::Web3::new(web3::transports::WebSocket::new(&conf.eth_api_url).await?);
@@ -40,7 +31,9 @@ async fn main() -> Result<(), web3::Error> {
         Err(e) => return Err(e),
     };
 
+    // TransferFraudReported listening
     loop {
+        // get latest block
         let new_block_num: u64 = match get_latest_block_num(&web3).await {
             Ok(n) => {
                 if n == old_block_num {
@@ -53,12 +46,14 @@ async fn main() -> Result<(), web3::Error> {
             Err(_) => continue,
         };
 
+        // blocks enumeration (from old to latest)
         for i in old_block_num + 1..=new_block_num {
             let block = match get_block(i, &web3).await {
                 Ok(b) => b,
                 Err(_) => continue,
             };
 
+            // TX enumeration
             for tx in block.transactions {
                 if format!(
                     "0x{:x}",
@@ -73,13 +68,18 @@ async fn main() -> Result<(), web3::Error> {
                     continue;
                 }
 
-                let tx_logs =
-                    match get_event_logs("TransferFraudReported", tx.hash, &web3, &conf.contract)
-                        .await
-                    {
-                        Ok(r) => r,
-                        Err(_) => continue,
-                    };
+                // try fetch TransferFraudReported event from Mark3dCollection contract
+                let tx_logs = match get_event_logs(
+                    "TransferFraudReported",
+                    tx.hash,
+                    &web3,
+                    &conf.mark_3d_collection_contract,
+                )
+                .await
+                {
+                    Ok(r) => r,
+                    Err(_) => continue,
+                };
 
                 let mut report = TransferFraudReported {
                     token_id: 0,
@@ -105,9 +105,64 @@ async fn main() -> Result<(), web3::Error> {
                     }
                 }
 
-                println!("{:#?}", report);
+                println!("{:?}", report);
+
+                // try fetch FraudReported event from FraudDeciderWeb2 contract
+                let tx_logs2 = match get_event_logs(
+                    "FraudReported",
+                    tx.hash,
+                    &web3,
+                    &conf.fraud_decider_web2_contract,
+                )
+                .await
+                {
+                    Ok(r) => r,
+                    Err(_) => continue,
+                };
+
+                let mut report2 = FraudReported {
+                    collection: String::new(),
+                    token_id: 0,
+                    cid: String::new(),
+                    public_key: vec![],
+                    private_key: vec![],
+                    encrypted_password: vec![],
+                };
+
+                for log in tx_logs2.params {
+                    match log.name.as_str() {
+                        "collection" => match log.value {
+                            web3::ethabi::Token::String(s) => report2.collection = s,
+                            _ => continue,
+                        },
+                        "tokenId" => match log.value {
+                            web3::ethabi::Token::Uint(u) => report2.token_id = u.as_u64(),
+                            _ => continue,
+                        },
+                        "cid" => match log.value {
+                            web3::ethabi::Token::String(s) => report2.cid = s,
+                            _ => continue,
+                        },
+                        "publicKey" => match log.value {
+                            web3::ethabi::Token::Bytes(b) => report2.public_key = b,
+                            _ => continue,
+                        },
+                        "privateKey" => match log.value {
+                            web3::ethabi::Token::Bytes(b) => report2.private_key = b,
+                            _ => continue,
+                        },
+                        "encryptedPassword" => match log.value {
+                            web3::ethabi::Token::Bytes(b) => report2.encrypted_password = b,
+                            _ => continue,
+                        },
+                        &_ => continue,
+                    }
+                }
+
+                println!("{:?}", report2);
             }
 
+            // next loop step
             old_block_num = new_block_num;
         }
 

@@ -1,3 +1,5 @@
+use std::env;
+
 use web3::{
     ethabi::{Contract, Log, RawLog},
     transports::WebSocket,
@@ -8,7 +10,8 @@ use web3::{
 pub struct OraculConf {
     pub eth_api_url: String,
     pub contract_address: String,
-    pub contract: web3::ethabi::Contract,
+    pub mark_3d_collection_contract: web3::ethabi::Contract,
+    pub fraud_decider_web2_contract: web3::ethabi::Contract,
 }
 
 #[derive(Debug)]
@@ -16,6 +19,30 @@ pub struct TransferFraudReported {
     pub token_id: u64,
     pub decided: bool,
     pub approved: bool,
+}
+
+#[derive(Debug)]
+pub struct FraudReported {
+    pub collection: String,
+    pub token_id: u64,
+    pub cid: String,
+    pub public_key: Vec<u8>,
+    pub private_key: Vec<u8>,
+    pub encrypted_password: Vec<u8>,
+}
+
+pub async fn get_contract(env_var: &str) -> web3::ethabi::Contract {
+    let abi_bytes = tokio::fs::read(env::var(env_var).expect(&format!("env err ({env_var})")))
+        .await
+        .expect("invalid hex");
+
+    let full_json_with_abi: serde_json::Value =
+        serde_json::from_slice(&abi_bytes).expect("parse json abi failed");
+
+    let x = serde_json::to_vec(full_json_with_abi.get("abi").expect("create abi bytes err"))
+        .expect("create abi err");
+
+    web3::ethabi::Contract::load(&*x).expect("load contract err")
 }
 
 async fn get_tx_receipt(hash: H256, web3: &Web3<WebSocket>) -> Result<TransactionReceipt, ()> {
