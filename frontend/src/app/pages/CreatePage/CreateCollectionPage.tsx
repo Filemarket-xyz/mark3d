@@ -117,6 +117,36 @@ const Form = styled('form', {
   marginRight: 'auto'
 })
 
+const InputWithPrefix = styled('div', {
+  backgroundColor: '$white',
+  borderRadius: '$3',
+  height: 48,
+  paddingLR: '$3',
+  outline: 'none',
+  ...textVariant('secondary1').true,
+  color: '$blue900',
+  border: '2px solid transparent',
+  boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)',
+  '&:placeholder': {
+    color: '#a1a1ab'
+  },
+  '&:focus-within': {
+    background:
+      'linear-gradient($white 0 0) padding-box, linear-gradient(to right, #00DCFF80, #E14BEC80) border-box',
+    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)'
+  },
+  width: '100%',
+  display: 'flex',
+  gap: '$2',
+  alignItems: 'center'
+})
+
+const InputPrefix = styled('span', {
+  color: '$gray500',
+  ...textVariant('secondary1').true,
+  fontWeight: 600
+})
+
 export default function CreateCollectionPage() {
   return (
     <PageLayout css={{ minHeight: '100vh', paddingBottom: '$4' }}>
@@ -163,7 +193,23 @@ export default function CreateCollectionPage() {
 
         <FormControl>
           <SubTitle>URL</SubTitle>
-          <Input placeholder='Short url' />
+          <InputWithPrefix>
+            <InputPrefix>mark.3d/</InputPrefix>
+            <Input
+              css={{
+                paddingLR: 0,
+                borderRadius: 0,
+                border: 'none',
+                flexGrow: 1,
+                height: '100%',
+                boxShadow: 'none',
+                '&:focus': {
+                  boxShadow: 'none'
+                }
+              }}
+              placeholder='Short url'
+            />
+          </InputWithPrefix>
         </FormControl>
 
         <Button type='submit' primary>
