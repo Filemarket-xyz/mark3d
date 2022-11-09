@@ -24,6 +24,23 @@ const Description = styled('p', {
   marginBottom: '$2'
 })
 
+const WhiteShade = styled('div', {
+  width: '100%',
+  height: '100%',
+  background: 'rgba(255,255,255, 0)',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  borderRadius: 'inherit',
+  transition: 'all 0.15s ease-in-out'
+})
+const hoverFileStyles: any = {}
+
+hoverFileStyles[`&:hover ${WhiteShade.selector}`] = {
+  background: 'rgba(255,255,255, 0.3)'
+}
 const File = styled('label', {
   width: '100%',
   height: '232px',
@@ -38,7 +55,9 @@ const File = styled('label', {
   alignItems: 'center',
   gap: '$3',
   marginBottom: '$2',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  position: 'relative',
+  ...hoverFileStyles
 })
 
 const Box = styled('img', {
@@ -87,6 +106,7 @@ export default function CreateNftPage() {
             <TextBold>Max size:</TextBold> 100 MB.
           </Description>
           <File htmlFor='inputTag'>
+            <WhiteShade></WhiteShade>
             <Box src={BoxImage} />
             <BoxLabel>Choose File</BoxLabel>
             <FileInput
