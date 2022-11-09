@@ -107,7 +107,6 @@ export default function CreateCollectionPage() {
           <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
 
           <File htmlFor='inputTag'>
-            <WhiteShade></WhiteShade>
             <FileImageContainer>
               <WhiteShade></WhiteShade>
               <ImageIcon src={ImgIcon} />
