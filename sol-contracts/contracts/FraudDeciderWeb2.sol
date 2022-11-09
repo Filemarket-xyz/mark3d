@@ -6,6 +6,8 @@ import "./IFraudDecider.sol";
 import "./Mark3dCollection.sol";
 
 contract FraudDeciderWeb2 is IFraudDecider, AccessControl {
+    event FraudReported(address collection, uint256 tokenId, string cid, bytes publicKey, bytes privateKey, bytes encryptedPassword);
+
     struct Report {
         Mark3dCollection tokenInstance;
         uint256 id;
@@ -29,6 +31,7 @@ contract FraudDeciderWeb2 is IFraudDecider, AccessControl {
         bytes calldata encryptedPassword
     ) external returns (bool, bool) {
         reports[_msgSender()][tokenId] = Report(Mark3dCollection(_msgSender()), tokenId, cid, publicKey, privateKey, encryptedPassword);
+        emit FraudReported(_msgSender(), tokenId, cid, publicKey, privateKey, encryptedPassword);
         return (false, false);
     }
 
