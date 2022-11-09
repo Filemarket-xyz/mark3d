@@ -81,7 +81,7 @@ async fn main() -> Result<(), web3::Error> {
                     Err(_) => continue,
                 };
 
-                let mut report = TransferFraudReported {
+                let mut report_flag = TransferFraudReported {
                     token_id: 0,
                     decided: false,
                     approved: false,
@@ -90,25 +90,23 @@ async fn main() -> Result<(), web3::Error> {
                 for log in tx_logs.params {
                     match log.name.as_str() {
                         "tokenId" => match log.value {
-                            web3::ethabi::Token::Uint(u) => report.token_id = u.as_u64(),
+                            web3::ethabi::Token::Uint(u) => report_flag.token_id = u.as_u64(),
                             _ => continue,
                         },
                         "decided" => match log.value {
-                            web3::ethabi::Token::Bool(b) => report.decided = b,
+                            web3::ethabi::Token::Bool(b) => report_flag.decided = b,
                             _ => continue,
                         },
                         "approved" => match log.value {
-                            web3::ethabi::Token::Bool(b) => report.approved = b,
+                            web3::ethabi::Token::Bool(b) => report_flag.approved = b,
                             _ => continue,
                         },
                         &_ => continue,
                     }
                 }
 
-                println!("{:?}", report);
-
                 // try fetch FraudReported event from FraudDeciderWeb2 contract
-                let tx_logs2 = match get_event_logs(
+                let tx_logs = match get_event_logs(
                     "FraudReported",
                     tx.hash,
                     &web3,
@@ -120,7 +118,7 @@ async fn main() -> Result<(), web3::Error> {
                     Err(_) => continue,
                 };
 
-                let mut report2 = FraudReported {
+                let mut report = FraudReported {
                     collection: String::new(),
                     token_id: 0,
                     cid: String::new(),
@@ -129,37 +127,37 @@ async fn main() -> Result<(), web3::Error> {
                     encrypted_password: vec![],
                 };
 
-                for log in tx_logs2.params {
+                for log in tx_logs.params {
                     match log.name.as_str() {
                         "collection" => match log.value {
-                            web3::ethabi::Token::String(s) => report2.collection = s,
+                            web3::ethabi::Token::String(s) => report.collection = s,
                             _ => continue,
                         },
                         "tokenId" => match log.value {
-                            web3::ethabi::Token::Uint(u) => report2.token_id = u.as_u64(),
+                            web3::ethabi::Token::Uint(u) => report.token_id = u.as_u64(),
                             _ => continue,
                         },
                         "cid" => match log.value {
-                            web3::ethabi::Token::String(s) => report2.cid = s,
+                            web3::ethabi::Token::String(s) => report.cid = s,
                             _ => continue,
                         },
                         "publicKey" => match log.value {
-                            web3::ethabi::Token::Bytes(b) => report2.public_key = b,
+                            web3::ethabi::Token::Bytes(b) => report.public_key = b,
                             _ => continue,
                         },
                         "privateKey" => match log.value {
-                            web3::ethabi::Token::Bytes(b) => report2.private_key = b,
+                            web3::ethabi::Token::Bytes(b) => report.private_key = b,
                             _ => continue,
                         },
                         "encryptedPassword" => match log.value {
-                            web3::ethabi::Token::Bytes(b) => report2.encrypted_password = b,
+                            web3::ethabi::Token::Bytes(b) => report.encrypted_password = b,
                             _ => continue,
                         },
                         &_ => continue,
                     }
                 }
 
-                println!("{:?}", report2);
+                println!("{:?}", report);
             }
 
             // next loop step
