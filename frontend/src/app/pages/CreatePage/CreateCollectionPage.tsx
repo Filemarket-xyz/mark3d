@@ -4,6 +4,7 @@ import { Button, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
 import PrefixedInput from '../../UIkit/Form/PrefixedInput'
 import { TextArea } from '../../UIkit/Form/Textarea'
+import { generateFileHoverStyles, WhiteShade } from './CreateNFTPage'
 import ImgIcon from './img/image-icon.svg'
 
 export const Title = styled('h1', {
@@ -40,6 +41,7 @@ const File = styled('label', {
 })
 
 const FileImageContainer = styled('div', {
+  position: 'relative',
   width: 160,
   height: 152,
   backgroundColor: '$white',
@@ -50,7 +52,8 @@ const FileImageContainer = styled('div', {
   gap: '$2',
   flexDirection: 'column',
   borderRadius: '$3',
-  ...textVariant('primary1').true
+  ...textVariant('primary1').true,
+  ...generateFileHoverStyles()
 })
 
 const ImageIcon = styled('img', {
@@ -104,7 +107,9 @@ export default function CreateCollectionPage() {
           <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
 
           <File htmlFor='inputTag'>
+            <WhiteShade></WhiteShade>
             <FileImageContainer>
+              <WhiteShade></WhiteShade>
               <ImageIcon src={ImgIcon} />
               <p>Choose photo</p>
             </FileImageContainer>

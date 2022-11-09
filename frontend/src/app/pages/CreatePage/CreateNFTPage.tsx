@@ -24,7 +24,7 @@ const Description = styled('p', {
   marginBottom: '$2'
 })
 
-const WhiteShade = styled('div', {
+export const WhiteShade = styled('div', {
   width: '100%',
   height: '100%',
   background: 'rgba(255,255,255, 0)',
@@ -36,11 +36,15 @@ const WhiteShade = styled('div', {
   borderRadius: 'inherit',
   transition: 'all 0.15s ease-in-out'
 })
-const hoverFileStyles: any = {}
 
-hoverFileStyles[`&:hover ${WhiteShade.selector}`] = {
-  background: 'rgba(255,255,255, 0.3)'
+export const generateFileHoverStyles = () => {
+  const hoverFileStyles: any = {}
+  hoverFileStyles[`&:hover ${WhiteShade.selector}`] = {
+    background: 'rgba(255,255,255, 0.3)'
+  }
+  return hoverFileStyles
 }
+
 const File = styled('label', {
   width: '100%',
   height: '232px',
@@ -57,7 +61,7 @@ const File = styled('label', {
   marginBottom: '$2',
   cursor: 'pointer',
   position: 'relative',
-  ...hoverFileStyles
+  ...generateFileHoverStyles()
 })
 
 const Box = styled('img', {
