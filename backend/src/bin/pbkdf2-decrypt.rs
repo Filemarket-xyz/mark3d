@@ -1,13 +1,12 @@
-use std::env;
-use std::fs;
 use aes::cipher::BlockDecrypt;
 use aes::cipher::KeyInit;
-use openssl::pkcs5::pbkdf2_hmac;
-use openssl::hash::MessageDigest;
-use hex;
 use aes::Aes256;
 use generic_array::GenericArray;
-use sha2::{Sha256, Digest};
+use openssl::hash::MessageDigest;
+use openssl::pkcs5::pbkdf2_hmac;
+use sha2::{Digest, Sha256};
+use std::env;
+use std::fs;
 
 #[tokio::main]
 async fn main() {
@@ -15,8 +14,14 @@ async fn main() {
 
     let password = args[1].clone();
     let salt = "salt";
-    let mut buf: Vec<u8> = vec![0; 32 as usize];
-    match pbkdf2_hmac(password.as_bytes(), salt.as_bytes(), 1, MessageDigest::sha512(), &mut buf) {
+    let mut buf: Vec<u8> = vec![0; 32];
+    match pbkdf2_hmac(
+        password.as_bytes(),
+        salt.as_bytes(),
+        1,
+        MessageDigest::sha512(),
+        &mut buf,
+    ) {
         Ok(v) => println!("ok: {:?}", v),
         Err(err) => panic!("make key failed: {:?}", err),
     };
@@ -33,30 +38,30 @@ async fn main() {
     };
     let mut decrypted: Vec<u8> = vec![0; contents.len()];
 
-    for i in 0..contents.len()/16 {
-        let mut block: Vec<u8> = vec![0; 16 as usize];
-        block.clone_from_slice(&contents[i*16..(i+1)*16]);
+    for i in 0..contents.len() / 16 {
+        let mut block: Vec<u8> = vec![0; 16];
+        block.clone_from_slice(&contents[i * 16..(i + 1) * 16]);
 
-        (&cipher).decrypt_block(GenericArray::from_mut_slice(block.as_mut_slice()));
+        cipher.decrypt_block(GenericArray::from_mut_slice(block.as_mut_slice()));
 
-        decrypted[i*16..(i+1)*16].copy_from_slice(block.as_slice());
+        decrypted[i * 16..(i + 1) * 16].copy_from_slice(block.as_slice());
     }
 
-    let hash = (&decrypted[decrypted.len()-32..]).clone();
+    let hash = &decrypted[decrypted.len() - 32..];
     let mut hasher = Sha256::new();
-    hasher.update(&decrypted[..decrypted.len()-32]);
+    hasher.update(&decrypted[..decrypted.len() - 32]);
     let res = hasher.finalize();
     let result = res.as_slice();
     assert_eq!(hash, result);
-    
+
     let mut ind = 0;
-    for i in 0..decrypted.len() {
-        if decrypted[i] == 0 {
-            ind = i + 1;
+    for (idx, item) in decrypted.iter().enumerate() {
+        if *item == 0 {
+            ind = idx + 1;
         } else {
             break;
         }
     }
 
-    fs::write(&args[3], &decrypted[ind..decrypted.len()-32]).unwrap();
+    fs::write(&args[3], &decrypted[ind..decrypted.len() - 32]).unwrap();
 }
