@@ -89,7 +89,11 @@ export default function CreateNftPage() {
           <File htmlFor='inputTag'>
             <Box src={BoxImage} />
             <BoxLabel>Choose File</BoxLabel>
-            <FileInput id='inputTag' type='file' />
+            <FileInput
+              id='inputTag'
+              type='file'
+              accept='.fbx, .3ds, .max, .blend, .obj, .c4d, .mb, .ma, .lwo, .lxo, .skp, .stl, .uasset, .dae, .ply, .glb, .gltf, .usdf, .unitypackage'
+            />
           </File>
         </FormControl>
 
