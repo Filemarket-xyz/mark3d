@@ -1,5 +1,4 @@
 use std::env;
-
 use web3::{
     ethabi::{Contract, Log, RawLog},
     transports::WebSocket,
@@ -9,9 +8,10 @@ use web3::{
 
 pub struct OraculConf {
     pub eth_api_url: String,
-    pub contract_address: String,
-    pub mark_3d_collection_contract: web3::ethabi::Contract,
+    pub ihidden_files_token_upgradeable_contract: web3::ethabi::Contract,
+    pub ihidden_files_token_upgradeable_address: String,
     pub fraud_decider_web2_contract: web3::ethabi::Contract,
+    pub fraud_decider_web2_address: String,
 }
 
 #[derive(Debug)]

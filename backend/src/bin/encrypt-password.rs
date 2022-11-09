@@ -1,6 +1,7 @@
-use std::str;
+use openssl::rsa::{Padding, Rsa};
 use std::env;
-use openssl::rsa::{Rsa, Padding};
+use std::str;
+
 // use rand;
 #[tokio::main]
 async fn main() {

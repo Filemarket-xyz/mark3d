@@ -3,6 +3,7 @@ use pgp::crypto::sym::SymmetricKeyAlgorithm;
 use pgp::types::StringToKey;
 use std::env;
 use std::fs;
+
 #[tokio::main]
 async fn main() {
     let args: Vec<String> = env::args().collect();

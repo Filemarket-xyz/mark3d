@@ -4,7 +4,9 @@ use helpers::{
     get_block, get_contract, get_event_logs, get_latest_block_num, FraudReported, OraculConf,
     TransferFraudReported,
 };
+use openssl::rsa::{Padding, Rsa};
 use std::env;
+use web3::types::H160;
 
 #[tokio::main]
 async fn main() -> Result<(), web3::Error> {
@@ -12,8 +14,9 @@ async fn main() -> Result<(), web3::Error> {
 
     let conf = OraculConf {
         eth_api_url: env::var("ETH_API_URL").expect("env err"),
-        contract_address: {
-            let mut addr = env::var("CONTRACT_ADDRESS")
+        ihidden_files_token_upgradeable_contract: get_contract("MARK_3D_COLLECTION_PATH").await,
+        ihidden_files_token_upgradeable_address: {
+            let mut addr = env::var("MARK_3D_COLLECTION_ADDRESS")
                 .expect("env err")
                 .to_lowercase();
             if !addr.starts_with("0x") {
@@ -21,8 +24,16 @@ async fn main() -> Result<(), web3::Error> {
             }
             addr
         },
-        mark_3d_collection_contract: get_contract("MARK_3D_COLLECTION_PATH").await,
         fraud_decider_web2_contract: get_contract("FRAUD_DECIDER_WEB2_PATH").await,
+        fraud_decider_web2_address: {
+            let mut addr = env::var("FRAUD_DECIDER_WEB2_ADDRESS")
+                .expect("env err")
+                .to_lowercase();
+            if !addr.starts_with("0x") {
+                addr = format!("0x{}", addr);
+            }
+            addr
+        },
     };
 
     let web3 = web3::Web3::new(web3::transports::WebSocket::new(&conf.eth_api_url).await?);
@@ -63,7 +74,7 @@ async fn main() -> Result<(), web3::Error> {
                             continue;
                         }
                     }
-                ) != conf.contract_address
+                ) != conf.ihidden_files_token_upgradeable_address
                 {
                     continue;
                 }
@@ -73,7 +84,7 @@ async fn main() -> Result<(), web3::Error> {
                     "TransferFraudReported",
                     tx.hash,
                     &web3,
-                    &conf.mark_3d_collection_contract,
+                    &conf.ihidden_files_token_upgradeable_contract,
                 )
                 .await
                 {
@@ -157,7 +168,43 @@ async fn main() -> Result<(), web3::Error> {
                     }
                 }
 
-                println!("{:?}", report);
+                let private_key = match Rsa::private_key_from_pem(&report.private_key) {
+                    Ok(key) => key,
+                    Err(_) => continue,
+                };
+
+                let public_key = match private_key.public_key_to_pem() {
+                    Ok(key) => key,
+                    Err(_) => continue,
+                };
+
+                let cont = web3::contract::Contract::new(
+                    web3.eth(),
+                    H160::from_slice(conf.fraud_decider_web2_address.as_bytes()),
+                    conf.fraud_decider_web2_contract,
+                );
+
+                if report.public_key != public_key {
+                    // нужно вызывать lateDecision у FraudDeciderWeb2 с аргументом
+                    // approve выставленным в false (tokenInstance это collection
+                    // из эвента FraudReported, tokenId это tokenId из эвента FraudReported).
+                    let tx = match cont
+                        .call_with_confirmations(
+                            "lateDecision",
+                            params,
+                            from,
+                            options,
+                            confirmations,
+                        )
+                        .await
+                    {
+                        Ok(tx) => tx,
+                        Err(_) => continue,
+                    };
+                }
+
+                // Если есть совпадение ключей, то пытаемся расшифровать пароль.
+                // Если удачно (под удачностью подразумевается, что код не свалился с ошибкой), то идем к следующему шагу.
             }
 
             // next loop step
