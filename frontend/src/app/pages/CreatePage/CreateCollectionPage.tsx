@@ -37,7 +37,8 @@ const File = styled('label', {
     flexDirection: 'column',
     alignItems: 'center',
     display: 'flex'
-  }
+  },
+  ...generateFileHoverStyles()
 })
 
 const FileImageContainer = styled('div', {
@@ -52,8 +53,7 @@ const FileImageContainer = styled('div', {
   gap: '$2',
   flexDirection: 'column',
   borderRadius: '$3',
-  ...textVariant('primary1').true,
-  ...generateFileHoverStyles()
+  ...textVariant('primary1').true
 })
 
 const ImageIcon = styled('img', {
