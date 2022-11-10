@@ -47,14 +47,17 @@ pub async fn get_contract(env_var: &str) -> web3::ethabi::Contract {
     web3::ethabi::Contract::load(&*x).expect("load contract err")
 }
 
-async fn get_tx_receipt(hash: H256, web3: &Web3<WebSocket>) -> Result<TransactionReceipt, ()> {
+async fn get_tx_receipt(
+    hash: H256,
+    web3: &Web3<WebSocket>,
+) -> Result<TransactionReceipt, web3::Error> {
     if let Some(tx) = match web3.eth().transaction_receipt(hash).await {
         Ok(tx) => tx,
-        Err(_) => return Err(()),
+        Err(e) => return Err(e),
     } {
         Ok(tx)
     } else {
-        Err(())
+        Err(web3::Error::Internal)
     }
 }
 
@@ -63,29 +66,32 @@ pub async fn get_event_logs(
     hash: H256,
     web3: &Web3<WebSocket>,
     cont: &Contract,
-) -> Result<Log, ()> {
+) -> Result<Log, web3::Error> {
     let tx = get_tx_receipt(hash, web3).await?;
 
     if tx.logs.is_empty() {
-        return Err(());
+        return Err(web3::Error::Internal);
     }
 
     let event = match cont.event(event_name) {
         Ok(e) => e,
-        Err(_) => return Err(()),
+        Err(e) => return Err(web3::Error::Decoder(format!("{}", e))),
     };
 
-    match event.parse_log(RawLog {
-        topics: tx.logs[0]
-            .topics
-            .iter()
-            .map(|x| H256::from_slice(x.as_bytes()))
-            .collect(),
-        data: Vec::from(tx.logs[0].data.0.as_slice()),
-    }) {
-        Ok(p) => Ok(p),
-        Err(_) => Err(()),
+    for i in 0..tx.logs.len() {
+        match event.parse_log(RawLog {
+            topics: tx.logs[i]
+                .topics
+                .iter()
+                .map(|x| H256::from_slice(x.as_bytes()))
+                .collect(),
+            data: Vec::from(tx.logs[0].data.0.as_slice()),
+        }) {
+            Ok(p) => return Ok(p),
+            Err(_) => (),
+        }
     }
+    Err(web3::Error::Decoder(format!("no logs")))
 }
 
 pub async fn get_latest_block_num(web3: &Web3<WebSocket>) -> Result<u64, web3::Error> {

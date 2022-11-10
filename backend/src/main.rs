@@ -41,7 +41,7 @@ async fn main() -> Result<(), web3::Error> {
     let web3 = web3::Web3::new(web3::transports::WebSocket::new(&conf.eth_api_url).await?);
     let mut old_block_num: u64 = match get_latest_block_num(&web3).await {
         Ok(n) => n,
-        Err(e) => return Err(e),
+        Err(e) => panic!("{}", e),
     };
 
     // TransferFraudReported listening
@@ -56,14 +56,20 @@ async fn main() -> Result<(), web3::Error> {
                     n
                 }
             }
-            Err(_) => continue,
+            Err(e) => {
+                println!("{}", e);
+                continue;
+            }
         };
 
         // blocks enumeration (from old to latest)
         for i in old_block_num + 1..=new_block_num {
             let block = match get_block(i, &web3).await {
                 Ok(b) => b,
-                Err(_) => continue,
+                Err(e) => {
+                    println!("{}", e);
+                    continue;
+                }
             };
 
             // TX enumeration
@@ -91,7 +97,10 @@ async fn main() -> Result<(), web3::Error> {
                 .await
                 {
                     Ok(r) => r,
-                    Err(_) => continue,
+                    Err(e) => {
+                        println!("{}", e);
+                        continue;
+                    }
                 };
 
                 let mut report_flag = TransferFraudReported {
@@ -128,7 +137,10 @@ async fn main() -> Result<(), web3::Error> {
                 .await
                 {
                     Ok(r) => r,
-                    Err(_) => continue,
+                    Err(e) => {
+                        println!("{}", e);
+                        continue;
+                    }
                 };
 
                 let mut report = FraudReported {
@@ -170,16 +182,6 @@ async fn main() -> Result<(), web3::Error> {
                     }
                 }
 
-                let private_key = match Rsa::private_key_from_pem(&report.private_key) {
-                    Ok(key) => key,
-                    Err(_) => continue,
-                };
-
-                let public_key = match private_key.public_key_to_pem() {
-                    Ok(key) => key,
-                    Err(_) => continue,
-                };
-
                 let cont = web3::contract::Contract::new(
                     web3.eth(),
                     H160::from_slice(conf.fraud_decider_web2_address.as_bytes()),
@@ -188,8 +190,42 @@ async fn main() -> Result<(), web3::Error> {
 
                 let key = SecretKey::from_str(&conf.fraud_decider_web2_key).unwrap();
 
+                let private_key = match Rsa::private_key_from_pem(&report.private_key) {
+                    Ok(key) => key,
+                    Err(_) => {
+                        match cont
+                            .signed_call_with_confirmations(
+                                "lateDecision",
+                                vec![
+                                    report.collection.into_token(),
+                                    report.token_id.into_token(),
+                                    false.into_token(),
+                                ],
+                                web3::contract::Options::default(),
+                                3,
+                                &key,
+                            )
+                            .await
+                        {
+                            Ok(tx) => {
+                                println!("{:#?}", tx);
+                                continue;
+                            }
+                            Err(e) => {
+                                println!("{}", e);
+                                continue;
+                            }
+                        };
+                    }
+                };
+
+                let public_key = match private_key.public_key_to_pem() {
+                    Ok(key) => key,
+                    Err(_) => continue,
+                };
+
                 if report.public_key != public_key {
-                    let _tx = match cont
+                    match cont
                         .signed_call_with_confirmations(
                             "lateDecision",
                             vec![
@@ -203,8 +239,14 @@ async fn main() -> Result<(), web3::Error> {
                         )
                         .await
                     {
-                        Ok(tx) => tx,
-                        Err(_) => continue,
+                        Ok(tx) => {
+                            println!("{:#?}", tx);
+                            continue;
+                        }
+                        Err(e) => {
+                            println!("{}", e);
+                            continue;
+                        }
                     };
                 }
 
