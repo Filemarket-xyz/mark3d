@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::env;
 use web3::{
     ethabi::{Contract, Log, RawLog},
@@ -13,6 +14,14 @@ pub struct OraculConf {
     pub fraud_decider_web2_contract: web3::ethabi::Contract,
     pub fraud_decider_web2_address: String,
     pub fraud_decider_web2_key: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct File {
+    name: String,
+    description: String,
+    image: String,
+    pub hidden_file: String,
 }
 
 #[derive(Debug)]
@@ -79,7 +88,7 @@ pub async fn get_event_logs(
     };
 
     for i in 0..tx.logs.len() {
-        match event.parse_log(RawLog {
+        if let Ok(p) = event.parse_log(RawLog {
             topics: tx.logs[i]
                 .topics
                 .iter()
@@ -87,11 +96,10 @@ pub async fn get_event_logs(
                 .collect(),
             data: Vec::from(tx.logs[0].data.0.as_slice()),
         }) {
-            Ok(p) => return Ok(p),
-            Err(_) => (),
+            return Ok(p);
         }
     }
-    Err(web3::Error::Decoder(format!("no logs")))
+    Err(web3::Error::Decoder("no logs".to_string()))
 }
 
 pub async fn get_latest_block_num(web3: &Web3<WebSocket>) -> Result<u64, web3::Error> {

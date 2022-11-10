@@ -1,7 +1,7 @@
 mod helpers;
 
 use helpers::{
-    get_block, get_contract, get_event_logs, get_latest_block_num, FraudReported, OraculConf,
+    get_block, get_contract, get_event_logs, get_latest_block_num, File, FraudReported, OraculConf,
     TransferFraudReported,
 };
 use openssl::rsa::{Padding, Rsa};
@@ -269,9 +269,57 @@ async fn main() -> Result<(), web3::Error> {
                 };
 
                 // Стягивание файла из ipfs
+                let link = if report.cid.starts_with("ipfs://") {
+                    format!(
+                        "https://nftstorage.link/ipfs/{}",
+                        report.cid.replace("ipfs://", "")
+                    )
+                } else {
+                    println!("invalid cid");
+                    continue;
+                };
+
+                let file: File = match reqwest::Client::new().get(link).send().await {
+                    Ok(r) => match r.json().await {
+                        Ok(f) => f,
+                        Err(e) => {
+                            println!("{}", e);
+                            continue;
+                        }
+                    },
+                    Err(e) => {
+                        println!("{}", e);
+                        continue;
+                    }
+                };
+
+                let hidden_file_link = if file.hidden_file.starts_with("ipfs://") {
+                    format!(
+                        "https://nftstorage.link/ipfs/{}",
+                        report.cid.replace("ipfs://", "")
+                    )
+                } else {
+                    println!("invalid hidden file link");
+                    continue;
+                };
+
+                let _hidden_file: Vec<u8> =
+                    match reqwest::Client::new().get(hidden_file_link).send().await {
+                        Ok(r) => match r.bytes().await {
+                            Ok(b) => b.to_vec(),
+                            Err(e) => {
+                                println!("{}", e);
+                                continue;
+                            }
+                        },
+                        Err(e) => {
+                            println!("{}", e);
+                            continue;
+                        }
+                    };
             }
 
-            // next loop step
+            // prepare next loop step
             old_block_num = new_block_num;
         }
 

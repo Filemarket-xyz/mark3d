@@ -52,6 +52,7 @@ dependencies = [
  "openssl",
  "pgp",
  "rand 0.8.5",
+ "reqwest",
  "secp256k1",
  "serde",
  "serde_json",
