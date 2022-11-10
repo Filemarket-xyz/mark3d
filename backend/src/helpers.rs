@@ -2,16 +2,17 @@ use std::env;
 use web3::{
     ethabi::{Contract, Log, RawLog},
     transports::WebSocket,
-    types::{Block, BlockId, BlockNumber, Transaction, TransactionReceipt, H256},
+    types::{Block, BlockId, BlockNumber, Transaction, TransactionReceipt, H160, H256, U256},
     Web3,
 };
 
 pub struct OraculConf {
     pub eth_api_url: String,
-    pub ihidden_files_token_upgradeable_contract: web3::ethabi::Contract,
-    pub ihidden_files_token_upgradeable_address: String,
+    pub mark_3d_collection_contract: web3::ethabi::Contract,
+    pub mark_3d_collection_address: String,
     pub fraud_decider_web2_contract: web3::ethabi::Contract,
     pub fraud_decider_web2_address: String,
+    pub fraud_decider_web2_key: String,
 }
 
 #[derive(Debug)]
@@ -23,8 +24,8 @@ pub struct TransferFraudReported {
 
 #[derive(Debug)]
 pub struct FraudReported {
-    pub collection: String,
-    pub token_id: u64,
+    pub collection: H160,
+    pub token_id: U256,
     pub cid: String,
     pub public_key: Vec<u8>,
     pub private_key: Vec<u8>,

@@ -4,9 +4,10 @@ use helpers::{
     get_block, get_contract, get_event_logs, get_latest_block_num, FraudReported, OraculConf,
     TransferFraudReported,
 };
-use openssl::rsa::{Padding, Rsa};
-use std::env;
-use web3::types::H160;
+use openssl::rsa::Rsa;
+use secp256k1::SecretKey;
+use std::{env, str::FromStr};
+use web3::{contract::tokens::Tokenizable, types::H160};
 
 #[tokio::main]
 async fn main() -> Result<(), web3::Error> {
@@ -14,8 +15,8 @@ async fn main() -> Result<(), web3::Error> {
 
     let conf = OraculConf {
         eth_api_url: env::var("ETH_API_URL").expect("env err"),
-        ihidden_files_token_upgradeable_contract: get_contract("MARK_3D_COLLECTION_PATH").await,
-        ihidden_files_token_upgradeable_address: {
+        mark_3d_collection_contract: get_contract("MARK_3D_COLLECTION_PATH").await,
+        mark_3d_collection_address: {
             let mut addr = env::var("MARK_3D_COLLECTION_ADDRESS")
                 .expect("env err")
                 .to_lowercase();
@@ -34,6 +35,7 @@ async fn main() -> Result<(), web3::Error> {
             }
             addr
         },
+        fraud_decider_web2_key: env::var("FRAUD_DECIDER_WEB2_ADDRESS").expect("env err"),
     };
 
     let web3 = web3::Web3::new(web3::transports::WebSocket::new(&conf.eth_api_url).await?);
@@ -74,7 +76,7 @@ async fn main() -> Result<(), web3::Error> {
                             continue;
                         }
                     }
-                ) != conf.ihidden_files_token_upgradeable_address
+                ) != conf.mark_3d_collection_address
                 {
                     continue;
                 }
@@ -84,7 +86,7 @@ async fn main() -> Result<(), web3::Error> {
                     "TransferFraudReported",
                     tx.hash,
                     &web3,
-                    &conf.ihidden_files_token_upgradeable_contract,
+                    &conf.mark_3d_collection_contract,
                 )
                 .await
                 {
@@ -130,8 +132,8 @@ async fn main() -> Result<(), web3::Error> {
                 };
 
                 let mut report = FraudReported {
-                    collection: String::new(),
-                    token_id: 0,
+                    collection: H160::default(),
+                    token_id: web3::types::U256::default(),
                     cid: String::new(),
                     public_key: vec![],
                     private_key: vec![],
@@ -141,11 +143,11 @@ async fn main() -> Result<(), web3::Error> {
                 for log in tx_logs.params {
                     match log.name.as_str() {
                         "collection" => match log.value {
-                            web3::ethabi::Token::String(s) => report.collection = s,
+                            web3::ethabi::Token::Address(s) => report.collection = s,
                             _ => continue,
                         },
                         "tokenId" => match log.value {
-                            web3::ethabi::Token::Uint(u) => report.token_id = u.as_u64(),
+                            web3::ethabi::Token::Uint(u) => report.token_id = u,
                             _ => continue,
                         },
                         "cid" => match log.value {
@@ -181,20 +183,23 @@ async fn main() -> Result<(), web3::Error> {
                 let cont = web3::contract::Contract::new(
                     web3.eth(),
                     H160::from_slice(conf.fraud_decider_web2_address.as_bytes()),
-                    conf.fraud_decider_web2_contract,
+                    conf.fraud_decider_web2_contract.clone(),
                 );
 
+                let key = SecretKey::from_str(&conf.fraud_decider_web2_key).unwrap();
+
                 if report.public_key != public_key {
-                    // нужно вызывать lateDecision у FraudDeciderWeb2 с аргументом
-                    // approve выставленным в false (tokenInstance это collection
-                    // из эвента FraudReported, tokenId это tokenId из эвента FraudReported).
-                    let tx = match cont
-                        .call_with_confirmations(
+                    let _tx = match cont
+                        .signed_call_with_confirmations(
                             "lateDecision",
-                            params,
-                            from,
-                            options,
-                            confirmations,
+                            vec![
+                                report.collection.into_token(),
+                                report.token_id.into_token(),
+                                false.into_token(),
+                            ],
+                            web3::contract::Options::default(),
+                            3,
+                            &key,
                         )
                         .await
                     {
@@ -205,6 +210,7 @@ async fn main() -> Result<(), web3::Error> {
 
                 // Если есть совпадение ключей, то пытаемся расшифровать пароль.
                 // Если удачно (под удачностью подразумевается, что код не свалился с ошибкой), то идем к следующему шагу.
+                
             }
 
             // next loop step
