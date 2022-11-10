@@ -34,7 +34,15 @@ export const WhiteShade = styled('div', {
   right: 0,
   bottom: 0,
   borderRadius: 'inherit',
-  transition: 'all 0.15s ease-in-out'
+  transition: 'all 0.15s ease-in-out',
+  zIndex: 1,
+  variants: {
+    selected: {
+      true: {
+        zIndex: 0
+      }
+    }
+  }
 })
 
 export const generateFileHoverStyles = () => {
