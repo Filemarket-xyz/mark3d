@@ -101,7 +101,7 @@ contract Mark3dAccessToken is ERC721Enumerable, AccessControl, Ownable {
     function getSelfCollections(
         uint256 page,
         uint256 size
-    ) external view returns (PrivateCollectionData[] memory, uint256[] memory) {
+    ) external view returns (PrivateCollectionData[] memory, uint256[] memory, uint256) {
         require(size <= 1000, "Mark3dAccessToken: size must be 1000 or lower");
         uint256 total = ownedCollections[_msgSender()].length();
         require((total == 0 && page == 0) || page * size < total, "Mark3dAccessToken: out of bounds");
@@ -117,7 +117,7 @@ contract Mark3dAccessToken is ERC721Enumerable, AccessControl, Ownable {
                 tokenCollections[tokenId].collectionData());
             counts[i - page * size] = tokenCollections[tokenId].balanceOf(_msgSender());
         }
-        return (res, counts);
+        return (res, counts, total);
     }
 
     /// @dev function for retrieving token lists. Implemented using basic pagination.
@@ -130,7 +130,7 @@ contract Mark3dAccessToken is ERC721Enumerable, AccessControl, Ownable {
         uint256[] calldata ids,
         uint256[] calldata pages,
         uint256[] calldata sizes
-    ) external view returns (Mark3dCollection.TokenData[][] memory) {
+    ) external view returns (Mark3dCollection.TokenData[][] memory, uint256[] memory) {
         require(ids.length <= 1000, "Mark3dAccessToken: collections quantity must be 1000 or lower");
         require(ids.length == pages.length && pages.length == sizes.length, "Mark3dAccessToken: lengths unmatch");
         Mark3dCollection.TokenData[][] memory res = new Mark3dCollection.TokenData[][](ids.length);
@@ -156,7 +156,12 @@ contract Mark3dAccessToken is ERC721Enumerable, AccessControl, Ownable {
                     collection.tokenUris(tokenId), collection.tokenData(tokenId));
             }
         }
-        return res;
+
+        uint256[] memory totals = new uint256[](ids.length);
+        for (uint256 i = 0; i < ids.length; i++) {
+            totals[i] = tokenCollections[ids[i]].balanceOf(_msgSender());
+        }
+        return (res, totals);
     }
 
     /// @dev Set contract-level metadata URI
@@ -200,5 +205,23 @@ contract Mark3dAccessToken is ERC721Enumerable, AccessControl, Ownable {
     /// @return Metadata file URI
     function contractURI() public view returns (string memory) {
         return contractMetaUri;
+    }
+
+    /// @dev callback implementation for updating collections sets
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual override(ERC721) {
+        super._afterTokenTransfer(from, to, tokenId);
+        if (from != address(0) && to != address(0)) {
+            tokenCollections[tokenId].transferOwnership(to);
+        }
+        if (from != address(0)) {
+            ownedCollections[from].remove(bytes32(tokenId));
+        }
+        if (to != address(0) && !ownedCollections[to].contains(bytes32(tokenId))) {
+            ownedCollections[to].add(bytes32(tokenId));
+        }
     }
 }
