@@ -221,11 +221,11 @@ async fn main() -> Result<(), web3::Error> {
                     Err(_) => continue,
                 };
 
-                let res = match std::str::from_utf8(&buf[..res_size]) {
+                let _res = match std::str::from_utf8(&buf[..res_size]) {
                     Ok(s) => s,
                     Err(_) => continue,
                 };
-                
+
                 // Стягивание файла из ipfs
             }
 
