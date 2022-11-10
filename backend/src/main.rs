@@ -4,7 +4,7 @@ use helpers::{
     get_block, get_contract, get_event_logs, get_latest_block_num, FraudReported, OraculConf,
     TransferFraudReported,
 };
-use openssl::rsa::Rsa;
+use openssl::rsa::{Padding, Rsa};
 use secp256k1::SecretKey;
 use std::{env, str::FromStr};
 use web3::{contract::tokens::Tokenizable, types::H160};
@@ -210,7 +210,23 @@ async fn main() -> Result<(), web3::Error> {
 
                 // Если есть совпадение ключей, то пытаемся расшифровать пароль.
                 // Если удачно (под удачностью подразумевается, что код не свалился с ошибкой), то идем к следующему шагу.
+                let mut buf: Vec<u8> = vec![0; private_key.size() as usize];
+
+                let res_size = match private_key.private_decrypt(
+                    &report.encrypted_password,
+                    &mut buf,
+                    Padding::PKCS1_OAEP,
+                ) {
+                    Ok(v) => v,
+                    Err(_) => continue,
+                };
+
+                let res = match std::str::from_utf8(&buf[..res_size]) {
+                    Ok(s) => s,
+                    Err(_) => continue,
+                };
                 
+                // Стягивание файла из ipfs
             }
 
             // next loop step
