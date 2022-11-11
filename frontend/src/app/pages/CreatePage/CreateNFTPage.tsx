@@ -114,11 +114,12 @@ const CollectionPickerContainer = styled('div', {
   },
 
   // set width to full width of form
-  // calc inside cals is taken from container props
+  // calc inside calcs is taken from container props
   '& ul': {
     width: 'calc(100% - 2 * calc((100% - $breakpoints$xl) * 0.5 + $space$3))',
     '@xl': {
-      width: 'calc(100% - 2 * calc((100% - $breakpoints$lg) * 0.5 + $space$3) - $space$2 - 48px)'
+      width:
+        'calc(100% - 2 * calc((100% - $breakpoints$lg) * 0.5 + $space$3) - $space$2 - 48px)'
     },
     '@lg': {
       width: 'calc(100% - 2 * calc((100% - $breakpoints$md) * 0.5 + $space$3))'
@@ -173,7 +174,12 @@ export default function CreateNftPage() {
         <FormControl>
           <Label>Collection</Label>
           <CollectionPickerContainer>
-            <Combobox />
+            <Combobox
+              options={[
+                { title: 'first collection' },
+                { title: 'second collection' }
+              ]}
+            />
             <NavLink to={'../collection'}>
               <AddCollectionButton>
                 <Icon src={PlusIcon} />

@@ -35,7 +35,11 @@ const Listbox = styled('ul', {
   }
 })
 
-export default function Combobox() {
+export interface ComboboxProps {
+  options: Array<{ title: string }>
+}
+
+export default function Combobox(props: ComboboxProps) {
   const {
     getRootProps,
     getInputProps,
@@ -43,7 +47,7 @@ export default function Combobox() {
     getOptionProps,
     groupedOptions
   } = useAutocomplete({
-    options: top100Films,
+    options: props.options,
     getOptionLabel: (option) => option.title
   })
 
@@ -54,7 +58,7 @@ export default function Combobox() {
       </div>
       {groupedOptions.length > 0 && (
         <Listbox {...getListboxProps()}>
-          {(groupedOptions as typeof top100Films).map((option, index) => (
+          {(groupedOptions as typeof props.options).map((option, index) => (
             <li {...getOptionProps({ option, index })} key={option.title}>
               {option.title}
             </li>
@@ -64,10 +68,3 @@ export default function Combobox() {
     </div>
   )
 }
-
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-const top100Films = [
-  { title: 'The Shawshank Redemption', year: 1994 },
-  { title: 'The Godfather', year: 1972 },
-  { title: 'The Godfather: Part II', year: 1974 }
-]
