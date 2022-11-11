@@ -56,7 +56,6 @@ export default function Combobox(props: ComboboxProps) {
           postfix={<img width={24} height={24} src={bottomArrow} />}
           inputProps={getInputProps()}
         />
-        {/* <Input {...getInputProps()} placeholder={'Select collection'} /> */}
       </div>
       {groupedOptions.length > 0 && (
         <Listbox {...getListboxProps()}>
