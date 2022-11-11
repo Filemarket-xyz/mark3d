@@ -35,7 +35,7 @@ const Listbox = styled('ul', {
   }
 })
 
-export default function UseAutocomplete() {
+export default function Combobox() {
   const {
     getRootProps,
     getInputProps,

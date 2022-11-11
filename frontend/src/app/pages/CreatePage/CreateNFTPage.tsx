@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { styled } from '../../../styles'
 import { Button, PageLayout, textVariant } from '../../UIkit'
-import Dropdown from '../../UIkit/Form/Dropdown'
+import Combobox from '../../UIkit/Form/Combobox'
 import { Input } from '../../UIkit/Form/Input'
 import PostfixedInput from '../../UIkit/Form/PostfixedInput'
 import { TextArea } from '../../UIkit/Form/Textarea'
@@ -148,7 +148,7 @@ export default function CreateNftPage() {
 
         <FormControl>
           <Label>Collection</Label>
-          <Dropdown />
+          <Combobox />
           <NavLink to={'../collection'}>
             <AddCollectionButton>
               <Icon src={PlusIcon} />
