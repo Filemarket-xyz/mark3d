@@ -263,7 +263,7 @@ async fn main() -> Result<(), web3::Error> {
                     Err(_) => continue,
                 };
 
-                let _res = match std::str::from_utf8(&buf[..res_size]) {
+                let decrypted_password = match std::str::from_utf8(&buf[..res_size]) {
                     Ok(s) => s,
                     Err(_) => continue,
                 };
@@ -303,7 +303,7 @@ async fn main() -> Result<(), web3::Error> {
                     continue;
                 };
 
-                let _hidden_file: Vec<u8> =
+                let hidden_file: Vec<u8> =
                     match reqwest::Client::new().get(hidden_file_link).send().await {
                         Ok(r) => match r.bytes().await {
                             Ok(b) => b.to_vec(),
@@ -317,6 +317,9 @@ async fn main() -> Result<(), web3::Error> {
                             continue;
                         }
                     };
+                
+                // Расшифровать файл с помощью пароля
+                // need: hidden file, decrypted password
             }
 
             // prepare next loop step
