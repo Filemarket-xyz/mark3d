@@ -1,6 +1,8 @@
+use secp256k1::SecretKey;
 use serde::{Deserialize, Serialize};
 use std::env;
 use web3::{
+    contract::tokens::Tokenizable,
     ethabi::{Contract, Log, RawLog},
     transports::WebSocket,
     types::{Block, BlockId, BlockNumber, Transaction, TransactionReceipt, H160, H256, U256},
@@ -13,7 +15,7 @@ pub struct OraculConf {
     pub mark_3d_collection_address: String,
     pub fraud_decider_web2_contract: web3::ethabi::Contract,
     pub fraud_decider_web2_address: String,
-    pub fraud_decider_web2_key: String,
+    pub fraud_decider_web2_key: SecretKey,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -137,4 +139,25 @@ pub async fn get_block(
         Some(b) => Ok(b),
         None => Err(web3::Error::Internal),
     }
+}
+
+pub async fn call_late_decision(
+    contract: &web3::contract::Contract<WebSocket>,
+    approved: bool,
+    report: &FraudReported,
+    key: &SecretKey,
+) -> Result<web3::types::TransactionReceipt, web3::error::Error> {
+    contract
+        .signed_call_with_confirmations(
+            "lateDecision",
+            vec![
+                report.collection.into_token(),
+                report.token_id.into_token(),
+                approved.into_token(),
+            ],
+            web3::contract::Options::default(),
+            3,
+            key,
+        )
+        .await
 }

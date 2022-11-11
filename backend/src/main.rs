@@ -1,13 +1,24 @@
 mod helpers;
 
+use aes::cipher::BlockDecrypt;
+use aes::cipher::KeyInit;
+use aes::Aes256;
+use generic_array::GenericArray;
+use helpers::call_late_decision;
 use helpers::{
     get_block, get_contract, get_event_logs, get_latest_block_num, File, FraudReported, OraculConf,
     TransferFraudReported,
 };
-use openssl::rsa::{Padding, Rsa};
+use openssl::{
+    hash::MessageDigest,
+    pkcs5::pbkdf2_hmac,
+    rsa::{Padding, Rsa},
+};
 use secp256k1::SecretKey;
+use sha2::Digest;
+use sha2::Sha256;
 use std::{env, str::FromStr};
-use web3::{contract::tokens::Tokenizable, types::H160};
+use web3::types::H160;
 
 #[tokio::main]
 async fn main() -> Result<(), web3::Error> {
@@ -35,7 +46,10 @@ async fn main() -> Result<(), web3::Error> {
             }
             addr
         },
-        fraud_decider_web2_key: env::var("FRAUD_DECIDER_WEB2_ADDRESS").expect("env err"),
+        fraud_decider_web2_key: SecretKey::from_str(
+            &env::var("FRAUD_DECIDER_WEB2_ADDRESS").expect("env err"),
+        )
+        .expect("secret key create err"),
     };
 
     let web3 = web3::Web3::new(web3::transports::WebSocket::new(&conf.eth_api_url).await?);
@@ -43,6 +57,12 @@ async fn main() -> Result<(), web3::Error> {
         Ok(n) => n,
         Err(e) => panic!("{}", e),
     };
+
+    let upgraded_fraud_decider_web2_contract = web3::contract::Contract::new(
+        web3.eth(),
+        H160::from_slice(conf.fraud_decider_web2_address.as_bytes()),
+        conf.fraud_decider_web2_contract.clone(),
+    );
 
     // TransferFraudReported listening
     loop {
@@ -182,30 +202,16 @@ async fn main() -> Result<(), web3::Error> {
                     }
                 }
 
-                let cont = web3::contract::Contract::new(
-                    web3.eth(),
-                    H160::from_slice(conf.fraud_decider_web2_address.as_bytes()),
-                    conf.fraud_decider_web2_contract.clone(),
-                );
-
-                let key = SecretKey::from_str(&conf.fraud_decider_web2_key).unwrap();
-
                 let private_key = match Rsa::private_key_from_pem(&report.private_key) {
-                    Ok(key) => key,
+                    Ok(k) => k,
                     Err(_) => {
-                        match cont
-                            .signed_call_with_confirmations(
-                                "lateDecision",
-                                vec![
-                                    report.collection.into_token(),
-                                    report.token_id.into_token(),
-                                    false.into_token(),
-                                ],
-                                web3::contract::Options::default(),
-                                3,
-                                &key,
-                            )
-                            .await
+                        match call_late_decision(
+                            &upgraded_fraud_decider_web2_contract,
+                            false,
+                            &report,
+                            &conf.fraud_decider_web2_key,
+                        )
+                        .await
                         {
                             Ok(tx) => {
                                 println!("{:#?}", tx);
@@ -215,7 +221,7 @@ async fn main() -> Result<(), web3::Error> {
                                 println!("{}", e);
                                 continue;
                             }
-                        };
+                        }
                     }
                 };
 
@@ -225,19 +231,13 @@ async fn main() -> Result<(), web3::Error> {
                 };
 
                 if report.public_key != public_key {
-                    match cont
-                        .signed_call_with_confirmations(
-                            "lateDecision",
-                            vec![
-                                report.collection.into_token(),
-                                report.token_id.into_token(),
-                                false.into_token(),
-                            ],
-                            web3::contract::Options::default(),
-                            3,
-                            &key,
-                        )
-                        .await
+                    match call_late_decision(
+                        &upgraded_fraud_decider_web2_contract,
+                        false,
+                        &report,
+                        &conf.fraud_decider_web2_key,
+                    )
+                    .await
                     {
                         Ok(tx) => {
                             println!("{:#?}", tx);
@@ -247,7 +247,7 @@ async fn main() -> Result<(), web3::Error> {
                             println!("{}", e);
                             continue;
                         }
-                    };
+                    }
                 }
 
                 // Если есть совпадение ключей, то пытаемся расшифровать пароль.
@@ -317,9 +317,95 @@ async fn main() -> Result<(), web3::Error> {
                             continue;
                         }
                     };
-                
+
                 // Расшифровать файл с помощью пароля
                 // need: hidden file, decrypted password
+                let salt = "salt";
+                let mut buf: Vec<u8> = vec![0; 32];
+                if let Err(e) = pbkdf2_hmac(
+                    decrypted_password.as_bytes(),
+                    salt.as_bytes(),
+                    1,
+                    MessageDigest::sha512(),
+                    &mut buf,
+                ) {
+                    println!("make key failed: {:?}", e);
+                    match call_late_decision(
+                        &upgraded_fraud_decider_web2_contract,
+                        true,
+                        &report,
+                        &conf.fraud_decider_web2_key,
+                    )
+                    .await
+                    {
+                        Ok(tx) => {
+                            println!("{:#?}", tx);
+                            continue;
+                        }
+                        Err(e) => {
+                            println!("{}", e);
+                            continue;
+                        }
+                    }
+                };
+                let key_bytes = buf.clone();
+
+                let cipher = match Aes256::new_from_slice(&key_bytes) {
+                    Ok(c) => c,
+                    Err(e) => {
+                        println!("parse key failed: {:?}", e);
+                        match call_late_decision(
+                            &upgraded_fraud_decider_web2_contract,
+                            true,
+                            &report,
+                            &conf.fraud_decider_web2_key,
+                        )
+                        .await
+                        {
+                            Ok(tx) => {
+                                println!("{:#?}", tx);
+                                continue;
+                            }
+                            Err(e) => {
+                                println!("{}", e);
+                                continue;
+                            }
+                        }
+                    }
+                };
+                let mut decrypted: Vec<u8> = vec![0; hidden_file.len()];
+
+                for i in 0..hidden_file.len() / 16 {
+                    let mut block: Vec<u8> = vec![0; 16];
+                    block.clone_from_slice(&hidden_file[i * 16..(i + 1) * 16]);
+
+                    cipher.decrypt_block(GenericArray::from_mut_slice(block.as_mut_slice()));
+
+                    decrypted[i * 16..(i + 1) * 16].copy_from_slice(block.as_slice());
+                }
+
+                let hash = &decrypted[decrypted.len() - 32..];
+                let mut hasher = Sha256::new();
+                hasher.update(&decrypted[..decrypted.len() - 32]);
+                let res = hasher.finalize();
+                let result = res.as_slice();
+                match call_late_decision(
+                    &upgraded_fraud_decider_web2_contract,
+                    result != hash,
+                    &report,
+                    &conf.fraud_decider_web2_key,
+                )
+                .await
+                {
+                    Ok(tx) => {
+                        println!("{:#?}", tx);
+                        continue;
+                    }
+                    Err(e) => {
+                        println!("{}", e);
+                        continue;
+                    }
+                }
             }
 
             // prepare next loop step
