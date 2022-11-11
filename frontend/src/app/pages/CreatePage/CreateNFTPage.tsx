@@ -105,12 +105,36 @@ const Icon = styled('img', {
   height: 16
 })
 
+const CollectionPickerContainer = styled('div', {
+  display: 'flex',
+  gap: '$2',
+  justifyContent: 'space-between',
+  '& div:first-child': {
+    flexGrow: 1
+  },
+
+  // set width to full width of form
+  // calc inside cals is taken from container props
+  '& ul': {
+    width: 'calc(100% - 2 * calc((100% - $breakpoints$xl) * 0.5 + $space$3))',
+    '@xl': {
+      width: 'calc(100% - 2 * calc((100% - $breakpoints$lg) * 0.5 + $space$3) - $space$2 - 48px)'
+    },
+    '@lg': {
+      width: 'calc(100% - 2 * calc((100% - $breakpoints$md) * 0.5 + $space$3))'
+    },
+    '@md': {
+      width: 'calc(100% - 2 * calc((100% - $breakpoints$sm) * 0.5 + $space$2))'
+    },
+    '@sm': {
+      width: 'calc(100% - 2 * $space$2)'
+    }
+  }
+})
+
 export default function CreateNftPage() {
   return (
-    <PageLayout
-      css={{ paddingBottom: '$4' }}
-    >
-
+    <PageLayout css={{ paddingBottom: '$4' }}>
       <Form>
         <Title>Create New NFT</Title>
         <FormControl>
@@ -148,12 +172,14 @@ export default function CreateNftPage() {
 
         <FormControl>
           <Label>Collection</Label>
-          <Combobox />
-          <NavLink to={'../collection'}>
-            <AddCollectionButton>
-              <Icon src={PlusIcon} />
-            </AddCollectionButton>
-          </NavLink>
+          <CollectionPickerContainer>
+            <Combobox />
+            <NavLink to={'../collection'}>
+              <AddCollectionButton>
+                <Icon src={PlusIcon} />
+              </AddCollectionButton>
+            </NavLink>
+          </CollectionPickerContainer>
         </FormControl>
 
         <FormControl>
