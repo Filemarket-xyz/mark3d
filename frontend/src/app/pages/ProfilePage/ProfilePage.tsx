@@ -1,7 +1,7 @@
-import { Container } from '@nextui-org/react'
 import React from 'react'
 import { styled } from '../../../styles'
-import { PageLayout, textVariant } from '../../UIkit'
+import { textVariant, Container } from '../../UIkit'
+import Tabs from '../MarketPage/Tabs'
 import bg from './img/Gradient.jpg'
 
 const Background = styled('img', {
@@ -63,6 +63,13 @@ const ProfileDescription = styled('p', {
   color: '$gray500'
 })
 
+const Inventory = styled(Container, {
+  paddingTop: '$4',
+  backgroundColor: '$white',
+  borderTopLeftRadius: 64,
+  borderTopRightRadius: 64
+})
+
 export default function ProfilePage() {
   return (
     <>
@@ -91,7 +98,9 @@ export default function ProfilePage() {
           </Profile>
         </Container>
 
-        <PageLayout>hello world</PageLayout>
+        <Inventory>
+            <Tabs />
+        </Inventory>
       </GrayOverlay>
     </>
   )
