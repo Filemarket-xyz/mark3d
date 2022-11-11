@@ -38,13 +38,14 @@ export const globalStyles = globalCss({
       src: `local(''), url('${interRegular}') format('truetype')`
     }
   ],
-  'html, body': {
+  'html, body, #root, #root>div': {
     fontFamily: '$primary',
     fontSize: '$html',
     height: '100%'
   },
   html: {
-    overflowY: 'hidden'
+    // breaks popovers
+    // overflowY: 'hidden'
   },
   body: {
     overflowY: 'auto',

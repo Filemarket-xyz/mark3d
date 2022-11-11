@@ -2,6 +2,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { styled } from '../../../styles'
 import { Button, PageLayout, textVariant } from '../../UIkit'
+import Dropdown from '../../UIkit/Form/Dropdown'
 import { Input } from '../../UIkit/Form/Input'
 import PostfixedInput from '../../UIkit/Form/PostfixedInput'
 import { TextArea } from '../../UIkit/Form/Textarea'
@@ -106,7 +107,10 @@ const Icon = styled('img', {
 
 export default function CreateNftPage() {
   return (
-    <PageLayout css={{ minHeight: '100vh', paddingBottom: '$4' }}>
+    <PageLayout
+      css={{ paddingBottom: '$4' }}
+    >
+
       <Form>
         <Title>Create New NFT</Title>
         <FormControl>
@@ -144,8 +148,7 @@ export default function CreateNftPage() {
 
         <FormControl>
           <Label>Collection</Label>
-          {/* TODO MAKE SELECT */}
-          <Input placeholder='Select collection' />
+          <Dropdown />
           <NavLink to={'../collection'}>
             <AddCollectionButton>
               <Icon src={PlusIcon} />

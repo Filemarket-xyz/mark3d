@@ -196,7 +196,12 @@ export default function CreateCollectionPage() {
   }
 
   return (
-    <PageLayout css={{ minHeight: '100vh', paddingBottom: '$4' }}>
+    <PageLayout
+      css={{
+        minHeight: '100vh',
+        paddingBottom: '$4'
+      }}
+    >
       <Form>
         <Title>Create New Collection</Title>
 
