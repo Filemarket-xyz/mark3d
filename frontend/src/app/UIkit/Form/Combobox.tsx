@@ -1,11 +1,8 @@
 import * as React from 'react'
 import { useAutocomplete } from '@mui/base/AutocompleteUnstyled'
 import { styled } from '../../../styles'
-import { Input as CustomInput } from './Input'
-
-const Input = styled(CustomInput, {
-  width: '100%'
-})
+import PostfixedInput from './PostfixedInput'
+import bottomArrow from './img/arrow-bottom.svg'
 
 const Listbox = styled('ul', {
   maxWidth: '600px',
@@ -54,7 +51,12 @@ export default function Combobox(props: ComboboxProps) {
   return (
     <div>
       <div {...getRootProps()}>
-        <Input {...getInputProps()} placeholder={'Select collection'} />
+        <PostfixedInput
+          placeholder='Select collection'
+          postfix={<img width={24} height={24} src={bottomArrow} />}
+          inputProps={getInputProps()}
+        />
+        {/* <Input {...getInputProps()} placeholder={'Select collection'} /> */}
       </div>
       {groupedOptions.length > 0 && (
         <Listbox {...getListboxProps()}>

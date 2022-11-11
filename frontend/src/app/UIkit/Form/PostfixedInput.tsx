@@ -1,3 +1,4 @@
+import { ComponentProps, ReactNode } from 'react'
 import { styled } from '../../../styles'
 import { textVariant } from '../Txt'
 import { Input, inputStyles } from './Input'
@@ -11,15 +12,18 @@ const InputWithPrefix = styled('div', {
   alignItems: 'center'
 })
 
-const InputPostfix = styled('span', {
+const InputPostfix = styled('div', {
   color: '$gray400',
   ...textVariant('primary1').true,
-  fontWeight: 600
+  fontWeight: 600,
+  display: 'flex',
+  alignItems: 'center'
 })
 
 interface PrefixedInputProps {
-  postfix: string
+  postfix: ReactNode
   placeholder: string
+  inputProps?: ComponentProps<typeof Input>
 }
 
 export default function PostfixedInput(props: PrefixedInputProps) {
@@ -37,6 +41,7 @@ export default function PostfixedInput(props: PrefixedInputProps) {
             boxShadow: 'none'
           }
         }}
+        {...props.inputProps}
         placeholder={props.placeholder}
       />
       <InputPostfix>{props.postfix}</InputPostfix>
