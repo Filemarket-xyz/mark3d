@@ -70,14 +70,13 @@ async fn main() -> Result<(), web3::Error> {
         let new_block_num: u64 = match get_latest_block_num(&web3).await {
             Ok(n) => {
                 if n == old_block_num {
-                    tokio::time::sleep(tokio::time::Duration::from_millis(200)).await;
                     continue;
                 } else {
                     n
                 }
             }
             Err(e) => {
-                println!("{}", e);
+                println!("get latest block num error: {e}");
                 continue;
             }
         };
@@ -87,7 +86,7 @@ async fn main() -> Result<(), web3::Error> {
             let block = match get_block(i, &web3).await {
                 Ok(b) => b,
                 Err(e) => {
-                    println!("{}", e);
+                    println!("get block error: {e}");
                     continue;
                 }
             };
@@ -118,7 +117,7 @@ async fn main() -> Result<(), web3::Error> {
                 {
                     Ok(r) => r,
                     Err(e) => {
-                        println!("{}", e);
+                        println!("get event logs error: {e}");
                         continue;
                     }
                 };
@@ -158,7 +157,7 @@ async fn main() -> Result<(), web3::Error> {
                 {
                     Ok(r) => r,
                     Err(e) => {
-                        println!("{}", e);
+                        println!("get event logs error: {e}");
                         continue;
                     }
                 };
@@ -214,11 +213,11 @@ async fn main() -> Result<(), web3::Error> {
                         .await
                         {
                             Ok(tx) => {
-                                println!("{:#?}", tx);
+                                println!("{tx:#?}");
                                 continue;
                             }
                             Err(e) => {
-                                println!("{}", e);
+                                println!("call lateDecision error: {e}");
                                 continue;
                             }
                         }
@@ -240,11 +239,11 @@ async fn main() -> Result<(), web3::Error> {
                     .await
                     {
                         Ok(tx) => {
-                            println!("{:#?}", tx);
+                            println!("{tx:#?}");
                             continue;
                         }
                         Err(e) => {
-                            println!("{}", e);
+                            println!("call lateDecision error: {e}");
                             continue;
                         }
                     }
@@ -283,12 +282,12 @@ async fn main() -> Result<(), web3::Error> {
                     Ok(r) => match r.json().await {
                         Ok(f) => f,
                         Err(e) => {
-                            println!("{}", e);
+                            println!("convert file in JSON error: {e}");
                             continue;
                         }
                     },
                     Err(e) => {
-                        println!("{}", e);
+                        println!("get file in json error: {e}");
                         continue;
                     }
                 };
@@ -308,12 +307,12 @@ async fn main() -> Result<(), web3::Error> {
                         Ok(r) => match r.bytes().await {
                             Ok(b) => b.to_vec(),
                             Err(e) => {
-                                println!("{}", e);
+                                println!("convert hidden file to bytes error: {e}");
                                 continue;
                             }
                         },
                         Err(e) => {
-                            println!("{}", e);
+                            println!("get hidden file error: {e}");
                             continue;
                         }
                     };
@@ -329,7 +328,7 @@ async fn main() -> Result<(), web3::Error> {
                     MessageDigest::sha512(),
                     &mut buf,
                 ) {
-                    println!("make key failed: {:?}", e);
+                    println!("make key failed: {e}");
                     match call_late_decision(
                         &upgraded_fraud_decider_web2_contract,
                         true,
@@ -339,11 +338,11 @@ async fn main() -> Result<(), web3::Error> {
                     .await
                     {
                         Ok(tx) => {
-                            println!("{:#?}", tx);
+                            println!("{tx:#?}");
                             continue;
                         }
                         Err(e) => {
-                            println!("{}", e);
+                            println!("call lateDecision error: {e}");
                             continue;
                         }
                     }
@@ -353,7 +352,7 @@ async fn main() -> Result<(), web3::Error> {
                 let cipher = match Aes256::new_from_slice(&key_bytes) {
                     Ok(c) => c,
                     Err(e) => {
-                        println!("parse key failed: {:?}", e);
+                        println!("parse key failed: {e}");
                         match call_late_decision(
                             &upgraded_fraud_decider_web2_contract,
                             true,
@@ -363,11 +362,11 @@ async fn main() -> Result<(), web3::Error> {
                         .await
                         {
                             Ok(tx) => {
-                                println!("{:#?}", tx);
+                                println!("{tx:#?}");
                                 continue;
                             }
                             Err(e) => {
-                                println!("{}", e);
+                                println!("call lateDecision error: {e}");
                                 continue;
                             }
                         }
@@ -398,11 +397,11 @@ async fn main() -> Result<(), web3::Error> {
                 .await
                 {
                     Ok(tx) => {
-                        println!("{:#?}", tx);
+                        println!("lateDecision: {tx:#?}");
                         continue;
                     }
                     Err(e) => {
-                        println!("{}", e);
+                        println!("call lateDecision error: {e}");
                         continue;
                     }
                 }
