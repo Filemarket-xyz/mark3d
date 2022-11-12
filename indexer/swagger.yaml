@@ -6,7 +6,7 @@ info:
   version: 1.0.0
 schemes:
   - https
-host: indexer.mark3d.xyz
+host: mark3d.xyz
 basePath: /api
 paths:
   /tokens/{address}:
