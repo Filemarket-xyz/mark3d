@@ -67,7 +67,10 @@ export const RowCell = styled('div', {
   alignItems: 'center',
   variants: {
     title: {
-      ...textVariant('primary2'),
+      true: {
+        ...textVariant('primary2').true,
+        color: '$blue500'
+      },
       false: {
         ...textVariant('secondary1').true,
         fontSize: '14px'
@@ -133,6 +136,7 @@ export const TableRow: FC<Props> = ({ children, content, contentTitle }) => {
           title={contentTitle}
           description={content.description}
           imageURLS={content.imageURLS}
+          link={content.link}
         />
       )}
     </ItemWithContent>

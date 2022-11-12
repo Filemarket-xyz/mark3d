@@ -59,7 +59,12 @@ interface Props extends IRowContent {
   title: ReactNode
 }
 
-export default function RowContent({ description, imageURLS, title }: Props) {
+export default function RowContent({
+  description,
+  imageURLS,
+  title,
+  link
+}: Props) {
   return (
     <ContentWrapper>
       <Hr />
@@ -72,7 +77,9 @@ export default function RowContent({ description, imageURLS, title }: Props) {
             Description
           </Txt>
           <Description>{description}</Description>
-          <Button primary>Explore</Button>
+          <a href={link} target='_blank' rel='noopener noreferrer'>
+            <Button primary>Explore</Button>
+          </a>
         </MainInfo>
         <Preview>
           <Txt primary1>Visual preview</Txt>
