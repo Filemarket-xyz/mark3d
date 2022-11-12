@@ -273,25 +273,8 @@ definitions:
         type: integer
         description: Id ордера
         format: int64
-      collection:
-        type: string
-        description: Адрес коллекции
-        pattern: "0x[0-9a-f-A-F]{40}"
-      tokenId:
-        type: string
-        description: Id токена
-        pattern: "^[0-9]+$"
-      from:
-        type: string
-        description: Отправитель
-        pattern: "0x[0-9a-f-A-F]{40}"
-      to:
-        type: string
-        description: Получатель, если уже назначен
-        pattern: "0x[0-9a-f-A-F]{40}"
-      orderId:
-        type: number
-        description: Id ордера, если трансфер создан из-за ордера
+      transfer:
+        $ref: "#/definitions/Transfer"
       statuses:
         type: array
         description: Статусы ордера
