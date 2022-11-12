@@ -1,22 +1,12 @@
 mod helpers;
 
-use aes::cipher::BlockDecrypt;
-use aes::cipher::KeyInit;
-use aes::Aes256;
-use generic_array::GenericArray;
 use helpers::call_late_decision;
-use helpers::{
-    get_block, get_contract, get_event_logs, get_latest_block_num, File, FraudReported, OraculConf,
-    TransferFraudReported,
-};
-use openssl::{
-    hash::MessageDigest,
-    pkcs5::pbkdf2_hmac,
-    rsa::{Padding, Rsa},
-};
+use helpers::decrypt_file;
+use helpers::decrypt_password;
+use helpers::fetch_file;
+use helpers::{get_block, get_contract, get_events, get_latest_block_num, OraculConf};
+use openssl::rsa::Rsa;
 use secp256k1::SecretKey;
-use sha2::Digest;
-use sha2::Sha256;
 use std::{env, str::FromStr};
 use web3::types::H160;
 
@@ -106,100 +96,14 @@ async fn main() -> Result<(), web3::Error> {
                     continue;
                 }
 
-                // try fetch TransferFraudReported event from Mark3dCollection contract
-                let tx_logs = match get_event_logs(
-                    "TransferFraudReported",
-                    tx.hash,
-                    &web3,
-                    &conf.mark_3d_collection_contract,
-                )
-                .await
-                {
-                    Ok(r) => r,
-                    Err(e) => {
-                        println!("get event logs error: {e}");
-                        continue;
-                    }
-                };
-
-                let mut report_flag = TransferFraudReported {
-                    token_id: 0,
-                    decided: false,
-                    approved: false,
-                };
-
-                for log in tx_logs.params {
-                    match log.name.as_str() {
-                        "tokenId" => match log.value {
-                            web3::ethabi::Token::Uint(u) => report_flag.token_id = u.as_u64(),
-                            _ => continue,
-                        },
-                        "decided" => match log.value {
-                            web3::ethabi::Token::Bool(b) => report_flag.decided = b,
-                            _ => continue,
-                        },
-                        "approved" => match log.value {
-                            web3::ethabi::Token::Bool(b) => report_flag.approved = b,
-                            _ => continue,
-                        },
-                        &_ => continue,
-                    }
-                }
-
-                // try fetch FraudReported event from FraudDeciderWeb2 contract
-                let tx_logs = match get_event_logs(
-                    "FraudReported",
-                    tx.hash,
-                    &web3,
-                    &conf.fraud_decider_web2_contract,
-                )
-                .await
-                {
-                    Ok(r) => r,
-                    Err(e) => {
-                        println!("get event logs error: {e}");
-                        continue;
-                    }
-                };
-
-                let mut report = FraudReported {
-                    collection: H160::default(),
-                    token_id: web3::types::U256::default(),
-                    cid: String::new(),
-                    public_key: vec![],
-                    private_key: vec![],
-                    encrypted_password: vec![],
-                };
-
-                for log in tx_logs.params {
-                    match log.name.as_str() {
-                        "collection" => match log.value {
-                            web3::ethabi::Token::Address(s) => report.collection = s,
-                            _ => continue,
-                        },
-                        "tokenId" => match log.value {
-                            web3::ethabi::Token::Uint(u) => report.token_id = u,
-                            _ => continue,
-                        },
-                        "cid" => match log.value {
-                            web3::ethabi::Token::String(s) => report.cid = s,
-                            _ => continue,
-                        },
-                        "publicKey" => match log.value {
-                            web3::ethabi::Token::Bytes(b) => report.public_key = b,
-                            _ => continue,
-                        },
-                        "privateKey" => match log.value {
-                            web3::ethabi::Token::Bytes(b) => report.private_key = b,
-                            _ => continue,
-                        },
-                        "encryptedPassword" => match log.value {
-                            web3::ethabi::Token::Bytes(b) => report.encrypted_password = b,
-                            _ => continue,
-                        },
-                        &_ => continue,
-                    }
-                }
+                let (_report_flag, report) =
+                    match get_events(tx.hash, &web3, &conf.mark_3d_collection_contract).await {
+                        Ok(events) => events,
+                        Err(e) => {
+                            println!("get event logs error: {e}");
+                            continue;
+                        }
+                    };
 
                 let private_key = match Rsa::private_key_from_pem(&report.private_key) {
                     Ok(k) => k,
@@ -251,108 +155,9 @@ async fn main() -> Result<(), web3::Error> {
 
                 // Если есть совпадение ключей, то пытаемся расшифровать пароль.
                 // Если удачно (под удачностью подразумевается, что код не свалился с ошибкой), то идем к следующему шагу.
-                let mut buf: Vec<u8> = vec![0; private_key.size() as usize];
-
-                let res_size = match private_key.private_decrypt(
-                    &report.encrypted_password,
-                    &mut buf,
-                    Padding::PKCS1_OAEP,
-                ) {
-                    Ok(v) => v,
-                    Err(_) => continue,
-                };
-
-                let decrypted_password = match std::str::from_utf8(&buf[..res_size]) {
-                    Ok(s) => s,
-                    Err(_) => continue,
-                };
-
-                // Стягивание файла из ipfs
-                let link = if report.cid.starts_with("ipfs://") {
-                    format!(
-                        "https://nftstorage.link/ipfs/{}",
-                        report.cid.replace("ipfs://", "")
-                    )
-                } else {
-                    println!("invalid cid");
-                    continue;
-                };
-
-                let file: File = match reqwest::Client::new().get(link).send().await {
-                    Ok(r) => match r.json().await {
-                        Ok(f) => f,
-                        Err(e) => {
-                            println!("convert file in JSON error: {e}");
-                            continue;
-                        }
-                    },
-                    Err(e) => {
-                        println!("get file in json error: {e}");
-                        continue;
-                    }
-                };
-
-                let hidden_file_link = if file.hidden_file.starts_with("ipfs://") {
-                    format!(
-                        "https://nftstorage.link/ipfs/{}",
-                        report.cid.replace("ipfs://", "")
-                    )
-                } else {
-                    println!("invalid hidden file link");
-                    continue;
-                };
-
-                let hidden_file: Vec<u8> =
-                    match reqwest::Client::new().get(hidden_file_link).send().await {
-                        Ok(r) => match r.bytes().await {
-                            Ok(b) => b.to_vec(),
-                            Err(e) => {
-                                println!("convert hidden file to bytes error: {e}");
-                                continue;
-                            }
-                        },
-                        Err(e) => {
-                            println!("get hidden file error: {e}");
-                            continue;
-                        }
-                    };
-
-                // Расшифровать файл с помощью пароля
-                // need: hidden file, decrypted password
-                let salt = "salt";
-                let mut buf: Vec<u8> = vec![0; 32];
-                if let Err(e) = pbkdf2_hmac(
-                    decrypted_password.as_bytes(),
-                    salt.as_bytes(),
-                    1,
-                    MessageDigest::sha512(),
-                    &mut buf,
-                ) {
-                    println!("make key failed: {e}");
-                    match call_late_decision(
-                        &upgraded_fraud_decider_web2_contract,
-                        true,
-                        &report,
-                        &conf.fraud_decider_web2_key,
-                    )
-                    .await
-                    {
-                        Ok(tx) => {
-                            println!("{tx:#?}");
-                            continue;
-                        }
-                        Err(e) => {
-                            println!("call lateDecision error: {e}");
-                            continue;
-                        }
-                    }
-                };
-                let key_bytes = buf.clone();
-
-                let cipher = match Aes256::new_from_slice(&key_bytes) {
-                    Ok(c) => c,
-                    Err(e) => {
-                        println!("parse key failed: {e}");
+                let decrypted_password = match decrypt_password(private_key, &report).await {
+                    Ok(p) => p,
+                    Err(_) => {
                         match call_late_decision(
                             &upgraded_fraud_decider_web2_contract,
                             true,
@@ -372,25 +177,57 @@ async fn main() -> Result<(), web3::Error> {
                         }
                     }
                 };
-                let mut decrypted: Vec<u8> = vec![0; hidden_file.len()];
 
-                for i in 0..hidden_file.len() / 16 {
-                    let mut block: Vec<u8> = vec![0; 16];
-                    block.clone_from_slice(&hidden_file[i * 16..(i + 1) * 16]);
+                // Стягивание файла из ipfs
+                let hidden_file: Vec<u8> = match fetch_file(&report).await {
+                    Ok(f) => f,
+                    Err(_) => {
+                        match call_late_decision(
+                            &upgraded_fraud_decider_web2_contract,
+                            true,
+                            &report,
+                            &conf.fraud_decider_web2_key,
+                        )
+                        .await
+                        {
+                            Ok(tx) => {
+                                println!("{tx:#?}");
+                                continue;
+                            }
+                            Err(e) => {
+                                println!("call lateDecision error: {e}");
+                                continue;
+                            }
+                        }
+                    }
+                };
 
-                    cipher.decrypt_block(GenericArray::from_mut_slice(block.as_mut_slice()));
-
-                    decrypted[i * 16..(i + 1) * 16].copy_from_slice(block.as_slice());
-                }
-
-                let hash = &decrypted[decrypted.len() - 32..];
-                let mut hasher = Sha256::new();
-                hasher.update(&decrypted[..decrypted.len() - 32]);
-                let res = hasher.finalize();
-                let result = res.as_slice();
+                // Расшифровать файл с помощью пароля
+                // need: hidden file, decrypted password
                 match call_late_decision(
                     &upgraded_fraud_decider_web2_contract,
-                    result != hash,
+                    match decrypt_file(hidden_file, &decrypted_password).await {
+                        Ok(res) => res,
+                        Err(_) => {
+                            match call_late_decision(
+                                &upgraded_fraud_decider_web2_contract,
+                                true,
+                                &report,
+                                &conf.fraud_decider_web2_key,
+                            )
+                            .await
+                            {
+                                Ok(tx) => {
+                                    println!("{tx:#?}");
+                                    continue;
+                                }
+                                Err(e) => {
+                                    println!("call lateDecision error: {e}");
+                                    continue;
+                                }
+                            }
+                        }
+                    },
                     &report,
                     &conf.fraud_decider_web2_key,
                 )

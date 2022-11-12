@@ -1,9 +1,21 @@
+use aes::{
+    cipher::{BlockDecrypt, KeyInit},
+    Aes256,
+};
+use generic_array::GenericArray;
+use openssl::{
+    hash::MessageDigest,
+    pkcs5::pbkdf2_hmac,
+    pkey::Private,
+    rsa::{Padding, Rsa},
+};
 use secp256k1::SecretKey;
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use std::env;
 use web3::{
     contract::tokens::Tokenizable,
-    ethabi::{Contract, Log, RawLog},
+    ethabi::{Contract, RawLog},
     transports::WebSocket,
     types::{Block, BlockId, BlockNumber, Transaction, TransactionReceipt, H160, H256, U256},
     Web3,
@@ -72,25 +84,42 @@ async fn get_tx_receipt(
     }
 }
 
-pub async fn get_event_logs(
-    event_name: &str,
+pub async fn get_events(
     hash: H256,
     web3: &Web3<WebSocket>,
     cont: &Contract,
-) -> Result<Log, web3::Error> {
+) -> Result<(TransferFraudReported, FraudReported), web3::Error> {
     let tx = get_tx_receipt(hash, web3).await?;
-
-    if tx.logs.is_empty() {
+    if tx.logs.is_empty() || tx.logs.len() > 2 {
         return Err(web3::Error::Internal);
     }
 
-    let event = match cont.event(event_name) {
+    let event_t_f_r = match cont.event("TransferFraudReported") {
         Ok(e) => e,
         Err(e) => return Err(web3::Error::Decoder(format!("{}", e))),
     };
+    let mut t_f_r = TransferFraudReported {
+        token_id: 0,
+        decided: false,
+        approved: false,
+    };
 
+    let event_f_r = match cont.event("FraudReported") {
+        Ok(e) => e,
+        Err(e) => return Err(web3::Error::Decoder(format!("{}", e))),
+    };
+    let mut f_r = FraudReported {
+        collection: H160::default(),
+        token_id: web3::types::U256::default(),
+        cid: String::new(),
+        public_key: vec![],
+        private_key: vec![],
+        encrypted_password: vec![],
+    };
+
+    let mut f_r_idx: usize = 1;
     for i in 0..tx.logs.len() {
-        if let Ok(p) = event.parse_log(RawLog {
+        if let Ok(p) = event_t_f_r.parse_log(RawLog {
             topics: tx.logs[i]
                 .topics
                 .iter()
@@ -98,10 +127,172 @@ pub async fn get_event_logs(
                 .collect(),
             data: Vec::from(tx.logs[i].data.0.as_slice()),
         }) {
-            return Ok(p);
+            f_r_idx -= i;
+            for log in p.params {
+                match log.name.as_str() {
+                    "tokenId" => match log.value {
+                        web3::ethabi::Token::Uint(u) => t_f_r.token_id = u.as_u64(),
+                        _ => continue,
+                    },
+                    "decided" => match log.value {
+                        web3::ethabi::Token::Bool(b) => t_f_r.decided = b,
+                        _ => continue,
+                    },
+                    "approved" => match log.value {
+                        web3::ethabi::Token::Bool(b) => t_f_r.approved = b,
+                        _ => continue,
+                    },
+                    &_ => continue,
+                }
+            }
+        } else {
+            continue;
+        }
+
+        if let Ok(p) = event_f_r.parse_log(RawLog {
+            topics: tx.logs[f_r_idx]
+                .topics
+                .iter()
+                .map(|x| H256::from_slice(x.as_bytes()))
+                .collect(),
+            data: Vec::from(tx.logs[f_r_idx].data.0.as_slice()),
+        }) {
+            for log in p.params {
+                match log.name.as_str() {
+                    "collection" => match log.value {
+                        web3::ethabi::Token::Address(s) => f_r.collection = s,
+                        _ => continue,
+                    },
+                    "tokenId" => match log.value {
+                        web3::ethabi::Token::Uint(u) => f_r.token_id = u,
+                        _ => continue,
+                    },
+                    "cid" => match log.value {
+                        web3::ethabi::Token::String(s) => f_r.cid = s,
+                        _ => continue,
+                    },
+                    "publicKey" => match log.value {
+                        web3::ethabi::Token::Bytes(b) => f_r.public_key = b,
+                        _ => continue,
+                    },
+                    "privateKey" => match log.value {
+                        web3::ethabi::Token::Bytes(b) => f_r.private_key = b,
+                        _ => continue,
+                    },
+                    "encryptedPassword" => match log.value {
+                        web3::ethabi::Token::Bytes(b) => f_r.encrypted_password = b,
+                        _ => continue,
+                    },
+                    &_ => continue,
+                }
+            }
         }
     }
-    Err(web3::Error::Decoder("no logs".to_string()))
+
+    Ok((t_f_r, f_r))
+}
+
+pub async fn decrypt_password(
+    private_key: Rsa<Private>,
+    report: &FraudReported,
+) -> Result<String, web3::Error> {
+    let mut buf: Vec<u8> = vec![0; private_key.size() as usize];
+
+    let res_size = match private_key.private_decrypt(
+        &report.encrypted_password,
+        &mut buf,
+        Padding::PKCS1_OAEP,
+    ) {
+        Ok(v) => v,
+        Err(e) => return Err(web3::Error::Decoder(format!("{e}"))),
+    };
+
+    match std::str::from_utf8(&buf[..res_size]) {
+        Ok(s) => Ok(s.to_string()),
+        Err(e) => Err(web3::Error::Decoder(format!("{e}"))),
+    }
+}
+
+pub async fn fetch_file(report: &FraudReported) -> Result<Vec<u8>, web3::Error> {
+    let link = if report.cid.starts_with("ipfs://") {
+        format!(
+            "https://nftstorage.link/ipfs/{}",
+            report.cid.replace("ipfs://", "")
+        )
+    } else {
+        return Err(web3::Error::Decoder("invalid cid".to_string()));
+    };
+
+    let file: File = match reqwest::Client::new().get(link).send().await {
+        Ok(r) => match r.json().await {
+            Ok(f) => f,
+            Err(e) => {
+                return Err(web3::Error::Decoder(format!(
+                    "convert file in JSON error: {e}"
+                )))
+            }
+        },
+        Err(e) => return Err(web3::Error::Decoder(format!("get file in JSON error: {e}"))),
+    };
+
+    let hidden_file_link = if file.hidden_file.starts_with("ipfs://") {
+        format!(
+            "https://nftstorage.link/ipfs/{}",
+            report.cid.replace("ipfs://", "")
+        )
+    } else {
+        return Err(web3::Error::Decoder("invalid hidden file link".to_string()));
+    };
+
+    match reqwest::Client::new().get(hidden_file_link).send().await {
+        Ok(r) => match r.bytes().await {
+            Ok(b) => Ok(b.to_vec()),
+            Err(e) => Err(web3::Error::Decoder(format!(
+                "convert hidden file to bytes error: {e}"
+            ))),
+        },
+        Err(e) => Err(web3::Error::Decoder(format!("get hidden file error: {e}"))),
+    }
+}
+
+pub async fn decrypt_file(file: Vec<u8>, password: &str) -> Result<bool, web3::Error> {
+    let salt = "salt";
+    let mut buf: Vec<u8> = vec![0; 32];
+    if let Err(e) = pbkdf2_hmac(
+        password.as_bytes(),
+        salt.as_bytes(),
+        1,
+        MessageDigest::sha512(),
+        &mut buf,
+    ) {
+        return Err(web3::Error::Decoder(format!("make key failed: {e}")));
+    };
+    let key_bytes = buf.clone();
+
+    let cipher = match Aes256::new_from_slice(&key_bytes) {
+        Ok(c) => c,
+        Err(e) => {
+            return Err(web3::Error::Decoder(format!("parse key failed: {e}")));
+        }
+    };
+    let mut decrypted: Vec<u8> = vec![0; file.len()];
+
+    for i in 0..file.len() / 16 {
+        let mut block: Vec<u8> = vec![0; 16];
+        block.clone_from_slice(&file[i * 16..(i + 1) * 16]);
+
+        cipher.decrypt_block(GenericArray::from_mut_slice(block.as_mut_slice()));
+
+        decrypted[i * 16..(i + 1) * 16].copy_from_slice(block.as_slice());
+    }
+
+    let hash = &decrypted[decrypted.len() - 32..];
+    let mut hasher = Sha256::new();
+    hasher.update(&decrypted[..decrypted.len() - 32]);
+    let res = hasher.finalize();
+    let result = res.as_slice();
+
+    Ok(result != hash)
 }
 
 pub async fn get_latest_block_num(web3: &Web3<WebSocket>) -> Result<u64, web3::Error> {
