@@ -14,6 +14,8 @@ contract Mark3dAccessToken is ERC721Enumerable, AccessControl, Ownable {
     using Clones for address;
     using EnumerableSet for EnumerableSet.Bytes32Set;
 
+    event CollectionCreation(uint256 indexed tokenId, address indexed instance);
+
     /// @dev PrivateCollectionData - struct for collections list getter
     struct PrivateCollectionData {
         uint256 tokenId;                                // access token id
@@ -78,6 +80,8 @@ contract Mark3dAccessToken is ERC721Enumerable, AccessControl, Ownable {
         Mark3dCollection(instance).initialize(name, symbol, _contractMetaUri,
             this, tokenId, _msgSender(), data, fraudDecider, fraudLateDecisionEnabled);
         tokensCount++;
+        
+        emit CollectionCreation(tokenId, instance);
     }
 
     /// @dev function for prediction of address of new collection
