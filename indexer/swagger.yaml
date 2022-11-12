@@ -256,6 +256,10 @@ definitions:
       orderId:
         type: number
         description: Id ордера, если трансфер создан из-за ордера
+      fraudApproved:
+        type: boolean
+        description: true - если факт мошенничества подтвержден (репорт подает всегда только получатель).
+          был ли подан репорт, можно выяснить по статусам
       statuses:
         type: array
         description: Статусы трансфера
@@ -315,7 +319,6 @@ definitions:
       * `PublicKeySet` - Сохранен публичный ключ получателя <br />
       * `PasswordSet` - Сохранен зашифрованный пароль <br />
       * `FraudReported` - Доложено мошенничество <br />
-      * `FraudDecided` - Мошенничество решено <br />
       * `Finished` - Трансфер завершен <br />
       * `Cancelled` - Трансфер отменен
     type: string
