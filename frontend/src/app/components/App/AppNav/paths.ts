@@ -1,11 +1,6 @@
-import { ReactNode } from 'react'
+import { NavBarItemData } from '../../../UIkit'
 
-export interface Path {
-  to: string
-  label?: ReactNode
-}
-
-export const paths: Path[] = [
+export const paths: NavBarItemData[] = [
   {
     to: '/explorer',
     label: 'Explorer'

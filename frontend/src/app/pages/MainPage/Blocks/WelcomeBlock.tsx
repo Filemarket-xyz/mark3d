@@ -3,7 +3,6 @@ import { styled } from '../../../../styles'
 import {
   Card,
   Container,
-  navBarHeightPx,
   Button,
   textVariant
 } from '../../../UIkit'
@@ -26,7 +25,8 @@ const Title = styled('h1', {
     fontSize: 'calc(3vw + 35px)',
     textAlign: 'center'
   },
-  maxWidth: '755px'
+  maxWidth: '755px',
+  marginBottom: 0
 })
 
 const ToolCard = styled(Card, {
@@ -66,7 +66,7 @@ const ToolDescription = styled('p', {
 })
 
 const WelcomeInfo = styled(Container, {
-  paddingTop: `calc(${navBarHeightPx}px + 25%)`,
+  paddingTop: 'calc($layout$navBarHeight + 128px)',
   paddingBottom: '140px',
   '@sm': {
     paddingBottom: '$5'
@@ -76,14 +76,15 @@ const WelcomeInfo = styled(Container, {
 const ToolsContainer = styled('div', {
   display: 'flex',
   gap: '$4',
-  marginTop: '$4',
+  marginTop: 160,
   '@lg': {
     justifyContent: 'center',
-    marginTop: '$5'
+    marginTop: 100
   },
   '@sm': {
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: '$5'
   }
 })
 
@@ -110,7 +111,7 @@ export default function WelcomeBlock() {
   return (
     <WelcomeScreenWrapper>
       <WelcomeInfo>
-        <Title>ESSENTIAL TOOLS FOR 3D INTERNET</Title>
+        <Title>ESSENTIAL TOOLS<br/>FOR 3D INTERNET</Title>
         <ToolsContainer>
           <ToolCard css={{ border: '6px solid $blue300' }}>
             <ToolTitle css={{ color: '$gradient0' }}>For 3D creators</ToolTitle>

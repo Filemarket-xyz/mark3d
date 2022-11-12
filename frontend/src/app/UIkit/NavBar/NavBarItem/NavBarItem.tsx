@@ -1,12 +1,14 @@
-import { styled } from '../../../styles'
+import { cssShowHideIn, styled } from '../../../../styles'
 import { ComponentProps, FC, PropsWithChildren } from 'react'
-import { Txt } from '../Txt'
-import { NavLink } from '../Link'
+import { Txt } from '../../Txt'
+import { NavLink } from '../../Link'
 
-export const NavLinkStyled = styled(NavLink, {
+export const NavLinkStyled = styled(NavLink, cssShowHideIn, {
   color: '$blue900',
   position: 'relative',
-  '&.active::after': {
+  '&::after': {
+    transition: 'opacity 0.25s ease 0s',
+    opacity: 0,
     content: '',
     display: 'block',
     position: 'absolute',
@@ -16,6 +18,9 @@ export const NavLinkStyled = styled(NavLink, {
     height: '2px',
     background: '$gradients$main',
     filter: 'blur(0.5px)'
+  },
+  '&.active::after': {
+    opacity: 1
   }
 })
 

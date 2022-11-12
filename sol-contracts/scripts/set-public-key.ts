@@ -12,7 +12,7 @@ async function main() {
   let accounts = await hre.ethers.getSigners();
   const collectionFactory = new Mark3dCollection__factory(accounts[0]);
   const collection = collectionFactory.attach(args.collection);
-  const tx = await collection.connect(accounts[1]).setTransferPublicKey(args.id, args.key);
+  const tx = await collection.connect(accounts[2]).setTransferPublicKey(args.id, args.key);
   console.log("set transfer public key txid: ", tx.hash);
 }
 

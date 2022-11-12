@@ -11,16 +11,14 @@ import Youtube from './img/Youtube.svg'
 const FooterWrapper = styled('footer', {
   width: '100%',
   height: '64px',
-  position: 'fixed',
-  bottom: 0,
-  left: 0,
-  right: 0,
   backdropFilter: 'blur(12.5px)',
   boxShadow: '$footer',
   color: '$blue900',
   background: '$colors$whiteOp50',
+  '@md': {
+    height: '96px'
+  },
   '@sm': {
-    position: 'static',
     height: '128px'
   }
 })
@@ -33,12 +31,10 @@ const FooterContainer = styled(Container, {
   '@md': {
     justifyContent: 'center',
     flexDirection: 'column',
-    gap: '$1'
+    gap: '$3'
   },
   '@sm': {
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: '$3'
+    alignItems: 'center'
   }
 })
 

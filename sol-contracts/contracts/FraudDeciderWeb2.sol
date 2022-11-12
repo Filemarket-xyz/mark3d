@@ -17,7 +17,7 @@ contract FraudDeciderWeb2 is IFraudDecider, AccessControl {
         bytes encryptedPassword;
     }
 
-    mapping(address => mapping(uint256 => Report)) reports;
+    mapping(address => mapping(uint256 => Report)) public reports;
 
     constructor() {
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());

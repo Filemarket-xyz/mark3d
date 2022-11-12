@@ -43,6 +43,13 @@ export const globalStyles = globalCss({
     fontSize: '$html',
     height: '100%'
   },
+  html: {
+    overflowY: 'hidden'
+  },
+  body: {
+    overflowY: 'auto',
+    scrollbarGutter: 'stable'
+  },
   '#root': {
     height: '100%'
   }
