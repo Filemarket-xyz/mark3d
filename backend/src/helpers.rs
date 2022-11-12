@@ -96,7 +96,7 @@ pub async fn get_event_logs(
                 .iter()
                 .map(|x| H256::from_slice(x.as_bytes()))
                 .collect(),
-            data: Vec::from(tx.logs[0].data.0.as_slice()),
+            data: Vec::from(tx.logs[i].data.0.as_slice()),
         }) {
             return Ok(p);
         }
