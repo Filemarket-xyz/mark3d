@@ -308,15 +308,15 @@ definitions:
         description: Транзакция, которой был установлен статус
         pattern: "0x[0-9a-f-A-F]{64}"
   TransferStatus:
-    description: Статус трансфера
-      * `Drafted` - Создан черновик трансфера
-      * `DraftCompleted` - Черновик трансфера завершен
-      * `Created` - Трансфер инициализирован
-      * `PublicKeySet` - Сохранен публичный ключ получателя
-      * `PasswordSet` - Сохранен зашифрованный пароль
-      * `FraudReported` - Доложено мошенничество
-      * `FraudDecided` - Мошенничество решено
-      * `Finished` - Трансфер завершен
+    description: Статус трансфера <br />
+      * `Drafted` - Создан черновик трансфера <br />
+      * `DraftCompleted` - Черновик трансфера завершен <br />
+      * `Created` - Трансфер инициализирован <br />
+      * `PublicKeySet` - Сохранен публичный ключ получателя <br />
+      * `PasswordSet` - Сохранен зашифрованный пароль <br />
+      * `FraudReported` - Доложено мошенничество <br />
+      * `FraudDecided` - Мошенничество решено <br />
+      * `Finished` - Трансфер завершен <br />
       * `Cancelled` - Трансфер отменен
     type: string
     enum:
@@ -344,11 +344,11 @@ definitions:
         description: Транзакция, которой был установлен статус
         pattern: "0x[0-9a-f-A-F]{64}"
   OrderStatus:
-    description: Статус ордера
-      * `Created` - ордер создан
-      * `Fulfilled` - средства внесены покупателем
-      * `Finished` - ордер завершен успешно
-      * `FraudApproved` - доказано мошенничество и ордер отменен
+    description: Статус ордера <br />
+      * `Created` - ордер создан <br />
+      * `Fulfilled` - средства внесены покупателем <br />
+      * `Finished` - ордер завершен успешно <br />
+      * `FraudApproved` - доказано мошенничество и ордер отменен <br />
       * `Cancelled` - ордер отменен
     type: string
     enum:
