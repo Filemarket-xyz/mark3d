@@ -1,3 +1,4 @@
+use crate::structs::{CollectionCreation, File, FraudReported, TransferFraudReported};
 use aes::{
     cipher::{BlockDecrypt, KeyInit},
     Aes256,
@@ -9,50 +10,36 @@ use openssl::{
     pkey::Private,
     rsa::{Padding, Rsa},
 };
+use redis::{aio::Connection, AsyncCommands};
 use secp256k1::SecretKey;
-use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::env;
+use std::{env, error::Error};
 use web3::{
     contract::tokens::Tokenizable,
-    ethabi::{Contract, RawLog},
+    ethabi::{Contract, Log, RawLog},
     transports::WebSocket,
-    types::{Block, BlockId, BlockNumber, Transaction, TransactionReceipt, H160, H256, U256},
+    types::{Block, BlockId, BlockNumber, Transaction, TransactionReceipt, H160, H256},
     Web3,
 };
 
-pub struct OraculConf {
-    pub eth_api_url: String,
-    pub mark_3d_collection_contract: web3::ethabi::Contract,
-    pub mark_3d_collection_address: String,
-    pub fraud_decider_web2_contract: web3::ethabi::Contract,
-    pub fraud_decider_web2_address: String,
-    pub fraud_decider_web2_key: SecretKey,
+pub async fn is_in_set(set: &Vec<String>, address: String) -> Result<bool, Box<dyn Error>> {
+    for s in set {
+        if *s == address {
+            return Ok(true);
+        }
+    }
+    Ok(false)
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct File {
-    name: String,
-    description: String,
-    image: String,
-    pub hidden_file: String,
-}
-
-#[derive(Debug)]
-pub struct TransferFraudReported {
-    pub token_id: u64,
-    pub decided: bool,
-    pub approved: bool,
-}
-
-#[derive(Debug)]
-pub struct FraudReported {
-    pub collection: H160,
-    pub token_id: U256,
-    pub cid: String,
-    pub public_key: Vec<u8>,
-    pub private_key: Vec<u8>,
-    pub encrypted_password: Vec<u8>,
+pub async fn add_in_set(
+    con: &mut Connection,
+    address: H160,
+    set: &mut Vec<String>,
+) -> Result<(), Box<dyn Error>> {
+    let addr = format!("0x{address:x}");
+    con.sadd("collections", &addr).await?;
+    set.push(addr);
+    Ok(())
 }
 
 pub async fn get_contract(env_var: &str) -> web3::ethabi::Contract {
@@ -84,13 +71,47 @@ async fn get_tx_receipt(
     }
 }
 
+pub async fn get_collection_creation_event(
+    hash: H256,
+    web3: &Web3<WebSocket>,
+    cont: &Contract,
+) -> Result<CollectionCreation, web3::Error> {
+    let tx = get_tx_receipt(hash, web3).await?;
+    if tx.logs.is_empty() {
+        return Err(web3::Error::Internal);
+    }
+
+    let event_c_c = match cont.event("CollectionCreation") {
+        Ok(e) => e,
+        Err(e) => return Err(web3::Error::Decoder(format!("{}", e))),
+    };
+
+    let mut c_c_log: Log = Log { params: vec![] };
+    for i in 0..tx.logs.len() {
+        if let Ok(log) = event_c_c.parse_log(RawLog {
+            topics: tx.logs[i]
+                .topics
+                .iter()
+                .map(|x| H256::from_slice(x.as_bytes()))
+                .collect(),
+            data: Vec::from(tx.logs[i].data.0.as_slice()),
+        }) {
+            c_c_log = log;
+        } else {
+            continue;
+        }
+    }
+
+    Ok(CollectionCreation::from_log(c_c_log))
+}
+
 pub async fn get_events(
     hash: H256,
     web3: &Web3<WebSocket>,
     cont: &Contract,
 ) -> Result<(TransferFraudReported, FraudReported), web3::Error> {
     let tx = get_tx_receipt(hash, web3).await?;
-    if tx.logs.is_empty() || tx.logs.len() > 2 {
+    if tx.logs.len() != 2 {
         return Err(web3::Error::Internal);
     }
 
@@ -98,28 +119,17 @@ pub async fn get_events(
         Ok(e) => e,
         Err(e) => return Err(web3::Error::Decoder(format!("{}", e))),
     };
-    let mut t_f_r = TransferFraudReported {
-        token_id: 0,
-        decided: false,
-        approved: false,
-    };
 
     let event_f_r = match cont.event("FraudReported") {
         Ok(e) => e,
         Err(e) => return Err(web3::Error::Decoder(format!("{}", e))),
     };
-    let mut f_r = FraudReported {
-        collection: H160::default(),
-        token_id: web3::types::U256::default(),
-        cid: String::new(),
-        public_key: vec![],
-        private_key: vec![],
-        encrypted_password: vec![],
-    };
 
+    let mut t_f_r_log: Log = Log { params: vec![] };
+    let mut f_r_log: Log = Log { params: vec![] };
     let mut f_r_idx: usize = 1;
     for i in 0..tx.logs.len() {
-        if let Ok(p) = event_t_f_r.parse_log(RawLog {
+        if let Ok(log) = event_t_f_r.parse_log(RawLog {
             topics: tx.logs[i]
                 .topics
                 .iter()
@@ -128,28 +138,12 @@ pub async fn get_events(
             data: Vec::from(tx.logs[i].data.0.as_slice()),
         }) {
             f_r_idx -= i;
-            for log in p.params {
-                match log.name.as_str() {
-                    "tokenId" => match log.value {
-                        web3::ethabi::Token::Uint(u) => t_f_r.token_id = u.as_u64(),
-                        _ => continue,
-                    },
-                    "decided" => match log.value {
-                        web3::ethabi::Token::Bool(b) => t_f_r.decided = b,
-                        _ => continue,
-                    },
-                    "approved" => match log.value {
-                        web3::ethabi::Token::Bool(b) => t_f_r.approved = b,
-                        _ => continue,
-                    },
-                    &_ => continue,
-                }
-            }
+            t_f_r_log = log;
         } else {
             continue;
         }
 
-        if let Ok(p) = event_f_r.parse_log(RawLog {
+        if let Ok(log) = event_f_r.parse_log(RawLog {
             topics: tx.logs[f_r_idx]
                 .topics
                 .iter()
@@ -157,39 +151,16 @@ pub async fn get_events(
                 .collect(),
             data: Vec::from(tx.logs[f_r_idx].data.0.as_slice()),
         }) {
-            for log in p.params {
-                match log.name.as_str() {
-                    "collection" => match log.value {
-                        web3::ethabi::Token::Address(s) => f_r.collection = s,
-                        _ => continue,
-                    },
-                    "tokenId" => match log.value {
-                        web3::ethabi::Token::Uint(u) => f_r.token_id = u,
-                        _ => continue,
-                    },
-                    "cid" => match log.value {
-                        web3::ethabi::Token::String(s) => f_r.cid = s,
-                        _ => continue,
-                    },
-                    "publicKey" => match log.value {
-                        web3::ethabi::Token::Bytes(b) => f_r.public_key = b,
-                        _ => continue,
-                    },
-                    "privateKey" => match log.value {
-                        web3::ethabi::Token::Bytes(b) => f_r.private_key = b,
-                        _ => continue,
-                    },
-                    "encryptedPassword" => match log.value {
-                        web3::ethabi::Token::Bytes(b) => f_r.encrypted_password = b,
-                        _ => continue,
-                    },
-                    &_ => continue,
-                }
-            }
+            f_r_log = log
+        } else {
+            return Err(web3::Error::Internal);
         }
     }
 
-    Ok((t_f_r, f_r))
+    Ok((
+        TransferFraudReported::from_log(t_f_r_log),
+        FraudReported::from_log(f_r_log),
+    ))
 }
 
 pub async fn decrypt_password(

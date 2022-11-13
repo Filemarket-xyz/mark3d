@@ -1,24 +1,40 @@
 mod helpers;
+mod structs;
 
+use helpers::add_in_set;
 use helpers::call_late_decision;
 use helpers::decrypt_file;
 use helpers::decrypt_password;
 use helpers::fetch_file;
-use helpers::{get_block, get_contract, get_events, get_latest_block_num, OraculConf};
+use helpers::get_collection_creation_event;
+use helpers::is_in_set;
+use helpers::{get_block, get_contract, get_events, get_latest_block_num};
 use openssl::rsa::Rsa;
+use redis::aio::Connection;
+use redis::AsyncCommands;
+use redis::Client;
 use secp256k1::SecretKey;
+use std::error::Error;
 use std::{env, str::FromStr};
+use structs::OraculConf;
 use web3::types::H160;
 
 #[tokio::main]
-async fn main() -> Result<(), web3::Error> {
+async fn main() -> Result<(), Box<dyn Error>> {
     dotenvy::dotenv().expect("Failed to read .env file");
+
+    let mut con: Connection = Client::open(env::var("REDIS_CON").expect("redis env err"))?
+        .get_tokio_connection()
+        .await?;
+
+    let mut set: Vec<String> = con.smembers("collections").await?;
 
     let conf = OraculConf {
         eth_api_url: env::var("ETH_API_URL").expect("env err"),
         mark_3d_collection_contract: get_contract("MARK_3D_COLLECTION_PATH").await,
-        mark_3d_collection_address: {
-            let mut addr = env::var("MARK_3D_COLLECTION_ADDRESS")
+        fraud_decider_web2_contract: get_contract("FRAUD_DECIDER_WEB2_PATH").await,
+        fraud_decider_web2_address: {
+            let mut addr = env::var("FRAUD_DECIDER_WEB2_ADDRESS")
                 .expect("env err")
                 .to_lowercase();
             if !addr.starts_with("0x") {
@@ -26,9 +42,9 @@ async fn main() -> Result<(), web3::Error> {
             }
             addr
         },
-        fraud_decider_web2_contract: get_contract("FRAUD_DECIDER_WEB2_PATH").await,
-        fraud_decider_web2_address: {
-            let mut addr = env::var("FRAUD_DECIDER_WEB2_ADDRESS")
+        mark_3d_access_token_contract: get_contract("MARK_3D_ACCESS_TOKEN_PATH").await,
+        mark_3d_access_token_address: {
+            let mut addr = env::var("MARK_3D_ACCESS_TOKEN_ADDRESS")
                 .expect("env err")
                 .to_lowercase();
             if !addr.starts_with("0x") {
@@ -83,7 +99,7 @@ async fn main() -> Result<(), web3::Error> {
 
             // TX enumeration
             for tx in block.transactions {
-                if format!(
+                let to = format!(
                     "0x{:x}",
                     match tx.to {
                         Some(to) => to,
@@ -91,8 +107,25 @@ async fn main() -> Result<(), web3::Error> {
                             continue;
                         }
                     }
-                ) != conf.mark_3d_collection_address
-                {
+                );
+
+                if to == conf.mark_3d_access_token_address {
+                    let c_c_event = match get_collection_creation_event(
+                        tx.hash,
+                        &web3,
+                        &conf.mark_3d_collection_contract,
+                    )
+                    .await
+                    {
+                        Ok(e) => e,
+                        Err(e) => {
+                            println!("get event logs error: {e}");
+                            continue;
+                        }
+                    };
+                    add_in_set(&mut con, c_c_event.instance, &mut set).await?;
+                } else if is_in_set(&set, to).await? {
+                } else {
                     continue;
                 }
 

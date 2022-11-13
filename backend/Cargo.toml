@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 web3 = "0.18.0"
 tokio = "1.21.2"
+redis = { version = "0.22.1", features = ["tokio-comp"] }
 dotenvy = "0.15.6"
 serde = { version = "1.0.147", features = ["derive"] }
 serde_json = "1.0.87"
