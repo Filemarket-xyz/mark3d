@@ -1,5 +1,5 @@
 import { AESKey, CryptoMessage, DecryptResult, RSAKeyPair, RSAPrivateKey, RSAPublicKey } from '../types'
-import { ISecureStorage } from '../SecureStorage/interface'
+import { ISecureStorage } from '../SecureStorage'
 
 export interface ICryptoProvider {
   readonly id: string
