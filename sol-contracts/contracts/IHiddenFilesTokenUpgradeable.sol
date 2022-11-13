@@ -100,8 +100,10 @@ interface IHiddenFilesTokenUpgradeable is IERC721Upgradeable {
 
     /// @dev Finalize transfer
     /// @notice MUST revert if transfer process wasn't initiated or it exists but is in wrong state
-    /// @notice MUST revert if called not by token receiver
     /// @notice This function MUST call `transferFinished` callback function
+    /// Following cases are allowed:
+    /// 1. Transfer is finalized by receiver
+    /// 2. Encrypted password was set more than 24 hours ago (or some other significant timeout) and transfer is finalized by sender
     /// @param tokenId is id for token to transfer
     function finalizeTransfer(
         uint256 tokenId
@@ -137,6 +139,7 @@ interface IHiddenFilesTokenUpgradeable is IERC721Upgradeable {
     /// 2. Current owner cancels transfer before public key was set by receiver
     /// 3. Current owner cancels transfer before encrypted password was set
     /// 4. Current owner cancels transfer before receiver finalize it or report fraud
+    /// 5. Receiver cancels transfer before encrypted password was set if 24 hours (or some other significant timeout) past after public key was set
     /// @param tokenId is id for token to transfer
     function cancelTransfer(
         uint256 tokenId

@@ -92,6 +92,7 @@ describe("Success transfer", async () => {
     expect(collections).deep.eq([
       [[BN.from(0), collectionInstance.address, "0x"]],
       [BN.from(1)],
+      1,
     ]);
   });
 
@@ -101,8 +102,13 @@ describe("Success transfer", async () => {
       .getSelfTokens([BN.from(0)], [BN.from(0)], [BN.from(10)]);
     expect(tokens).deep.eq([
       [
-        [BN.from(0), "a", "0x"],
+        [
+          [BN.from(0), "a", "0x"],
+        ],
       ],
+      [
+        1
+      ]
     ]);
   });
 });
