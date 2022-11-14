@@ -1,0 +1,11 @@
+{
+  "server": {
+    "port": 9202,
+    "readTimeout": "5s",
+    "writeTimeout": "5s",
+    "maxHeaderBytes": 1024
+  },
+  "handler": {
+    "requestTimeout": "5s"
+  }
+}
