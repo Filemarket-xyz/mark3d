@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouteObject } from 'react-router-dom'
+import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom'
 import ExplorerPage from './ExplorerPage/ExplorerPage'
 import { AppLayout } from '../components/App'
 import MainPage from './MainPage/MainPage'
@@ -7,6 +7,7 @@ import { createRoutes } from './CreatePage/routes'
 import { marketRoutes } from './MarketPage/routes'
 import ProfilePage from './ProfilePage/ProfilePage'
 import { profileRoutes } from './ProfilePage/routes'
+import NFTPage from './NFTPage/NFTPage'
 
 const routes: RouteObject[] = [
   {
@@ -30,6 +31,14 @@ const routes: RouteObject[] = [
     path: 'profile',
     element: <ProfilePage />,
     children: profileRoutes
+  },
+  {
+    path: 'nft/:id',
+    element: <NFTPage />
+  },
+  {
+    path: '*',
+    element: <Navigate to={''} />
   }
 ]
 
