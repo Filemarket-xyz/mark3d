@@ -74,7 +74,7 @@ pub async fn get_collection_creation_event(
 
     let event_c_c = match cont.event("CollectionCreation") {
         Ok(e) => e,
-        Err(e) => return Err(web3::Error::Decoder(format!("{}", e))),
+        Err(e) => return Err(web3::Error::Decoder(format!("{e}"))),
     };
 
     let mut c_c_log: Log = Log { params: vec![] };
@@ -106,12 +106,12 @@ pub async fn get_events(
 
     let event_t_f_r = match cont.event("TransferFraudReported") {
         Ok(e) => e,
-        Err(e) => return Err(web3::Error::Decoder(format!("{}", e))),
+        Err(e) => return Err(web3::Error::Decoder(format!("{e}"))),
     };
 
     let event_f_r = match cont.event("FraudReported") {
         Ok(e) => e,
-        Err(e) => return Err(web3::Error::Decoder(format!("{}", e))),
+        Err(e) => return Err(web3::Error::Decoder(format!("{e}"))),
     };
 
     let mut t_f_r_log: Log = Log { params: vec![] };

@@ -54,7 +54,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let web3 = web3::Web3::new(web3::transports::WebSocket::new(&conf.eth_api_url).await?);
     let mut old_block_num: u64 = match get_latest_block_num(&web3).await {
         Ok(n) => n,
-        Err(e) => panic!("{}", e),
+        Err(e) => panic!("{e}"),
     };
 
     let upgraded_fraud_decider_web2_contract = web3::contract::Contract::new(
