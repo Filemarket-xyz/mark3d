@@ -1,7 +1,8 @@
 import React from 'react'
+import { Outlet } from 'react-router'
 import { styled } from '../../../styles'
 import { textVariant, Container } from '../../UIkit'
-import Tabs from '../../UIkit/Tabs/Tabs'
+import Tabs, { TabsProps } from '../../UIkit/Tabs/Tabs'
 import bg from './img/Gradient.jpg'
 
 const Background = styled('img', {
@@ -70,6 +71,35 @@ const Inventory = styled(Container, {
   borderTopRightRadius: 64
 })
 
+const tabs: Pick<TabsProps, 'tabs'> = {
+  tabs: [
+    {
+      name: 'Owned',
+      url: '/profile/owned',
+      amount: 3
+    },
+    {
+      name: 'Created',
+      url: '/profile/created',
+      amount: 2
+    },
+    {
+      name: 'Namespaces',
+      url: '/profile/namespaces',
+      amount: 3
+    },
+    {
+      name: 'Collections',
+      url: '/profile/collections',
+      amount: 1
+    }
+  ]
+}
+
+const TabsContainer = styled('div', {
+  marginBottom: '$4'
+})
+
 export default function ProfilePage() {
   return (
     <>
@@ -99,7 +129,10 @@ export default function ProfilePage() {
         </Container>
 
         <Inventory>
-            <Tabs />
+          <TabsContainer>
+            <Tabs {...tabs} />
+          </TabsContainer>
+          <Outlet />
         </Inventory>
       </GrayOverlay>
     </>

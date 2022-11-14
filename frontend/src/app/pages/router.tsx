@@ -6,6 +6,7 @@ import MarketPage from './MarketPage/MarketPage'
 import { createRoutes } from './CreatePage/routes'
 import { marketRoutes } from './MarketPage/routes'
 import ProfilePage from './ProfilePage/ProfilePage'
+import { profileRoutes } from './ProfilePage/routes'
 
 const routes: RouteObject[] = [
   {
@@ -27,7 +28,8 @@ const routes: RouteObject[] = [
   },
   {
     path: 'profile',
-    element: <ProfilePage />
+    element: <ProfilePage />,
+    children: profileRoutes
   }
 ]
 
