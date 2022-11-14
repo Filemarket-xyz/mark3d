@@ -1,3 +1,4 @@
+import { useDrop } from '@react-aria/dnd'
 import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { styled } from '../../../../styles'
 import { TextBold } from '../../../pages/CreatePage/CreateCollectionPage'
@@ -125,34 +126,64 @@ const FileDescriptionList = styled('ul', {
 
 const FileDescriptionItem = styled('li', {})
 
+interface ItemWithGetFileProperty {
+  getFile: () => Promise<File>
+}
+
 export default function ImageLoader() {
-  const [selectedFile, setSelectedFile] = useState<File | undefined>()
+  const [file, setFile] = useState<File | undefined>()
+
+  const setFileAsync = async (item: ItemWithGetFileProperty) => {
+    const file = await item.getFile()
+    setFile(file)
+  }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [preview, setPreview] = useState<string | undefined>()
 
+  const ref = React.useRef(null)
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { dropProps, isDropTarget } = useDrop({
+    ref,
+    onDrop(e) {
+      const item = e.items.find(
+        (item) =>
+          item.kind === 'file' &&
+          (item.type === 'image/jpeg' ||
+            item.type === 'image/png' ||
+            item.type === 'image/gif')
+      )
+      if (item) {
+        void setFileAsync(item as unknown as ItemWithGetFileProperty)
+      }
+    }
+  })
+
   useEffect(() => {
-    if (!selectedFile) {
+    if (!file) {
       setPreview(undefined)
       return
     }
 
-    const objectUrl = URL.createObjectURL(selectedFile)
+    const objectUrl = URL.createObjectURL(file)
     setPreview(objectUrl)
 
     return () => URL.revokeObjectURL(objectUrl)
-  }, [selectedFile])
+  }, [file])
 
   const onSelectFile = (e: SyntheticEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement
     if (!target.files || target.files.length === 0) {
-      setSelectedFile(undefined)
+      setFile(undefined)
       return
     }
-    setSelectedFile(target.files[0])
+    setFile(target.files[0])
   }
   return (
     <File htmlFor='inputTag' selected={Boolean(preview)}>
       <FileImageContainer
+        {...dropProps}
+        ref={ref}
         css={{
           backgroundImage: `url('${preview}')`,
           backgroundSize: 'cover',

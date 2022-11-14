@@ -2431,6 +2431,23 @@
     "@react-types/dialog" "^3.4.4"
     "@react-types/shared" "^3.15.0"
 
+"@react-aria/dnd@^3.0.0-rc.0":
+  version "3.0.0-rc.0"
+  resolved "https://registry.yarnpkg.com/@react-aria/dnd/-/dnd-3.0.0-rc.0.tgz#5065e1865d398c87aaa213978c7d688fd154e27c"
+  integrity sha512-L3IOBq//05RKpQBxUX+lP+3TwSNoXntcooemUOuvCM8sikYRWoXDiL2ixUrFFJPk8qKfBlZzUFzgDaIM2I47gg==
+  dependencies:
+    "@babel/runtime" "^7.6.2"
+    "@internationalized/string" "^3.0.0"
+    "@react-aria/i18n" "^3.6.1"
+    "@react-aria/interactions" "^3.12.0"
+    "@react-aria/live-announcer" "^3.1.1"
+    "@react-aria/overlays" "^3.11.0"
+    "@react-aria/utils" "^3.14.0"
+    "@react-aria/visually-hidden" "^3.5.0"
+    "@react-stately/dnd" "3.0.0-rc.0"
+    "@react-types/button" "^3.6.2"
+    "@react-types/shared" "^3.15.0"
+
 "@react-aria/focus@3.7.0":
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/@react-aria/focus/-/focus-3.7.0.tgz#6a90dc99da64bd145e3eeacf3097a29a0342f709"
@@ -3063,6 +3080,15 @@
     "@react-stately/overlays" "^3.4.2"
     "@react-stately/utils" "^3.5.1"
     "@react-types/datepicker" "^3.1.2"
+    "@react-types/shared" "^3.15.0"
+
+"@react-stately/dnd@3.0.0-rc.0":
+  version "3.0.0-rc.0"
+  resolved "https://registry.yarnpkg.com/@react-stately/dnd/-/dnd-3.0.0-rc.0.tgz#8ad366f9c750db05156322377276ebddb4d97a44"
+  integrity sha512-rlLmcCIhau+3+kh4d6Yr6r3WYXOse8j+RPGLQZ5PNm3keFVOTPU90gJeLwTayMnWPKPX5ONGaLJgYbbZUeEC+w==
+  dependencies:
+    "@babel/runtime" "^7.6.2"
+    "@react-stately/selection" "^3.11.0"
     "@react-types/shared" "^3.15.0"
 
 "@react-stately/grid@^3.3.0", "@react-stately/grid@^3.4.0":
