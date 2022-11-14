@@ -31,7 +31,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 .expect("env err")
                 .to_lowercase();
             if !addr.starts_with("0x") {
-                addr = format!("0x{}", addr);
+                addr = format!("0x{addr}");
             }
             addr
         },
@@ -41,7 +41,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 .expect("env err")
                 .to_lowercase();
             if !addr.starts_with("0x") {
-                addr = format!("0x{}", addr);
+                addr = format!("0x{addr}");
             }
             addr
         },
