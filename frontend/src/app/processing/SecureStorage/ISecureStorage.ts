@@ -1,13 +1,22 @@
+import { IStorageSecurityProvider } from '../StorageSecurityProvider'
+import { IStorageProvider } from '../StorageProvider'
+
 export interface ISecureStorage<Value = Uint8Array> {
 
-  readonly id: string
+  readonly storageProvider: IStorageProvider
 
   /**
-   * Sets the crypto-callback for encryption and decryption of the stored values.
+   * Indicates whether promise returned by setSecurityProvider is executing.
+   */
+  securityProviderChanging: boolean
+
+  /**
+   * Sets the crypto functions for encryption and decryption of the stored values.
+   * When called second time, will decrypt all values with an old security provider and encrypt with the new one.
    * @param encrypt
    * @param decrypt
    */
-  setCallbacks: (encrypt: (data: Value) => string, decrypt: (encryptedValue: string) => Value) => Promise<void>
+  setSecurityProvider: (securityProvider: IStorageSecurityProvider<Value>) => Promise<void>
 
   /**
    * Decrypts and returns a value corresponding to the id.

@@ -36,6 +36,7 @@ module.exports = {
       }
     ],
     '@typescript-eslint/restrict-template-expressions': 'off',
+    '@typescript-eslint/no-dynamic-delete': 'off',
   },
   settings: {
     react: {

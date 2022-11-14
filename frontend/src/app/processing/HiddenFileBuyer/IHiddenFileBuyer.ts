@@ -1,4 +1,4 @@
-import { IHiddenFileBase } from '../HiddenFileBase/interface'
+import { IHiddenFileBase } from '../HiddenFileBase/IHiddenFileBase'
 import { CryptoMessage, DecryptResult, RSAPrivateKey, RSAPublicKey } from '../types'
 
 export interface IHiddenFileBuyer extends IHiddenFileBase {

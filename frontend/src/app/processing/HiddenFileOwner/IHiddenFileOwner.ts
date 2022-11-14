@@ -1,5 +1,5 @@
 import { CryptoMessage, RSAPublicKey } from '../types'
-import { IHiddenFileBase } from '../HiddenFileBase/interface'
+import { IHiddenFileBase } from '../HiddenFileBase/IHiddenFileBase'
 
 export interface IHiddenFileOwner extends IHiddenFileBase {
 
