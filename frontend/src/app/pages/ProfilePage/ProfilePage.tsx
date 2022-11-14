@@ -19,7 +19,12 @@ const ProfileHeader = styled('div', {
   alignItems: 'flex-end',
   gap: '$3',
   marginTop: -80,
-  marginBottom: '$4'
+  marginBottom: '$4',
+  '@sm': {
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginBottom: '$3'
+  }
 })
 
 const ProfileImage = styled('img', {
@@ -32,7 +37,10 @@ const ProfileImage = styled('img', {
 const ProfileName = styled('h2', {
   ...textVariant('h2').true,
   color: '$blue900',
-  paddingBottom: '$3'
+  paddingBottom: '$3',
+  '@sm': {
+    fontSize: 'calc(5vw + 10px)'
+  }
 })
 
 const ProfileCredentials = styled('div', {
@@ -68,7 +76,11 @@ const Inventory = styled(Container, {
   paddingTop: '$4',
   backgroundColor: '$white',
   borderTopLeftRadius: 64,
-  borderTopRightRadius: 64
+  borderTopRightRadius: 64,
+  '@md': {
+    borderTopLeftRadius: '$4',
+    borderTopRightRadius: '$4'
+  }
 })
 
 const tabs: Pick<TabsProps, 'tabs'> = {
