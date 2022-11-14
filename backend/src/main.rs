@@ -1,21 +1,14 @@
 mod helpers;
 mod structs;
 
-use helpers::add_in_set;
-use helpers::call_late_decision;
-use helpers::decrypt_file;
-use helpers::decrypt_password;
-use helpers::fetch_file;
-use helpers::get_collection_creation_event;
-use helpers::is_in_set;
-use helpers::{get_block, get_contract, get_events, get_latest_block_num};
+use helpers::{
+    add_in_set, call_late_decision, decrypt_file, decrypt_password, fetch_file, get_block,
+    get_collection_creation_event, get_contract, get_events, get_latest_block_num,
+};
 use openssl::rsa::Rsa;
-use redis::aio::Connection;
-use redis::AsyncCommands;
-use redis::Client;
+use redis::{aio::Connection, AsyncCommands, Client};
 use secp256k1::SecretKey;
-use std::error::Error;
-use std::{env, str::FromStr};
+use std::{collections::HashSet, env, error::Error, str::FromStr};
 use structs::OraculConf;
 use web3::types::H160;
 
@@ -27,7 +20,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .get_tokio_connection()
         .await?;
 
-    let mut set: Vec<String> = con.smembers("collections").await?;
+    let mut set: HashSet<String> = con.smembers("collections").await?;
 
     let conf = OraculConf {
         eth_api_url: env::var("ETH_API_URL").expect("env err"),
@@ -77,9 +70,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
             Ok(n) => {
                 if n == old_block_num {
                     continue;
-                } else {
-                    n
                 }
+                n
             }
             Err(e) => {
                 println!("get latest block num error: {e}");
@@ -124,7 +116,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                         }
                     };
                     add_in_set(&mut con, c_c_event.instance, &mut set).await?;
-                } else if is_in_set(&set, to).await? {
+                } else if set.contains(&to) {
                 } else {
                     continue;
                 }
@@ -188,7 +180,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
                 // Если есть совпадение ключей, то пытаемся расшифровать пароль.
                 // Если удачно (под удачностью подразумевается, что код не свалился с ошибкой), то идем к следующему шагу.
-                let decrypted_password = match decrypt_password(private_key, &report).await {
+                let decrypted_password = match decrypt_password(&private_key, &report) {
                     Ok(p) => p,
                     Err(_) => {
                         match call_late_decision(
@@ -239,7 +231,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 // need: hidden file, decrypted password
                 match call_late_decision(
                     &upgraded_fraud_decider_web2_contract,
-                    match decrypt_file(hidden_file, &decrypted_password).await {
+                    match decrypt_file(&hidden_file, &decrypted_password) {
                         Ok(res) => res,
                         Err(_) => {
                             match call_late_decision(

@@ -43,8 +43,8 @@ async fn main() {
     hasher.update(padded.clone());
     let mut res = hasher.finalize();
     let result = res.as_mut_slice();
-    let res_vec = result.to_vec();
-    padded.append(res_vec.to_vec().as_mut());
+    let mut res_vec = result.to_vec();
+    padded.append(&mut res_vec);
 
     let mut encrypted: Vec<u8> = vec![0; padded.len()];
 

@@ -13,7 +13,7 @@ use openssl::{
 use redis::{aio::Connection, AsyncCommands};
 use secp256k1::SecretKey;
 use sha2::{Digest, Sha256};
-use std::{env, error::Error};
+use std::{collections::HashSet, env, error::Error};
 use web3::{
     contract::tokens::Tokenizable,
     ethabi::{Contract, Log, RawLog},
@@ -22,23 +22,14 @@ use web3::{
     Web3,
 };
 
-pub async fn is_in_set(set: &Vec<String>, address: String) -> Result<bool, Box<dyn Error>> {
-    for s in set {
-        if *s == address {
-            return Ok(true);
-        }
-    }
-    Ok(false)
-}
-
 pub async fn add_in_set(
     con: &mut Connection,
     address: H160,
-    set: &mut Vec<String>,
+    set: &mut HashSet<String>,
 ) -> Result<(), Box<dyn Error>> {
     let addr = format!("0x{address:x}");
     con.sadd("collections", &addr).await?;
-    set.push(addr);
+    set.insert(addr);
     Ok(())
 }
 
@@ -97,8 +88,6 @@ pub async fn get_collection_creation_event(
             data: Vec::from(tx.logs[i].data.0.as_slice()),
         }) {
             c_c_log = log;
-        } else {
-            continue;
         }
     }
 
@@ -139,8 +128,6 @@ pub async fn get_events(
         }) {
             f_r_idx -= i;
             t_f_r_log = log;
-        } else {
-            continue;
         }
 
         if let Ok(log) = event_f_r.parse_log(RawLog {
@@ -151,7 +138,7 @@ pub async fn get_events(
                 .collect(),
             data: Vec::from(tx.logs[f_r_idx].data.0.as_slice()),
         }) {
-            f_r_log = log
+            f_r_log = log;
         } else {
             return Err(web3::Error::Internal);
         }
@@ -163,8 +150,8 @@ pub async fn get_events(
     ))
 }
 
-pub async fn decrypt_password(
-    private_key: Rsa<Private>,
+pub fn decrypt_password(
+    private_key: &Rsa<Private>,
     report: &FraudReported,
 ) -> Result<String, web3::Error> {
     let mut buf: Vec<u8> = vec![0; private_key.size() as usize];
@@ -226,7 +213,7 @@ pub async fn fetch_file(report: &FraudReported) -> Result<Vec<u8>, web3::Error> 
     }
 }
 
-pub async fn decrypt_file(file: Vec<u8>, password: &str) -> Result<bool, web3::Error> {
+pub fn decrypt_file(file: &[u8], password: &str) -> Result<bool, web3::Error> {
     let salt = "salt";
     let mut buf: Vec<u8> = vec![0; 32];
     if let Err(e) = pbkdf2_hmac(
