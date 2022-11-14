@@ -1,12 +1,14 @@
 import { IStorageSecurityProvider } from './IStorageSecurityProvider'
 
-export class NoopStorageSecurityProvider implements IStorageSecurityProvider<Uint8Array> {
-  private readonly encoding = 'base64'
-  async encrypt(value: Uint8Array): Promise<string> {
-    return Buffer.from(value).toString(this.encoding)
+/**
+ * For now no encryption, but in the future it will be included.
+ */
+export class NoopStorageSecurityProvider implements IStorageSecurityProvider {
+  async encrypt(value: string): Promise<string> {
+    return value
   }
 
-  async decrypt(encryptedValue: string): Promise<Uint8Array> {
-    return Buffer.from(encryptedValue, this.encoding)
+  async decrypt(encryptedValue: string): Promise<string> {
+    return encryptedValue
   }
 }

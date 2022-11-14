@@ -1,7 +1,7 @@
 import { AESKey, CryptoMessage, DecryptResult, RSAKeyPair, RSAPrivateKey, RSAPublicKey } from '../types'
 import { ISecureStorage } from '../SecureStorage'
 
-export interface ICryptoProvider {
+export interface IStatefulCryptoProvider {
   readonly id: string
   readonly storage: ISecureStorage
 
@@ -18,7 +18,7 @@ export interface ICryptoProvider {
   /**
    * Sets and saves AES key corresponding to the id. The key will then used during encryption/decryption
    */
-  setAESKey: () => Promise<void>
+  setAESKey: (key: AESKey) => Promise<void>
 
   /**
    * Generates and saves RSA key pair corresponding to the id.
@@ -47,13 +47,6 @@ export interface ICryptoProvider {
    * @param message
    */
   decryptAES: (message: CryptoMessage) => Promise<DecryptResult>
-
-  /**
-   * Encrypts the message with RSA using key corresponding to the id.
-   * @throws {@link NoRSAPublicKeyToEncrypt}
-   * @param message
-   */
-  encryptRSA: (message: CryptoMessage) => Promise<CryptoMessage>
 
   /**
    * Decrypts the message with RSA using key corresponding to the id.

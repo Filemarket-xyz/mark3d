@@ -1,4 +1,4 @@
-export interface IStorageSecurityProvider<Value = Uint8Array> {
+export interface IStorageSecurityProvider<Value = string> {
   /**
    * Function, that takes care of the credentials and algorithm and encrypts values
    * @param data

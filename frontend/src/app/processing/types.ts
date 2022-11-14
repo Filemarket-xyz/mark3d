@@ -1,17 +1,17 @@
 
-// Actually many libraries use Buffer, which comes from NodeJS, but is not supported by the browser.
-// But Buffer extends Uint8Array, so it is safe to use the second one.
-
-export type AESKey = Uint8Array
+// AES key is base64 encoded
+export const AESEncoding = 'base64' as const
+export type AESKey = string
 
 // We are not using higher abstractions specific to the libraries, cos libraries might change
-
-export type RSAPublicKey = Uint8Array
-export type RSAPrivateKey = Uint8Array
+// RSA key is encoded as pkcs8 string
+export const RSAEncoding = 'pkcs8' as const
+export type RSAPublicKey = string
+export type RSAPrivateKey = string
 
 export interface RSAKeyPair {
-  public: RSAPublicKey
-  private: RSAPrivateKey
+  pub: RSAPublicKey // public is reserved keyword
+  priv: RSAPrivateKey // private is reserved keyword
 }
 
 // Word crypto just to make it differ from a lot of 'Message' types
@@ -38,7 +38,7 @@ export interface DecryptResultOk {
 
 export interface DecryptResultError {
   ok: false
-  // TODO: add error when it's known
+  error: string
 }
 
 export type DecryptResult = DecryptResultOk | DecryptResultError

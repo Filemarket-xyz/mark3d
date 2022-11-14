@@ -1,19 +1,19 @@
 import { ISecureStorage } from './ISecureStorage'
-import { wrappedCall } from '../../utils/error/wrappedCall'
+import { ensureCall } from '../../utils/error/ensureCall'
 import { IStorageSecurityProvider } from '../StorageSecurityProvider'
 import { IStorageProvider, StorageData } from '../StorageProvider'
-import { DecryptError, EncryptError, LoadError, UploadError, UploadSingleError } from './errors'
 import { arrayToRecord } from '../../utils/structs/arrayToRecord'
+import { CallbacksChangingError } from './errors'
 
-const encrypt = async (provider: IStorageSecurityProvider | undefined, data: Uint8Array): Promise<string> => {
-  return await wrappedCall(EncryptError, provider?.encrypt, data)
+const encrypt = async (provider: IStorageSecurityProvider | undefined, data: string): Promise<string> => {
+  return await ensureCall('StorageSecurityProvider.encrypt', provider?.encrypt, data)
 }
 
-const decrypt = async (provider: IStorageSecurityProvider | undefined, encryptedValue: string): Promise<Uint8Array> => {
-  return await wrappedCall(DecryptError, provider?.decrypt, encryptedValue)
+const decrypt = async (provider: IStorageSecurityProvider | undefined, encryptedValue: string): Promise<string> => {
+  return await ensureCall('StorageSecurityProvider.decrypt', provider?.decrypt, encryptedValue)
 }
 
-export class SecureStorage implements ISecureStorage<Uint8Array> {
+export class SecureStorage implements ISecureStorage {
   private securityProvider?: IStorageSecurityProvider
   securityProviderChanging = false
 
@@ -22,21 +22,6 @@ export class SecureStorage implements ISecureStorage<Uint8Array> {
   constructor(
     public readonly storageProvider: IStorageProvider
   ) {
-    this.uploadSingle = this.storageProvider.uploadSingle
-      ? async (id: string, value?: string): Promise<void> =>
-        await wrappedCall(UploadSingleError, this.storageProvider.uploadSingle, id, value)
-      : undefined
-  }
-
-  private async upload(data: StorageData): Promise<void> {
-    return await wrappedCall(UploadError, this.storageProvider.upload, data)
-  }
-
-  // initialized in the constructor
-  private readonly uploadSingle?: (id: string, value?: string) => Promise<void>
-
-  private async load(): Promise<StorageData> {
-    return await wrappedCall(LoadError, this.storageProvider.load)
   }
 
   async setSecurityProvider(securityProvider: IStorageSecurityProvider): Promise<void> {
@@ -48,7 +33,7 @@ export class SecureStorage implements ISecureStorage<Uint8Array> {
             .entries(this.data)
             .map(async ([id, encryptedValue]) => [
               id,
-              await encrypt(this.securityProvider, await decrypt(this.securityProvider, encryptedValue))
+              await encrypt(securityProvider, await decrypt(this.securityProvider, encryptedValue))
             ])
         )
         await this.setData(arrayToRecord(encryptedWithNewProviderData))
@@ -59,16 +44,19 @@ export class SecureStorage implements ISecureStorage<Uint8Array> {
 
   private async ensureData(): Promise<void> {
     if (!this.data) {
-      this.data = await this.load()
+      this.data = await this.storageProvider.load()
     }
   }
 
   private async setData(data: StorageData): Promise<void> {
-    await this.upload(data)
+    await this.storageProvider.upload(data)
     this.data = data
   }
 
-  async get(id: string): Promise<Uint8Array | undefined> {
+  async get(id: string): Promise<string | undefined> {
+    if (this.securityProviderChanging) {
+      throw new CallbacksChangingError()
+    }
     await this.ensureData()
     const encryptedValue = this.data?.[id]
     if (!encryptedValue) {
@@ -77,10 +65,13 @@ export class SecureStorage implements ISecureStorage<Uint8Array> {
     return await decrypt(this.securityProvider, encryptedValue)
   }
 
-  async set(id: string, value?: Uint8Array): Promise<void> {
+  async set(id: string, value: string | undefined): Promise<void> {
+    if (this.securityProviderChanging) {
+      throw new CallbacksChangingError()
+    }
     const encryptedValue = value && await encrypt(this.securityProvider, value)
-    if (this.uploadSingle) {
-      await this.uploadSingle(id, encryptedValue)
+    if (this.storageProvider.uploadSingle) {
+      await this.storageProvider.uploadSingle(id, encryptedValue)
     } else {
       await this.ensureData()
       const data = { ...this.data }

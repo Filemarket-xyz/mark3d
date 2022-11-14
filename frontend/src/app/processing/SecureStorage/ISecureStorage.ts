@@ -1,7 +1,7 @@
 import { IStorageSecurityProvider } from '../StorageSecurityProvider'
 import { IStorageProvider } from '../StorageProvider'
 
-export interface ISecureStorage<Value = Uint8Array> {
+export interface ISecureStorage<Value = string> {
 
   readonly storageProvider: IStorageProvider
 
@@ -20,8 +20,7 @@ export interface ISecureStorage<Value = Uint8Array> {
 
   /**
    * Decrypts and returns a value corresponding to the id.
-   * @throws {@link DecryptCallbackError}
-   * @throws {@link CallbacksChanging}
+   * @throws {@link CallbacksChangingError}
    * @param id a string that references the value.
    */
   get: (id: string) => Promise<Value | undefined>
@@ -29,10 +28,9 @@ export interface ISecureStorage<Value = Uint8Array> {
   /**
    * Encrypts and saves the value. If null value is provided, deletes the value.
    *
-   * @throws {@link EncryptCallbackError}
-   * @throws {@link CallbacksChanging}
+   * @throws {@link CallbacksChangingError}
    * @param id a string that references the value.
    * @param value
    */
-  set: (id: string, value?: Value) => Promise<void>
+  set: (id: string, value: Value | undefined) => Promise<void>
 }
