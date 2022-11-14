@@ -1,7 +1,7 @@
 import React from 'react'
 import { styled } from '../../../styles'
 import { textVariant, Container } from '../../UIkit'
-import Tabs from '../MarketPage/Tabs'
+import Tabs from '../../UIkit/Tabs/Tabs'
 import bg from './img/Gradient.jpg'
 
 const Background = styled('img', {
