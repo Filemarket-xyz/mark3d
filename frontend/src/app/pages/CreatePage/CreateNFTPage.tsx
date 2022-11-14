@@ -1,7 +1,8 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { styled } from '../../../styles'
-import { Button, PageLayout, textVariant } from '../../UIkit'
+import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
+import { Button, PageLayout } from '../../UIkit'
 import Combobox from '../../UIkit/Form/Combobox'
 import { Input } from '../../UIkit/Form/Input'
 import PostfixedInput from '../../UIkit/Form/PostfixedInput'
@@ -16,76 +17,12 @@ import {
   TextGray,
   Title
 } from './CreateCollectionPage'
-import BoxImage from './img/box.svg'
 import PlusIcon from './img/plus-icon.svg'
 
 const Description = styled('p', {
   fontSize: '12px',
   color: '$gray500',
   marginBottom: '$2'
-})
-
-export const WhiteShade = styled('div', {
-  width: '100%',
-  height: '100%',
-  background: 'rgba(255,255,255, 0)',
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  borderRadius: 'inherit',
-  transition: 'all 0.15s ease-in-out',
-  zIndex: 1,
-  variants: {
-    selected: {
-      true: {
-        zIndex: 0
-      }
-    }
-  }
-})
-
-export const generateFileHoverStyles = () => {
-  const hoverFileStyles: any = {}
-  hoverFileStyles[`&:hover ${WhiteShade.selector}`] = {
-    background: 'rgba(255,255,255, 0.3)'
-  }
-  return hoverFileStyles
-}
-
-const File = styled('label', {
-  width: '100%',
-  height: '232px',
-  backgroundColor: '$white',
-  borderRadius: '16px',
-  backgroundImage: 'url("./img/box.svg")',
-  backgroundSize: '56px 45px',
-  backgroundPosition: 'center',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  gap: '$3',
-  marginBottom: '$2',
-  cursor: 'pointer',
-  position: 'relative',
-  ...generateFileHoverStyles()
-})
-
-const Box = styled('img', {
-  width: 80,
-  height: 80
-})
-
-const FileInput = styled('input', {
-  display: 'none'
-})
-
-const BoxLabel = styled('span', {
-  ...textVariant('primary1').true,
-  color: '$blue500',
-  fontWeight: 600
 })
 
 const AddCollectionButton = styled(Button, {
@@ -146,16 +83,7 @@ export default function CreateNftPage() {
             UNITYPACKAGE.
             <TextBold>Max size:</TextBold> 100 MB.
           </Description>
-          <File htmlFor='inputTag'>
-            <WhiteShade></WhiteShade>
-            <Box src={BoxImage} />
-            <BoxLabel>Choose File</BoxLabel>
-            <FileInput
-              id='inputTag'
-              type='file'
-              accept='.fbx, .3ds, .max, .blend, .obj, .c4d, .mb, .ma, .lwo, .lxo, .skp, .stl, .uasset, .dae, .ply, .glb, .gltf, .usdf, .unitypackage'
-            />
-          </File>
+          <NftLoader />
         </FormControl>
 
         <FormControl>
