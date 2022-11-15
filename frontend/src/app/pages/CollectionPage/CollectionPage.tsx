@@ -86,28 +86,19 @@ const Inventory = styled(Container, {
 const tabs: Pick<TabsProps, 'tabs'> = {
   tabs: [
     {
-      name: 'Owned',
-      url: 'owned',
+      name: 'NFTs',
+      url: 'nfts',
       amount: 3
     },
     {
-      name: 'Created',
-      url: 'created',
+      name: 'Owners',
+      url: 'owners',
       amount: 2
     },
     {
-      name: 'Namespaces',
-      url: 'namespaces',
-      amount: 3
-    },
-    {
-      name: 'Collections',
-      url: 'collections',
-      amount: 1
-    },
-    {
       name: 'History',
-      url: 'history'
+      url: 'history',
+      amount: 3
     }
   ]
 }
@@ -116,7 +107,7 @@ const TabsContainer = styled('div', {
   marginBottom: '$4'
 })
 
-export default function ProfilePage() {
+export default function CollectionPage() {
   return (
     <>
       <GrayOverlay>

@@ -8,6 +8,8 @@ import { marketRoutes } from './MarketPage/routes'
 import ProfilePage from './ProfilePage/ProfilePage'
 import { profileRoutes } from './ProfilePage/routes'
 import NFTPage from './NFTPage/NFTPage'
+import CollectionPage from './CollectionPage/CollectionPage'
+import { collectionPageRoutes } from './CollectionPage/routes'
 
 const routes: RouteObject[] = [
   {
@@ -28,9 +30,14 @@ const routes: RouteObject[] = [
     children: createRoutes
   },
   {
-    path: 'profile',
+    path: 'profile/:id',
     element: <ProfilePage />,
     children: profileRoutes
+  },
+  {
+    path: 'collection/:id',
+    element: <CollectionPage />,
+    children: collectionPageRoutes
   },
   {
     path: 'nft/:id',

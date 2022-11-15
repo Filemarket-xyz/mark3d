@@ -23,5 +23,10 @@ export const profileRoutes: RouteObject[] = [
   {
     path: 'collections',
     element: <CollectionSection />
+  },
+  // TODO CREATE HISTORY SECTION
+  {
+    path: 'history',
+    element: <Navigate to={'../owned'} />
   }
 ]

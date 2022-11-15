@@ -64,7 +64,9 @@ export default function Tabs(props: TabsProps) {
   const location = useLocation()
   useEffect(() => {
     const currentTabUrl = location.pathname.split('/').at(-1) ?? ''
-    let tabIndex = props.tabs.findIndex((t) => t.url.match(new RegExp(currentTabUrl, 'i')))
+    let tabIndex = props.tabs.findIndex((t) =>
+      t.url.match(new RegExp(currentTabUrl, 'i'))
+    )
     if (tabIndex === -1) {
       tabIndex = 0
     }
