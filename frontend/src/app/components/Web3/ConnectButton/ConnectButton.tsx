@@ -1,11 +1,11 @@
 import { FC } from 'react'
-import { useConnectModal } from '@web3modal/react'
+import { useWeb3Modal } from '@web3modal/react'
 import { Button } from '../../../UIkit'
 
 export const ConnectButton: FC = () => {
-  const { open } = useConnectModal()
+  const { open } = useWeb3Modal()
   return (
-    <Button onPress={open} small primary>
+    <Button onPress={() => open()} small primary>
       Connect
     </Button>
   )
