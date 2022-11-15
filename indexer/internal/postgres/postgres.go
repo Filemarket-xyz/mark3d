@@ -24,7 +24,7 @@ type Transactions interface {
 }
 
 type Collections interface {
-	GetCollectionsByAddress(ctx context.Context, tx pgx.Tx, address string) ([]*domain.Collection, error)
+	GetCollectionsByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Collection, error)
 	GetCollection(ctx context.Context, tx pgx.Tx, contractAddress common.Address) (*domain.Collection, error)
 	InsertCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
 	UpdateCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
@@ -41,6 +41,8 @@ type Tokens interface {
 type Transfers interface {
 	GetIncomingTransfersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Transfer, error)
 	GetOutgoingTransfersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Transfer, error)
+	GetActiveIncomingTransfersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Transfer, error)
+	GetActiveOutgoingTransfersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Transfer, error)
 	GetTransfer(ctx context.Context, tx pgx.Tx, id int64) (*domain.Transfer, error)
 	GetActiveTransfer(ctx context.Context, tx pgx.Tx, contractAddress common.Address, tokenId *big.Int) (*domain.Transfer, error)
 	InsertTransfer(ctx context.Context, tx pgx.Tx, transfer *domain.Transfer) (int64, error)
@@ -51,6 +53,8 @@ type Transfers interface {
 type Orders interface {
 	GetIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error)
 	GetOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error)
+	GetActiveIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error)
+	GetActiveOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error)
 	GetOrder(ctx context.Context, tx pgx.Tx, id int64) (*domain.Order, error)
 	GetActiveOrder(ctx context.Context, tx pgx.Tx, contractAddress common.Address, tokenId *big.Int) (*domain.Order, error)
 	InsertOrder(ctx context.Context, tx pgx.Tx, order *domain.Order) (int64, error)

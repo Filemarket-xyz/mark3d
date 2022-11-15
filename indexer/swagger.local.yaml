@@ -5,9 +5,8 @@ info:
     Здесь можно **маркдауном** писать дополнительное описание.<br />
   version: 1.0.0
 schemes:
-  - https
-host: mark3d.xyz
-basePath: /api
+  - http
+host: localhost:9202
 paths:
   /tokens/{address}:
     get:

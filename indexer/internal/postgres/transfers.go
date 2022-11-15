@@ -88,6 +88,88 @@ func (p *postgres) GetOutgoingTransfersByAddress(ctx context.Context, tx pgx.Tx,
 	return res, nil
 }
 
+func (p *postgres) GetActiveIncomingTransfersByAddress(ctx context.Context, tx pgx.Tx,
+	address common.Address) ([]*domain.Transfer, error) {
+	// language=PostgreSQL
+	rows, err := tx.Query(ctx, `SELECT t.id,t.collection_address,t.token_id,
+       t.from_address,t.to_address,t.fraud_approved FROM transfers AS t WHERE t.to_address=$1 AND
+            NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
+                ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
+                    ANY('{Finished,Cancelled}') ORDER BY t.id DESC`, strings.ToLower(address.String()))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var (
+		res []*domain.Transfer
+		ids []int64
+	)
+	for rows.Next() {
+		var collectionAddress, tokenId, from, to string
+		t := &domain.Transfer{}
+		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to, &t.FraudApproved); err != nil {
+			return nil, err
+		}
+		t.CollectionAddress, t.FromAddress, t.ToAddress = common.HexToAddress(collectionAddress),
+			common.HexToAddress(from), common.HexToAddress(to)
+		var ok bool
+		t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
+		if !ok {
+			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
+		}
+		res, ids = append(res, t), append(ids, t.Id)
+	}
+	statuses, err := p.getTransferStatuses(ctx, tx, ids)
+	if err != nil {
+		return nil, err
+	}
+	for _, t := range res {
+		t.Statuses = statuses[t.Id]
+	}
+	return res, nil
+}
+
+func (p *postgres) GetActiveOutgoingTransfersByAddress(ctx context.Context, tx pgx.Tx,
+	address common.Address) ([]*domain.Transfer, error) {
+	// language=PostgreSQL
+	rows, err := tx.Query(ctx, `SELECT t.id,t.collection_address,t.token_id,
+       t.from_address,t.to_address,t.fraud_approved FROM transfers AS t WHERE t.from_address=$1 AND
+            NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
+                ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
+                    ANY('{Finished,Cancelled}') ORDER BY t.id DESC`, strings.ToLower(address.String()))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var (
+		res []*domain.Transfer
+		ids []int64
+	)
+	for rows.Next() {
+		var collectionAddress, tokenId, from, to string
+		t := &domain.Transfer{}
+		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to, &t.FraudApproved); err != nil {
+			return nil, err
+		}
+		t.CollectionAddress, t.FromAddress, t.ToAddress = common.HexToAddress(collectionAddress),
+			common.HexToAddress(from), common.HexToAddress(to)
+		var ok bool
+		t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
+		if !ok {
+			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
+		}
+		res, ids = append(res, t), append(ids, t.Id)
+	}
+	statuses, err := p.getTransferStatuses(ctx, tx, ids)
+	if err != nil {
+		return nil, err
+	}
+	for _, t := range res {
+		t.Statuses = statuses[t.Id]
+	}
+	return res, nil
+}
+
 func (p *postgres) getTransferStatuses(ctx context.Context, tx pgx.Tx,
 	ids []int64) (map[int64][]*domain.TransferStatus, error) {
 	// language=PostgreSQL

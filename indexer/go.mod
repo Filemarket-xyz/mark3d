@@ -3,13 +3,14 @@ module github.com/mark3d-xyz/mark3d/indexer
 go 1.19
 
 require (
+	github.com/ethereum/go-ethereum v1.10.23
 	github.com/go-openapi/errors v0.20.3
 	github.com/go-openapi/strfmt v0.21.3
 	github.com/go-openapi/swag v0.22.3
 	github.com/go-openapi/validate v0.22.0
+	github.com/gorilla/mux v1.8.0
 	github.com/jackc/pgx/v4 v4.17.2
 	github.com/spf13/viper v1.14.0
-	github.com/ethereum/go-ethereum v1.10.23
 )
 
 require (

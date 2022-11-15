@@ -13,3 +13,10 @@ migrate.down:
 
 migrate.status:
 	goose -dir migrations  postgres "host=localhost port=1338 user=indexer password=1337 dbname=mark3d_indexer sslmode=disable" status
+
+swagger.start:
+	docker run --restart unless-stopped -d --name mark3d-indexer-swagger -p 9201:8080 -e SWAGGER_JSON=/swagger.local.yaml -v $(shell pwd)/swagger.local.yaml:/swagger.local.yaml swaggerapi/swagger-ui
+
+swagger.stop:
+	docker stop mark3d-indexer-swagger
+	docker rm mark3d-indexer-swagger

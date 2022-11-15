@@ -31,6 +31,7 @@ type (
 
 	HandlerConfig struct {
 		RequestTimeout time.Duration
+		SwaggerHost    string
 	}
 )
 
@@ -66,6 +67,7 @@ func Init(configPath string) (*Config, error) {
 		},
 		Handler: &HandlerConfig{
 			RequestTimeout: jsonCfg.GetDuration("handler.requestTimeout"),
+			SwaggerHost:    jsonCfg.GetString("handler.swaggerHost"),
 		},
 	}, nil
 }

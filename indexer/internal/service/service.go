@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/postgres"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 )
@@ -10,21 +11,22 @@ type Service interface {
 	Tokens
 	Transfers
 	Orders
-	Shutdown() error
+	ListenBlockchain()
+	Shutdown()
 }
 
 type Tokens interface {
-	GetTokensByAddress(ctx context.Context, address string) (*models.TokensResponse, *models.ErrorResponse)
+	GetTokensByAddress(ctx context.Context, address common.Address) (*models.TokensResponse, *models.ErrorResponse)
 }
 
 type Transfers interface {
-	GetTransfers(ctx context.Context, address string) (*models.TransfersResponse, *models.ErrorResponse)
-	GetTransfersHistory(ctx context.Context, address string) (*models.TransfersResponse, *models.ErrorResponse)
+	GetTransfers(ctx context.Context, address common.Address) (*models.TransfersResponse, *models.ErrorResponse)
+	GetTransfersHistory(ctx context.Context, address common.Address) (*models.TransfersResponse, *models.ErrorResponse)
 }
 
 type Orders interface {
-	GetOrders(ctx context.Context, address string) (*models.OrdersResponse, *models.ErrorResponse)
-	GetOrdersHistory(ctx context.Context, address string) (*models.OrdersResponse, *models.ErrorResponse)
+	GetOrders(ctx context.Context, address common.Address) (*models.OrdersResponse, *models.ErrorResponse)
+	GetOrdersHistory(ctx context.Context, address common.Address) (*models.OrdersResponse, *models.ErrorResponse)
 }
 
 type service struct {
@@ -37,6 +39,10 @@ func NewService(postgres postgres.Postgres) Service {
 	}
 }
 
-func (s *service) Shutdown() error {
+func (s *service) ListenBlockchain() {
+
+}
+
+func (s *service) Shutdown() {
 
 }

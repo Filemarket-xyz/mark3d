@@ -11,11 +11,12 @@ import (
 )
 
 func (p *postgres) GetCollectionsByAddress(ctx context.Context,
-	tx pgx.Tx, address string) ([]*domain.Collection, error) {
+	tx pgx.Tx, address common.Address) ([]*domain.Collection, error) {
 	// language=PostgreSQL
 	rows, err := tx.Query(ctx, `SELECT address,creator,owner,name,token_id,meta_uri 
 			FROM collections AS c WHERE owner=$1 OR 
-            	EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)`, address)
+            	EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)`,
+		strings.ToLower(address.String()))
 	if err != nil {
 		return nil, err
 	}

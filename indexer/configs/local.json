@@ -7,6 +7,6 @@
   },
   "handler": {
     "requestTimeout": "5s",
-    "swaggerHost": "https://indexer-swagger.mark3d.xyz"
+    "swaggerHost": "http://localhost:9201"
   }
 }

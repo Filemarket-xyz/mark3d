@@ -13,7 +13,7 @@ func (p *postgres) GetIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx,
 	address common.Address) ([]*domain.Order, error) {
 	// language=PostgreSQL
 	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price FROM orders AS o 
-    	JOIN transfers t on o.transfer_id = t.id WHERE t.to_address=$1 ORDER BY id DESC `,
+    	JOIN transfers t on o.transfer_id = t.id WHERE t.to_address=$1 ORDER BY o.id DESC `,
 		strings.ToLower(address.String()))
 	if err != nil {
 		return nil, err
@@ -44,8 +44,75 @@ func (p *postgres) GetIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx,
 func (p *postgres) GetOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error) {
 	// language=PostgreSQL
 	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price FROM orders AS o 
-    	JOIN transfers t on o.transfer_id = t.id WHERE t.from_address=$1 ORDER BY id DESC `,
+    	JOIN transfers t on o.transfer_id = t.id WHERE t.from_address=$1 ORDER BY o.id DESC `,
 		strings.ToLower(address.String()))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var (
+		res []*domain.Order
+		ids []int64
+	)
+	for rows.Next() {
+		o := &domain.Order{}
+		if err := rows.Scan(&o.Id, &o.TransferId, &o.Price); err != nil {
+			return nil, err
+		}
+
+		res, ids = append(res, o), append(ids, o.Id)
+	}
+	statuses, err := p.getOrderStatuses(ctx, tx, ids)
+	if err != nil {
+		return nil, err
+	}
+	for _, t := range res {
+		t.Statuses = statuses[t.Id]
+	}
+	return res, nil
+}
+
+func (p *postgres) GetActiveIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx,
+	address common.Address) ([]*domain.Order, error) {
+	// language=PostgreSQL
+	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price FROM orders AS o 
+    	JOIN transfers t on o.transfer_id = t.id WHERE t.to_address=$1 AND 
+    	    NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
+                ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
+                    ANY('{Finished,Cancelled}') ORDER BY o.id DESC `, strings.ToLower(address.String()))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var (
+		res []*domain.Order
+		ids []int64
+	)
+	for rows.Next() {
+		o := &domain.Order{}
+		if err := rows.Scan(&o.Id, &o.TransferId, &o.Price); err != nil {
+			return nil, err
+		}
+
+		res, ids = append(res, o), append(ids, o.Id)
+	}
+	statuses, err := p.getOrderStatuses(ctx, tx, ids)
+	if err != nil {
+		return nil, err
+	}
+	for _, t := range res {
+		t.Statuses = statuses[t.Id]
+	}
+	return res, nil
+}
+
+func (p *postgres) GetActiveOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error) {
+	// language=PostgreSQL
+	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price FROM orders AS o 
+    	JOIN transfers t on o.transfer_id = t.id WHERE t.from_address=$1 AND
+    	    NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
+                ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
+                    ANY('{Finished,Cancelled}') ORDER BY o.id DESC `, strings.ToLower(address.String()))
 	if err != nil {
 		return nil, err
 	}
