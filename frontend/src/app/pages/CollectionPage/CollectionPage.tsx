@@ -1,9 +1,11 @@
 import React from 'react'
 import { Outlet } from 'react-router'
 import { styled } from '../../../styles'
+import Badge from '../../components/Badge/Badge'
 import { textVariant, Container } from '../../UIkit'
 import Tabs, { TabsProps } from '../../UIkit/Tabs/Tabs'
 import bg from './img/Gradient.jpg'
+import creator from './img/creatorImg.jpg'
 
 const Background = styled('img', {
   width: '100%',
@@ -43,23 +45,10 @@ const ProfileName = styled('h2', {
   }
 })
 
-const ProfileCredentials = styled('div', {
+const Badges = styled('div', {
   display: 'flex',
   gap: '$2',
   marginBottom: '$4'
-})
-
-const CredentialsItem = styled('div', {
-  height: '$4',
-  padding: '8px 12px',
-  fontSize: '$primary3',
-  color: '$blue500',
-  fontWeight: 600,
-  lineHeight: '$primary1',
-  display: 'flex',
-  alignItems: 'center',
-  backgroundColor: '$white',
-  borderRadius: '$2'
 })
 
 const GrayOverlay = styled('div', {
@@ -117,13 +106,16 @@ export default function CollectionPage() {
           <Profile>
             <ProfileHeader>
               <ProfileImage src={bg} />
-              <ProfileName>UnderKong</ProfileName>
+              <ProfileName>VR Glasses</ProfileName>
             </ProfileHeader>
 
-            <ProfileCredentials>
-              <CredentialsItem>something</CredentialsItem>
-              <CredentialsItem>twitter</CredentialsItem>
-            </ProfileCredentials>
+            <Badges>
+              <Badge
+                content={{ title: 'Creator', value: 'Underkong' }}
+                imgUrl={creator}
+              />
+              <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
+            </Badges>
 
             <ProfileDescription>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sodales
