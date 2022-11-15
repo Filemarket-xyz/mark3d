@@ -11,6 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/access_token"
+	"github.com/mark3d-xyz/mark3d/indexer/contracts/collection"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/exchange"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/config"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
@@ -159,6 +160,7 @@ func (s *service) processCollectionCreation(ctx context.Context, tx pgx.Tx,
 	}); err != nil {
 		return err
 	}
+	log.Println("collection created", ev.Instance)
 	return nil
 }
 
@@ -166,6 +168,10 @@ func (s *service) processCollectionTransfer(ctx context.Context, tx pgx.Tx,
 	t *types.Transaction, ev *access_token.Mark3dAccessTokenTransfer) error {
 	c, err := s.postgres.GetCollectionsByTokenId(ctx, tx, ev.TokenId)
 	if err != nil {
+		return err
+	}
+	c.Owner = ev.To
+	if err := s.postgres.UpdateCollection(ctx, tx, c); err != nil {
 		return err
 	}
 	if err := s.postgres.InsertCollectionTransfer(ctx, tx, c.Address, &domain.CollectionTransfer{
@@ -176,6 +182,7 @@ func (s *service) processCollectionTransfer(ctx context.Context, tx pgx.Tx,
 	}); err != nil {
 		return err
 	}
+	log.Println("collection transfer processed", c.Address.String(), ev.From.String(), ev.To.String(), t.Hash().String())
 	return nil
 }
 
@@ -189,6 +196,9 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 		if err != nil {
 			transfer, err := s.accessTokenInstance.ParseTransfer(*l)
 			if err != nil {
+				continue
+			}
+			if transfer.From == common.HexToAddress(zeroAddress) {
 				continue
 			}
 			if err := s.processCollectionTransfer(ctx, tx, t, transfer); err != nil {
@@ -207,7 +217,48 @@ func (s *service) processExchangeTx(ctx context.Context, tx pgx.Tx, t *types.Tra
 	return nil
 }
 
+func (s *service) tryProcessCollectionTransferEvent(ctx context.Context, tx pgx.Tx,
+	t *types.Transaction, l *types.Log) error {
+	instance, err := collection.NewMark3dCollection(*t.To(), s.ethClient)
+	if err != nil {
+		return err
+	}
+	transfer, err := instance.ParseTransfer(*l)
+	if err != nil {
+		return nil
+	}
+	if transfer.From != common.HexToAddress(zeroAddress) {
+		return nil
+	}
+	metaUri, err := instance.TokenURI(&bind.CallOpts{
+		Context: ctx,
+	}, transfer.TokenId)
+	if err != nil {
+		return err
+	}
+	token := &domain.Token{
+		CollectionAddress: *t.To(),
+		TokenId:           transfer.TokenId,
+		Owner:             transfer.To,
+		MetaUri:           metaUri,
+	}
+	if err := s.postgres.InsertToken(ctx, tx, token); err != nil {
+		return err
+	}
+	log.Println("token inserted", token.CollectionAddress.String(), token.TokenId.String(), token.Owner.String(), token.MetaUri)
+	return nil
+}
+
 func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.Transaction) error {
+	receipt, err := s.ethClient.TransactionReceipt(ctx, t.Hash())
+	if err != nil {
+		return err
+	}
+	for _, l := range receipt.Logs {
+		if err := s.tryProcessCollectionTransferEvent(ctx, tx, t, l); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

@@ -19,13 +19,13 @@ async function main() {
   let accessToken = await accessTokenFactory.deploy("Mark3D Access Token", "MARK3D", "",
     collectionToClone.address, true, fraudDecider.address);
   const salt = genRanHex(64);
-  await accessToken.connect(accounts[1]).createCollection("0x" + salt,
-    "TEST", "TEST", "", "", "0x");
-  const collectionAddress = await accessToken.predictDeterministicAddress("0x" + salt);
-  let collectionInstance = collectionFactory.attach(collectionAddress);
+  // await accessToken.connect(accounts[1]).createCollection("0x" + salt,
+  //   "TEST", "TEST", "", "", "0x");
+  // const collectionAddress = await accessToken.predictDeterministicAddress("0x" + salt);
+  // let collectionInstance = collectionFactory.attach(collectionAddress);
   console.log("fraud decider address: ", fraudDecider.address);
   console.log("access token address: ", accessToken.address);
-  console.log("collection address: ", collectionInstance.address);
+  // console.log("collection address: ", collectionInstance.address);
 }
 
 main().catch((error) => {
