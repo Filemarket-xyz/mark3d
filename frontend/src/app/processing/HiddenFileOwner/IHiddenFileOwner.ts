@@ -1,6 +1,9 @@
-import { CryptoMessage, RSAPublicKey } from '../types'
-import { IHiddenFileBase } from '../HiddenFileBase/IHiddenFileBase'
+import { CryptoMessage, DecryptResult, FileMeta, RSAPublicKey } from '../types'
+import { IHiddenFileBase } from '../HiddenFileBase'
 
+/**
+ * Used to mint and sell NFT
+ */
 export interface IHiddenFileOwner extends IHiddenFileBase {
 
   /**
@@ -15,7 +18,7 @@ export interface IHiddenFileOwner extends IHiddenFileBase {
    * @throws {@link NoAESKeyToDecrypt}
    * @param file
    */
-  decryptFile: (fileData: CryptoMessage) => Promise<File>
+  decryptFile: (encryptedFileData: CryptoMessage, meta: FileMeta) => Promise<DecryptResult<File>>
 
   /**
    * Encrypts stored AES key (AES key used to encrypt file) with provided publicKey.

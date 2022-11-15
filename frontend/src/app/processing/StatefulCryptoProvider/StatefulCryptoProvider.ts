@@ -11,6 +11,9 @@ import {
 import { decryptAES, encryptAES, genAESKey, decryptRSA, encryptRSA, genRSAKeyPair } from '../crypto'
 import { NoAESKeyToDecrypt, NoAESKeyToEncrypt, NoRSAPrivateKeyToDecrypt, NoRSAPublicKeyToEncrypt } from './errors'
 
+// prefixes used to prevent collisions in the storage
+const storagePrefix = 'crypto'
+
 export class StatefulCryptoProvider implements IStatefulCryptoProvider {
   constructor(
     public readonly id: string,
@@ -19,15 +22,15 @@ export class StatefulCryptoProvider implements IStatefulCryptoProvider {
   }
 
   private get AESKeyId() {
-    return `${this.id}/AES`
+    return `${storagePrefix}/${this.id}/AES`
   }
 
   private get RSAPrivateKeyId() {
-    return `${this.id}/RSA/Private`
+    return `${storagePrefix}/${this.id}/RSA/Private`
   }
 
   private get RSAPublicKeyId() {
-    return `${this.id}/RSA/Public`
+    return `${storagePrefix}/${this.id}/RSA/Public`
   }
 
   async decryptAES(message: CryptoMessage): Promise<DecryptResult> {

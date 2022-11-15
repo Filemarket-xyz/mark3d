@@ -31,9 +31,9 @@ export interface TokenFullId {
   tokenId: string
 }
 
-export interface DecryptResultOk {
+export interface DecryptResultOk<ResultType> {
   ok: true
-  result: CryptoMessage
+  result: ResultType
 }
 
 export interface DecryptResultError {
@@ -41,4 +41,9 @@ export interface DecryptResultError {
   error: string
 }
 
-export type DecryptResult = DecryptResultOk | DecryptResultError
+export type DecryptResult<ResultType = CryptoMessage> = DecryptResultOk<ResultType> | DecryptResultError
+
+export interface FileMeta {
+  name: string
+  type: string // mime type
+}
