@@ -51,7 +51,8 @@ const BuyContainerInfo = styled('div', {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  marginBottom: '$3'
+  marginBottom: '$3',
+  gap: '$3'
 })
 
 const Price = styled('div', {
@@ -67,7 +68,11 @@ const PriceTitle = styled('span', {
 
 const PriceValue = styled('p', {
   fontSize: '$h3',
-  fontWeight: 700
+  fontWeight: 700,
+  color: '$blue900',
+  '@xl': {
+    fontSize: '$h4'
+  }
 })
 
 export default function NFTPage() {

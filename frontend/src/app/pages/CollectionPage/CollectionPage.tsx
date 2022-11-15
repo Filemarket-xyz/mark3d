@@ -119,7 +119,21 @@ const ItemTitle = styled('span', {
 
 const ItemValue = styled('span', {
   ...textVariant('h3').true,
-  fontWeight: 700
+  fontWeight: 700,
+  '@sm': {
+    fontSize: '$h5'
+  },
+  color: '$blue900'
+})
+
+const StyledContainer = styled(Container, {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  '@xl': {
+    flexDirection: 'column',
+    paddingBottom: '$4'
+  }
 })
 
 export default function CollectionPage() {
@@ -128,13 +142,7 @@ export default function CollectionPage() {
       <GrayOverlay>
         <Background src={bg} />
 
-        <Container
-          css={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}
-        >
+        <StyledContainer>
           <Profile>
             <ProfileHeader>
               <ProfileImage src={bg} />
@@ -167,7 +175,7 @@ export default function CollectionPage() {
               <ItemValue>3.05 ETH</ItemValue>
             </CollectionDataItem>
           </CollectionData>
-        </Container>
+        </StyledContainer>
 
         <Inventory>
           <TabsContainer>
