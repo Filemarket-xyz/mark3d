@@ -59,6 +59,22 @@ func (p *postgres) GetCollection(ctx context.Context,
 	return c, nil
 }
 
+func (p *postgres) GetCollectionsByTokenId(ctx context.Context, tx pgx.Tx,
+	tokenId *big.Int) (*domain.Collection, error) {
+	// language=PostgreSQL
+	row := tx.QueryRow(ctx, `SELECT address,creator,owner,name,meta_uri FROM collections WHERE address=$1`,
+		tokenId.String())
+	var collectionAddress, creator, owner string
+	c := &domain.Collection{
+		TokenId: tokenId,
+	}
+	if err := row.Scan(&collectionAddress, &creator, &owner, &c.Name, &c.MetaUri); err != nil {
+		return nil, err
+	}
+	c.Address, c.Owner, c.Creator = common.HexToAddress(collectionAddress), common.HexToAddress(creator), common.HexToAddress(owner)
+	return c, nil
+}
+
 func (p *postgres) InsertCollection(ctx context.Context, tx pgx.Tx,
 	collection *domain.Collection) error {
 	// language=PostgreSQL
@@ -74,10 +90,10 @@ func (p *postgres) InsertCollection(ctx context.Context, tx pgx.Tx,
 func (p *postgres) InsertCollectionTransfer(ctx context.Context, tx pgx.Tx,
 	collectionAddress common.Address, transfer *domain.CollectionTransfer) error {
 	// language=PostgreSQL
-	if _, err := tx.Exec(ctx, `INSERT INTO collection_transfers VALUES ($1,$2,$3,$4)`,
+	if _, err := tx.Exec(ctx, `INSERT INTO collection_transfers VALUES ($1,$2,$3,$4,$5)`,
 		strings.ToLower(collectionAddress.String()), transfer.Timestamp,
-		strings.ToLower(transfer.From.String()),
-		strings.ToLower(transfer.To.String())); err != nil {
+		strings.ToLower(transfer.From.String()), strings.ToLower(transfer.To.String()),
+		strings.ToLower(transfer.TxId.String())); err != nil {
 		return err
 	}
 	return nil

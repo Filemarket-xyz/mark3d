@@ -26,6 +26,7 @@ type Transactions interface {
 type Collections interface {
 	GetCollectionsByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Collection, error)
 	GetCollection(ctx context.Context, tx pgx.Tx, contractAddress common.Address) (*domain.Collection, error)
+	GetCollectionsByTokenId(ctx context.Context, tx pgx.Tx, tokenId *big.Int) (*domain.Collection, error)
 	InsertCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
 	UpdateCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
 	InsertCollectionTransfer(ctx context.Context, tx pgx.Tx, collectionAddress common.Address, transfer *domain.CollectionTransfer) error

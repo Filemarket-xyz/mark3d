@@ -18,10 +18,11 @@ ALTER TABLE public.collections
 
 CREATE TABLE public.collection_transfers
 (
-    collection_address CHAR(42)     NOT NULL,
-    timestamp          BIGINT       NOT NULL,
-    from_address       CHAR(42)     NOT NULL,
-    to_address         CHAR(42)     NOT NULL,
+    collection_address CHAR(42) NOT NULL,
+    timestamp          BIGINT   NOT NULL,
+    from_address       CHAR(42) NOT NULL,
+    to_address         CHAR(42) NOT NULL,
+    tx_id              CHAR(66) NOT NULL,
     PRIMARY KEY (collection_address, timestamp),
     CONSTRAINT collection_transfers_collection_fkey
         FOREIGN KEY (collection_address)

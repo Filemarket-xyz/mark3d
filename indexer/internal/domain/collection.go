@@ -19,6 +19,7 @@ type CollectionTransfer struct {
 	Timestamp int64
 	From      common.Address
 	To        common.Address
+	TxId      common.Hash
 }
 
 func CollectionToModel(c *Collection) *models.Collection {

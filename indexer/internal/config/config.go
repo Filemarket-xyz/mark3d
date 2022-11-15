@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/spf13/viper"
 	"path/filepath"
 	"time"
@@ -12,6 +13,7 @@ type (
 		Postgres *PostgresConfig
 		Server   *ServerConfig
 		Handler  *HandlerConfig
+		Service  *ServiceConfig
 	}
 
 	PostgresConfig struct {
@@ -32,6 +34,12 @@ type (
 	HandlerConfig struct {
 		RequestTimeout time.Duration
 		SwaggerHost    string
+	}
+
+	ServiceConfig struct {
+		RpcUrl             string
+		AccessTokenAddress common.Address
+		ExchangeAddress    common.Address
 	}
 )
 
@@ -68,6 +76,10 @@ func Init(configPath string) (*Config, error) {
 		Handler: &HandlerConfig{
 			RequestTimeout: jsonCfg.GetDuration("handler.requestTimeout"),
 			SwaggerHost:    jsonCfg.GetString("handler.swaggerHost"),
+		},
+		Service: &ServiceConfig{
+			RpcUrl:             envCfg.GetString("RPC_URL"),
+			AccessTokenAddress: common.HexToAddress(jsonCfg.GetString("service.accessTokenAddress")),
 		},
 	}, nil
 }

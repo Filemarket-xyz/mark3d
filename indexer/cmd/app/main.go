@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/config"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/handler"
@@ -39,7 +40,14 @@ func main() {
 	}
 
 	pg := postgres.NewPostgres(pool)
-	indexService := service.NewService(pg)                        // service who interact with main dependencies
+	ethClient, err := ethclient.Dial(cfg.Service.RpcUrl)
+	if err != nil {
+		log.Panicln(err)
+	}
+	indexService, err := service.NewService(pg, ethClient, cfg.Service) // service who interact with main dependencies
+	if err != nil {
+		log.Panicln(err)
+	}
 	indexHandler := handler.NewHandler(cfg.Handler, indexService) // handler who interact with a service and hashManager
 	router := indexHandler.Init()                                 // gorilla mux here
 	srv := server.NewServer(cfg.Server, router)                   // basically http.Server with config here
@@ -56,6 +64,12 @@ func main() {
 	// graceful shutdown here
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+	go func() {
+		if err := indexService.ListenBlockchain(); err != service.ErrSubFailed {
+			log.Panicln(err)
+		}
+		quit <- syscall.SIGTERM
+	}()
 
 	<-quit
 

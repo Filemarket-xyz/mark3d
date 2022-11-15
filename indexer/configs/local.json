@@ -8,5 +8,8 @@
   "handler": {
     "requestTimeout": "5s",
     "swaggerHost": "http://localhost:9201"
+  },
+  "service": {
+    "accessTokenAddress": ""
   }
 }
