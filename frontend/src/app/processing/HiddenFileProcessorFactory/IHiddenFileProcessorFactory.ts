@@ -2,7 +2,7 @@ import { IHiddenFileOwner } from '../HiddenFileOwner'
 import { ISecureStorage } from '../SecureStorage'
 import { TokenFullId } from '../types'
 import { IHiddenFileBuyer } from '../HiddenFileBuyer'
-import { TokenIdStorage } from '../TokenIdStorage/TokenIdStorage'
+import { TokenIdStorage } from '../TokenIdStorage'
 import { IHiddenFileBase } from '../HiddenFileBase'
 
 /**

@@ -4,7 +4,7 @@ import { HiddenFileOwner, IHiddenFileOwner } from '../HiddenFileOwner'
 import { TokenFullId } from '../types'
 import { IHiddenFileBase } from '../HiddenFileBase'
 import { ISecureStorage, SecureStorage } from '../SecureStorage'
-import { TokenIdStorage } from '../TokenIdStorage/TokenIdStorage'
+import { TokenIdStorage } from '../TokenIdStorage'
 import { LocalStorageProvider } from '../StorageProvider'
 import { StatefulCryptoProvider } from '../StatefulCryptoProvider'
 
