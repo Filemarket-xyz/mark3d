@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ComponentProps } from 'react'
 import { styled } from '../../../styles'
 import { textVariant } from '../../UIkit'
 
@@ -41,11 +41,12 @@ export interface BadgeProps {
     title?: string
     value: string
   }
+  wrapperProps?: ComponentProps<typeof Wrapper>
 }
 
 export default function Badge(props: BadgeProps) {
   return (
-    <Wrapper>
+    <Wrapper {...props.wrapperProps}>
       {props.imgUrl && <Image src={props.imgUrl} />}
       <Content>
         {props.content.title && <Title>{props.content.title}</Title>}

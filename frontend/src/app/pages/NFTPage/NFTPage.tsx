@@ -25,16 +25,25 @@ const MintTime = styled('p', {
   marginBottom: '$3'
 })
 
-const NftTagsContainer = styled('div', {
+const BadgesContainer = styled('div', {
   display: 'flex',
-  gap: '$3'
+  gap: '$3',
+  '@sm': {
+    flexDirection: 'column-reverse',
+    gap: '$2'
+  }
 })
 
-const Layout = styled(PageLayout, {
+const GridLayout = styled(PageLayout, {
   paddingTop: 48,
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
-  columnGap: '$4'
+  columnGap: '$4',
+  '@md': {
+    gridTemplateRows: 'max-content',
+    gap: '$4',
+    gridTemplateColumns: '1fr'
+  }
 })
 
 const GridBlock = styled('div')
@@ -52,7 +61,10 @@ const BuyContainerInfo = styled('div', {
   justifyContent: 'space-between',
   alignItems: 'center',
   marginBottom: '$3',
-  gap: '$3'
+  gap: '$3',
+  '@sm': {
+    flexDirection: 'column'
+  }
 })
 
 const Price = styled('div', {
@@ -79,11 +91,11 @@ export default function NFTPage() {
   return (
     <>
       <NFTPreviewContainer></NFTPreviewContainer>
-      <Layout>
+      <GridLayout>
         <GridBlock>
           <NftName>VR Glasses</NftName>
           <MintTime>Minted on Sep 9, 2022</MintTime>
-          <NftTagsContainer>
+          <BadgesContainer>
             <Badge
               imgUrl={creator}
               content={{ title: 'Creator', value: 'Underkong' }}
@@ -92,12 +104,13 @@ export default function NFTPage() {
               imgUrl={collection}
               content={{ title: 'Collection', value: 'VR Glasses by Mark3d' }}
             />
-          </NftTagsContainer>
+          </BadgesContainer>
         </GridBlock>
         <GridBlock>
           <BuyContainer>
             <BuyContainerInfo>
               <Badge
+                wrapperProps={{ css: { flexShrink: 0 } }}
                 imgUrl={creator}
                 content={{ title: 'Creator', value: 'Underkong' }}
               />
@@ -111,7 +124,7 @@ export default function NFTPage() {
             </Button>
           </BuyContainer>
         </GridBlock>
-      </Layout>
+      </GridLayout>
     </>
   )
 }
