@@ -61,7 +61,7 @@ const ArrowButton = styled('div', {
   backgroundSize: 'contain',
   backgroundPosition: 'center',
   borderRadius: '50%',
-  backgroundColor: 'rgba(255,255,255, 0.5)',
+  backgroundColor: '$whiteOp50',
   border: 'none',
   variants: {
     rightArrow: {

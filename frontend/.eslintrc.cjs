@@ -26,6 +26,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/space-before-function-paren': 'off',
     '@typescript-eslint/strict-boolean-expressions': 'off',
+    '@typescript-eslint/no-unnecessary-type-assertion': 'off',
     'max-len': [
       'warn',
       {
@@ -35,7 +36,7 @@ module.exports = {
         ignoreUrls: true
       }
     ],
-    '@typescript-eslint/restrict-template-expressions': 'off',
+    '@typescript-eslint/restrict-template-expressions': 'off'
   },
   settings: {
     react: {
