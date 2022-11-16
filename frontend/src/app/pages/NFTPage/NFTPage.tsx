@@ -1,6 +1,6 @@
 import React from 'react'
 import { styled } from '../../../styles'
-import { Button, PageLayout, textVariant } from '../../UIkit'
+import { Button, PageLayout, textVariant, Link } from '../../UIkit'
 import creator from './img/creatorImg.jpg'
 import collection from './img/collection.jpg'
 import Badge from '../../components/Badge/Badge'
@@ -39,10 +39,13 @@ const GridLayout = styled(PageLayout, {
   paddingTop: 48,
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
+  gridTemplateRows: 'max-content',
   columnGap: '$4',
+  minHeight: '100%',
+  gap: '48px',
   '@md': {
     gridTemplateRows: 'max-content',
-    gap: '$4',
+    gap: '$5',
     gridTemplateColumns: '1fr'
   }
 })
@@ -120,7 +123,7 @@ const Tag = ({
   }
 
   if (isGray) {
-    color = '$gray500'
+    color = '$gray400'
   }
   return (
     <Badge content={{ value }} valueStyles={{ css: { fontSize: fz, color } }} />
@@ -258,6 +261,32 @@ export default function NFTPage() {
             </Li>
             <Li>
               <Bold>object4.glb</Bold> (64 MB)
+            </Li>
+          </Ul>
+        </GridBlock>
+
+        <GridBlock>
+          <PropertyTitle>Links</PropertyTitle>
+          <StyledHr />
+          <Ul
+            css={{
+              listStyle: 'none',
+              '& li:not(:last-child)': {
+                marginBottom: '$3'
+              }
+            }}
+          >
+            <Li>
+              <Link>View on Etherscan</Link>
+            </Li>
+            <Li>
+              <Link>View metadata</Link>
+            </Li>
+            <Li>
+              <Link>View on IPFS</Link>
+            </Li>
+            <Li>
+              <Link>Share</Link>
             </Li>
           </Ul>
         </GridBlock>
