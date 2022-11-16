@@ -42,6 +42,7 @@ export interface BadgeProps {
     value: string
   }
   wrapperProps?: ComponentProps<typeof Wrapper>
+  valueStyles?: ComponentProps<typeof Value>
 }
 
 export default function Badge(props: BadgeProps) {
@@ -50,7 +51,7 @@ export default function Badge(props: BadgeProps) {
       {props.imgUrl && <Image src={props.imgUrl} />}
       <Content>
         {props.content.title && <Title>{props.content.title}</Title>}
-        <Value>{props.content.value}</Value>
+        <Value css={props.valueStyles?.css}>{props.content.value}</Value>
       </Content>
     </Wrapper>
   )

@@ -4,6 +4,7 @@ import { Button, PageLayout, textVariant } from '../../UIkit'
 import creator from './img/creatorImg.jpg'
 import collection from './img/collection.jpg'
 import Badge from '../../components/Badge/Badge'
+import { Hr } from '../../UIkit/Hr/Hr'
 
 const NFTPreviewContainer = styled('div', {
   paddingTop: '$layout$navbarheight',
@@ -87,6 +88,35 @@ const PriceValue = styled('p', {
   }
 })
 
+const PropertyTitle = styled('h2', {
+  ...textVariant('h5').true,
+  color: '$gray500',
+  marginBottom: '$3'
+})
+
+const P = styled('p', {
+  ...textVariant('primary1').true,
+  color: '$gray500',
+  fontWeight: 400
+})
+
+const StyledHr = styled(Hr, {
+  marginBottom: '$3'
+})
+
+const Tag = ({ value }: { value: string }) => {
+  return (
+    <Badge
+      content={{ value }}
+      valueStyles={{ css: { fontSize: '$primary2' } }}
+    />
+  )
+}
+const TagsContainer = styled('div', {
+  display: 'flex',
+  gap: '$2',
+  flexWrap: 'wrap'
+})
 export default function NFTPage() {
   return (
     <>
@@ -106,6 +136,7 @@ export default function NFTPage() {
             />
           </BadgesContainer>
         </GridBlock>
+
         <GridBlock>
           <BuyContainer>
             <BuyContainerInfo>
@@ -123,6 +154,28 @@ export default function NFTPage() {
               Buy now
             </Button>
           </BuyContainer>
+        </GridBlock>
+
+        <GridBlock>
+          <PropertyTitle>Description</PropertyTitle>
+          <StyledHr />
+          <P>Mark3d NFT collection for 3D Internet and virtual worlds</P>
+        </GridBlock>
+
+        <GridBlock>
+          <PropertyTitle>Tags</PropertyTitle>
+          <StyledHr />
+          <TagsContainer>
+            <Tag value='VR' />
+            <Tag value='Metaverse' />
+            <Tag value='Web3' />
+            <Tag value='Jedi' />
+            <Tag value='3D Internet' />
+            <Tag value='NFT' />
+            <Tag value='DAO-ART' />
+            <Tag value='ART' />
+            <Tag value='Tag' />
+          </TagsContainer>
         </GridBlock>
       </GridLayout>
     </>
