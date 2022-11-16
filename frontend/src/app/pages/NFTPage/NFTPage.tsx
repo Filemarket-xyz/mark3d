@@ -104,12 +104,26 @@ const StyledHr = styled(Hr, {
   marginBottom: '$3'
 })
 
-const Tag = ({ value }: { value: string }) => {
+const Tag = ({
+  value,
+  smallText,
+  isGray
+}: {
+  value: string
+  smallText?: boolean
+  isGray?: boolean
+}) => {
+  let fz = '$primary2'
+  let color
+  if (smallText) {
+    fz = '$primary3'
+  }
+
+  if (isGray) {
+    color = '$gray500'
+  }
   return (
-    <Badge
-      content={{ value }}
-      valueStyles={{ css: { fontSize: '$primary2' } }}
-    />
+    <Badge content={{ value }} valueStyles={{ css: { fontSize: fz, color } }} />
   )
 }
 const TagsContainer = styled('div', {
@@ -212,6 +226,38 @@ export default function NFTPage() {
             </Li>
             <Li>
               <Bold>PBR:</Bold> Specular
+            </Li>
+          </Ul>
+        </GridBlock>
+
+        <GridBlock>
+          <PropertyTitle>Hidden files</PropertyTitle>
+          <StyledHr />
+          {/* TODO later create separate component for interactivity */}
+          <TagsContainer css={{ marginBottom: '$3' }}>
+            <Tag value='All_files/' smallText isGray />
+            <Tag value='3D_files/' smallText />
+            <Tag value='Proccessed_Textures/' smallText />
+          </TagsContainer>
+          <Ul
+            css={{
+              listStyle: 'none',
+              '& li:not(:last-child)': {
+                marginBottom: '$2'
+              }
+            }}
+          >
+            <Li>
+              <Bold>object1.glb</Bold> (64 MB)
+            </Li>
+            <Li>
+              <Bold>object2.glb</Bold> (64 MB)
+            </Li>
+            <Li>
+              <Bold>object3.glb</Bold> (64 MB)
+            </Li>
+            <Li>
+              <Bold>object4.glb</Bold> (64 MB)
             </Li>
           </Ul>
         </GridBlock>
