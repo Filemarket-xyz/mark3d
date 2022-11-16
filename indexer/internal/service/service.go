@@ -294,7 +294,7 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 		return err
 	}
 	transfer := &domain.Transfer{
-		CollectionAddress: *t.To(),
+		CollectionAddress: l.Address,
 		TokenId:           initEv.TokenId,
 		FromAddress:       initEv.From,
 	}

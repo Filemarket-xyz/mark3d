@@ -13,3 +13,11 @@ encrypted-script.ts
 correct-metadata.json
 wrong-metadata.json
 false_fraud.sh
+true_fraud.sh
+order_false_fraud.sh
+order_true_fraud.sh
+cancel_order.sh
+cancel_transfer.sh
+finish_order.sh
+finish_transfer.sh
+test.sh

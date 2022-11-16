@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
@@ -24,9 +25,15 @@ func (p *postgres) GetIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx,
 		ids []int64
 	)
 	for rows.Next() {
+		var price string
 		o := &domain.Order{}
-		if err := rows.Scan(&o.Id, &o.TransferId, &o.Price); err != nil {
+		if err := rows.Scan(&o.Id, &o.TransferId, &price); err != nil {
 			return nil, err
+		}
+		var ok bool
+		o.Price, ok = big.NewInt(0).SetString(price, 10)
+		if !ok {
+			return nil, fmt.Errorf("failed to parse big int: %s", price)
 		}
 
 		res, ids = append(res, o), append(ids, o.Id)
@@ -55,9 +62,15 @@ func (p *postgres) GetOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, ad
 		ids []int64
 	)
 	for rows.Next() {
+		var price string
 		o := &domain.Order{}
-		if err := rows.Scan(&o.Id, &o.TransferId, &o.Price); err != nil {
+		if err := rows.Scan(&o.Id, &o.TransferId, &price); err != nil {
 			return nil, err
+		}
+		var ok bool
+		o.Price, ok = big.NewInt(0).SetString(price, 10)
+		if !ok {
+			return nil, fmt.Errorf("failed to parse big int: %s", price)
 		}
 
 		res, ids = append(res, o), append(ids, o.Id)
@@ -89,9 +102,15 @@ func (p *postgres) GetActiveIncomingOrdersByAddress(ctx context.Context, tx pgx.
 		ids []int64
 	)
 	for rows.Next() {
+		var price string
 		o := &domain.Order{}
-		if err := rows.Scan(&o.Id, &o.TransferId, &o.Price); err != nil {
+		if err := rows.Scan(&o.Id, &o.TransferId, &price); err != nil {
 			return nil, err
+		}
+		var ok bool
+		o.Price, ok = big.NewInt(0).SetString(price, 10)
+		if !ok {
+			return nil, fmt.Errorf("failed to parse big int: %s", price)
 		}
 
 		res, ids = append(res, o), append(ids, o.Id)
@@ -122,9 +141,15 @@ func (p *postgres) GetActiveOutgoingOrdersByAddress(ctx context.Context, tx pgx.
 		ids []int64
 	)
 	for rows.Next() {
+		var price string
 		o := &domain.Order{}
-		if err := rows.Scan(&o.Id, &o.TransferId, &o.Price); err != nil {
+		if err := rows.Scan(&o.Id, &o.TransferId, &price); err != nil {
 			return nil, err
+		}
+		var ok bool
+		o.Price, ok = big.NewInt(0).SetString(price, 10)
+		if !ok {
+			return nil, fmt.Errorf("failed to parse big int: %s", price)
 		}
 
 		res, ids = append(res, o), append(ids, o.Id)
@@ -167,10 +192,18 @@ func (p *postgres) getOrderStatuses(ctx context.Context, tx pgx.Tx,
 func (p *postgres) GetOrder(ctx context.Context, tx pgx.Tx, id int64) (*domain.Order, error) {
 	// language=PostgreSQL
 	row := tx.QueryRow(ctx, `SELECT id,transfer_id,price FROM orders WHERE id=$1`, id)
+
+	var price string
 	o := &domain.Order{}
-	if err := row.Scan(&o.Id, &o.TransferId, &o.Price); err != nil {
+	if err := row.Scan(&o.Id, &o.TransferId, &price); err != nil {
 		return nil, err
 	}
+	var ok bool
+	o.Price, ok = big.NewInt(0).SetString(price, 10)
+	if !ok {
+		return nil, fmt.Errorf("failed to parse big int: %s", price)
+	}
+
 	statuses, err := p.getOrderStatuses(ctx, tx, []int64{o.Id})
 	if err != nil {
 		return nil, err
@@ -187,10 +220,18 @@ func (p *postgres) GetActiveOrder(ctx context.Context, tx pgx.Tx, contractAddres
               NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
                 ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
                     ANY('{Finished,Cancelled}')`, strings.ToLower(contractAddress.String()), tokenId.String())
+
+	var price string
 	o := &domain.Order{}
-	if err := row.Scan(&o.Id, &o.TransferId, &o.Price); err != nil {
+	if err := row.Scan(&o.Id, &o.TransferId, &price); err != nil {
 		return nil, err
 	}
+	var ok bool
+	o.Price, ok = big.NewInt(0).SetString(price, 10)
+	if !ok {
+		return nil, fmt.Errorf("failed to parse big int: %s", price)
+	}
+	
 	statuses, err := p.getOrderStatuses(ctx, tx, []int64{o.Id})
 	if err != nil {
 		return nil, err
@@ -202,7 +243,7 @@ func (p *postgres) GetActiveOrder(ctx context.Context, tx pgx.Tx, contractAddres
 func (p *postgres) InsertOrder(ctx context.Context, tx pgx.Tx, order *domain.Order) (int64, error) {
 	// language=PostgreSQL
 	row := tx.QueryRow(ctx, `INSERT INTO orders VALUES (DEFAULT,$1,$2) RETURNING id`,
-		order.TransferId, order.Price)
+		order.TransferId, order.Price.String())
 	var id int64
 	if err := row.Scan(&id); err != nil {
 		return 0, err

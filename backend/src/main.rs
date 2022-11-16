@@ -163,10 +163,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     }
                 };
 
-                let public_key = match private_key.public_key_to_pem() {
+                let mut public_key = match private_key.public_key_to_pem() {
                     Ok(key) => key,
                     Err(_) => continue,
                 };
+                public_key.pop();   // removing line break
 
                 if report.public_key != public_key {
                     println!("not approved, because of unmatching keys");

@@ -199,7 +199,7 @@ pub async fn fetch_file(report: &FraudReported) -> Result<Vec<u8>, web3::Error> 
     let hidden_file_link = if file.hidden_file.starts_with("ipfs://") {
         format!(
             "https://nftstorage.link/ipfs/{}",
-            report.cid.replace("ipfs://", "")
+            file.hidden_file.replace("ipfs://", "")
         )
     } else {
         return Err(web3::Error::Decoder("invalid hidden file link".to_string()));
@@ -253,7 +253,7 @@ pub fn decrypt_file(file: &[u8], password: &str) -> Result<bool, web3::Error> {
     let res = hasher.finalize();
     let result = res.as_slice();
 
-    Ok(result != hash)
+    Ok(result == hash)
 }
 
 pub async fn get_latest_block_num(web3: &Web3<WebSocket>) -> Result<u64, web3::Error> {
