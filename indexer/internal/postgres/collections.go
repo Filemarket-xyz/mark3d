@@ -49,7 +49,7 @@ func (p *postgres) GetCollection(ctx context.Context,
 	var collectionAddress, creator, owner, tokenId string
 	c := &domain.Collection{}
 	if err := row.Scan(&collectionAddress, &creator, &owner, &c.Name, &tokenId,
-		&c.MetaUri, &c.Description, c.Image); err != nil {
+		&c.MetaUri, &c.Description, &c.Image); err != nil {
 		return nil, err
 	}
 	c.Address, c.Owner, c.Creator = contractAddress, common.HexToAddress(creator), common.HexToAddress(owner)

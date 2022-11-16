@@ -228,6 +228,10 @@ definitions:
         type: string
         description: Владелец
         pattern: "0x[0-9a-f-A-F]{40}"
+      creator:
+        type: string
+        description: Создатель
+        pattern: "0x[0-9a-f-A-F]{40}"
       metaUri:
         type: string
         description: uri метаданных токена

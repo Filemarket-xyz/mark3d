@@ -12,3 +12,4 @@ artifacts
 encrypted-script.ts
 correct-metadata.json
 wrong-metadata.json
+false_fraud.sh

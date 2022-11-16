@@ -111,9 +111,9 @@ func (s *service) loadTokenParams(ctx context.Context, cid string) metaData {
 	if cid == "" {
 		return metaData{}
 	}
-	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://ipfs.io/ipfs/%s", cid), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://nftstorage.link/ipfs/%s", cid), nil)
 	if err != nil {
 		return metaData{}
 	}
@@ -220,11 +220,7 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 }
 
 func (s *service) tryProcessCollectionTransferEvent(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, l *types.Log) error {
-	instance, err := collection.NewMark3dCollection(*t.To(), s.ethClient)
-	if err != nil {
-		return err
-	}
+	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
 	transfer, err := instance.ParseTransfer(*l)
 	if err != nil {
 		return nil
@@ -248,6 +244,7 @@ func (s *service) tryProcessCollectionTransferEvent(ctx context.Context, tx pgx.
 		Description:       meta.Description,
 		Image:             meta.Image,
 		HiddenFile:        meta.HiddenFile,
+		Creator:           transfer.To,
 	}
 	if err := s.postgres.InsertToken(ctx, tx, token); err != nil {
 		return err
@@ -258,14 +255,10 @@ func (s *service) tryProcessCollectionTransferEvent(ctx context.Context, tx pgx.
 }
 
 func (s *service) tryProcessTransferInit(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, l *types.Log) error {
-	instance, err := collection.NewMark3dCollection(*t.To(), s.ethClient)
-	if err != nil {
-		return err
-	}
+	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
 	initEv, err := instance.ParseTransferInit(*l)
 	if err != nil {
-		return err
+		return nil
 	}
 	transfer := &domain.Transfer{
 		CollectionAddress: *t.To(),
@@ -289,14 +282,10 @@ func (s *service) tryProcessTransferInit(ctx context.Context, tx pgx.Tx,
 }
 
 func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, l *types.Log) error {
-	instance, err := collection.NewMark3dCollection(l.Address, s.ethClient)
-	if err != nil {
-		return err
-	}
+	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
 	initEv, err := instance.ParseTransferDraft(*l)
 	if err != nil {
-		return err
+		return nil
 	}
 	order, err := s.exchangeInstance.Orders(&bind.CallOpts{
 		Context: ctx,
@@ -341,14 +330,10 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 }
 
 func (s *service) tryProcessTransferDraftCompletion(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, l *types.Log) error {
-	instance, err := collection.NewMark3dCollection(l.Address, s.ethClient)
-	if err != nil {
-		return err
-	}
+	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
 	ev, err := instance.ParseTransferDraftCompletion(*l)
 	if err != nil {
-		return err
+		return nil
 	}
 	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
@@ -381,14 +366,10 @@ func (s *service) tryProcessTransferDraftCompletion(ctx context.Context, tx pgx.
 }
 
 func (s *service) tryProcessPublicKeySet(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, l *types.Log) error {
-	instance, err := collection.NewMark3dCollection(l.Address, s.ethClient)
-	if err != nil {
-		return err
-	}
+	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
 	ev, err := instance.ParseTransferPublicKeySet(*l)
 	if err != nil {
-		return err
+		return nil
 	}
 	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
@@ -405,14 +386,10 @@ func (s *service) tryProcessPublicKeySet(ctx context.Context, tx pgx.Tx,
 }
 
 func (s *service) tryProcessPasswordSet(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, l *types.Log) error {
-	instance, err := collection.NewMark3dCollection(l.Address, s.ethClient)
-	if err != nil {
-		return err
-	}
+	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
 	ev, err := instance.ParseTransferPasswordSet(*l)
 	if err != nil {
-		return err
+		return nil
 	}
 	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
@@ -429,14 +406,10 @@ func (s *service) tryProcessPasswordSet(ctx context.Context, tx pgx.Tx,
 }
 
 func (s *service) tryProcessTransferFinish(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, l *types.Log) error {
-	instance, err := collection.NewMark3dCollection(l.Address, s.ethClient)
-	if err != nil {
-		return err
-	}
+	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
 	ev, err := instance.ParseTransferFinished(*l)
 	if err != nil {
-		return err
+		return nil
 	}
 	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
@@ -459,18 +432,22 @@ func (s *service) tryProcessTransferFinish(ctx context.Context, tx pgx.Tx,
 			return err
 		}
 	}
+	token, err := s.postgres.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		return err
+	}
+	token.Owner = transfer.ToAddress
+	if err := s.postgres.UpdateToken(ctx, tx, token); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (s *service) tryProcessTransferFraudReported(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, l *types.Log) error {
-	instance, err := collection.NewMark3dCollection(l.Address, s.ethClient)
-	if err != nil {
-		return err
-	}
+	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
 	ev, err := instance.ParseTransferFraudReported(*l)
 	if err != nil {
-		return err
+		return nil
 	}
 	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
@@ -484,14 +461,28 @@ func (s *service) tryProcessTransferFraudReported(ctx context.Context, tx pgx.Tx
 	}); err != nil {
 		return err
 	}
-	if ev.Decided {
-		if err := s.postgres.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
-			Timestamp: timestamp + 1,
-			Status:    string(models.TransferStatusFinished),
-			TxId:      t.Hash(),
-		}); err != nil {
-			return err
-		}
+	return nil
+}
+
+func (s *service) tryProcessTransferFraudDecided(ctx context.Context, tx pgx.Tx,
+	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
+	ev, err := instance.ParseTransferFraudDecided(*l)
+	if err != nil {
+		return nil
+	}
+	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		return err
+	}
+	timestamp := now.Now().UnixMilli()
+	if err := s.postgres.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
+		Timestamp: timestamp,
+		Status:    string(models.TransferStatusFinished),
+		TxId:      t.Hash(),
+	}); err != nil {
+		return err
+	}
+	if transfer.OrderId != 0 {
 		var orderStatus string
 		if ev.Approved {
 			orderStatus = string(models.OrderStatusFraudApproved)
@@ -499,31 +490,36 @@ func (s *service) tryProcessTransferFraudReported(ctx context.Context, tx pgx.Tx
 			orderStatus = string(models.OrderStatusFinished)
 		}
 		if err := s.postgres.InsertOrderStatus(ctx, tx, transfer.OrderId, &domain.OrderStatus{
-			Timestamp: timestamp + 1,
+			Timestamp: timestamp,
 			Status:    orderStatus,
 			TxId:      t.Hash(),
 		}); err != nil {
 			return err
 		}
-		if ev.Approved {
-			transfer.FraudApproved = true
-			if err := s.postgres.UpdateTransfer(ctx, tx, transfer); err != nil {
-				return err
-			}
+	}
+	if ev.Approved {
+		transfer.FraudApproved = true
+		if err := s.postgres.UpdateTransfer(ctx, tx, transfer); err != nil {
+			return err
+		}
+	} else {
+		token, err := s.postgres.GetToken(ctx, tx, l.Address, ev.TokenId)
+		if err != nil {
+			return err
+		}
+		token.Owner = transfer.ToAddress
+		if err := s.postgres.UpdateToken(ctx, tx, token); err != nil {
+			return err
 		}
 	}
 	return nil
 }
 
 func (s *service) tryProcessTransferCancel(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, l *types.Log) error {
-	instance, err := collection.NewMark3dCollection(l.Address, s.ethClient)
-	if err != nil {
-		return err
-	}
+	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
 	ev, err := instance.ParseTransferCancellation(*l)
 	if err != nil {
-		return err
+		return nil
 	}
 	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
@@ -550,36 +546,44 @@ func (s *service) tryProcessTransferCancel(ctx context.Context, tx pgx.Tx,
 }
 
 func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.Transaction) error {
+	log.Println("processing collection tx", t.Hash())
 	receipt, err := s.ethClient.TransactionReceipt(ctx, t.Hash())
 	if err != nil {
 		return err
 	}
 	for _, l := range receipt.Logs {
-		if err := s.tryProcessCollectionTransferEvent(ctx, tx, t, l); err != nil {
+		instance, err := collection.NewMark3dCollection(l.Address, s.ethClient)
+		if err != nil {
 			return err
 		}
-		if err := s.tryProcessTransferInit(ctx, tx, t, l); err != nil {
+		if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l); err != nil {
 			return err
 		}
-		if err := s.tryProcessTransferDraft(ctx, tx, t, l); err != nil {
+		if err := s.tryProcessTransferInit(ctx, tx, instance, t, l); err != nil {
 			return err
 		}
-		if err := s.tryProcessTransferDraftCompletion(ctx, tx, t, l); err != nil {
+		if err := s.tryProcessTransferDraft(ctx, tx, instance, t, l); err != nil {
 			return err
 		}
-		if err := s.tryProcessPublicKeySet(ctx, tx, t, l); err != nil {
+		if err := s.tryProcessTransferDraftCompletion(ctx, tx, instance, t, l); err != nil {
 			return err
 		}
-		if err := s.tryProcessPasswordSet(ctx, tx, t, l); err != nil {
+		if err := s.tryProcessPublicKeySet(ctx, tx, instance, t, l); err != nil {
 			return err
 		}
-		if err := s.tryProcessTransferFinish(ctx, tx, t, l); err != nil {
+		if err := s.tryProcessPasswordSet(ctx, tx, instance, t, l); err != nil {
 			return err
 		}
-		if err := s.tryProcessTransferFraudReported(ctx, tx, t, l); err != nil {
+		if err := s.tryProcessTransferFinish(ctx, tx, instance, t, l); err != nil {
 			return err
 		}
-		if err := s.tryProcessTransferCancel(ctx, tx, t, l); err != nil {
+		if err := s.tryProcessTransferFraudReported(ctx, tx, instance, t, l); err != nil {
+			return err
+		}
+		if err := s.tryProcessTransferFraudDecided(ctx, tx, instance, t, l); err != nil {
+			return err
+		}
+		if err := s.tryProcessTransferCancel(ctx, tx, instance, t, l); err != nil {
 			return err
 		}
 	}
@@ -587,7 +591,7 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 }
 
 func (s *service) processBlock(hash common.Hash) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 	block, err := s.ethClient.BlockByHash(ctx, hash)
 	if err != nil {
@@ -608,6 +612,10 @@ func (s *service) processBlock(hash common.Hash) error {
 		}
 		if *t.To() == s.cfg.AccessTokenAddress {
 			err = s.processAccessTokenTx(ctx, tx, t)
+		} else if *t.To() == s.cfg.ExchangeAddress {
+			err = s.processCollectionTx(ctx, tx, t)
+		} else if *t.To() == s.cfg.FraudDeciderWeb2Address {
+			err = s.processCollectionTx(ctx, tx, t)
 		} else if isCollectionAddress {
 			err = s.processCollectionTx(ctx, tx, t)
 		}
@@ -631,6 +639,7 @@ func (s *service) ListenBlockchain() error {
 	for {
 		select {
 		case head := <-ch:
+			time.Sleep(100 * time.Millisecond)
 			if err := s.processBlock(head.Hash()); err != nil {
 				log.Println("process block failed", err)
 			}

@@ -11,6 +11,7 @@ use secp256k1::SecretKey;
 use std::{collections::HashSet, env, error::Error, str::FromStr};
 use structs::OraculConf;
 use web3::types::H160;
+use std::{thread, time::Duration};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -46,7 +47,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             addr
         },
         fraud_decider_web2_key: SecretKey::from_str(
-            &env::var("FRAUD_DECIDER_WEB2_ADDRESS").expect("env err"),
+            &env::var("FRAUD_DECIDER_WEB2_KEY").expect("env err"),
         )
         .expect("secret key create err"),
     };
@@ -59,12 +60,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let upgraded_fraud_decider_web2_contract = web3::contract::Contract::new(
         web3.eth(),
-        H160::from_slice(conf.fraud_decider_web2_address.as_bytes()),
+        H160::from_str(&conf.fraud_decider_web2_address).unwrap(),
         conf.fraud_decider_web2_contract.clone(),
     );
 
     // TransferFraudReported listening
     loop {
+        thread::sleep(Duration::from_millis(200));
         // get latest block
         let new_block_num: u64 = match get_latest_block_num(&web3).await {
             Ok(n) => {
@@ -105,7 +107,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     let c_c_event = match get_collection_creation_event(
                         tx.hash,
                         &web3,
-                        &conf.mark_3d_collection_contract,
+                        &conf.mark_3d_access_token_contract,
                     )
                     .await
                     {
@@ -115,24 +117,32 @@ async fn main() -> Result<(), Box<dyn Error>> {
                             continue;
                         }
                     };
+            
+                    println!("new collection: {:?}", c_c_event.instance);
                     add_in_set(&mut con, c_c_event.instance, &mut set).await?;
-                } else if set.contains(&to) {
-                } else {
+                    continue;
+                } else if !set.contains(&to) {
                     continue;
                 }
 
                 let (_report_flag, report) =
-                    match get_events(tx.hash, &web3, &conf.mark_3d_collection_contract).await {
+                    match get_events(
+                        tx.hash,
+                        &web3,
+                        &conf.mark_3d_collection_contract,
+                        &conf.fraud_decider_web2_contract).await {
                         Ok(events) => events,
                         Err(e) => {
-                            println!("get event logs error: {e}");
+                            println!("parse events failed: {e}");
                             continue;
                         }
                     };
+                println!("fraud events: {:?} {:?}", _report_flag, report);
 
                 let private_key = match Rsa::private_key_from_pem(&report.private_key) {
                     Ok(k) => k,
                     Err(_) => {
+                        println!("not approved, because invalid private key");
                         match call_late_decision(
                             &upgraded_fraud_decider_web2_contract,
                             false,
@@ -159,6 +169,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 };
 
                 if report.public_key != public_key {
+                    println!("not approved, because of unmatching keys");
                     match call_late_decision(
                         &upgraded_fraud_decider_web2_contract,
                         false,
@@ -183,6 +194,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 let decrypted_password = match decrypt_password(&private_key, &report) {
                     Ok(p) => p,
                     Err(_) => {
+                        println!("approved, because passwor decryption failed");
                         match call_late_decision(
                             &upgraded_fraud_decider_web2_contract,
                             true,
@@ -207,6 +219,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 let hidden_file: Vec<u8> = match fetch_file(&report).await {
                     Ok(f) => f,
                     Err(_) => {
+                        println!("approved, because of invalid hidden file");
                         match call_late_decision(
                             &upgraded_fraud_decider_web2_contract,
                             true,
@@ -229,30 +242,33 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
                 // Расшифровать файл с помощью пароля
                 // need: hidden file, decrypted password
-                match call_late_decision(
-                    &upgraded_fraud_decider_web2_contract,
-                    match decrypt_file(&hidden_file, &decrypted_password) {
-                        Ok(res) => res,
-                        Err(_) => {
-                            match call_late_decision(
-                                &upgraded_fraud_decider_web2_contract,
-                                true,
-                                &report,
-                                &conf.fraud_decider_web2_key,
-                            )
-                            .await
-                            {
-                                Ok(tx) => {
-                                    println!("{tx:#?}");
-                                    continue;
-                                }
-                                Err(e) => {
-                                    println!("call lateDecision error: {e}");
-                                    continue;
-                                }
+                let hash_matched = match decrypt_file(&hidden_file, &decrypted_password) {
+                    Ok(res) => res,
+                    Err(_) => {
+                        println!("approved, because file decryption failed");
+                        match call_late_decision(
+                            &upgraded_fraud_decider_web2_contract,
+                            true,
+                            &report,
+                            &conf.fraud_decider_web2_key,
+                        )
+                        .await
+                        {
+                            Ok(tx) => {
+                                println!("{tx:#?}");
+                                continue;
+                            }
+                            Err(e) => {
+                                println!("call lateDecision error: {e}");
+                                continue;
                             }
                         }
-                    },
+                    }
+                };
+                println!("hash matched: {:?}", hash_matched);
+                match call_late_decision(
+                    &upgraded_fraud_decider_web2_contract,
+                    !hash_matched,
                     &report,
                     &conf.fraud_decider_web2_key,
                 )

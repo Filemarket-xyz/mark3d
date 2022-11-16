@@ -45,6 +45,7 @@ CREATE TABLE public.tokens
     description        TEXT         NOT NULL,
     image              TEXT         NOT NULL,
     hidden_file        TEXT         NOT NULL,
+    creator            CHAR(42)     NOT NULL,
     PRIMARY KEY (collection_address, token_id),
     CONSTRAINT tokens_collection_fkey
         FOREIGN KEY (collection_address)

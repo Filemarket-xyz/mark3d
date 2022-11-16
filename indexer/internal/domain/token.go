@@ -10,6 +10,7 @@ type Token struct {
 	CollectionAddress common.Address
 	TokenId           *big.Int
 	Owner             common.Address
+	Creator           common.Address
 	MetaUri           string
 	Name              string
 	Description       string
@@ -26,6 +27,7 @@ func TokenToModel(t *Token) *models.Token {
 		MetaURI:     t.MetaUri,
 		Name:        t.Name,
 		Owner:       t.Owner.String(),
+		Creator:     t.Creator.String(),
 		TokenID:     t.TokenId.String(),
 	}
 }
