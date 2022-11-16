@@ -12,6 +12,9 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
   readonly storage: ISecureStorage
   readonly tokenIdStorage: TokenIdStorage
 
+  private readonly owners: Record<string, IHiddenFileOwner> = Object.create(null)
+  private readonly buyers: Record<string, IHiddenFileBuyer> = Object.create(null)
+
   constructor() {
     const storageProvider = new LocalStorageProvider('mark3d')
     this.storage = new SecureStorage(storageProvider)
@@ -25,20 +28,34 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
     )
   }
 
-  async createBuyer(tokenFullId: TokenFullId): Promise<IHiddenFileBuyer> {
+  async getBuyer(tokenFullId: TokenFullId): Promise<IHiddenFileBuyer> {
     const surrogateId = await this.tokenIdStorage.getSurrogateIdOrCreate(tokenFullId)
-    return new HiddenFileBuyer(
-      new StatefulCryptoProvider(surrogateId, this.storage),
-      surrogateId
-    )
+    const existing = this.buyers[surrogateId]
+    if (existing) {
+      return existing
+    } else {
+      const buyer = new HiddenFileBuyer(
+        new StatefulCryptoProvider(surrogateId, this.storage),
+        surrogateId
+      )
+      this.buyers[surrogateId] = buyer
+      return buyer
+    }
   }
 
-  async createOwner(tokenFullId: TokenFullId | undefined): Promise<IHiddenFileOwner> {
+  async getOwner(tokenFullId: TokenFullId | undefined): Promise<IHiddenFileOwner> {
     const surrogateId = await this.tokenIdStorage.getSurrogateIdOrCreate(tokenFullId)
-    return new HiddenFileOwner(
-      new StatefulCryptoProvider(surrogateId, this.storage),
-      surrogateId
-    )
+    const existing = this.owners[surrogateId]
+    if (existing) {
+      return existing
+    } else {
+      const owner = new HiddenFileOwner(
+        new StatefulCryptoProvider(surrogateId, this.storage),
+        surrogateId
+      )
+      this.owners[surrogateId] = owner
+      return owner
+    }
   }
 
   async registerTokenFullId(hiddenFileProcessor: IHiddenFileBase, tokenFullId: TokenFullId): Promise<void> {

@@ -13,16 +13,16 @@ export interface IHiddenFileProcessorFactory {
   readonly tokenIdStorage: TokenIdStorage
 
   /**
-   * Create IHiddenFileOwner to access a hidden file and sell the NFT.
-   * @param tokenFullId
+   * Create or uses existing IHiddenFileOwner to access a hidden file and sell the NFT.
+   * @param tokenFullId if null always creates new owner
    */
-  createOwner: (tokenFullId?: TokenFullId) => Promise<IHiddenFileOwner>
+  getOwner: (tokenFullId?: TokenFullId) => Promise<IHiddenFileOwner>
 
   /**
-   * Create IHiddenFileBuyer if you want to initiate purchase
+   * Create or uses existing IHiddenFileBuyer if you want to initiate purchase
    * @param tokenFullId
    */
-  createBuyer: (tokenFullId: TokenFullId) => Promise<IHiddenFileBuyer>
+  getBuyer: (tokenFullId: TokenFullId) => Promise<IHiddenFileBuyer>
 
   /**
    * Used after NFT was bought.
