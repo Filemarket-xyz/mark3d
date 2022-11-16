@@ -4,12 +4,14 @@ SELECT 'up SQL query';
 -- +goose StatementEnd
 CREATE TABLE public.collections
 (
-    address  CHAR(42)     NOT NULL,
-    creator  CHAR(42)     NOT NULL,
-    owner    CHAR(42)     NOT NULL,
-    name     VARCHAR(255) NOT NULL,
-    token_id VARCHAR(255) NOT NULL,
-    meta_uri TEXT         NOT NULL,
+    address     CHAR(42)     NOT NULL,
+    creator     CHAR(42)     NOT NULL,
+    owner       CHAR(42)     NOT NULL,
+    name        VARCHAR(255) NOT NULL,
+    token_id    VARCHAR(255) NOT NULL,
+    meta_uri    TEXT         NOT NULL,
+    description TEXT         NOT NULL,
+    image       TEXT         NOT NULL,
     PRIMARY KEY (address)
 );
 
@@ -39,6 +41,10 @@ CREATE TABLE public.tokens
     token_id           VARCHAR(255) NOT NULL,
     owner              CHAR(42)     NOT NULL,
     meta_uri           TEXT         NOT NULL,
+    name               VARCHAR(255) NOT NULL,
+    description        TEXT         NOT NULL,
+    image              TEXT         NOT NULL,
+    hidden_file        TEXT         NOT NULL,
     PRIMARY KEY (collection_address, token_id),
     CONSTRAINT tokens_collection_fkey
         FOREIGN KEY (collection_address)

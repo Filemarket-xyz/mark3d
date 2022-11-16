@@ -7,12 +7,14 @@ import (
 )
 
 type Collection struct {
-	Address common.Address
-	Creator common.Address
-	Owner   common.Address
-	Name    string
-	TokenId *big.Int
-	MetaUri string
+	Address     common.Address
+	Creator     common.Address
+	Owner       common.Address
+	TokenId     *big.Int
+	MetaUri     string
+	Name        string
+	Description string
+	Image       string
 }
 
 type CollectionTransfer struct {
@@ -24,11 +26,13 @@ type CollectionTransfer struct {
 
 func CollectionToModel(c *Collection) *models.Collection {
 	return &models.Collection{
-		Address: c.Address.String(),
-		Creator: c.Creator.String(),
-		MetaURI: c.MetaUri,
-		Name:    c.Name,
-		Owner:   c.Owner.String(),
-		TokenID: c.TokenId.String(),
+		Address:     c.Address.String(),
+		Creator:     c.Creator.String(),
+		MetaURI:     c.MetaUri,
+		Owner:       c.Owner.String(),
+		TokenID:     c.TokenId.String(),
+		Name:        c.Name,
+		Description: c.Description,
+		Image:       c.Image,
 	}
 }

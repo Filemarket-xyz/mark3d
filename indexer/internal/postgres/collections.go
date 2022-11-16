@@ -13,7 +13,7 @@ import (
 func (p *postgres) GetCollectionsByAddress(ctx context.Context,
 	tx pgx.Tx, address common.Address) ([]*domain.Collection, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT address,creator,owner,name,token_id,meta_uri 
+	rows, err := tx.Query(ctx, `SELECT address,creator,owner,name,token_id,meta_uri,description,image 
 			FROM collections AS c WHERE owner=$1 OR 
             	EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)`,
 		strings.ToLower(address.String()))
@@ -25,7 +25,8 @@ func (p *postgres) GetCollectionsByAddress(ctx context.Context,
 	for rows.Next() {
 		var collectionAddress, creator, owner, tokenId string
 		c := &domain.Collection{}
-		if err := rows.Scan(&collectionAddress, &creator, &owner, &c.Name, &tokenId, &c.MetaUri); err != nil {
+		if err := rows.Scan(&collectionAddress, &creator, &owner, &c.Name,
+			&tokenId, &c.MetaUri, &c.Description, &c.Image); err != nil {
 			return nil, err
 		}
 		c.Address, c.Owner, c.Creator = common.HexToAddress(collectionAddress),
@@ -43,11 +44,12 @@ func (p *postgres) GetCollectionsByAddress(ctx context.Context,
 func (p *postgres) GetCollection(ctx context.Context,
 	tx pgx.Tx, contractAddress common.Address) (*domain.Collection, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `SELECT address,creator,owner,name,token_id,meta_uri FROM collections WHERE address=$1`,
-		strings.ToLower(contractAddress.String()))
+	row := tx.QueryRow(ctx, `SELECT address,creator,owner,name,token_id,meta_uri,description,
+       image FROM collections WHERE address=$1`, strings.ToLower(contractAddress.String()))
 	var collectionAddress, creator, owner, tokenId string
 	c := &domain.Collection{}
-	if err := row.Scan(&collectionAddress, &creator, &owner, &c.Name, &tokenId, &c.MetaUri); err != nil {
+	if err := row.Scan(&collectionAddress, &creator, &owner, &c.Name, &tokenId,
+		&c.MetaUri, &c.Description, c.Image); err != nil {
 		return nil, err
 	}
 	c.Address, c.Owner, c.Creator = contractAddress, common.HexToAddress(creator), common.HexToAddress(owner)
@@ -62,13 +64,14 @@ func (p *postgres) GetCollection(ctx context.Context,
 func (p *postgres) GetCollectionsByTokenId(ctx context.Context, tx pgx.Tx,
 	tokenId *big.Int) (*domain.Collection, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `SELECT address,creator,owner,name,meta_uri FROM collections WHERE address=$1`,
-		tokenId.String())
+	row := tx.QueryRow(ctx, `SELECT address,creator,owner,name,meta_uri,description,
+       image FROM collections WHERE address=$1`, tokenId.String())
 	var collectionAddress, creator, owner string
 	c := &domain.Collection{
 		TokenId: tokenId,
 	}
-	if err := row.Scan(&collectionAddress, &creator, &owner, &c.Name, &c.MetaUri); err != nil {
+	if err := row.Scan(&collectionAddress, &creator, &owner, &c.Name,
+		&c.MetaUri, &c.Description, &c.Image); err != nil {
 		return nil, err
 	}
 	c.Address, c.Owner, c.Creator = common.HexToAddress(collectionAddress), common.HexToAddress(creator), common.HexToAddress(owner)
@@ -78,10 +81,10 @@ func (p *postgres) GetCollectionsByTokenId(ctx context.Context, tx pgx.Tx,
 func (p *postgres) InsertCollection(ctx context.Context, tx pgx.Tx,
 	collection *domain.Collection) error {
 	// language=PostgreSQL
-	if _, err := tx.Exec(ctx, `INSERT INTO collections VALUES ($1,$2,$3,$4,$5,$6)`,
+	if _, err := tx.Exec(ctx, `INSERT INTO collections VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
 		strings.ToLower(collection.Address.String()), strings.ToLower(collection.Creator.String()),
 		strings.ToLower(collection.Owner.String()), collection.Name, collection.TokenId.String(),
-		collection.MetaUri); err != nil {
+		collection.MetaUri, collection.Description, collection.Image); err != nil {
 		return err
 	}
 	return nil

@@ -11,13 +11,21 @@ type Token struct {
 	TokenId           *big.Int
 	Owner             common.Address
 	MetaUri           string
+	Name              string
+	Description       string
+	Image             string
+	HiddenFile        string
 }
 
 func TokenToModel(t *Token) *models.Token {
 	return &models.Token{
-		Collection: t.CollectionAddress.String(),
-		MetaURI:    t.MetaUri,
-		TokenID:    t.TokenId.String(),
-		Owner:      t.Owner.String(),
+		Collection:  t.CollectionAddress.String(),
+		Description: t.Description,
+		HiddenFile:  t.HiddenFile,
+		Image:       t.Image,
+		MetaURI:     t.MetaUri,
+		Name:        t.Name,
+		Owner:       t.Owner.String(),
+		TokenID:     t.TokenId.String(),
 	}
 }

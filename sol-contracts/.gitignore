@@ -9,3 +9,6 @@ typechain-types
 cache
 artifacts
 
+encrypted-script.ts
+correct-metadata.json
+wrong-metadata.json

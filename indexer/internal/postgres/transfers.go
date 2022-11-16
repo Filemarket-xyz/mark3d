@@ -13,9 +13,10 @@ import (
 func (p *postgres) GetIncomingTransfersByAddress(ctx context.Context, tx pgx.Tx,
 	address common.Address) ([]*domain.Transfer, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT id,collection_address,token_id,
-       from_address,to_address,fraud_approved FROM transfers WHERE to_address=$1 ORDER BY id DESC`,
-		strings.ToLower(address.String()))
+	rows, err := tx.Query(ctx, `SELECT t.id,t.collection_address,t.token_id,
+       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0) FROM transfers AS t 
+           LEFT JOIN orders o on t.id = o.transfer_id
+            WHERE t.to_address=$1 ORDER BY id DESC`, strings.ToLower(address.String()))
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +28,7 @@ func (p *postgres) GetIncomingTransfersByAddress(ctx context.Context, tx pgx.Tx,
 	for rows.Next() {
 		var collectionAddress, tokenId, from, to string
 		t := &domain.Transfer{}
-		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to, &t.FraudApproved); err != nil {
+		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to, &t.FraudApproved, &t.OrderId); err != nil {
 			return nil, err
 		}
 		t.CollectionAddress, t.FromAddress, t.ToAddress = common.HexToAddress(collectionAddress),
@@ -52,8 +53,9 @@ func (p *postgres) GetIncomingTransfersByAddress(ctx context.Context, tx pgx.Tx,
 func (p *postgres) GetOutgoingTransfersByAddress(ctx context.Context, tx pgx.Tx,
 	address common.Address) ([]*domain.Transfer, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT id,collection_address,token_id,
-       from_address,to_address,fraud_approved FROM transfers WHERE from_address=$1 ORDER BY id DESC`,
+	rows, err := tx.Query(ctx, `SELECT t.id,t.collection_address,t.token_id,
+       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0) FROM transfers AS t 
+           LEFT JOIN orders o on t.id = o.transfer_id WHERE t.from_address=$1 ORDER BY id DESC`,
 		strings.ToLower(address.String()))
 	if err != nil {
 		return nil, err
@@ -66,7 +68,7 @@ func (p *postgres) GetOutgoingTransfersByAddress(ctx context.Context, tx pgx.Tx,
 	for rows.Next() {
 		var collectionAddress, tokenId, from, to string
 		t := &domain.Transfer{}
-		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to, &t.FraudApproved); err != nil {
+		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to, &t.FraudApproved, &t.OrderId); err != nil {
 			return nil, err
 		}
 		t.CollectionAddress, t.FromAddress, t.ToAddress = common.HexToAddress(collectionAddress),
@@ -92,7 +94,8 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(ctx context.Context, tx p
 	address common.Address) ([]*domain.Transfer, error) {
 	// language=PostgreSQL
 	rows, err := tx.Query(ctx, `SELECT t.id,t.collection_address,t.token_id,
-       t.from_address,t.to_address,t.fraud_approved FROM transfers AS t WHERE t.to_address=$1 AND
+       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0) FROM transfers AS t 
+           LEFT JOIN orders o on t.id = o.transfer_id WHERE t.to_address=$1 AND
             NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
                 ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
                     ANY('{Finished,Cancelled}') ORDER BY t.id DESC`, strings.ToLower(address.String()))
@@ -107,7 +110,8 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(ctx context.Context, tx p
 	for rows.Next() {
 		var collectionAddress, tokenId, from, to string
 		t := &domain.Transfer{}
-		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to, &t.FraudApproved); err != nil {
+		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to,
+			&t.FraudApproved, &t.OrderId); err != nil {
 			return nil, err
 		}
 		t.CollectionAddress, t.FromAddress, t.ToAddress = common.HexToAddress(collectionAddress),
@@ -133,7 +137,8 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(ctx context.Context, tx p
 	address common.Address) ([]*domain.Transfer, error) {
 	// language=PostgreSQL
 	rows, err := tx.Query(ctx, `SELECT t.id,t.collection_address,t.token_id,
-       t.from_address,t.to_address,t.fraud_approved FROM transfers AS t WHERE t.from_address=$1 AND
+       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0) FROM transfers AS t 
+           LEFT JOIN orders o on t.id = o.transfer_id WHERE t.from_address=$1 AND
             NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
                 ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
                     ANY('{Finished,Cancelled}') ORDER BY t.id DESC`, strings.ToLower(address.String()))
@@ -148,7 +153,8 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(ctx context.Context, tx p
 	for rows.Next() {
 		var collectionAddress, tokenId, from, to string
 		t := &domain.Transfer{}
-		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to, &t.FraudApproved); err != nil {
+		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to,
+			&t.FraudApproved, &t.OrderId); err != nil {
 			return nil, err
 		}
 		t.CollectionAddress, t.FromAddress, t.ToAddress = common.HexToAddress(collectionAddress),
@@ -197,11 +203,13 @@ func (p *postgres) getTransferStatuses(ctx context.Context, tx pgx.Tx,
 
 func (p *postgres) GetTransfer(ctx context.Context, tx pgx.Tx, id int64) (*domain.Transfer, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `SELECT id,collection_address,token_id,
-       from_address,to_address,fraud_approved FROM transfers WHERE id=$1`, id)
+	row := tx.QueryRow(ctx, `SELECT t.id,t.collection_address,t.token_id,
+       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0) FROM transfers AS t 
+           LEFT JOIN orders o on t.id = o.transfer_id WHERE t.id=$1`, id)
 	var collectionAddress, tokenId, from, to string
 	t := &domain.Transfer{}
-	if err := row.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to, &t.FraudApproved); err != nil {
+	if err := row.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to,
+		&t.FraudApproved, &t.OrderId); err != nil {
 		return nil, err
 	}
 	t.CollectionAddress, t.FromAddress, t.ToAddress = common.HexToAddress(collectionAddress),
@@ -222,7 +230,9 @@ func (p *postgres) GetTransfer(ctx context.Context, tx pgx.Tx, id int64) (*domai
 func (p *postgres) GetActiveTransfer(ctx context.Context, tx pgx.Tx,
 	contractAddress common.Address, tokenId *big.Int) (*domain.Transfer, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `SELECT id,from_address,to_address,fraud_approved FROM transfers AS t
+	row := tx.QueryRow(ctx, `SELECT t.id,t.from_address,t.to_address,
+       t.fraud_approved,COALESCE(o.id, 0) FROM transfers AS t 
+           LEFT JOIN orders o on t.id = o.transfer_id
         WHERE collection_address=$1 AND token_id=$2 AND
               NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
                 ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
@@ -232,7 +242,7 @@ func (p *postgres) GetActiveTransfer(ctx context.Context, tx pgx.Tx,
 		CollectionAddress: contractAddress,
 		TokenId:           tokenId,
 	}
-	if err := row.Scan(&t.Id, &from, &to, &t.FraudApproved); err != nil {
+	if err := row.Scan(&t.Id, &from, &to, &t.FraudApproved, &t.OrderId); err != nil {
 		return nil, err
 	}
 	t.FromAddress, t.ToAddress = common.HexToAddress(from), common.HexToAddress(to)
