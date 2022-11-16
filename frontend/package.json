@@ -9,6 +9,7 @@
     "node": ">= 18.12.0"
   },
   "scripts": {
+    "swagger": "yarn swagger-typescript-api -p ../indexer/swagger.yaml -o ./src/swagger",
     "prepare": "cd ../sol-contracts && yarn && yarn hardhat compile && cp -r artifacts ../frontend/src/artifacts && cp -r typechain-types ../frontend/src/typechain-types",
     "start": "vite",
     "build": "tsc && vite build",
