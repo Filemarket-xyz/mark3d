@@ -117,6 +117,25 @@ const TagsContainer = styled('div', {
   gap: '$2',
   flexWrap: 'wrap'
 })
+
+const Ul = styled('ul', {
+  listStyle: 'inside'
+})
+
+const Li = styled('li', {
+  color: '$gray500',
+  lineHeight: '125%',
+  '&::marker': {
+    fontSize: '10px',
+    display: 'block',
+    color: '$gray500'
+  }
+})
+
+const Bold = styled('span', {
+  fontWeight: 600
+})
+
 export default function NFTPage() {
   return (
     <>
@@ -176,6 +195,25 @@ export default function NFTPage() {
             <Tag value='ART' />
             <Tag value='Tag' />
           </TagsContainer>
+        </GridBlock>
+
+        <GridBlock>
+          <PropertyTitle>Object Info</PropertyTitle>
+          <StyledHr />
+          <Ul>
+            <Li>
+              <Bold>formats:</Bold> .fbx, .max, .obj, .gltf, .usdz, .glb
+            </Li>
+            <Li>
+              <Bold>extra archive size:</Bold> 600kb
+            </Li>
+            <Li>
+              <Bold>poly count:</Bold> 50.000
+            </Li>
+            <Li>
+              <Bold>PBR:</Bold> Specular
+            </Li>
+          </Ul>
         </GridBlock>
       </GridLayout>
     </>
