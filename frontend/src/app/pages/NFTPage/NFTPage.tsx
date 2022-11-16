@@ -36,7 +36,7 @@ const BadgesContainer = styled('div', {
 })
 
 const GridLayout = styled(PageLayout, {
-  paddingTop: 48,
+  paddingTB: 48,
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
   gridTemplateRows: 'max-content',
@@ -289,6 +289,11 @@ export default function NFTPage() {
               <Link>Share</Link>
             </Li>
           </Ul>
+        </GridBlock>
+
+        <GridBlock>
+          <PropertyTitle>History</PropertyTitle>
+          <StyledHr />
         </GridBlock>
       </GridLayout>
     </>
