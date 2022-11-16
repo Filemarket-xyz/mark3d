@@ -43,6 +43,10 @@ jobs:
           unzip frontend.zip
           sudo rm -r /usr/share/nginx/mark3d.xyz/*
           sudo mv dist/* /usr/share/nginx/mark3d.xyz/
+      - name: Update swagger
+        run: cp indexer/swagger.yaml ~/indexer-swagger/
+      - name: Update compose
+        run: docker-compose -f docker-compose.yml up -d mark3d-indexer-swagger mark3d-indexer-postgres
       - name: update nginx
         run: |
           sudo mv nginx.conf /etc/nginx/conf.d/mark3d.conf

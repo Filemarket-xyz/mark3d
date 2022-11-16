@@ -59,7 +59,7 @@ const ToolImgContainer = styled('div', {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  background: 'rgba(255, 255, 255, 0.5)',
+  background: '$whiteOp50',
   '@md': {
     width: '140px',
     height: '140px',
