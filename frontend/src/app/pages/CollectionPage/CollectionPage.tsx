@@ -1,9 +1,11 @@
 import React from 'react'
 import { Outlet } from 'react-router'
 import { styled } from '../../../styles'
+import Badge from '../../components/Badge/Badge'
 import { textVariant, Container } from '../../UIkit'
 import Tabs, { TabsProps } from '../../UIkit/Tabs/Tabs'
 import bg from './img/Gradient.jpg'
+import creator from './img/creatorImg.jpg'
 
 const Background = styled('img', {
   width: '100%',
@@ -43,23 +45,10 @@ const ProfileName = styled('h2', {
   }
 })
 
-const ProfileCredentials = styled('div', {
+const Badges = styled('div', {
   display: 'flex',
   gap: '$2',
   marginBottom: '$4'
-})
-
-const CredentialsItem = styled('div', {
-  height: '$4',
-  padding: '8px 12px',
-  fontSize: '$primary3',
-  color: '$blue500',
-  fontWeight: 600,
-  lineHeight: '$primary1',
-  display: 'flex',
-  alignItems: 'center',
-  backgroundColor: '$white',
-  borderRadius: '$2'
 })
 
 const GrayOverlay = styled('div', {
@@ -86,28 +75,19 @@ const Inventory = styled(Container, {
 const tabs: Pick<TabsProps, 'tabs'> = {
   tabs: [
     {
-      name: 'Owned',
-      url: 'owned',
+      name: 'NFTs',
+      url: 'nfts',
       amount: 3
     },
     {
-      name: 'Created',
-      url: 'created',
+      name: 'Owners',
+      url: 'owners',
       amount: 2
     },
     {
-      name: 'Namespaces',
-      url: 'namespaces',
-      amount: 3
-    },
-    {
-      name: 'Collections',
-      url: 'collections',
-      amount: 1
-    },
-    {
       name: 'History',
-      url: 'history'
+      url: 'history',
+      amount: 3
     }
   ]
 }
@@ -116,23 +96,66 @@ const TabsContainer = styled('div', {
   marginBottom: '$4'
 })
 
-export default function ProfilePage() {
+const CollectionData = styled('div', {
+  display: 'flex',
+  gap: '$4',
+  height: 'max-content',
+  padding: '$4',
+  borderRadius: '$4',
+  border: '2px solid transparent',
+  background:
+    'linear-gradient($gray100 0 0) padding-box, linear-gradient(to right, #00DCFF25, #E14BEC25) border-box'
+})
+
+const CollectionDataItem = styled('div', {
+  display: 'flex',
+  flexDirection: 'column'
+})
+
+const ItemTitle = styled('span', {
+  ...textVariant('primary1').true,
+  marginBottom: '$1'
+})
+
+const ItemValue = styled('span', {
+  ...textVariant('h3').true,
+  fontWeight: 700,
+  '@sm': {
+    fontSize: '$h5'
+  },
+  color: '$blue900'
+})
+
+const StyledContainer = styled(Container, {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  '@xl': {
+    flexDirection: 'column',
+    paddingBottom: '$4'
+  }
+})
+
+export default function CollectionPage() {
   return (
     <>
       <GrayOverlay>
         <Background src={bg} />
 
-        <Container>
+        <StyledContainer>
           <Profile>
             <ProfileHeader>
               <ProfileImage src={bg} />
-              <ProfileName>UnderKong</ProfileName>
+              <ProfileName>VR Glasses</ProfileName>
             </ProfileHeader>
 
-            <ProfileCredentials>
-              <CredentialsItem>something</CredentialsItem>
-              <CredentialsItem>twitter</CredentialsItem>
-            </ProfileCredentials>
+            <Badges>
+              <Badge
+                content={{ title: 'Creator', value: 'Underkong' }}
+                imgUrl={creator}
+              />
+              <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
+            </Badges>
 
             <ProfileDescription>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sodales
@@ -142,7 +165,17 @@ export default function ProfilePage() {
               eleifend etiam.
             </ProfileDescription>
           </Profile>
-        </Container>
+          <CollectionData>
+            <CollectionDataItem>
+              <ItemTitle>Volume</ItemTitle>
+              <ItemValue>110 ETH</ItemValue>
+            </CollectionDataItem>
+            <CollectionDataItem>
+              <ItemTitle>Floor price</ItemTitle>
+              <ItemValue>3.05 ETH</ItemValue>
+            </CollectionDataItem>
+          </CollectionData>
+        </StyledContainer>
 
         <Inventory>
           <TabsContainer>
