@@ -8,7 +8,7 @@ module.exports = {
     'standard-with-typescript',
     'plugin:storybook/recommended'
   ],
-  ignorePatterns: ['vite.config.ts'],
+  ignorePatterns: ['vite.config.ts','**/node_modules'],
   overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
