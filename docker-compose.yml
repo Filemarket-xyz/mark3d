@@ -35,6 +35,13 @@ services:
       - mark3d-indexer-postgres-data:/var/lib/postgresql/data
     env_file: ~/.indexer_pg_env
     restart: unless-stopped
+  mark3d-indexer-postgres-migration:
+    build:
+      context: .
+      dockerfile: migrate.Dockerfile
+    env_file: ~/.indexer_pg_env
+    depends_on:
+      - mark3d-indexer-postgres
 
 volumes:
   mark3d-indexer-postgres-data:
