@@ -3,7 +3,7 @@ run:
 
 build-contracts:
 	mkdir -p contracts/build
-	(cd ../sol-contracts && yarn hardhat compile && cp -r artifacts/contracts/* ../indexer/contracts/build)
+	(cd ../sol-contracts && yarn && yarn hardhat compile && cp -r artifacts/contracts/* ../indexer/contracts/build)
 	mkdir -p contracts/access_token
 	mkdir -p contracts/collection
 	mkdir -p contracts/exchange

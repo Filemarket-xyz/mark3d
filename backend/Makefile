@@ -1,5 +1,5 @@
 build-contracts:
-	(yarn hardhat compile && cp -r artifacts/contracts/* ../indexer/contracts/build)
+	(cd ../sol-contracts && yarn && yarn hardhat compile)
 
 redis.start:
 	docker run --name mark3d-backend-redis -p 9203:6379 -d redis redis-server --save 60 1

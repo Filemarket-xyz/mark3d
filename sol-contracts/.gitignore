@@ -21,3 +21,4 @@ cancel_transfer.sh
 finish_order.sh
 finish_transfer.sh
 test.sh
+.mumbai-secret
