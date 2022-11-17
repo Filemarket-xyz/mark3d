@@ -1,9 +1,9 @@
 import { FC, ReactNode } from 'react'
-import { useAccount } from '@web3modal/react'
 import { ConnectButton } from '../ConnectButton'
 import { Button } from '../../../UIkit'
 import { AddressIcon } from '../AddressIcon'
 import { styled } from '../../../../styles'
+import { useAccount } from 'wagmi'
 
 export interface ConnectWidgetProps {
   connectedContent?: ReactNode
@@ -16,7 +16,7 @@ const IconWrapper = styled('div', {
 
 export const ConnectWidget: FC<ConnectWidgetProps> = ({ connectedContent }) => {
   const { isConnected, address } = useAccount()
-  if (isConnected) {
+  if (isConnected && address) {
     return (
       <>
         {connectedContent}

@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Generated files
+src/artifacts
+src/typechain-types
+src/swagger
+src/abi
