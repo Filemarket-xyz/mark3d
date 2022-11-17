@@ -6,4 +6,4 @@ RUN wget https://github.com/pressly/goose/releases/download/v3.4.1/goose_linux_x
 RUN chmod +x goose_linux_x86_64
 COPY indexer/migrations .
 
-ENTRYPOINT /usr/src/app/goose_linux_x86_64 postgres "host=mark3d-indexer-postgres port=5432 user=$POSTGRES_USER password=$POSTGRES_PASSWORD dbname=$POSTGRES_DB sslmode=disable" up
+ENTRYPOINT /usr/src/app/goose_linux_x86_64 postgres "host=indexer-postgres port=5432 user=$POSTGRES_USER password=$POSTGRES_PASSWORD dbname=$POSTGRES_DB sslmode=disable" up
