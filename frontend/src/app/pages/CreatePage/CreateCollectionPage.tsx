@@ -1,3 +1,4 @@
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { styled } from '../../../styles'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import { Button, PageLayout, textVariant } from '../../UIkit'
@@ -47,7 +48,18 @@ export const Form = styled('form', {
   marginRight: 'auto'
 })
 
+interface CreateCollectionForm {
+  image: File
+  displayName: string
+  symbol: string
+  description: string
+}
+
 export default function CreateCollectionPage() {
+  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
+
+  const { register, handleSubmit } = useForm()
+
   return (
     <PageLayout
       css={{
