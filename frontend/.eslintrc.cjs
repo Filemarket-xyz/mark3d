@@ -27,6 +27,7 @@ module.exports = {
     '@typescript-eslint/space-before-function-paren': 'off',
     '@typescript-eslint/strict-boolean-expressions': 'off',
     '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+    '@typescript-eslint/no-misused-promises': 'off',
     'max-len': [
       'warn',
       {

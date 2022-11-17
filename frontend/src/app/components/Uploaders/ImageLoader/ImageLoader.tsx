@@ -1,5 +1,11 @@
 import { useDrop } from '@react-aria/dnd'
-import React, { SyntheticEvent, useEffect, useState } from 'react'
+import React, {
+  ComponentType,
+  HTMLProps,
+  SyntheticEvent,
+  useEffect,
+  useState
+} from 'react'
 import { styled } from '../../../../styles'
 import { TextBold } from '../../../pages/CreatePage/CreateCollectionPage'
 import { textVariant } from '../../../UIkit'
@@ -50,7 +56,7 @@ const P = styled('p', {
 
 const ImageIcon = styled('img', {
   width: 64,
-  heigth: 64,
+  height: 64,
   transition: 'all 0.15s ease-in-out',
   variants: {
     selected: {
@@ -130,7 +136,11 @@ interface ItemWithGetFileProperty {
   getFile: () => Promise<File>
 }
 
-export default function ImageLoader() {
+interface ImageLoaderProps {
+  inputProps?: HTMLProps<HTMLInputElement> & ComponentType<typeof FileInput>
+}
+
+export default function ImageLoader(props: ImageLoaderProps) {
   const [file, setFile] = useState<File | undefined>()
 
   const setFileAsync = async (item: ItemWithGetFileProperty) => {
@@ -210,8 +220,12 @@ export default function ImageLoader() {
       <FileInput
         id='inputTag'
         type='file'
-        onChange={onSelectFile}
         accept={'.jpg, .png, .gif'}
+        {...props.inputProps}
+        onChange={(e) => {
+          onSelectFile(e)
+          props.inputProps?.onChange(e)
+        }}
       />
     </File>
   )
