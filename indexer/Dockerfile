@@ -25,6 +25,6 @@ COPY --from=build-deps /usr/src/backend/main main
 COPY --from=build-deps /usr/src/backend/.env .env
 COPY --from=build-deps /usr/src/backend/configs/$env.yml config.yml
 
-ENV LOG_PATH=/logs/main.log
+ENV LOG_PATH=/logs/mark3d-indexer.log
 
 ENTRYPOINT ["./run.sh"]

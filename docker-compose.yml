@@ -6,10 +6,16 @@ services:
       - "9202:9202"
     depends_on:
       - mark3d-indexer-postgres
+    volumes:
+      - ~/mark3d-logs:/logs
+    restart: unless-stopped
   mark3d-oracle-service:
     image: mark3d-oracle-service:latest
     depends_on:
       - mark3d-oracle-redis
+    volumes:
+      - ~/mark3d-logs:/logs
+    restart: unless-stopped
   mark3d-indexer-swagger:
     image: swaggerapi/swagger-ui:latest
     ports:

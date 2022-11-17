@@ -48,13 +48,13 @@ jobs:
         run: cp ~/.indexer_main_env indexer/.env
       - name: Build contracts
         run: make build-contracts
-        working-directory: backend/
+        working-directory: indexer/
       - name: Build models
         run: make build-models
-        working-directory: backend/
+        working-directory: indexer/
       - name: Build indexer container
         run: docker build --build-arg env=main -t mark3d-indexer-service:latest .
-        working-directory: backend
+        working-directory: indexer/
   update:
     runs-on: [self-hosted, main]
     needs: [ build-frontend, build-oracle, build-indexer ]
