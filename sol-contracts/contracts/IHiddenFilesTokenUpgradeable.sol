@@ -26,7 +26,10 @@ interface IHiddenFilesTokenUpgradeable is IERC721Upgradeable {
     event TransferFinished(uint256 indexed tokenId);
 
     /// @dev Event emitted after fraud was reported
-    event TransferFraudReported(uint256 indexed tokenId, bool decided, bool approved);
+    event TransferFraudReported(uint256 indexed tokenId);
+
+    /// @dev Event emitted after fraud was decided
+    event TransferFraudDecided(uint256 indexed tokenId, bool approved);
 
     /// @dev Event emitted after transfer was cancelled
     event TransferCancellation(uint256 indexed tokenId);

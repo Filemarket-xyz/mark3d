@@ -1,7 +1,8 @@
 import React from 'react'
+import { Outlet } from 'react-router'
 import { styled } from '../../../styles'
 import { textVariant, Container } from '../../UIkit'
-import Tabs from '../MarketPage/Tabs'
+import Tabs, { TabsProps } from '../../UIkit/Tabs/Tabs'
 import bg from './img/Gradient.jpg'
 
 const Background = styled('img', {
@@ -18,7 +19,12 @@ const ProfileHeader = styled('div', {
   alignItems: 'flex-end',
   gap: '$3',
   marginTop: -80,
-  marginBottom: '$4'
+  marginBottom: '$4',
+  '@sm': {
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginBottom: '$3'
+  }
 })
 
 const ProfileImage = styled('img', {
@@ -31,7 +37,10 @@ const ProfileImage = styled('img', {
 const ProfileName = styled('h2', {
   ...textVariant('h2').true,
   color: '$blue900',
-  paddingBottom: '$3'
+  paddingBottom: '$3',
+  '@sm': {
+    fontSize: 'calc(5vw + 10px)'
+  }
 })
 
 const ProfileCredentials = styled('div', {
@@ -67,7 +76,44 @@ const Inventory = styled(Container, {
   paddingTop: '$4',
   backgroundColor: '$white',
   borderTopLeftRadius: 64,
-  borderTopRightRadius: 64
+  borderTopRightRadius: 64,
+  '@md': {
+    borderTopLeftRadius: '$4',
+    borderTopRightRadius: '$4'
+  }
+})
+
+const tabs: Pick<TabsProps, 'tabs'> = {
+  tabs: [
+    {
+      name: 'Owned',
+      url: 'owned',
+      amount: 3
+    },
+    {
+      name: 'Created',
+      url: 'created',
+      amount: 2
+    },
+    {
+      name: 'Namespaces',
+      url: 'namespaces',
+      amount: 3
+    },
+    {
+      name: 'Collections',
+      url: 'collections',
+      amount: 1
+    },
+    {
+      name: 'History',
+      url: 'history'
+    }
+  ]
+}
+
+const TabsContainer = styled('div', {
+  marginBottom: '$4'
 })
 
 export default function ProfilePage() {
@@ -99,7 +145,10 @@ export default function ProfilePage() {
         </Container>
 
         <Inventory>
-            <Tabs />
+          <TabsContainer>
+            <Tabs {...tabs} />
+          </TabsContainer>
+          <Outlet />
         </Inventory>
       </GrayOverlay>
     </>

@@ -95,6 +95,12 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         super.supportsInterface(interfaceId);
     }
 
+    /// @dev Returns the Uniform Resource Identifier (URI) for `tokenId` token.
+    /// @return Metadata file URI
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        return tokenUris[tokenId];
+    }
+
     /// @dev Function to detect if fraud decision instant. Should return false in EVM chains and true in Filecoin
     /// @return Boolean indicating if fraud decision will be instant
     function fraudDecisionInstant() external view returns (bool) {
@@ -283,6 +289,8 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         (bool decided, bool approve) = fraudDecider_.decide(tokenId,
             tokenUris[tokenId], info.publicKey, privateKey, info.encryptedPassword);
         require(fraudLateDecisionEnabled || decided, "Mark3dCollection: late decision disabled");
+        emit TransferFraudReported(tokenId);
+
         if (decided) {
             if (address(info.callbackReceiver) != address(0)) {
                 info.callbackReceiver.transferFraudDetected(tokenId, approve);
@@ -291,8 +299,8 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
                 _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
             }
             delete transfers[tokenId];
+            emit TransferFraudDecided(tokenId, approve);
         }
-        emit TransferFraudReported(tokenId, decided, approve);
     }
 
     /**
@@ -310,11 +318,14 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         if (address(info.callbackReceiver) != address(0)) {
             info.callbackReceiver.transferFraudDetected(tokenId, approve);
         }
-        if (!approve) {
-            _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
-        }
+        bytes memory data = info.data;
+        address to = info.to;
         delete transfers[tokenId];
-        emit TransferFraudReported(tokenId, true, approve);
+        if (!approve) {
+            _safeTransfer(ownerOf(tokenId), to, tokenId, data);
+        }
+
+        emit TransferFraudDecided(tokenId, approve);
     }
 
     /**

@@ -29,9 +29,35 @@ jobs:
         with:
           name: main-frontend
           path: frontend/frontend.zip
+  build-oracle:
+    runs-on: [self-hosted, main]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Copy .env from host
+        run: cp ~/.oracle_main_env backend/.env
+      - name: Build contracts
+        run: make build-contracts
+        working-directory: backend/
+      - name: Build oracle container
+        run: docker build -t mark3d-oracle-service:latest -f backend/Dockerfile .
+  build-indexer:
+    runs-on: [self-hosted, main]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Copy .env from host
+        run: cp ~/.indexer_main_env indexer/.env
+      - name: Build contracts
+        run: make build-contracts
+        working-directory: indexer/
+      - name: Build models
+        run: make build-models
+        working-directory: indexer/
+      - name: Build indexer container
+        run: docker build --build-arg env=main -t mark3d-indexer-service:latest .
+        working-directory: indexer/
   update:
     runs-on: [self-hosted, main]
-    needs: [ build-frontend ]
+    needs: [ build-frontend, build-oracle, build-indexer ]
     steps:
       - uses: actions/checkout@v3
       - name: Load frontend artifacts
@@ -45,8 +71,12 @@ jobs:
           sudo mv dist/* /usr/share/nginx/mark3d.xyz/
       - name: Update swagger
         run: cp indexer/swagger.yaml ~/indexer-swagger/
+      - name: Up migration
+        run: docker-compose -f docker-compose.yml up -d --build indexer-postgres-migration
+      - name: Check migration status
+        run: ./check_migration.sh
       - name: Update compose
-        run: docker-compose -f docker-compose.yml up -d mark3d-indexer-swagger mark3d-indexer-postgres
+        run: docker-compose -f docker-compose.yml up -d indexer-swagger indexer-postgres oracle-redis indexer-service oracle-service
       - name: update nginx
         run: |
           sudo mv nginx.conf /etc/nginx/conf.d/mark3d.conf

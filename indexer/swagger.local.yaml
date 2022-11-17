@@ -1,0 +1,359 @@
+swagger: "2.0"
+info:
+  title: Mark3d service
+  description: >
+    Здесь можно **маркдауном** писать дополнительное описание.<br />
+  version: 1.0.0
+schemes:
+  - http
+host: localhost:9202
+paths:
+  /tokens/{address}:
+    get:
+      tags:
+        - tokens
+      description: Получение списка токенов пользователя
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Токены
+          schema:
+            $ref: '#/definitions/TokensResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /transfers/{address}:
+    get:
+      tags:
+        - transfers
+      description: Получение списка трансферов пользователя
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Трансферы
+          schema:
+            $ref: '#/definitions/TransfersResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /transfers_history/{address}:
+    get:
+      tags:
+        - transfers
+      description: Получение истории трансферов пользователя
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Трансферы
+          schema:
+            $ref: '#/definitions/TransfersResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /orders/{address}:
+    get:
+      tags:
+        - orders
+      description: Получение списка активных ордеров
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Ордера
+          schema:
+            $ref: '#/definitions/OrdersResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /orders_history/{address}:
+    get:
+      tags:
+        - orders
+      description: Получение истории ордеров
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Ордера
+          schema:
+            $ref: '#/definitions/OrdersResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+definitions:
+  ErrorResponse:
+    type: object
+    description: Типовая ошибка
+    properties:
+      code:
+        type: integer
+        description: Код ошибки
+      message:
+        type: string
+        description: Сообщение ошибки
+      detail:
+        type: string
+        description: Дополнительные детали
+  TokensResponse:
+    type: object
+    description: Ответ на запрос токенов пользователя
+    properties:
+      collections:
+        type: array
+        description: Коллекции пользователя
+        items:
+          $ref: "#/definitions/Collection"
+      tokens:
+        type: array
+        description: Токены пользователя
+        items:
+          $ref: "#/definitions/Token"
+  TransfersResponse:
+    type: object
+    description: Ответ на запрос трансферов токенов от пользователя
+    properties:
+      incoming:
+        type: array
+        description: Входящие трансферы
+        items:
+          $ref: "#/definitions/Transfer"
+      outgoing:
+        type: array
+        description: Исходящие трансферы
+        items:
+          $ref: "#/definitions/Transfer"
+  OrdersResponse:
+    type: object
+    description: Ответ на запрос ордеров
+    properties:
+      incoming:
+        type: array
+        description: Входящие ордера (где пользователь - получатель)
+        items:
+          $ref: "#/definitions/Order"
+      outgoing:
+        type: array
+        description: Исходящие ордера (где пользователь - продавец)
+        items:
+          $ref: "#/definitions/Order"
+  Collection:
+    type: object
+    description: Коллекция
+    properties:
+      address:
+        type: string
+        description: Адрес контракта коллекции
+        pattern: "0x[0-9a-f-A-F]{40}"
+      creator:
+        type: string
+        description: Создатель коллекции
+        pattern: "0x[0-9a-f-A-F]{40}"
+      owner:
+        type: string
+        description: Владелец коллекции
+        pattern: "0x[0-9a-f-A-F]{40}"
+      name:
+        type: string
+        description: имя токена
+      tokenId:
+        type: string
+        description: Id Access токена
+        pattern: "^[0-9]+$"
+      metaUri:
+        type: string
+        description: uri метаданных access токена
+  Token:
+    type: object
+    description: Токен
+    properties:
+      collection:
+        type: string
+        description: Адрес коллекции
+        pattern: "0x[0-9a-f-A-F]{40}"
+      tokenId:
+        type: string
+        description: Id токена
+        pattern: "^[0-9]+$"
+      owner:
+        type: string
+        description: Владелец
+        pattern: "0x[0-9a-f-A-F]{40}"
+      metaUri:
+        type: string
+        description: uri метаданных токена
+      pendingTransferId:
+        type: integer
+        format: int64
+        description: id трансфера, находящегося в процессе
+      pendingOrderId:
+        type: integer
+        format: int64
+        description: id ордера, находящегося в процессе
+  Transfer:
+    type: object
+    description: Трансфер
+    properties:
+      id:
+        type: integer
+        description: Id трансфера
+        format: int64
+      collection:
+        type: string
+        description: Адрес коллекции
+        pattern: "0x[0-9a-f-A-F]{40}"
+      tokenId:
+        type: string
+        description: Id токена
+        pattern: "^[0-9]+$"
+      from:
+        type: string
+        description: Отправитель
+        pattern: "0x[0-9a-f-A-F]{40}"
+      to:
+        type: string
+        description: Получатель, если уже назначен
+        pattern: "0x[0-9a-f-A-F]{40}"
+      orderId:
+        type: integer
+        description: Id ордера, если трансфер создан из-за ордера
+        format: int64
+      fraudApproved:
+        type: boolean
+        description: true - если факт мошенничества подтвержден (репорт подает всегда только получатель).
+          был ли подан репорт, можно выяснить по статусам
+      statuses:
+        type: array
+        description: Статусы трансфера
+        items:
+          $ref: "#/definitions/TransferStatusInfo"
+  Order:
+    type: object
+    description: Ордер
+    properties:
+      id:
+        type: integer
+        description: Id ордера
+        format: int64
+      transferId:
+        type: integer
+        description: Id трансфера
+        format: int64
+      price:
+        type: string
+        description: Цена
+        pattern: "^[0-9]+$"
+      statuses:
+        type: array
+        description: Статусы ордера
+        items:
+          $ref: "#/definitions/OrderStatusInfo"
+  TransferStatusInfo:
+    type: object
+    description: Изменение статуса трансфера
+    properties:
+      status:
+        $ref: '#/definitions/TransferStatus'
+      timestamp:
+        type: number
+        description: Время установки статуса
+        format: int64
+      txId:
+        type: string
+        description: Транзакция, которой был установлен статус
+        pattern: "0x[0-9a-f-A-F]{64}"
+  TransferStatus:
+    description: Статус трансфера <br />
+      * `Drafted` - Создан черновик трансфера <br />
+      * `DraftCompleted` - Черновик трансфера завершен <br />
+      * `Created` - Трансфер инициализирован <br />
+      * `PublicKeySet` - Сохранен публичный ключ получателя <br />
+      * `PasswordSet` - Сохранен зашифрованный пароль <br />
+      * `FraudReported` - Доложено мошенничество <br />
+      * `Finished` - Трансфер завершен <br />
+      * `Cancelled` - Трансфер отменен
+    type: string
+    enum:
+      - Drafted
+      - DraftCompleted
+      - Created
+      - PublicKeySet
+      - PasswordSet
+      - FraudReported
+      - FraudDecided
+      - Finished
+      - Cancelled
+  OrderStatusInfo:
+    type: object
+    description: Изменение статуса ордера
+    properties:
+      status:
+        $ref: '#/definitions/OrderStatus'
+      timestamp:
+        type: number
+        description: Время установки статуса
+        format: int64
+      txId:
+        type: string
+        description: Транзакция, которой был установлен статус
+        pattern: "0x[0-9a-f-A-F]{64}"
+  OrderStatus:
+    description: Статус ордера <br />
+      * `Created` - ордер создан <br />
+      * `Fulfilled` - средства внесены покупателем <br />
+      * `Finished` - ордер завершен успешно <br />
+      * `FraudApproved` - доказано мошенничество и ордер отменен <br />
+      * `Cancelled` - ордер отменен
+    type: string
+    enum:
+      - Created
+      - Fulfilled
+      - Finished
+      - FraudApproved
+      - Cancelled
+tags:
+  - name: tokens
+  - name: transfers
+  - name: orders

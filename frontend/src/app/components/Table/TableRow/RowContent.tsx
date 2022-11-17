@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import { styled } from '../../../../styles'
 import { Button, textVariant, Txt } from '../../../UIkit'
+import { Hr } from '../../../UIkit/Hr/Hr'
 import Carousel from '../../Swiper/Swiper'
 import { IRowContent } from '../utils/tableBuilder'
 
@@ -14,15 +15,6 @@ const ContentWrapper = styled('div', {
     paddingLR: '$3'
   },
   paddingTop: 0
-})
-
-const Hr = styled('hr', {
-  width: '100%',
-  height: '2px',
-  background:
-    'linear-gradient(270deg, rgba(0, 220, 255, 0.25) 0%, rgba(225, 75, 236, 0.25) 85.65%);',
-  border: 'none',
-  display: 'block'
 })
 
 const Content = styled('section', {
