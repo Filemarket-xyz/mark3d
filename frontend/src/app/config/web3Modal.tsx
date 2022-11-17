@@ -3,7 +3,7 @@ import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3mod
 import { FC } from 'react'
 import { Web3Modal } from '@web3modal/react'
 
-const chains = [chain.mainnet, chain.polygon]
+const chains = [chain.polygonMumbai]
 
 export const projectId = import.meta.env.VITE_WEB3_MODAL_PROJECT_ID
 

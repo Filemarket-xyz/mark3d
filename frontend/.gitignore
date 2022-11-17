@@ -27,3 +27,4 @@ dist-ssr
 src/artifacts
 src/typechain-types
 src/swagger
+src/abi
