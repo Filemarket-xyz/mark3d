@@ -15,11 +15,11 @@ use secp256k1::SecretKey;
 use sha2::{Digest, Sha256};
 use std::{collections::HashSet, env, error::Error};
 use web3::{
-    contract::tokens::Tokenizable,
     ethabi::{Contract, Log, RawLog},
     transports::WebSocket,
     types::{Block, BlockId, BlockNumber, Transaction, TransactionReceipt, H160, H256},
     Web3,
+    signing::Key, contract::Options
 };
 
 pub async fn add_in_set(
@@ -97,26 +97,27 @@ pub async fn get_collection_creation_event(
 pub async fn get_events(
     hash: H256,
     web3: &Web3<WebSocket>,
-    cont: &Contract,
+    collection: &Contract,
+    fraud_decider: &Contract,
 ) -> Result<(TransferFraudReported, FraudReported), web3::Error> {
     let tx = get_tx_receipt(hash, web3).await?;
     if tx.logs.len() != 2 {
         return Err(web3::Error::Internal);
     }
 
-    let event_t_f_r = match cont.event("TransferFraudReported") {
+    let event_t_f_r = match collection.event("TransferFraudReported") {
         Ok(e) => e,
         Err(e) => return Err(web3::Error::Decoder(format!("{}", e))),
     };
 
-    let event_f_r = match cont.event("FraudReported") {
+    let event_f_r = match fraud_decider.event("FraudReported") {
         Ok(e) => e,
         Err(e) => return Err(web3::Error::Decoder(format!("{}", e))),
     };
 
     let mut t_f_r_log: Log = Log { params: vec![] };
     let mut f_r_log: Log = Log { params: vec![] };
-    let mut f_r_idx: usize = 1;
+    let mut left_events: i32 = 2;
     for i in 0..tx.logs.len() {
         if let Ok(log) = event_t_f_r.parse_log(RawLog {
             topics: tx.logs[i]
@@ -126,22 +127,24 @@ pub async fn get_events(
                 .collect(),
             data: Vec::from(tx.logs[i].data.0.as_slice()),
         }) {
-            f_r_idx -= i;
+            left_events-=1;
             t_f_r_log = log;
         }
 
         if let Ok(log) = event_f_r.parse_log(RawLog {
-            topics: tx.logs[f_r_idx]
+            topics: tx.logs[i]
                 .topics
                 .iter()
                 .map(|x| H256::from_slice(x.as_bytes()))
                 .collect(),
-            data: Vec::from(tx.logs[f_r_idx].data.0.as_slice()),
+            data: Vec::from(tx.logs[i].data.0.as_slice()),
         }) {
+            left_events-=1;
             f_r_log = log;
-        } else {
-            return Err(web3::Error::Internal);
         }
+    }
+    if left_events != 0 {
+        return Err(web3::Error::Decoder(format!("events not found")));
     }
 
     Ok((
@@ -196,7 +199,7 @@ pub async fn fetch_file(report: &FraudReported) -> Result<Vec<u8>, web3::Error> 
     let hidden_file_link = if file.hidden_file.starts_with("ipfs://") {
         format!(
             "https://nftstorage.link/ipfs/{}",
-            report.cid.replace("ipfs://", "")
+            file.hidden_file.replace("ipfs://", "")
         )
     } else {
         return Err(web3::Error::Decoder("invalid hidden file link".to_string()));
@@ -250,7 +253,7 @@ pub fn decrypt_file(file: &[u8], password: &str) -> Result<bool, web3::Error> {
     let res = hasher.finalize();
     let result = res.as_slice();
 
-    Ok(result != hash)
+    Ok(result == hash)
 }
 
 pub async fn get_latest_block_num(web3: &Web3<WebSocket>) -> Result<u64, web3::Error> {
@@ -295,17 +298,42 @@ pub async fn call_late_decision(
     approved: bool,
     report: &FraudReported,
     key: &SecretKey,
-) -> Result<web3::types::TransactionReceipt, web3::error::Error> {
+) -> Result<web3::types::H256, web3::Error> {
+    
+    let params = (
+        web3::ethabi::Token::Address(report.collection),
+        web3::ethabi::Token::Uint(report.token_id),
+        web3::ethabi::Token::Bool(approved),
+    );
+    let gas = match contract.estimate_gas(
+        "lateDecision", 
+        params,
+        key.address(),
+        web3::contract::Options::default())
+        .await {
+            Ok(g) => g,
+            Err(_) => return Err(web3::Error::Internal),
+        };
+    let opts  = Options { 
+        gas: Some(gas),
+        gas_price: None,
+        value: None,
+        nonce: None,
+        condition: None,
+        transaction_type: None, 
+        access_list: None, 
+        max_fee_per_gas: None, 
+        max_priority_fee_per_gas: None,
+     };
     contract
-        .signed_call_with_confirmations(
+        .signed_call(
             "lateDecision",
-            vec![
-                report.collection.into_token(),
-                report.token_id.into_token(),
-                approved.into_token(),
-            ],
-            web3::contract::Options::default(),
-            3,
+            (
+                web3::ethabi::Token::Address(report.collection),
+                web3::ethabi::Token::Uint(report.token_id),
+                web3::ethabi::Token::Bool(approved),
+            ),
+            opts,
             key,
         )
         .await

@@ -5,9 +5,8 @@ info:
     Здесь можно **маркдауном** писать дополнительное описание.<br />
   version: 1.0.0
 schemes:
-  - https
-host: mark3d.xyz
-basePath: /api
+  - http
+host: localhost:9202
 paths:
   /tokens/{address}:
     get:
@@ -196,6 +195,9 @@ definitions:
         type: string
         description: Владелец коллекции
         pattern: "0x[0-9a-f-A-F]{40}"
+      name:
+        type: string
+        description: имя токена
       tokenId:
         type: string
         description: Id Access токена
@@ -203,15 +205,6 @@ definitions:
       metaUri:
         type: string
         description: uri метаданных access токена
-      name:
-        type: string
-        description: Имя токена из метаданных
-      description:
-        type: string
-        description: Описание токена из метаданных
-      image:
-        type: string
-        description: Ссылка на пикчу из метаданных
   Token:
     type: object
     description: Токен
@@ -228,25 +221,9 @@ definitions:
         type: string
         description: Владелец
         pattern: "0x[0-9a-f-A-F]{40}"
-      creator:
-        type: string
-        description: Создатель
-        pattern: "0x[0-9a-f-A-F]{40}"
       metaUri:
         type: string
         description: uri метаданных токена
-      name:
-        type: string
-        description: Имя токена из метаданных
-      description:
-        type: string
-        description: Описание токена из метаданных
-      image:
-        type: string
-        description: Ссылка на пикчу из метаданных
-      hiddenFile:
-        type: string
-        description: Ссылка на зашифрованный файл из метаданных
       pendingTransferId:
         type: integer
         format: int64
@@ -330,6 +307,7 @@ definitions:
   TransferStatus:
     description: Статус трансфера <br />
       * `Drafted` - Создан черновик трансфера <br />
+      * `DraftCompleted` - Черновик трансфера завершен <br />
       * `Created` - Трансфер инициализирован <br />
       * `PublicKeySet` - Сохранен публичный ключ получателя <br />
       * `PasswordSet` - Сохранен зашифрованный пароль <br />
@@ -339,10 +317,12 @@ definitions:
     type: string
     enum:
       - Drafted
+      - DraftCompleted
       - Created
       - PublicKeySet
       - PasswordSet
       - FraudReported
+      - FraudDecided
       - Finished
       - Cancelled
   OrderStatusInfo:
