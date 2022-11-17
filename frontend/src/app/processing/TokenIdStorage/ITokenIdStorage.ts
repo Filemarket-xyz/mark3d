@@ -1,12 +1,6 @@
 import { ISecureStorage } from '../SecureStorage'
 import { TokenFullId } from '../types'
 
-// Looks like JSON, but not JSON, cos it is not deterministic
-export const stringifyTokenFullId = (tokenFullId: TokenFullId) =>
-  `{"collectionId":${tokenFullId.collectionId},"tokenId":${tokenFullId.tokenId}}`
-
-export const parseTokenFullId = (tokenFullId: string): TokenFullId => JSON.parse(tokenFullId)
-
 /**
  * CRUD of pairs (surrogateId, TokenFullId).
  *

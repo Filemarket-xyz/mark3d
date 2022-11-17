@@ -47,3 +47,14 @@ export interface FileMeta {
   name: string
   type: string // mime type
 }
+
+export enum Mark3dAccessTokenEvents {
+  Approval = 'Approval',
+  ApprovalForAll = 'ApprovalForAll',
+  CollectionCreation = 'CollectionCreation',
+  OwnershipTransferred = 'OwnershipTransferred',
+  RoleAdminChanged = 'RoleAdminChanged',
+  RoleGranted = 'RoleGranted',
+  RoleRevoked = 'RoleRevoked',
+  Transfer = 'Transfer',
+}

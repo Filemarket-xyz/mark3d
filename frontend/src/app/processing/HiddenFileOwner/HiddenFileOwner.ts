@@ -2,7 +2,7 @@ import { IHiddenFileOwner } from './IHiddenFileOwner'
 import { IStatefulCryptoProvider } from '../StatefulCryptoProvider'
 import { CryptoMessage, DecryptResult, FileMeta, RSAPublicKey } from '../types'
 import { NoAESKeyToSendBuyerError } from './errors'
-import { encryptRSA } from '../crypto'
+import { encryptRSA } from '../utils'
 
 export class HiddenFileOwner implements IHiddenFileOwner {
   constructor(

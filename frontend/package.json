@@ -34,6 +34,8 @@
     "buffer": "^6.0.3",
     "ethers": "^5.7.2",
     "jdenticon": "^3.2.0",
+    "mobx": "^6.7.0",
+    "mobx-react-lite": "^3.4.0",
     "nft.storage": "^7.0.0",
     "node-rsa": "^1.1.1",
     "openpgp": "^5.5.0",

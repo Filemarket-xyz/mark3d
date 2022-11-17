@@ -3,8 +3,9 @@ import { useCallback } from 'react'
 import { nftStorage } from '../../config/nftStorage'
 import { randomBytes } from 'ethers/lib/utils'
 import { useStatusState } from '../../hooks/useStatusState'
-import { ContractReceipt } from 'ethers'
+import { BigNumber, ContractReceipt } from 'ethers'
 import { mark3dConfig } from '../../config/mark3d'
+import { Mark3dAccessTokenEvents } from '../types'
 
 export interface CreateCollectionForm {
   name?: string // required, hook will return error if omitted
@@ -13,9 +14,15 @@ export interface CreateCollectionForm {
   image?: File // required
 }
 
+interface CreateCollectionResult {
+  collectionId: string
+  collectionTokenAddress: string
+  receipt: ContractReceipt // вся инфа о транзе
+}
+
 export function useCreateCollection(form: CreateCollectionForm) {
   const { contract, signer } = useAccessTokenContract()
-  const { wrapPromise, ...statuses } = useStatusState<ContractReceipt>()
+  const { wrapPromise, ...statuses } = useStatusState<CreateCollectionResult>()
   const createCollection = useCallback(async () => {
     return await wrapPromise(async () => {
       console.log('mint!', form)
@@ -30,10 +37,18 @@ export function useCreateCollection(form: CreateCollectionForm) {
             })
             console.log('metadata', metadata)
             const salt = `0x${Buffer.from(randomBytes(32)).toString('hex')}` as const
-            const result = await contract.createCollection(salt, form.name, form.symbol, metadata.url, metadata.url, '0x')
+            const result = await contract.createCollection(salt, form.name, form.symbol, metadata.url, metadata.url, '0x0')
             const receipt = await result.wait()
-            console.log('receipt', receipt)
-            return receipt
+            const createCollectionEvent = receipt.events
+              ?.find(event => event.event === Mark3dAccessTokenEvents.CollectionCreation)
+            if (!createCollectionEvent) {
+              throw Error(`receipt does not contain ${Mark3dAccessTokenEvents.CollectionCreation} event`)
+            }
+            return {
+              collectionId: BigNumber.from(createCollectionEvent.topics[1]).toString(),
+              collectionTokenAddress: createCollectionEvent.topics[2],
+              receipt
+            }
           } else {
             throw Error('CreateCollection form is not filled')
           }
