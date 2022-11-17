@@ -7,10 +7,10 @@ import { ContractReceipt } from 'ethers'
 import { mark3dConfig } from '../../config/mark3d'
 
 export interface CreateCollectionForm {
-  name?: string
-  symbol?: string
+  name?: string // required, hook will return error if omitted
+  symbol?: string // required
   description?: string
-  image?: File
+  image?: File // required
 }
 
 export function useCreateCollection(form: CreateCollectionForm) {
