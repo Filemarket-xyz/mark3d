@@ -23,7 +23,7 @@ ARG env
 COPY --from=build-deps /usr/src/backend/run.sh run.sh
 COPY --from=build-deps /usr/src/backend/main main
 COPY --from=build-deps /usr/src/backend/.env .env
-COPY --from=build-deps /usr/src/backend/configs/$env.yml config.yml
+COPY --from=build-deps /usr/src/backend/configs/$env.json config.json
 
 ENV LOG_PATH=/logs/mark3d-indexer.log
 
