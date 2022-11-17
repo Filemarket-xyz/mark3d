@@ -72,11 +72,11 @@ jobs:
       - name: Update swagger
         run: cp indexer/swagger.yaml ~/indexer-swagger/
       - name: Up migration
-        run: docker-compose -f docker-compose.yml up -d --build mark3d-indexer-postgres-migration
+        run: docker-compose -f docker-compose.yml up -d --build indexer-postgres-migration
       - name: Check migration status
         run: ./check_migration.sh
       - name: Update compose
-        run: docker-compose -f docker-compose.yml up -d mark3d-indexer-swagger mark3d-indexer-postgres mark3d-oracle-redis mark3d-indexer-service mark3d-oracle-service
+        run: docker-compose -f docker-compose.yml up -d indexer-swagger indexer-postgres oracle-redis indexer-service oracle-service
       - name: update nginx
         run: |
           sudo mv nginx.conf /etc/nginx/conf.d/mark3d.conf

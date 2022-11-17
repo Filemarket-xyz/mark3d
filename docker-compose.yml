@@ -1,22 +1,22 @@
 version: "3.8"
 services:
-  mark3d-indexer-service:
+  indexer-service:
     image: mark3d-indexer-service:latest
     ports:
       - "9202:9202"
     depends_on:
-      - mark3d-indexer-postgres
+      - indexer-postgres
     volumes:
       - ~/mark3d-logs:/logs
     restart: unless-stopped
-  mark3d-oracle-service:
+  oracle-service:
     image: mark3d-oracle-service:latest
     depends_on:
-      - mark3d-oracle-redis
+      - oracle-redis
     volumes:
       - ~/mark3d-logs:/logs
     restart: unless-stopped
-  mark3d-indexer-swagger:
+  indexer-swagger:
     image: swaggerapi/swagger-ui:latest
     ports:
       - "9201:8080"
@@ -24,25 +24,25 @@ services:
       - ~/indexer-swagger:/specs
     environment:
       - SWAGGER_JSON=/specs/swagger.yaml
-  mark3d-oracle-redis:
+  oracle-redis:
     image: redis:7
     volumes:
       - cache-redis-data:/data
     command: redis-server --save 60 1
-  mark3d-indexer-postgres:
+  indexer-postgres:
     image: postgres:13
     volumes:
-      - mark3d-indexer-postgres-data:/var/lib/postgresql/data
+      - indexer-postgres-data:/var/lib/postgresql/data
     env_file: ~/.indexer_pg_env
     restart: unless-stopped
-  mark3d-indexer-postgres-migration:
+  indexer-postgres-migration:
     build:
       context: .
       dockerfile: migrate.Dockerfile
     env_file: ~/.indexer_pg_env
     depends_on:
-      - mark3d-indexer-postgres
+      - indexer-postgres
 
 volumes:
-  mark3d-indexer-postgres-data:
+  indexer-postgres-data:
   cache-redis-data:
