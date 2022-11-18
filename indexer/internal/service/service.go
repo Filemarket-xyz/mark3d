@@ -20,6 +20,7 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/now"
 	"io"
 	"log"
+	"math/big"
 	"net/http"
 	"strings"
 	"time"
@@ -41,6 +42,7 @@ type metaData struct {
 }
 
 type Service interface {
+	Collections
 	Tokens
 	Transfers
 	Orders
@@ -54,7 +56,13 @@ type EthClient interface {
 	ethereum.TransactionReader
 }
 
+type Collections interface {
+	GetCollection(ctx context.Context, address common.Address) (*models.Collection, *models.ErrorResponse)
+}
+
 type Tokens interface {
+	GetToken(ctx context.Context, address common.Address, tokenId *big.Int) (*models.Token, *models.ErrorResponse)
+	GetCollectionTokens(ctx context.Context, address common.Address) ([]*models.Token, *models.ErrorResponse)
 	GetTokensByAddress(ctx context.Context, address common.Address) (*models.TokensResponse, *models.ErrorResponse)
 }
 

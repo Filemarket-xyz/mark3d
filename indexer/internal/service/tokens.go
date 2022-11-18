@@ -7,7 +7,43 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 	"log"
+	"math/big"
 )
+
+func (s *service) GetToken(ctx context.Context, address common.Address,
+	tokenId *big.Int) (*models.Token, *models.ErrorResponse) {
+	tx, err := s.postgres.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		log.Println("begin tx failed: ", err)
+		return nil, internalError
+	}
+	defer s.postgres.RollbackTransaction(ctx, tx)
+	token, err := s.postgres.GetToken(ctx, tx, address, tokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, tokenNotExistError
+		}
+		log.Println("get token failed: ", err)
+		return nil, internalError
+	}
+	return domain.TokenToModel(token), nil
+}
+
+func (s *service) GetCollectionTokens(ctx context.Context,
+	address common.Address) ([]*models.Token, *models.ErrorResponse) {
+	tx, err := s.postgres.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		log.Println("begin tx failed: ", err)
+		return nil, internalError
+	}
+	defer s.postgres.RollbackTransaction(ctx, tx)
+	tokens, err := s.postgres.GetCollectionTokens(ctx, tx, address)
+	if err != nil {
+		log.Println("get collection tokens failed: ", err)
+		return nil, internalError
+	}
+	return domain.MapSlice(tokens, domain.TokenToModel), nil
+}
 
 func (s *service) GetTokensByAddress(ctx context.Context,
 	address common.Address) (*models.TokensResponse, *models.ErrorResponse) {
