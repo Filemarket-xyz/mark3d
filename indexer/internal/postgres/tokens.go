@@ -10,6 +10,36 @@ import (
 	"strings"
 )
 
+func (p *postgres) GetCollectionTokens(ctx context.Context, tx pgx.Tx,
+	address common.Address) ([]*domain.Token, error) {
+	// language=PostgreSQL
+	rows, err := tx.Query(ctx, `SELECT collection_address,token_id,owner,
+       meta_uri,name,description,image,hidden_file,creator FROM tokens WHERE collection_address=$1`,
+		strings.ToLower(address.String()))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var res []*domain.Token
+	for rows.Next() {
+		var collectionAddress, tokenId, owner, creator string
+		t := &domain.Token{}
+		if err := rows.Scan(&collectionAddress, &tokenId, &owner, &t.MetaUri,
+			&t.Name, &t.Description, &t.Image, &t.HiddenFile, &creator); err != nil {
+			return nil, err
+		}
+		t.CollectionAddress, t.Owner, t.Creator = common.HexToAddress(collectionAddress), common.HexToAddress(owner),
+			common.HexToAddress(creator)
+		var ok bool
+		t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
+		if !ok {
+			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
+		}
+		res = append(res, t)
+	}
+	return res, nil
+}
+
 func (p *postgres) GetTokensByAddress(ctx context.Context, tx pgx.Tx,
 	address common.Address) ([]*domain.Token, error) {
 	// language=PostgreSQL

@@ -8,6 +8,28 @@ schemes:
   - http
 host: localhost:9202
 paths:
+  /collections/{address}:
+    get:
+      tags:
+        - tokens
+      description: Получение коллекции по адресу
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Коллекция
+          schema:
+            $ref: "#/definitions/Collection"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
   /tokens/{address}:
     get:
       tags:
@@ -28,6 +50,57 @@ paths:
         - name: address
           in: path
           description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /tokens/{collection}/{id}:
+    get:
+      tags:
+        - tokens
+      description: Получение токена по адресу коллекции и id
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Токен
+          schema:
+            $ref: "#/definitions/Token"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: collection
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
+  /tokens/by_collection/{address}:
+    get:
+      tags:
+        - tokens
+      description: Получение токенов по адресу коллекции
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Токены
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Token"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
