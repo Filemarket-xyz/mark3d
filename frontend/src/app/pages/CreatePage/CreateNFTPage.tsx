@@ -112,7 +112,8 @@ export default function CreateNftPage() {
         <FormControl>
           <Label>Collection</Label>
           <CollectionPickerContainer>
-            <ControlledComboBox
+            <ControlledComboBox<CreateNFTForm>
+              name='collection'
               control={control}
               comboboxProps={{
                 options: [

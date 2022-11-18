@@ -3,8 +3,7 @@ import { useAutocomplete } from '@mui/base/AutocompleteUnstyled'
 import { styled } from '../../../styles'
 import PostfixedInput from './PostfixedInput'
 import bottomArrow from './img/arrow-bottom.svg'
-import { Control, Controller, ControllerRenderProps } from 'react-hook-form'
-import { CreateNFTForm } from '../../pages/CreatePage/CreateNFTPage'
+import { Control, Controller, ControllerRenderProps, FieldValues, Path } from 'react-hook-form'
 import { AutocompleteChangeReason } from '@mui/material'
 
 const Listbox = styled('ul', {
@@ -40,7 +39,7 @@ export interface ComboBoxOption {
   id: string
 }
 
-interface ComboboxProps {
+interface ComboboxProps<T extends FieldValues> {
   options: ComboBoxOption[]
   value: ComboBoxOption
   onChange: (
@@ -48,10 +47,10 @@ interface ComboboxProps {
     data: ComboBoxOption | null,
     reason: AutocompleteChangeReason
   ) => void
-  otherFieldProps?: ControllerRenderProps<CreateNFTForm, 'collection'>
+  otherFieldProps?: ControllerRenderProps<T, Path<T>>
 }
 
-function UncontrolledCombobox(props: ComboboxProps) {
+function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
   const {
     getRootProps,
     getInputProps,
@@ -89,15 +88,16 @@ function UncontrolledCombobox(props: ComboboxProps) {
   )
 }
 
-export interface ControlledComboboxProps {
-  comboboxProps: Omit<ComboboxProps, 'onChange' | 'value'>
-  control: Control<CreateNFTForm, any>
+export interface ControlledComboboxProps<T extends FieldValues> {
+  comboboxProps: Omit<ComboboxProps<T>, 'onChange' | 'value'>
+  control: Control<T, any>
+  name: Path<T>
 }
 
-export const ControlledComboBox = (props: ControlledComboboxProps) => (
+export const ControlledComboBox = <T extends FieldValues>(props: ControlledComboboxProps<T>) => (
   <Controller
     control={props.control}
-    name='collection'
+    name={props.name}
     render={(p) => (
       <UncontrolledCombobox
         options={props.comboboxProps.options}
