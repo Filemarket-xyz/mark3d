@@ -29,17 +29,18 @@ export function useMintNFT(form: MintNFTForm) {
     return await wrapPromise(async () => {
       if (contract) {
         if (signer) {
-          if (form.name && form.collectionAddress && form.image && form.hiddenFile) {
+          const { name, description, image, hiddenFile, collectionAddress } = form
+          if (name && collectionAddress && image && hiddenFile) {
             const owner = await factory.getOwner()
-            const hiddenFileEncrypted = new Blob([await owner.encryptFile(form.hiddenFile)])
+            const hiddenFileEncrypted = new Blob([await owner.encryptFile(hiddenFile)])
             const hiddenFileMeta: FileMeta = {
-              name: form.hiddenFile.name,
-              type: form.hiddenFile.type
+              name: hiddenFile.name,
+              type: hiddenFile.type
             }
             const metadata = await nftStorage.store({
-              name: form.name,
-              description: form.description ?? '',
-              image: form.image,
+              name,
+              description: description ?? '',
+              image,
               external_link: mark3dConfig.externalLink,
               hidden_file: hiddenFileEncrypted,
               hidden_file_meta: hiddenFileMeta
@@ -54,12 +55,14 @@ export function useMintNFT(form: MintNFTForm) {
             }
             const tokenIdArgIndex = 2
             console.log('receipt', receipt)
-            const tokenId = transferEvent.args?.[tokenIdArgIndex]
-            if (!tokenId) {
+            const rawTokenId = transferEvent.args?.[tokenIdArgIndex]
+            if (!rawTokenId) {
               throw Error(`${ERC721TokenEvents.Transfer} does not have an arg with index ${tokenIdArgIndex}`)
             }
+            const tokenId = normalizeCounterId(rawTokenId)
+            await factory.registerTokenFullId(owner, { collectionAddress, tokenId })
             return {
-              tokenId: normalizeCounterId(tokenId),
+              tokenId,
               receipt
             }
           } else {

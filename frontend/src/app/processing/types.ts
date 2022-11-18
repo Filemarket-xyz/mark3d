@@ -26,9 +26,9 @@ export interface TokenFullId {
    */
   collectionAddress: string
   /**
-   * Token address (not id). Address is more useful when calling contracts
+   * Token id (not address). Is obtained as a result of the mint.
    */
-  tokenAddress: string
+  tokenId: string
 }
 
 export interface DecryptResultOk<ResultType> {
