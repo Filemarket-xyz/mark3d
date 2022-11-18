@@ -1,11 +1,6 @@
 import { useDrop } from '@react-aria/dnd'
-import React, {
-  ComponentType,
-  HTMLProps,
-  SyntheticEvent,
-  useEffect,
-  useState
-} from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
+import { UseFormRegisterReturn } from 'react-hook-form'
 import { styled } from '../../../../styles'
 import { TextBold } from '../../../pages/CreatePage/CreateCollectionPage'
 import { textVariant } from '../../../UIkit'
@@ -137,7 +132,7 @@ interface ItemWithGetFileProperty {
 }
 
 interface ImageLoaderProps {
-  inputProps?: HTMLProps<HTMLInputElement> | ComponentType<typeof FileInput>
+  registerProps?: UseFormRegisterReturn
 }
 
 export default function ImageLoader(props: ImageLoaderProps) {
@@ -221,10 +216,10 @@ export default function ImageLoader(props: ImageLoaderProps) {
         id='inputTag'
         type='file'
         accept={'.jpg, .png, .gif'}
-        {...props.inputProps}
+        {...props.registerProps}
         onChange={(e) => {
           onSelectFile(e)
-          props.inputProps?.onChange(e)
+          void props.registerProps?.onChange(e)
         }}
       />
     </File>

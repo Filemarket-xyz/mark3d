@@ -90,7 +90,7 @@ export default function CreateNftPage() {
 
         <FormControl>
           <Label css={{ marginBottom: '$3' }}>Upload a preview</Label>
-          <ImageLoader inputProps={register('image')} />
+          <ImageLoader registerProps={register('image')} />
         </FormControl>
 
         <FormControl>
@@ -101,7 +101,7 @@ export default function CreateNftPage() {
             UNITYPACKAGE.
             <TextBold>Max size:</TextBold> 100 MB.
           </Description>
-          <NftLoader inputProps={register('hiddenFile')} />
+          <NftLoader registerProps={register('hiddenFile')} />
         </FormControl>
 
         <FormControl>
@@ -144,7 +144,6 @@ export default function CreateNftPage() {
           />
         </FormControl>
 
-        <input type='submit' />
         <Button primary type='submit'>
           Mint
         </Button>

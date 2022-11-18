@@ -72,7 +72,7 @@ export default function CreateCollectionPage() {
 
         <FormControl>
           <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
-          <ImageLoader inputProps={register('image')} />
+          <ImageLoader registerProps={register('image')} />
         </FormControl>
 
         <FormControl>
@@ -98,6 +98,7 @@ export default function CreateCollectionPage() {
             placeholder='Description of your token collection'
           />
         </FormControl>
+
         <Button type='submit' primary>
           Mint
         </Button>
