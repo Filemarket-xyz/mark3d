@@ -1,8 +1,8 @@
 import { ISecureStorage } from './ISecureStorage'
-import { ensureCall } from '../../utils/error/ensureCall'
+import { ensureCall } from '../../utils/error'
 import { IStorageSecurityProvider } from '../StorageSecurityProvider'
 import { IStorageProvider, StorageData } from '../StorageProvider'
-import { arrayToRecord } from '../../utils/structs/arrayToRecord'
+import { arrayToRecord } from '../../utils/structs'
 import { CallbacksChangingError } from './errors'
 
 const encrypt = async (provider: IStorageSecurityProvider | undefined, data: string): Promise<string> => {

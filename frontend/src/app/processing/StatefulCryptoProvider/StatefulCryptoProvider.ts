@@ -8,7 +8,7 @@ import {
   RSAPrivateKey,
   RSAPublicKey
 } from '../types'
-import { decryptAES, encryptAES, genAESKey, decryptRSA, encryptRSA, genRSAKeyPair } from '../crypto'
+import { decryptAES, encryptAES, genAESKey, decryptRSA, encryptRSA, genRSAKeyPair } from '../utils'
 import { NoAESKeyToDecrypt, NoAESKeyToEncrypt, NoRSAPrivateKeyToDecrypt, NoRSAPublicKeyToEncrypt } from './errors'
 
 // prefixes used to prevent collisions in the storage

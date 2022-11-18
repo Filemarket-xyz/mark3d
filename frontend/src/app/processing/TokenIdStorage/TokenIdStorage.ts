@@ -1,6 +1,7 @@
-import { ITokenIdStorage, parseTokenFullId, stringifyTokenFullId } from './ITokenIdStorage'
+import { ITokenIdStorage } from './ITokenIdStorage'
 import { ISecureStorage } from '../SecureStorage'
 import { TokenFullId } from '../types'
+import { parseTokenFullId, stringifyTokenFullId } from '../utils/id'
 
 // prefixes used to prevent collisions in the storage
 const storagePrefix = 'tokenId'
