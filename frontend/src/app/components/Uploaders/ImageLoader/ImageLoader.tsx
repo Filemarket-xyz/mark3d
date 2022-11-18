@@ -137,7 +137,7 @@ interface ItemWithGetFileProperty {
 }
 
 interface ImageLoaderProps {
-  inputProps?: HTMLProps<HTMLInputElement> & ComponentType<typeof FileInput>
+  inputProps?: HTMLProps<HTMLInputElement> | ComponentType<typeof FileInput>
 }
 
 export default function ImageLoader(props: ImageLoaderProps) {

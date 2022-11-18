@@ -3,9 +3,8 @@ import { NavLink } from 'react-router-dom'
 import { styled } from '../../../styles'
 import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
 import { Button, PageLayout } from '../../UIkit'
-import Combobox from '../../UIkit/Form/Combobox'
+import { ControlledComboBox, ComboBoxOption } from '../../UIkit/Form/Combobox'
 import { Input } from '../../UIkit/Form/Input'
-import PostfixedInput from '../../UIkit/Form/PostfixedInput'
 import { TextArea } from '../../UIkit/Form/Textarea'
 import {
   Form,
@@ -18,6 +17,8 @@ import {
   Title
 } from './CreateCollectionPage'
 import PlusIcon from './img/plus-icon.svg'
+import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
+import { SubmitHandler, useForm } from 'react-hook-form'
 
 const Description = styled('p', {
   fontSize: '12px',
@@ -70,11 +71,28 @@ const CollectionPickerContainer = styled('div', {
   }
 })
 
+export interface CreateNFTForm {
+  image: File
+  hiddenFile: File
+  name: string
+  collection: ComboBoxOption
+  description: string
+}
+
 export default function CreateNftPage() {
+  const { register, handleSubmit, control } = useForm<CreateNFTForm>()
+  const onSubmit: SubmitHandler<CreateNFTForm> = (data) => console.log(data)
+
   return (
     <PageLayout css={{ paddingBottom: '$4' }}>
-      <Form>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Title>Create New NFT</Title>
+
+        <FormControl>
+          <Label css={{ marginBottom: '$3' }}>Upload a preview</Label>
+          <ImageLoader inputProps={register('image')} />
+        </FormControl>
+
         <FormControl>
           <Label css={{ marginBottom: '$3' }}>Upload a 3D model</Label>
           <Description>
@@ -83,30 +101,25 @@ export default function CreateNftPage() {
             UNITYPACKAGE.
             <TextBold>Max size:</TextBold> 100 MB.
           </Description>
-          <NftLoader />
+          <NftLoader inputProps={register('hiddenFile')} />
         </FormControl>
 
         <FormControl>
           <Label>Name</Label>
-          <Input placeholder='Item name' />
-        </FormControl>
-
-        <FormControl>
-          <Label>Price</Label>
-          <PostfixedInput
-            placeholder='Enter price for one piece'
-            postfix='ETH'
-          />
+          <Input placeholder='Item name' {...register('name')} />
         </FormControl>
 
         <FormControl>
           <Label>Collection</Label>
           <CollectionPickerContainer>
-            <Combobox
-              options={[
-                { title: 'first collection' },
-                { title: 'second collection' }
-              ]}
+            <ControlledComboBox
+              control={control}
+              comboboxProps={{
+                options: [
+                  { title: 'first collection', id: '1' },
+                  { title: 'second collection', id: '2' }
+                ]
+              }}
             />
             <NavLink to={'../collection'}>
               <AddCollectionButton>
@@ -124,14 +137,13 @@ export default function CreateNftPage() {
             <LetterCounter>0/1000</LetterCounter>
           </LabelWithCounter>
 
-          <TextArea placeholder='Description of your item' />
+          <TextArea
+            placeholder='Description of your item'
+            {...register('description')}
+          />
         </FormControl>
 
-        <FormControl>
-          <Label>Supply</Label>
-          <Input type={'number'} placeholder='Number of copies' />
-        </FormControl>
-
+        <input type='submit' />
         <Button primary type='submit'>
           Mint
         </Button>

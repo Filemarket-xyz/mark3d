@@ -3,6 +3,9 @@ import { useAutocomplete } from '@mui/base/AutocompleteUnstyled'
 import { styled } from '../../../styles'
 import PostfixedInput from './PostfixedInput'
 import bottomArrow from './img/arrow-bottom.svg'
+import { Control, Controller, ControllerRenderProps } from 'react-hook-form'
+import { CreateNFTForm } from '../../pages/CreatePage/CreateNFTPage'
+import { AutocompleteChangeReason } from '@mui/material'
 
 const Listbox = styled('ul', {
   maxWidth: '600px',
@@ -32,11 +35,23 @@ const Listbox = styled('ul', {
   }
 })
 
-export interface ComboboxProps {
-  options: Array<{ title: string }>
+export interface ComboBoxOption {
+  title: string
+  id: string
 }
 
-export default function Combobox(props: ComboboxProps) {
+interface ComboboxProps {
+  options: ComboBoxOption[]
+  value: ComboBoxOption
+  onChange: (
+    event: React.SyntheticEvent<Element, Event>,
+    data: ComboBoxOption | null,
+    reason: AutocompleteChangeReason
+  ) => void
+  otherFieldProps?: ControllerRenderProps<CreateNFTForm, 'collection'>
+}
+
+function UncontrolledCombobox(props: ComboboxProps) {
   const {
     getRootProps,
     getInputProps,
@@ -45,7 +60,11 @@ export default function Combobox(props: ComboboxProps) {
     groupedOptions
   } = useAutocomplete({
     options: props.options,
-    getOptionLabel: (option) => option.title
+    getOptionLabel: (option) => option.title,
+    isOptionEqualToValue: (option1, option2) => option1?.id === option2?.id,
+    ...props.otherFieldProps,
+    value: props.otherFieldProps?.value ?? null,
+    onChange: props.onChange
   })
 
   return (
@@ -60,7 +79,7 @@ export default function Combobox(props: ComboboxProps) {
       {groupedOptions.length > 0 && (
         <Listbox {...getListboxProps()}>
           {(groupedOptions as typeof props.options).map((option, index) => (
-            <li {...getOptionProps({ option, index })} key={option.title}>
+            <li {...getOptionProps({ option, index })} key={option.id}>
               {option.title}
             </li>
           ))}
@@ -69,3 +88,23 @@ export default function Combobox(props: ComboboxProps) {
     </div>
   )
 }
+
+export interface ControlledComboboxProps {
+  comboboxProps: Omit<ComboboxProps, 'onChange' | 'value'>
+  control: Control<CreateNFTForm, any>
+}
+
+export const ControlledComboBox = (props: ControlledComboboxProps) => (
+  <Controller
+    control={props.control}
+    name='collection'
+    render={(p) => (
+      <UncontrolledCombobox
+        options={props.comboboxProps.options}
+        value={p.field.value}
+        onChange={(_, data) => p.field.onChange(data)}
+        otherFieldProps={p.field}
+      />
+    )}
+  />
+)
