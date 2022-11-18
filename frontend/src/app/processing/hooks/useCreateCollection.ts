@@ -37,7 +37,7 @@ export function useCreateCollection(form: CreateCollectionForm) {
             })
             console.log('metadata', metadata)
             const salt = `0x${Buffer.from(randomBytes(32)).toString('hex')}` as const
-            const result = await contract.createCollection(salt, form.name, form.symbol, metadata.url, metadata.url, '0x0')
+            const result = await contract.createCollection(salt, form.name, form.symbol, metadata.url, metadata.url, '0x00')
             const receipt = await result.wait()
             const createCollectionEvent = receipt.events
               ?.find(event => event.event === Mark3dAccessTokenEvents.CollectionCreation)

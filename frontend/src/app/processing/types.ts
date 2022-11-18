@@ -22,13 +22,13 @@ export type CryptoMessage = Uint8Array
  */
 export interface TokenFullId {
   /**
-   * Collection Id inside AccessToken
+   * Collection address (not id). Address is more useful when calling contracts
    */
-  collectionId: string
+  collectionAddress: string
   /**
-   * Token Id inside collection
+   * Token address (not id). Address is more useful when calling contracts
    */
-  tokenId: string
+  tokenAddress: string
 }
 
 export interface DecryptResultOk<ResultType> {
@@ -57,4 +57,10 @@ export enum Mark3dAccessTokenEvents {
   RoleGranted = 'RoleGranted',
   RoleRevoked = 'RoleRevoked',
   Transfer = 'Transfer',
+}
+
+export enum ERC721TokenEvents {
+  Transfer = 'Transfer',
+  Approval = 'Approval',
+  ApprovalForAll = 'ApprovalForAll',
 }
