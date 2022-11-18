@@ -1,3 +1,5 @@
+import { ErrorResponse } from '../../../swagger/Api'
+
 export function stringifyError(error: any): string {
   if (typeof error === 'string') {
     return error
@@ -21,4 +23,11 @@ export function stringifyError(error: any): string {
     str = (error + '')
   }
   return str
+}
+
+export function errorResponseToMessage(error?: ErrorResponse): string {
+  if (!error) {
+    return 'received nullish error from the backend, but request was not successful'
+  }
+  return `${error.message}: ${error.detail}`
 }

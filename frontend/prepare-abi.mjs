@@ -4,6 +4,8 @@ import {exec} from 'node:child_process'
 const inputDir = '../sol-contracts/artifacts/contracts'
 const outputDir = './src/abi'
 
+// makes abi look like:
+// export default {...} as const;
 async function handleAbi(abiPath, contractName) {
   let fileHandleRead;
   let fileHandleWrite;
@@ -27,6 +29,7 @@ async function main() {
   await fs.rm(outputDir, {recursive: true, force: true})
   await fs.mkdir(outputDir)
 
+  // find files with abi
   for await (const dirent of inputFiles) {
     if (dirent.isDirectory()) {
       const [contractName, extension] = dirent.name.split('.')
@@ -37,6 +40,7 @@ async function main() {
     }
   }
 
+  // reformat generated code
   exec('yarn eslint --fix "src/abi/*.ts"')
 }
 
