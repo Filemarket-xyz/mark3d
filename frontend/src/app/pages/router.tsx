@@ -10,11 +10,16 @@ import { profileRoutes } from './ProfilePage/routes'
 import NFTPage from './NFTPage/NFTPage'
 import CollectionPage from './CollectionPage/CollectionPage'
 import { collectionPageRoutes } from './CollectionPage/routes'
+import { HackathonFormPage } from './HackathonForm/HackathonFormPage'
 
 const routes: RouteObject[] = [
   {
     path: 'explorer',
     element: <ExplorerPage />
+  },
+  {
+    path: 'hack',
+    element: <HackathonFormPage />
   },
   {
     path: '/',

@@ -4,6 +4,7 @@ import { wagmiClient, Web3ModalConfigured } from './app/config/web3Modal'
 import { NextUIProvider } from '@nextui-org/react'
 import { WagmiConfig } from 'wagmi'
 import { StoreProvider } from './app/hooks'
+import { DialogManager } from './app/components/App/DialogManager'
 
 export const Providers: FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -13,6 +14,7 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
           <StitchesProvider>
             <StoreProvider>
               {children}
+              <DialogManager/>
             </StoreProvider>
           </StitchesProvider>
         </NextUIProvider>
