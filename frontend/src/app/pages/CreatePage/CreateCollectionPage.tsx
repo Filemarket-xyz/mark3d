@@ -4,6 +4,9 @@ import { Button, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
 import PrefixedInput from '../../UIkit/Form/PrefixedInput'
 import { TextArea } from '../../UIkit/Form/Textarea'
+import { useState } from 'react'
+import { observer } from 'mobx-react-lite'
+import { MintNFTForm, useMintNFT } from '../../processing/hooks/useMintNFT'
 
 export const Title = styled('h1', {
   ...textVariant('h3').true,
@@ -47,7 +50,17 @@ export const Form = styled('form', {
   marginRight: 'auto'
 })
 
-export default function CreateCollectionPage() {
+const CreateCollectionPage = observer(() => {
+  const [file, setFile] = useState<File>()
+  console.log('file', file)
+  const form: MintNFTForm = {
+    name: 'I am super NFT',
+    description: 'abracadabra',
+    collectionAddress: '0xE37382F84dC2C72EF7eAaC6e327BBA054b30628C',
+    image: file,
+    hiddenFile: file
+  }
+  const { mintNFT, ...statuses } = useMintNFT(form)
   return (
     <PageLayout
       css={{
@@ -60,7 +73,7 @@ export default function CreateCollectionPage() {
 
         <FormControl>
           <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
-          <ImageLoader />
+          <ImageLoader onChange={setFile} />
         </FormControl>
 
         <FormControl>
@@ -91,11 +104,15 @@ export default function CreateCollectionPage() {
             placeholder='Short URL'
           ></PrefixedInput>
         </FormControl>
-
-        <Button type='submit' primary>
+        <div>
+          {JSON.stringify(statuses)}
+        </div>
+        <Button type='submit' primary onPress={ () => void mintNFT() }>
           Mint
         </Button>
       </Form>
     </PageLayout>
   )
-}
+})
+
+export default CreateCollectionPage

@@ -9,13 +9,14 @@ import { BigNumber, ContractReceipt, ethers } from 'ethers'
 import { useCallback } from 'react'
 import { assertContract, assertSigner } from '../utils/assert'
 import { useHiddenFileProcessorFactory } from './useHiddenFileProcessorFactory'
+import { mark3dConfig } from '../../config/mark3d'
 
 export function useFulfillOrder(collectionAddress?: string, tokenId?: string) {
   const { contract, signer } = useExchangeContract()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
   const factory = useHiddenFileProcessorFactory()
   const fulfillOrder = useCallback(wrapPromise(async () => {
-    assertContract(contract, 'Mark3dExchange')
+    assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
     if (collectionAddress && tokenId) {
       const buyer = await factory.getBuyer({ collectionAddress, tokenId })

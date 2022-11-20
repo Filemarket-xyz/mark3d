@@ -27,7 +27,7 @@ export function useMintNFT(form: MintNFTForm) {
   const { wrapPromise, ...statuses } = useStatusState<MintNFTResult>()
   const factory = useHiddenFileProcessorFactory()
   const mintNFT = useCallback(wrapPromise(async () => {
-    assertContract(contract, 'Mark3dCollection')
+    assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     const { name, description, image, hiddenFile, collectionAddress } = form
     if (name && collectionAddress && image && hiddenFile) {

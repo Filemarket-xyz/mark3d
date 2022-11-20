@@ -3,6 +3,7 @@ import { useStatusState } from '../../hooks'
 import { BigNumber, BigNumberish, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { assertContract, assertSigner } from '../utils/assert'
+import { mark3dConfig } from '../../config/mark3d'
 
 /**
  * Calls Mark3dExchange contract to place an order
@@ -14,7 +15,7 @@ export function usePlaceOrder(collectionAddress?: string, tokenId?: string, pric
   const { contract, signer } = useExchangeContract()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
   const placeOrder = useCallback(wrapPromise(async () => {
-    assertContract(contract, 'Mark3dExchange')
+    assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
     if (collectionAddress && tokenId && price) {
       const result = await contract.placeOrder(

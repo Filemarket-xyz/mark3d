@@ -26,7 +26,7 @@ export function useCreateCollection(form: CreateCollectionForm) {
   const { wrapPromise, ...statuses } = useStatusState<CreateCollectionResult>()
   const createCollection = useCallback(wrapPromise(async () => {
     console.log('mint!', form)
-    assertContract(contract, 'Mark3dAccessToken')
+    assertContract(contract, mark3dConfig.accessToken.name)
     assertSigner(signer)
     if (form.name && form.symbol && form.image) {
       const metadata = await nftStorage.store({
