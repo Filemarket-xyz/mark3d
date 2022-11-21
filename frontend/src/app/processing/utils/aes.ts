@@ -3,7 +3,7 @@ import { pbkdf2 } from 'pbkdf2'
 import { randomBytes, sha256 } from 'ethers/lib/utils'
 import { AES, ByteSource, padding } from 'aes-js'
 
-export const parseAESKey = (key: AESKey) => Buffer.from(key)
+export const parseAESKey = (key: AESKey) => Buffer.from(key, AESEncoding)
 
 export const genAESKey = async (): Promise<AESKey> => {
   const key = await new Promise<Buffer>((resolve, reject) => {

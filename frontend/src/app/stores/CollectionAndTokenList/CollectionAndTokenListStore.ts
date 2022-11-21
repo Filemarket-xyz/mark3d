@@ -38,7 +38,6 @@ export class CollectionAndTokenList implements IActivateDeactivate, IStoreReques
   activate(address: string): void {
     // no double activation
     if (!this.isLoaded) {
-      console.log('request', address)
       this.address = address
       this.request(address)
     }
