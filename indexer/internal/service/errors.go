@@ -9,9 +9,19 @@ var (
 		Message: "collection doesn't exist",
 	}
 	tokenNotExistError = &models.ErrorResponse{
-		Code:    0,
+		Code:    400,
 		Detail:  "",
 		Message: "token doesn't exist",
+	}
+	transferNotExistError = &models.ErrorResponse{
+		Code:    400,
+		Detail:  "",
+		Message: "transfer doesn't exist",
+	}
+	orderNotExistError = &models.ErrorResponse{
+		Code:    400,
+		Detail:  "",
+		Message: "order doesn't exist",
 	}
 	internalError = &models.ErrorResponse{
 		Code:    500,

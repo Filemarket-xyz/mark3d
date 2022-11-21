@@ -127,6 +127,22 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+  /transfers/{address}/{id}:
+    get:
+      tags:
+        - transfers
+      description: Получение **активного** трансфера по адресу коллекции и id токена
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Трансфер
+          schema:
+            $ref: "#/definitions/Transfer"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
   /transfers_history/{address}:
     get:
       tags:
@@ -173,6 +189,22 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+  /orders/{address}/{id}:
+    get:
+      tags:
+        - orders
+      description: Получение **активного** ордера по адресу коллекции и id токена
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Ордер
+          schema:
+            $ref: "#/definitions/Order"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
   /orders_history/{address}:
     get:
       tags:
@@ -337,6 +369,12 @@ definitions:
         type: boolean
         description: true - если факт мошенничества подтвержден (репорт подает всегда только получатель).
           был ли подан репорт, можно выяснить по статусам
+      publicKey:
+        type: string
+        description: публичный ключ (hex)
+      encryptedPassword:
+        type: string
+        description: зашифрованный пароль (hex)
       statuses:
         type: array
         description: Статусы трансфера

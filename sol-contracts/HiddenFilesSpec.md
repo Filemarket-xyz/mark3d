@@ -1,24 +1,27 @@
 # Mark3d transfer protocol
 | Header   | Value                                                                          |
 |----------|--------------------------------------------------------------------------------|
-| Author   | Oleg Shatniuk, Andrey Korolov, Stanislav Santalov, Ilya Orlov, Mikhail Korolov |
+| Author   | Oleg Shatniuk, Stanislav Santalov, Andrey Korolov, Ilya Orlov, Mikhail Korolov |
 | Status   | Idea                                                                           |
 | Type     | Standard                                                                       |
 | Category | Standard                                                                       |
-| Created  | 28-08-2022                                                                     |
+| Created  | 18-11-2022                                                                     |
 
 ## Table of contents
 * [Simple Summary](#simple-summary)
 * [Abstract](#abstract)
 * [Motivation](#motivation)
+* [Transfer scheme concept](#transfer-scheme-concept)
+* [Encryption](#encryption)
+* [FEVM vs EVM](#fevm-vs-evm)
 * [Specification](#specification)
-* [Implementation](#implementation)
-* [History](#history)
+* [Implementations](#implementations)
+* [References](#references)
 * [Copyright](#copyright)
 ## Simple Summary
 A standard interface for NFT with encrypted image or hidden file
 ## Abstract
-The following standard allows for implementation of a standard API for Non Fungible Tokens(NFT) with encrypted image or hidden file.
+The following standard allows for implementation of a standard API for Non-Fungible Tokens(NFT) with encrypted image or hidden file.
 The standard is an extension of ERC721 standard.
 ## Motivation
 With Filecoin and FVM there is ability of building decentralized applications with
@@ -27,11 +30,41 @@ advanced logic with huge amount of data, such as encryption and decryption.
 Encryption of NFT files (Hidden files) can solve problem of availability of content to anyone.
 
 In other words, with Filecoin and FVM private NFT can be implemented.
+## Transfer scheme concept
+Key idea of this standard is to use some secret "password" for file encryption/decryption and 
+to transfer token with "password" to hidden file.
+Password cannot be transferred in the explicit way as in the blockchain everything is public.
+So, here we are also required to use some encryption. This is the moment where asymmetric encryption
+schemes fit very well
+
+The scheme is following:
+1. Receiver saves the public key in the blockchain
+2. Sender encrypts the password and saves it in the blockchain
+3. Receiver decrypts the password
+4. Receiver decrypts the file and check if it is correct
+5. If something went wrong receiver reports fraud and publishes private key and fraud-check-actor performs all decryption and reverts transfer if there is really fact of fraud
+## Encryption
+There are some requirements for encryption shemes:
+1. Algorythm MUST be implemented and well tested in Rust programming language as it can be used in Filecoin native actor
+2. Algorythm MUST be present in web browser API as ability of operating with encrypted data within user browser is strongly required
+
+For file encryption AES protocol can be used and for password encryption RSA protocol. Both of them are present
+in the browser API and in Rust.
+
+Note: before encryption hash of file should be included. This hash can be used to check consistency after decryption.
+## FEVM vs EVM
+The difference between FEVM and EVM implementation is that we are unable to perform decryption on-chain in
+case of fraud report. Because of that, this standard is extended with ability to do this with trusted 3rd party web2 solution.
+
+While creating token contract instance trusted 3rd party address can be specified.
+
+"Web2 solution" here is just a service, which filter logs and performs decryption in case of reports of fraud.
+If this decryption fails, service is interacting with token contract and reverts transfer. And
+if decryption is successful, service is interacting with token contract and finalized transfer.
 ## Specification
 The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in RFC 2119.
 
 ```solidity
-/// @notice Probably, this will be renamed to FRC...FraudDecider in the future
 interface IFraudDecider {
     /// @dev Decide if there was a fact of fraud
     /// @param tokenId Id of token to check
@@ -88,7 +121,10 @@ interface IHiddenFilesToken is IERC721 {
     event TransferFinished(uint256 indexed tokenId);
 
     /// @dev Event emitted after fraud was reported
-    event TransferFraudReported(uint256 indexed tokenId, bool decided, bool approved);
+    event TransferFraudReported(uint256 indexed tokenId);
+
+    /// @dev Event emitted after fraud was decided
+    event TransferFraudDecided(uint256 indexed tokenId, bool approved);
 
     /// @dev Event emitted after transfer was cancelled
     event TransferCancellation(uint256 indexed tokenId);
@@ -162,8 +198,10 @@ interface IHiddenFilesToken is IERC721 {
 
     /// @dev Finalize transfer
     /// @notice MUST revert if transfer process wasn't initiated or it exists but is in wrong state
-    /// @notice MUST revert if called not by token receiver
     /// @notice This function MUST call `transferFinished` callback function
+    /// Following cases are allowed:
+    /// 1. Transfer is finalized by receiver
+    /// 2. Encrypted password was set more than 24 hours ago (or some other significant timeout) and transfer is finalized by sender
     /// @param tokenId is id for token to transfer
     function finalizeTransfer(
         uint256 tokenId
@@ -199,6 +237,7 @@ interface IHiddenFilesToken is IERC721 {
     /// 2. Current owner cancels transfer before public key was set by receiver
     /// 3. Current owner cancels transfer before encrypted password was set
     /// 4. Current owner cancels transfer before receiver finalize it or report fraud
+    /// 5. Receiver cancels transfer before encrypted password was set if 24 hours (or some other significant timeout) past after public key was set
     /// @param tokenId is id for token to transfer
     function cancelTransfer(
         uint256 tokenId
@@ -227,7 +266,12 @@ interface IHiddenFilesToken is IERC721 {
     ) external override;
 }
 ```
-## Implementation
-[Reference implementation](./contracts/Mark3dCollection.sol)
-## History
+## Implementations
+* [Reference implementation of IHiddenFilesToken](./contracts/Mark3dCollection.sol)
+* [Reference implementation of IFraudDecider](./contracts/FraudDeciderWeb2.sol)
+* [Reference implementation of IHiddenFilesTokenCallbackReceiver - Simple exchange contract, which also shows draft methods usage](./contracts/Mark3dExchange.sol)
+## References
+### Standards
+1. [ERC-721](https://eips.ethereum.org/EIPS/eip-721) Non-Fungible Token Standard.
 ## Copyright
+Copyright and related rights waived via CC4 (Creative Commons 4.0)
