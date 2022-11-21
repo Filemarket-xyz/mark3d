@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { styled } from '../../../styles'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
+import { useCreateCollection } from '../../processing/hooks/useCreateCollection'
 import { Button, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
@@ -55,8 +57,20 @@ interface CreateCollectionForm {
 }
 
 export default function CreateCollectionPage() {
-  const onSubmit: SubmitHandler<CreateCollectionForm> = (data) =>
-    console.log(data)
+  const {
+    createCollection,
+    statuses: { error, isLoading, result }
+  } = useCreateCollection()
+
+  useEffect(() => {
+    console.log(
+      `is loading: ${isLoading} \n error: ${error} \n result: ${result}`
+    )
+  }, [error, isLoading, result])
+
+  const onSubmit: SubmitHandler<CreateCollectionForm> = (data) => {
+    void createCollection(data).then(console.log).catch(console.log)
+  }
 
   const { register, handleSubmit } = useForm<CreateCollectionForm>()
 
@@ -98,6 +112,8 @@ export default function CreateCollectionPage() {
             placeholder='Description of your token collection'
           />
         </FormControl>
+
+        <input type='submit' value='submit' />
 
         <Button type='submit' primary>
           Mint
