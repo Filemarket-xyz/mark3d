@@ -3,6 +3,7 @@ import { useStores } from './useStores'
 import { CollectionAndTokenListStore } from '../stores/CollectionAndTokenList/CollectionAndTokenListStore'
 
 /**
+ * Component, using this hook, MUST be wrapped into observer
  * Returned store contains fields with collections, tokens and status fields like isLoading, isLoaded
  * @param address
  */

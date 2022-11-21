@@ -48,8 +48,8 @@ export function useButton<Props extends AriaButtonProps, Elem extends HTMLElemen
   return {
     buttonRef,
     buttonProps: {
-      ...otherProps,
       ...mergeProps(ariaButtonProps, focusProps, hoverProps),
+      ...otherProps,
       onClick: clickHandler,
       'data-pressed': isPressed,
       'data-hovered': isHovered,

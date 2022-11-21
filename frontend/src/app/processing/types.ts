@@ -22,11 +22,11 @@ export type CryptoMessage = Uint8Array
  */
 export interface TokenFullId {
   /**
-   * Collection Id inside AccessToken
+   * Collection address (not id). Address is more useful when calling contracts
    */
-  collectionId: string
+  collectionAddress: string
   /**
-   * Token Id inside collection
+   * Token id (not address). Is obtained as a result of the mint.
    */
   tokenId: string
 }
@@ -57,4 +57,10 @@ export enum Mark3dAccessTokenEvents {
   RoleGranted = 'RoleGranted',
   RoleRevoked = 'RoleRevoked',
   Transfer = 'Transfer',
+}
+
+export enum ERC721TokenEvents {
+  Transfer = 'Transfer',
+  Approval = 'Approval',
+  ApprovalForAll = 'ApprovalForAll',
 }

@@ -7,6 +7,7 @@ import { ISecureStorage, SecureStorage } from '../SecureStorage'
 import { TokenIdStorage } from '../TokenIdStorage'
 import { LocalStorageProvider } from '../StorageProvider'
 import { StatefulCryptoProvider } from '../StatefulCryptoProvider'
+import { NoopStorageSecurityProvider } from '../StorageSecurityProvider'
 
 export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
   readonly storage: ISecureStorage
@@ -19,6 +20,12 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
     const storageProvider = new LocalStorageProvider('mark3d')
     this.storage = new SecureStorage(storageProvider)
     this.tokenIdStorage = new TokenIdStorage(this.storage)
+    void this.setStorageSecurityProvider()
+  }
+
+  private async setStorageSecurityProvider() {
+    const securityProvider = new NoopStorageSecurityProvider()
+    await this.storage.setSecurityProvider(securityProvider)
   }
 
   async buyerToOwner(buyer: IHiddenFileBuyer): Promise<IHiddenFileOwner> {
