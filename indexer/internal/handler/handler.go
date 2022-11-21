@@ -42,8 +42,10 @@ func (h *handler) Init() http.Handler {
 	router.HandleFunc("/tokens/{address:0x[0-9a-f-A-F]{40}}", h.handleGetTokens)
 	router.HandleFunc("/transfers/{address:0x[0-9a-f-A-F]{40}}", h.handleGetActiveTransfers)
 	router.HandleFunc("/transfers_history/{address:0x[0-9a-f-A-F]{40}}", h.handleGetTransfersHistory)
+	router.HandleFunc("/transfers/{address:0x[0-9a-f-A-F]{40}}/{id:[0-9]+}", h.handleGetTransfer)
 	router.HandleFunc("/orders/{address:0x[0-9a-f-A-F]{40}}", h.handleGetActiveOrders)
 	router.HandleFunc("/orders_history/{address:0x[0-9a-f-A-F]{40}}", h.handleGetOrdersHistory)
+	router.HandleFunc("/orders/{address:0x[0-9a-f-A-F]{40}}/{id:[0-9]+}", h.handleGetOrder)
 	router.Use(h.corsMiddleware)
 
 	return router
