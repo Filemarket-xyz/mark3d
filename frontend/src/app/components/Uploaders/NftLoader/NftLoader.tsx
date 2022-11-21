@@ -1,4 +1,4 @@
-import React from 'react'
+import { UseFormRegisterReturn } from 'react-hook-form'
 import { styled } from '../../../../styles'
 import { textVariant } from '../../../UIkit'
 import BoxImage from './img/box.svg'
@@ -66,7 +66,11 @@ const File = styled('label', {
   ...generateFileHoverStyles()
 })
 
-export default function NftLoader() {
+interface NftLoaderProps {
+  registerProps: UseFormRegisterReturn
+}
+
+export default function NftLoader(props: NftLoaderProps) {
   return (
     <File htmlFor='inputTag'>
       <WhiteShade></WhiteShade>
@@ -76,6 +80,7 @@ export default function NftLoader() {
         id='inputTag'
         type='file'
         accept='.fbx, .3ds, .max, .blend, .obj, .c4d, .mb, .ma, .lwo, .lxo, .skp, .stl, .uasset, .dae, .ply, .glb, .gltf, .usdf, .unitypackage'
+        {...props.registerProps}
       />
     </File>
   )

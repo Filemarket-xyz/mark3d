@@ -3,6 +3,8 @@ import { useAutocomplete } from '@mui/base/AutocompleteUnstyled'
 import { styled } from '../../../styles'
 import PostfixedInput from './PostfixedInput'
 import bottomArrow from './img/arrow-bottom.svg'
+import { Control, Controller, ControllerRenderProps, FieldValues, Path } from 'react-hook-form'
+import { AutocompleteChangeReason } from '@mui/material'
 
 const Listbox = styled('ul', {
   maxWidth: '600px',
@@ -32,11 +34,23 @@ const Listbox = styled('ul', {
   }
 })
 
-export interface ComboboxProps {
-  options: Array<{ title: string }>
+export interface ComboBoxOption {
+  title: string
+  id: string
 }
 
-export default function Combobox(props: ComboboxProps) {
+interface ComboboxProps<T extends FieldValues> {
+  options: ComboBoxOption[]
+  value: ComboBoxOption
+  onChange: (
+    event: React.SyntheticEvent<Element, Event>,
+    data: ComboBoxOption | null,
+    reason: AutocompleteChangeReason
+  ) => void
+  otherFieldProps?: ControllerRenderProps<T, Path<T>>
+}
+
+function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
   const {
     getRootProps,
     getInputProps,
@@ -45,7 +59,11 @@ export default function Combobox(props: ComboboxProps) {
     groupedOptions
   } = useAutocomplete({
     options: props.options,
-    getOptionLabel: (option) => option.title
+    getOptionLabel: (option) => option.title,
+    isOptionEqualToValue: (option1, option2) => option1?.id === option2?.id,
+    ...props.otherFieldProps,
+    value: props.otherFieldProps?.value ?? null,
+    onChange: props.onChange
   })
 
   return (
@@ -60,7 +78,7 @@ export default function Combobox(props: ComboboxProps) {
       {groupedOptions.length > 0 && (
         <Listbox {...getListboxProps()}>
           {(groupedOptions as typeof props.options).map((option, index) => (
-            <li {...getOptionProps({ option, index })} key={option.title}>
+            <li {...getOptionProps({ option, index })} key={option.id}>
               {option.title}
             </li>
           ))}
@@ -69,3 +87,24 @@ export default function Combobox(props: ComboboxProps) {
     </div>
   )
 }
+
+export interface ControlledComboboxProps<T extends FieldValues> {
+  comboboxProps: Omit<ComboboxProps<T>, 'onChange' | 'value'>
+  control: Control<T, any>
+  name: Path<T>
+}
+
+export const ControlledComboBox = <T extends FieldValues>(props: ControlledComboboxProps<T>) => (
+  <Controller
+    control={props.control}
+    name={props.name}
+    render={(p) => (
+      <UncontrolledCombobox
+        options={props.comboboxProps.options}
+        value={p.field.value}
+        onChange={(_, data) => p.field.onChange(data)}
+        otherFieldProps={p.field}
+      />
+    )}
+  />
+)

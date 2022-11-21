@@ -1,8 +1,8 @@
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { styled } from '../../../styles'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import { Button, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
-import PrefixedInput from '../../UIkit/Form/PrefixedInput'
 import { TextArea } from '../../UIkit/Form/Textarea'
 
 export const Title = styled('h1', {
@@ -47,7 +47,19 @@ export const Form = styled('form', {
   marginRight: 'auto'
 })
 
+interface CreateCollectionForm {
+  image: File
+  displayName: string
+  symbol: string
+  description: string
+}
+
 export default function CreateCollectionPage() {
+  const onSubmit: SubmitHandler<CreateCollectionForm> = (data) =>
+    console.log(data)
+
+  const { register, handleSubmit } = useForm<CreateCollectionForm>()
+
   return (
     <PageLayout
       css={{
@@ -55,22 +67,22 @@ export default function CreateCollectionPage() {
         paddingBottom: '$4'
       }}
     >
-      <Form>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Title>Create New Collection</Title>
 
         <FormControl>
           <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
-          <ImageLoader />
+          <ImageLoader registerProps={register('image')} />
         </FormControl>
 
         <FormControl>
-          <Label>Name</Label>
-          <Input placeholder='Collection name' />
+          <Label>Display name</Label>
+          <Input placeholder='Collection name' {...register('displayName')} />
         </FormControl>
 
         <FormControl>
           <Label>Symbol</Label>
-          <Input placeholder='Token symbol' />
+          <Input placeholder='Token symbol' {...register('symbol')} />
         </FormControl>
 
         <FormControl>
@@ -81,15 +93,10 @@ export default function CreateCollectionPage() {
             <LetterCounter>0/1000</LetterCounter>
           </LabelWithCounter>
 
-          <TextArea placeholder='Description of your token collection' />
-        </FormControl>
-
-        <FormControl>
-          <Label>URL</Label>
-          <PrefixedInput
-            prefix='mark.3d/'
-            placeholder='Short URL'
-          ></PrefixedInput>
+          <TextArea
+            {...register('description')}
+            placeholder='Description of your token collection'
+          />
         </FormControl>
 
         <Button type='submit' primary>
