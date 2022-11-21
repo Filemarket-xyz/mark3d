@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
 import { useStores } from './useStores'
 import { CollectionAndTokenListStore } from '../stores/CollectionAndTokenList/CollectionAndTokenListStore'
+import { useActivateDeactivateAddress } from './useActivateDeactivateStore'
 
 /**
  * Component, using this hook, MUST be wrapped into observer
@@ -9,11 +9,6 @@ import { CollectionAndTokenListStore } from '../stores/CollectionAndTokenList/Co
  */
 export function useCollectionAndTokenListStore(address?: string): CollectionAndTokenListStore {
   const { collectionAndTokenList } = useStores()
-  useEffect(() => {
-    if (address) {
-      collectionAndTokenList.activate(address)
-    }
-    return () => collectionAndTokenList.deactivate()
-  }, [address])
+  useActivateDeactivateAddress(collectionAndTokenList, address)
   return collectionAndTokenList
 }

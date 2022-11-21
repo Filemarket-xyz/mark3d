@@ -4,16 +4,17 @@ import { Token } from '../../../swagger/Api'
 import { makeAutoObservable } from 'mobx'
 import { api } from '../../config/api'
 
-export class CollectionTokenListStore implements IActivateDeactivate, IStoreRequester {
+export class CollectionTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
 
   currentRequest?: RequestContext
   requestCount = 0
   isLoaded = false
   isLoading = false
+  isActivated = false
 
   data: Token[] = []
-  address = ''
+  collectionAddress = ''
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
@@ -22,23 +23,23 @@ export class CollectionTokenListStore implements IActivateDeactivate, IStoreRequ
     })
   }
 
-  private request(address: string) {
+  private request(collectionAddress: string) {
     storeRequest<Token[]>(
       this,
-      api.tokens.byCollectionDetail(address), resp => {
+      api.tokens.byCollectionDetail(collectionAddress), resp => {
         this.data = resp
       })
   }
 
-  activate(address: string): void {
-    if (!this.isLoaded) {
-      this.address = address
-      this.request(address)
-    }
+  activate(collectionAddress: string): void {
+    this.isActivated = true
+    this.collectionAddress = collectionAddress
+    this.request(collectionAddress)
   }
 
   deactivate(): void {
     this.reset()
+    this.isActivated = false
   }
 
   reset(): void {
@@ -46,6 +47,6 @@ export class CollectionTokenListStore implements IActivateDeactivate, IStoreRequ
   }
 
   reload(): void {
-    this.request(this.address)
+    this.request(this.collectionAddress)
   }
 }
