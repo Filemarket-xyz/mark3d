@@ -1,9 +1,12 @@
 import { useEffect } from 'react'
 import { useStores } from './useStores'
-import { CollectionAndTokenList } from '../stores/CollectionAndTokenList/CollectionAndTokenListStore'
+import { CollectionAndTokenListStore } from '../stores/CollectionAndTokenList/CollectionAndTokenListStore'
 
-// You can eiter use collections field or tokens field, or both
-export function useCollectionAndTokenListStore(address?: string): CollectionAndTokenList {
+/**
+ * Returned store contains fields with collections, tokens and status fields like isLoading, isLoaded
+ * @param address
+ */
+export function useCollectionAndTokenListStore(address?: string): CollectionAndTokenListStore {
   const { collectionAndTokenList } = useStores()
   useEffect(() => {
     if (address) {

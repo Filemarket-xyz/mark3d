@@ -4,6 +4,12 @@
  */
 
 export interface IActivateDeactivate {
-  activate: (...args: any[]) => void // вызывается перед использованием стора
-  deactivate: () => void // вызывается после окончания использования стора
+  /**
+   * Вызывается перед использованием стора.
+   */
+  activate: (...args: any[]) => void
+  /**
+   * Вызывается после окончания использования стора.
+   */
+  deactivate: () => void
 }

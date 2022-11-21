@@ -1,16 +1,19 @@
 import { DialogStore } from './Dialog/DialogStore'
 import { ErrorStore } from './Error/ErrorStore'
-import { CollectionAndTokenList } from './CollectionAndTokenList/CollectionAndTokenListStore'
+import { CollectionAndTokenListStore } from './CollectionAndTokenList/CollectionAndTokenListStore'
+import { CollectionTokenListStore } from './CollectionTokenList/CollectionTokenListStore'
 
 export class RootStore {
   dialogStore: DialogStore
   errorStore: ErrorStore
-  collectionAndTokenList: CollectionAndTokenList
+  collectionAndTokenList: CollectionAndTokenListStore
+  collectionTokenList: CollectionTokenListStore
 
   constructor() {
     this.dialogStore = new DialogStore()
     this.errorStore = new ErrorStore(this)
-    this.collectionAndTokenList = new CollectionAndTokenList(this)
+    this.collectionAndTokenList = new CollectionAndTokenListStore(this)
+    this.collectionTokenList = new CollectionTokenListStore(this)
   }
 }
 

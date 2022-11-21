@@ -1,10 +1,10 @@
-import { IActivateDeactivate, storeRequest, IStoreRequester, storeReset, RequestContext } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
+import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { Token } from '../../../swagger/Api'
 import { makeAutoObservable } from 'mobx'
-import { Collection, Token, TokensResponse } from '../../../swagger/Api'
 import { api } from '../../config/api'
 
-export class CollectionAndTokenListStore implements IActivateDeactivate, IStoreRequester {
+export class CollectionTokenListStore implements IActivateDeactivate, IStoreRequester {
   errorStore: ErrorStore
 
   currentRequest?: RequestContext
@@ -12,8 +12,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate, IStoreR
   isLoaded = false
   isLoading = false
 
-  collections: Collection[] = []
-  tokens: Token[] = []
+  data: Token[] = []
   address = ''
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
@@ -24,22 +23,14 @@ export class CollectionAndTokenListStore implements IActivateDeactivate, IStoreR
   }
 
   private request(address: string) {
-    storeRequest<TokensResponse>(
+    storeRequest<Token[]>(
       this,
-      api.tokens.tokensDetail(address),
-      resp => {
-        console.log('request response', resp)
-        if (resp.collections) {
-          this.collections = resp.collections
-        }
-        if (resp.tokens) {
-          this.tokens = resp.tokens
-        }
+      api.tokens.byCollectionDetail(address), resp => {
+        this.data = resp
       })
   }
 
   activate(address: string): void {
-    // no double activation
     if (!this.isLoaded) {
       this.address = address
       this.request(address)
