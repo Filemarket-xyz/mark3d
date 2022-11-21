@@ -1,5 +1,6 @@
 import { useDrop } from '@react-aria/dnd'
-import React, { SyntheticEvent, useCallback, useEffect, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
+import { UseFormRegisterReturn } from 'react-hook-form'
 import { styled } from '../../../../styles'
 import { TextBold } from '../../../pages/CreatePage/CreateCollectionPage'
 import { textVariant } from '../../../UIkit'
@@ -50,7 +51,7 @@ const P = styled('p', {
 
 const ImageIcon = styled('img', {
   width: 64,
-  heigth: 64,
+  height: 64,
   transition: 'all 0.15s ease-in-out',
   variants: {
     selected: {
@@ -130,16 +131,16 @@ interface ItemWithGetFileProperty {
   getFile: () => Promise<File>
 }
 
-export default function ImageLoader({ onChange }: { onChange?: (file: File | undefined) => void }) {
+interface ImageLoaderProps {
+  registerProps?: UseFormRegisterReturn
+}
+
+export default function ImageLoader(props: ImageLoaderProps) {
   const [file, setFile] = useState<File | undefined>()
-  const handleFile = useCallback((file: File | undefined) => {
-    setFile(file)
-    onChange?.(file)
-  }, [setFile])
 
   const setFileAsync = async (item: ItemWithGetFileProperty) => {
     const file = await item.getFile()
-    handleFile(file)
+    setFile(file)
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [preview, setPreview] = useState<string | undefined>()
@@ -178,10 +179,10 @@ export default function ImageLoader({ onChange }: { onChange?: (file: File | und
   const onSelectFile = (e: SyntheticEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement
     if (!target.files || target.files.length === 0) {
-      handleFile(undefined)
+      setFile(undefined)
       return
     }
-    handleFile(target.files[0])
+    setFile(target.files[0])
   }
   return (
     <File htmlFor='inputTag' selected={Boolean(preview)}>
@@ -196,7 +197,7 @@ export default function ImageLoader({ onChange }: { onChange?: (file: File | und
         }}
       >
         <Shade selected={Boolean(preview)}></Shade>
-        <ImageIcon src={ImgIcon} selected={Boolean(preview)}/>
+        <ImageIcon src={ImgIcon} selected={Boolean(preview)} />
         <P selected={Boolean(preview)}>Choose photo</P>
       </FileImageContainer>
 
@@ -214,8 +215,12 @@ export default function ImageLoader({ onChange }: { onChange?: (file: File | und
       <FileInput
         id='inputTag'
         type='file'
-        onChange={onSelectFile}
         accept={'.jpg, .png, .gif'}
+        {...props.registerProps}
+        onChange={(e) => {
+          onSelectFile(e)
+          void props.registerProps?.onChange(e)
+        }}
       />
     </File>
   )

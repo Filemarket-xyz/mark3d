@@ -7,6 +7,7 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 	"log"
+	"math/big"
 )
 
 func (s *service) GetOrders(ctx context.Context,
@@ -55,4 +56,22 @@ func (s *service) GetOrdersHistory(ctx context.Context,
 		Incoming: domain.MapSlice(incomingOrders, domain.OrderToModel),
 		Outgoing: domain.MapSlice(outgoingOrders, domain.OrderToModel),
 	}, nil
+}
+
+func (s *service) GetOrder(ctx context.Context, address common.Address,
+	tokenId *big.Int) (*models.Order, *models.ErrorResponse) {
+	tx, err := s.postgres.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		log.Println("begin tx failed: ", err)
+		return nil, internalError
+	}
+	defer s.postgres.RollbackTransaction(ctx, tx)
+	res, err := s.postgres.GetActiveOrder(ctx, tx, address, tokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, orderNotExistError
+		}
+		return nil, internalError
+	}
+	return domain.OrderToModel(res), nil
 }

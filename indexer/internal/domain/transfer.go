@@ -15,6 +15,8 @@ type Transfer struct {
 	FraudApproved     bool
 	Statuses          []*TransferStatus
 	OrderId           int64
+	PublicKey         string
+	EncryptedPassword string
 }
 
 type TransferStatus struct {
@@ -25,14 +27,16 @@ type TransferStatus struct {
 
 func TransferToModel(t *Transfer) *models.Transfer {
 	return &models.Transfer{
-		Collection:    t.CollectionAddress.String(),
-		FraudApproved: t.FraudApproved,
-		From:          t.FromAddress.String(),
-		ID:            t.Id,
-		OrderID:       t.OrderId,
-		Statuses:      MapSlice(t.Statuses, TransferStatusToModel),
-		To:            t.ToAddress.String(),
-		TokenID:       t.TokenId.String(),
+		Collection:        t.CollectionAddress.String(),
+		FraudApproved:     t.FraudApproved,
+		From:              t.FromAddress.String(),
+		ID:                t.Id,
+		OrderID:           t.OrderId,
+		Statuses:          MapSlice(t.Statuses, TransferStatusToModel),
+		To:                t.ToAddress.String(),
+		TokenID:           t.TokenId.String(),
+		PublicKey:         t.PublicKey,
+		EncryptedPassword: t.EncryptedPassword,
 	}
 }
 

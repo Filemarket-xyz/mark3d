@@ -8,6 +8,28 @@ schemes:
   - http
 host: localhost:9202
 paths:
+  /collections/{address}:
+    get:
+      tags:
+        - tokens
+      description: Получение коллекции по адресу
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Коллекция
+          schema:
+            $ref: "#/definitions/Collection"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
   /tokens/{address}:
     get:
       tags:
@@ -28,6 +50,57 @@ paths:
         - name: address
           in: path
           description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /tokens/{collection}/{id}:
+    get:
+      tags:
+        - tokens
+      description: Получение токена по адресу коллекции и id
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Токен
+          schema:
+            $ref: "#/definitions/Token"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: collection
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
+  /tokens/by_collection/{address}:
+    get:
+      tags:
+        - tokens
+      description: Получение токенов по адресу коллекции
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Токены
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Token"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
@@ -54,6 +127,34 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+  /transfers/{address}/{id}:
+    get:
+      tags:
+        - transfers
+      description: Получение **активного** трансфера по адресу коллекции и id токена
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Трансфер
+          schema:
+            $ref: "#/definitions/Transfer"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
   /transfers_history/{address}:
     get:
       tags:
@@ -100,6 +201,34 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+  /orders/{address}/{id}:
+    get:
+      tags:
+        - orders
+      description: Получение **активного** ордера по адресу коллекции и id токена
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Ордер
+          schema:
+            $ref: "#/definitions/Order"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
   /orders_history/{address}:
     get:
       tags:
@@ -264,6 +393,12 @@ definitions:
         type: boolean
         description: true - если факт мошенничества подтвержден (репорт подает всегда только получатель).
           был ли подан репорт, можно выяснить по статусам
+      publicKey:
+        type: string
+        description: публичный ключ (hex)
+      encryptedPassword:
+        type: string
+        description: зашифрованный пароль (hex)
       statuses:
         type: array
         description: Статусы трансфера

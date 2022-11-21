@@ -1,12 +1,9 @@
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { styled } from '../../../styles'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import { Button, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
-import PrefixedInput from '../../UIkit/Form/PrefixedInput'
 import { TextArea } from '../../UIkit/Form/Textarea'
-import { useState } from 'react'
-import { observer } from 'mobx-react-lite'
-import { MintNFTForm, useMintNFT } from '../../processing/hooks/useMintNFT'
 
 export const Title = styled('h1', {
   ...textVariant('h3').true,
@@ -50,17 +47,19 @@ export const Form = styled('form', {
   marginRight: 'auto'
 })
 
-const CreateCollectionPage = observer(() => {
-  const [file, setFile] = useState<File>()
-  console.log('file', file)
-  const form: MintNFTForm = {
-    name: 'I am super NFT',
-    description: 'abracadabra',
-    collectionAddress: '0xE37382F84dC2C72EF7eAaC6e327BBA054b30628C',
-    image: file,
-    hiddenFile: file
-  }
-  const { mintNFT, ...statuses } = useMintNFT(form)
+interface CreateCollectionForm {
+  image: File
+  displayName: string
+  symbol: string
+  description: string
+}
+
+export default function CreateCollectionPage() {
+  const onSubmit: SubmitHandler<CreateCollectionForm> = (data) =>
+    console.log(data)
+
+  const { register, handleSubmit } = useForm<CreateCollectionForm>()
+
   return (
     <PageLayout
       css={{
@@ -68,22 +67,22 @@ const CreateCollectionPage = observer(() => {
         paddingBottom: '$4'
       }}
     >
-      <Form>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Title>Create New Collection</Title>
 
         <FormControl>
           <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
-          <ImageLoader onChange={setFile} />
+          <ImageLoader registerProps={register('image')} />
         </FormControl>
 
         <FormControl>
-          <Label>Name</Label>
-          <Input placeholder='Collection name' />
+          <Label>Display name</Label>
+          <Input placeholder='Collection name' {...register('displayName')} />
         </FormControl>
 
         <FormControl>
           <Label>Symbol</Label>
-          <Input placeholder='Token symbol' />
+          <Input placeholder='Token symbol' {...register('symbol')} />
         </FormControl>
 
         <FormControl>
@@ -94,25 +93,16 @@ const CreateCollectionPage = observer(() => {
             <LetterCounter>0/1000</LetterCounter>
           </LabelWithCounter>
 
-          <TextArea placeholder='Description of your token collection' />
+          <TextArea
+            {...register('description')}
+            placeholder='Description of your token collection'
+          />
         </FormControl>
 
-        <FormControl>
-          <Label>URL</Label>
-          <PrefixedInput
-            prefix='mark.3d/'
-            placeholder='Short URL'
-          ></PrefixedInput>
-        </FormControl>
-        <div>
-          {JSON.stringify(statuses)}
-        </div>
-        <Button type='submit' primary onPress={ () => void mintNFT() }>
+        <Button type='submit' primary>
           Mint
         </Button>
       </Form>
     </PageLayout>
   )
-})
-
-export default CreateCollectionPage
+}

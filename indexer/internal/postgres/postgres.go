@@ -33,6 +33,7 @@ type Collections interface {
 }
 
 type Tokens interface {
+	GetCollectionTokens(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Token, error)
 	GetTokensByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Token, error)
 	GetToken(ctx context.Context, tx pgx.Tx, contractAddress common.Address, tokenId *big.Int) (*domain.Token, error)
 	InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error
