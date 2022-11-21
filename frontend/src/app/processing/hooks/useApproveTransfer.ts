@@ -6,7 +6,7 @@ import { useHiddenFileProcessorFactory } from './useHiddenFileProcessorFactory'
 import { assertContract, assertSigner } from '../utils/assert'
 import { mark3dConfig } from '../../config/mark3d'
 import { Transfer } from '../../../swagger/Api'
-import * as assert from 'assert'
+import assert from 'assert'
 
 export function useApproveTransfer(collectionAddress?: string, tokenId?: string, transfer?: Transfer) {
   const { contract, signer } = useCollectionContract(collectionAddress)
