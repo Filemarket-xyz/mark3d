@@ -50,10 +50,15 @@ export const Form = styled('form', {
 })
 
 interface CreateCollectionForm {
-  image: File
+  image: FileList
   displayName: string
   symbol: string
   description: string
+}
+
+const convertFileListToFile = (file: FileList): File | undefined => {
+  if (!file.length) return
+  return new File([file[0]], 'image', { type: file[0].type })
 }
 
 export default function CreateCollectionPage() {
@@ -69,7 +74,8 @@ export default function CreateCollectionPage() {
   }, [error, isLoading, result])
 
   const onSubmit: SubmitHandler<CreateCollectionForm> = (data) => {
-    void createCollection(data).then(console.log).catch(console.log)
+    const image = convertFileListToFile(data.image)
+    void createCollection({ ...data, image, name: data.displayName })
   }
 
   const { register, handleSubmit } = useForm<CreateCollectionForm>()
