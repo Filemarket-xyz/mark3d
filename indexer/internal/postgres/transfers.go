@@ -14,7 +14,8 @@ func (p *postgres) GetIncomingTransfersByAddress(ctx context.Context, tx pgx.Tx,
 	address common.Address) ([]*domain.Transfer, error) {
 	// language=PostgreSQL
 	rows, err := tx.Query(ctx, `SELECT t.id,t.collection_address,t.token_id,
-       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0) FROM transfers AS t 
+       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0),
+       t.public_key,t.encrypted_password FROM transfers AS t 
            LEFT JOIN orders o on t.id = o.transfer_id
             WHERE t.to_address=$1 ORDER BY id DESC`, strings.ToLower(address.String()))
 	if err != nil {
@@ -28,7 +29,8 @@ func (p *postgres) GetIncomingTransfersByAddress(ctx context.Context, tx pgx.Tx,
 	for rows.Next() {
 		var collectionAddress, tokenId, from, to string
 		t := &domain.Transfer{}
-		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to, &t.FraudApproved, &t.OrderId); err != nil {
+		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to,
+			&t.FraudApproved, &t.OrderId, &t.PublicKey, &t.EncryptedPassword); err != nil {
 			return nil, err
 		}
 		t.CollectionAddress, t.FromAddress, t.ToAddress = common.HexToAddress(collectionAddress),
@@ -54,7 +56,8 @@ func (p *postgres) GetOutgoingTransfersByAddress(ctx context.Context, tx pgx.Tx,
 	address common.Address) ([]*domain.Transfer, error) {
 	// language=PostgreSQL
 	rows, err := tx.Query(ctx, `SELECT t.id,t.collection_address,t.token_id,
-       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0) FROM transfers AS t 
+       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0),
+       t.public_key,t.encrypted_password FROM transfers AS t 
            LEFT JOIN orders o on t.id = o.transfer_id WHERE t.from_address=$1 ORDER BY id DESC`,
 		strings.ToLower(address.String()))
 	if err != nil {
@@ -68,7 +71,8 @@ func (p *postgres) GetOutgoingTransfersByAddress(ctx context.Context, tx pgx.Tx,
 	for rows.Next() {
 		var collectionAddress, tokenId, from, to string
 		t := &domain.Transfer{}
-		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to, &t.FraudApproved, &t.OrderId); err != nil {
+		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to,
+			&t.FraudApproved, &t.OrderId, &t.PublicKey, &t.EncryptedPassword); err != nil {
 			return nil, err
 		}
 		t.CollectionAddress, t.FromAddress, t.ToAddress = common.HexToAddress(collectionAddress),
@@ -94,7 +98,8 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(ctx context.Context, tx p
 	address common.Address) ([]*domain.Transfer, error) {
 	// language=PostgreSQL
 	rows, err := tx.Query(ctx, `SELECT t.id,t.collection_address,t.token_id,
-       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0) FROM transfers AS t 
+       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0),
+       t.public_key,t.encrypted_password FROM transfers AS t 
            LEFT JOIN orders o on t.id = o.transfer_id WHERE t.to_address=$1 AND
             NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
                 ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
@@ -111,7 +116,7 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(ctx context.Context, tx p
 		var collectionAddress, tokenId, from, to string
 		t := &domain.Transfer{}
 		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to,
-			&t.FraudApproved, &t.OrderId); err != nil {
+			&t.FraudApproved, &t.OrderId, &t.PublicKey, &t.EncryptedPassword); err != nil {
 			return nil, err
 		}
 		t.CollectionAddress, t.FromAddress, t.ToAddress = common.HexToAddress(collectionAddress),
@@ -137,7 +142,8 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(ctx context.Context, tx p
 	address common.Address) ([]*domain.Transfer, error) {
 	// language=PostgreSQL
 	rows, err := tx.Query(ctx, `SELECT t.id,t.collection_address,t.token_id,
-       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0) FROM transfers AS t 
+       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0),
+       t.public_key,t.encrypted_password FROM transfers AS t 
            LEFT JOIN orders o on t.id = o.transfer_id WHERE t.from_address=$1 AND
             NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
                 ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
@@ -154,7 +160,7 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(ctx context.Context, tx p
 		var collectionAddress, tokenId, from, to string
 		t := &domain.Transfer{}
 		if err := rows.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to,
-			&t.FraudApproved, &t.OrderId); err != nil {
+			&t.FraudApproved, &t.OrderId, &t.PublicKey, &t.EncryptedPassword); err != nil {
 			return nil, err
 		}
 		t.CollectionAddress, t.FromAddress, t.ToAddress = common.HexToAddress(collectionAddress),
@@ -204,12 +210,13 @@ func (p *postgres) getTransferStatuses(ctx context.Context, tx pgx.Tx,
 func (p *postgres) GetTransfer(ctx context.Context, tx pgx.Tx, id int64) (*domain.Transfer, error) {
 	// language=PostgreSQL
 	row := tx.QueryRow(ctx, `SELECT t.id,t.collection_address,t.token_id,
-       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0) FROM transfers AS t 
+       t.from_address,t.to_address,t.fraud_approved,COALESCE(o.id, 0),
+       t.public_key,t.encrypted_password FROM transfers AS t 
            LEFT JOIN orders o on t.id = o.transfer_id WHERE t.id=$1`, id)
 	var collectionAddress, tokenId, from, to string
 	t := &domain.Transfer{}
 	if err := row.Scan(&t.Id, &collectionAddress, &tokenId, &from, &to,
-		&t.FraudApproved, &t.OrderId); err != nil {
+		&t.FraudApproved, &t.OrderId, &t.PublicKey, &t.EncryptedPassword); err != nil {
 		return nil, err
 	}
 	t.CollectionAddress, t.FromAddress, t.ToAddress = common.HexToAddress(collectionAddress),
@@ -231,7 +238,8 @@ func (p *postgres) GetActiveTransfer(ctx context.Context, tx pgx.Tx,
 	contractAddress common.Address, tokenId *big.Int) (*domain.Transfer, error) {
 	// language=PostgreSQL
 	row := tx.QueryRow(ctx, `SELECT t.id,t.from_address,t.to_address,
-       t.fraud_approved,COALESCE(o.id, 0) FROM transfers AS t 
+       t.fraud_approved,COALESCE(o.id, 0),
+       t.public_key,t.encrypted_password FROM transfers AS t 
            LEFT JOIN orders o on t.id = o.transfer_id
         WHERE collection_address=$1 AND token_id=$2 AND
               NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
@@ -242,7 +250,8 @@ func (p *postgres) GetActiveTransfer(ctx context.Context, tx pgx.Tx,
 		CollectionAddress: contractAddress,
 		TokenId:           tokenId,
 	}
-	if err := row.Scan(&t.Id, &from, &to, &t.FraudApproved, &t.OrderId); err != nil {
+	if err := row.Scan(&t.Id, &from, &to, &t.FraudApproved,
+		&t.OrderId, &t.PublicKey, &t.EncryptedPassword); err != nil {
 		return nil, err
 	}
 	t.FromAddress, t.ToAddress = common.HexToAddress(from), common.HexToAddress(to)
@@ -256,7 +265,7 @@ func (p *postgres) GetActiveTransfer(ctx context.Context, tx pgx.Tx,
 
 func (p *postgres) InsertTransfer(ctx context.Context, tx pgx.Tx, transfer *domain.Transfer) (int64, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `INSERT INTO transfers VALUES (DEFAULT,$1,$2,$3,$4,$5) RETURNING id`,
+	row := tx.QueryRow(ctx, `INSERT INTO transfers VALUES (DEFAULT,$1,$2,$3,$4,$5,$6,$7) RETURNING id`,
 		strings.ToLower(transfer.CollectionAddress.String()), transfer.TokenId.String(),
 		strings.ToLower(transfer.FromAddress.String()), strings.ToLower(transfer.ToAddress.String()),
 		transfer.FraudApproved)
@@ -269,8 +278,8 @@ func (p *postgres) InsertTransfer(ctx context.Context, tx pgx.Tx, transfer *doma
 
 func (p *postgres) UpdateTransfer(ctx context.Context, tx pgx.Tx, transfer *domain.Transfer) error {
 	// language=PostgreSQL
-	if _, err := tx.Exec(ctx, `UPDATE transfers SET fraud_approved=$1 WHERE id=$2`,
-		transfer.FraudApproved, transfer.Id); err != nil {
+	if _, err := tx.Exec(ctx, `UPDATE transfers SET fraud_approved=$1,public_key=$2,encrypted_password=$3 WHERE id=$4`,
+		transfer.FraudApproved, transfer.PublicKey, transfer.EncryptedPassword, transfer.Id); err != nil {
 		return err
 	}
 	return nil

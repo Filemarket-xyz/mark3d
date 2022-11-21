@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -390,6 +391,10 @@ func (s *service) tryProcessPublicKeySet(ctx context.Context, tx pgx.Tx,
 	}); err != nil {
 		return err
 	}
+	transfer.PublicKey = hex.EncodeToString(ev.PublicKey)
+	if err := s.postgres.UpdateTransfer(ctx, tx, transfer); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -408,6 +413,10 @@ func (s *service) tryProcessPasswordSet(ctx context.Context, tx pgx.Tx,
 		Status:    string(models.TransferStatusPasswordSet),
 		TxId:      t.Hash(),
 	}); err != nil {
+		return err
+	}
+	transfer.EncryptedPassword = hex.EncodeToString(ev.EncryptedPassword)
+	if err := s.postgres.UpdateTransfer(ctx, tx, transfer); err != nil {
 		return err
 	}
 	return nil

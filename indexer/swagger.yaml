@@ -360,6 +360,12 @@ definitions:
         type: boolean
         description: true - если факт мошенничества подтвержден (репорт подает всегда только получатель).
           был ли подан репорт, можно выяснить по статусам
+      publicKey:
+        type: string
+        description: публичный ключ (hex)
+      encryptedPassword:
+        type: string
+        description: зашифрованный пароль (hex)
       statuses:
         type: array
         description: Статусы трансфера
