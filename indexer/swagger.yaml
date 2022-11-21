@@ -144,6 +144,18 @@ paths:
           description: Ошибка
           schema:
             $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
   /transfers_history/{address}:
     get:
       tags:
@@ -206,6 +218,18 @@ paths:
           description: Ошибка
           schema:
             $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
   /orders_history/{address}:
     get:
       tags:
