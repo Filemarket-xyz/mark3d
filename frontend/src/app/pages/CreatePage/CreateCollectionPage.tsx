@@ -1,7 +1,9 @@
+import { Loading } from '@nextui-org/react'
 import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { styled } from '../../../styles'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
+import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
 import { Button, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
@@ -50,6 +52,44 @@ export const Form = styled('form', {
   marginRight: 'auto'
 })
 
+const ModalTitle = styled('h3', {
+  ...textVariant('primary1'),
+  fontSize: '$h5',
+  color: '$blue900',
+  fontWeight: 600,
+  textAlign: 'center',
+  paddingTop: '$3'
+})
+
+const ModalP = styled('p', {
+  ...textVariant('primary1'),
+  color: '$gray500',
+  textAlign: 'center',
+  paddingTop: '$2'
+})
+
+const InProcessBody = () => (
+  <>
+    <Loading size='xl' type='points' />
+    <ModalTitle>Collection is being minted</ModalTitle>
+    <ModalP>Please check your wallet and sign the transaction</ModalP>
+  </>
+)
+
+const SuccessBody = () => (
+  <>
+    <ModalTitle css={{ paddingTop: 0 }}>Success</ModalTitle>
+    <ModalP>You can view your link here</ModalP>
+  </>
+)
+
+const ErrorBody = () => (
+  <>
+    <ModalTitle css={{ paddingTop: 0 }}>Error</ModalTitle>
+    <ModalP>Something went wrong</ModalP>
+  </>
+)
+
 export interface CreateCollectionForm {
   image: FileList
   name: string
@@ -67,14 +107,29 @@ export default function CreateCollectionPage() {
   }
 
   const [modalOpen, setModalOpen] = useState(true)
+  const [modalBody, setModalBody] = useState(InProcessBody)
 
-  useEffect(() => {
+  useAfterDidMountEffect(() => {
+    if (isLoading) {
+      void setModalOpen(true)
+      void setModalBody(InProcessBody)
+    } else if (result) {
+      void setModalOpen(true)
+      void setModalBody(SuccessBody)
+    } else if (error) {
+      void setModalOpen(true)
+      void setModalBody(ErrorBody)
+    }
     console.log(isLoading, error, result)
   }, [error, isLoading, result])
 
   return (
     <>
-      <MintModal handleClose={() => setModalOpen(false)} open={modalOpen} />
+      <MintModal
+        body={() => modalBody}
+        handleClose={() => setModalOpen(false)}
+        open={modalOpen}
+      />
       <PageLayout
         css={{
           minHeight: '100vh',
