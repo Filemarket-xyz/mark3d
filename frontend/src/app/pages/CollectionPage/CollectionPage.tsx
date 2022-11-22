@@ -130,7 +130,7 @@ const StyledContainer = styled(Container, {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  '@xl': {
+  '@lg': {
     flexDirection: 'column',
     paddingBottom: '$4'
   }
