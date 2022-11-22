@@ -1,14 +1,16 @@
 import { IActivateDeactivate } from '../utils/store'
 import { useEffect, useRef } from 'react'
 
-export function useActivateDeactivateAddress(store: IActivateDeactivate<[string]>, address?: string) {
+export function useActivateDeactivateRequireParams<Args extends any[]>(
+  store: IActivateDeactivate<Args>, ...args: Partial<Args>
+) {
   // flag ensures, that store is deactivated only if it was activated
   const activated = useRef<boolean>(false)
 
   useEffect(() => {
-    if (address && !store.isActivated) {
+    if (args.every(Boolean) && !store.isActivated) {
       activated.current = true
-      store.activate(address)
+      store.activate(...(args as Args))
     }
     return () => {
       if (activated.current) {
@@ -16,5 +18,5 @@ export function useActivateDeactivateAddress(store: IActivateDeactivate<[string]
         store.deactivate()
       }
     }
-  }, [address, activated])
+  }, [...args, activated])
 }

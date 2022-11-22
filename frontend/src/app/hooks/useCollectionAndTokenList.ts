@@ -1,6 +1,6 @@
 import { useStores } from './useStores'
 import { CollectionAndTokenListStore } from '../stores/CollectionAndTokenList/CollectionAndTokenListStore'
-import { useActivateDeactivateAddress } from './useActivateDeactivateStore'
+import { useActivateDeactivateRequireParams } from './useActivateDeactivateStore'
 
 /**
  * Component, using this hook, MUST be wrapped into observer
@@ -9,6 +9,6 @@ import { useActivateDeactivateAddress } from './useActivateDeactivateStore'
  */
 export function useCollectionAndTokenListStore(address?: string): CollectionAndTokenListStore {
   const { collectionAndTokenList } = useStores()
-  useActivateDeactivateAddress(collectionAndTokenList, address)
+  useActivateDeactivateRequireParams(collectionAndTokenList, address)
   return collectionAndTokenList
 }
