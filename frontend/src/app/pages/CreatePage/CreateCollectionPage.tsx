@@ -2,10 +2,10 @@ import { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { styled } from '../../../styles'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
-import { useCreateCollection } from '../../processing/hooks/useCreateCollection'
 import { Button, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
+import { useMintCollection } from './hooks/useMintCollection'
 
 export const Title = styled('h1', {
   ...textVariant('h3').true,
@@ -49,36 +49,25 @@ export const Form = styled('form', {
   marginRight: 'auto'
 })
 
-interface CreateCollectionForm {
+export interface CreateCollectionForm {
   image: FileList
-  displayName: string
+  name: string
   symbol: string
   description: string
 }
 
-const convertFileListToFile = (file: FileList): File | undefined => {
-  if (!file.length) return
-  return new File([file[0]], 'image', { type: file[0].type })
-}
-
 export default function CreateCollectionPage() {
-  const {
-    createCollection,
-    statuses: { error, isLoading, result }
-  } = useCreateCollection()
+  const { register, handleSubmit } = useForm<CreateCollectionForm>()
 
-  useEffect(() => {
-    console.log(
-      `is loading: ${isLoading} \n error: ${error} \n result: ${result}`
-    )
-  }, [error, isLoading, result])
+  const { error, isLoading, result, mintCollection } = useMintCollection()
 
   const onSubmit: SubmitHandler<CreateCollectionForm> = (data) => {
-    const image = convertFileListToFile(data.image)
-    void createCollection({ ...data, image, name: data.displayName })
+    mintCollection(data)
   }
 
-  const { register, handleSubmit } = useForm<CreateCollectionForm>()
+  useEffect(() => {
+    console.log(isLoading, error, result)
+  }, [error, isLoading, result])
 
   return (
     <PageLayout
@@ -97,7 +86,7 @@ export default function CreateCollectionPage() {
 
         <FormControl>
           <Label>Display name</Label>
-          <Input placeholder='Collection name' {...register('displayName')} />
+          <Input placeholder='Collection name' {...register('name')} />
         </FormControl>
 
         <FormControl>
@@ -118,8 +107,6 @@ export default function CreateCollectionPage() {
             placeholder='Description of your token collection'
           />
         </FormControl>
-
-        <input type='submit' value='submit' />
 
         <Button type='submit' primary>
           Mint
