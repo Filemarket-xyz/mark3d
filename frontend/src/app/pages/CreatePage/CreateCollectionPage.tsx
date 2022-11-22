@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { styled } from '../../../styles'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
@@ -6,6 +6,7 @@ import { Button, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
 import { useMintCollection } from './hooks/useMintCollection'
+import MintModal from './MintModal'
 
 export const Title = styled('h1', {
   ...textVariant('h3').true,
@@ -65,53 +66,58 @@ export default function CreateCollectionPage() {
     mintCollection(data)
   }
 
+  const [modalOpen, setModalOpen] = useState(true)
+
   useEffect(() => {
     console.log(isLoading, error, result)
   }, [error, isLoading, result])
 
   return (
-    <PageLayout
-      css={{
-        minHeight: '100vh',
-        paddingBottom: '$4'
-      }}
-    >
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <Title>Create New Collection</Title>
+    <>
+      <MintModal handleClose={() => setModalOpen(false)} open={modalOpen} />
+      <PageLayout
+        css={{
+          minHeight: '100vh',
+          paddingBottom: '$4'
+        }}
+      >
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <Title>Create New Collection</Title>
 
-        <FormControl>
-          <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
-          <ImageLoader registerProps={register('image')} />
-        </FormControl>
+          <FormControl>
+            <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
+            <ImageLoader registerProps={register('image')} />
+          </FormControl>
 
-        <FormControl>
-          <Label>Display name</Label>
-          <Input placeholder='Collection name' {...register('name')} />
-        </FormControl>
+          <FormControl>
+            <Label>Display name</Label>
+            <Input placeholder='Collection name' {...register('name')} />
+          </FormControl>
 
-        <FormControl>
-          <Label>Symbol</Label>
-          <Input placeholder='Token symbol' {...register('symbol')} />
-        </FormControl>
+          <FormControl>
+            <Label>Symbol</Label>
+            <Input placeholder='Token symbol' {...register('symbol')} />
+          </FormControl>
 
-        <FormControl>
-          <LabelWithCounter>
-            <Label>
-              Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
-            </Label>
-            <LetterCounter>0/1000</LetterCounter>
-          </LabelWithCounter>
+          <FormControl>
+            <LabelWithCounter>
+              <Label>
+                Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
+              </Label>
+              <LetterCounter>0/1000</LetterCounter>
+            </LabelWithCounter>
 
-          <TextArea
-            {...register('description')}
-            placeholder='Description of your token collection'
-          />
-        </FormControl>
+            <TextArea
+              {...register('description')}
+              placeholder='Description of your token collection'
+            />
+          </FormControl>
 
-        <Button type='submit' primary>
-          Mint
-        </Button>
-      </Form>
-    </PageLayout>
+          <Button type='submit' primary>
+            Mint
+          </Button>
+        </Form>
+      </PageLayout>
+    </>
   )
 }
