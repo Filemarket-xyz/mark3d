@@ -1,10 +1,10 @@
 import { Loading } from '@nextui-org/react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { styled } from '../../../styles'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
-import { Button, PageLayout, textVariant } from '../../UIkit'
+import { Button, NavLink, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
 import { useMintCollection } from './hooks/useMintCollection'
@@ -76,17 +76,22 @@ const InProcessBody = () => (
   </>
 )
 
-const SuccessBody = () => (
+const SuccessBody = ({ id }: { id: string }) => (
   <>
-    <ModalTitle css={{ paddingTop: 0 }}>Success</ModalTitle>
-    <ModalP>You can view your link here</ModalP>
+    <ModalTitle css={{ paddingTop: 0, marginBottom: '$4' }}>Success</ModalTitle>
+    <NavLink
+      to={`/collection/${id}`}
+      css={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+    >
+      <Button primary>View collection</Button>
+    </NavLink>
   </>
 )
 
-const ErrorBody = () => (
+const ErrorBody = ({ message }: { message: string }) => (
   <>
     <ModalTitle css={{ paddingTop: 0 }}>Error</ModalTitle>
-    <ModalP>Something went wrong</ModalP>
+    <ModalP css={{ color: '$red' }}>{message}</ModalP>
   </>
 )
 
@@ -98,27 +103,33 @@ export interface CreateCollectionForm {
 }
 
 export default function CreateCollectionPage() {
-  const { register, handleSubmit } = useForm<CreateCollectionForm>()
+  const {
+    register,
+    handleSubmit,
+    formState: { isValid }
+  } = useForm<CreateCollectionForm>()
 
   const { error, isLoading, result, mintCollection } = useMintCollection()
 
   const onSubmit: SubmitHandler<CreateCollectionForm> = (data) => {
+    console.log(isValid)
+
     mintCollection(data)
   }
 
-  const [modalOpen, setModalOpen] = useState(true)
-  const [modalBody, setModalBody] = useState(InProcessBody)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalBody, setModalBody] = useState<JSX.Element>()
 
   useAfterDidMountEffect(() => {
     if (isLoading) {
       void setModalOpen(true)
-      void setModalBody(InProcessBody)
+      void setModalBody(<InProcessBody />)
     } else if (result) {
       void setModalOpen(true)
-      void setModalBody(SuccessBody)
+      void setModalBody(<SuccessBody id={result.collectionTokenAddress} />)
     } else if (error) {
       void setModalOpen(true)
-      void setModalBody(ErrorBody)
+      void setModalBody(<ErrorBody message={error.split('\n').shift() ?? ''} />)
     }
     console.log(isLoading, error, result)
   }, [error, isLoading, result])
@@ -126,7 +137,7 @@ export default function CreateCollectionPage() {
   return (
     <>
       <MintModal
-        body={() => modalBody}
+        body={modalBody ?? <></>}
         handleClose={() => setModalOpen(false)}
         open={modalOpen}
       />
@@ -141,17 +152,25 @@ export default function CreateCollectionPage() {
 
           <FormControl>
             <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
-            <ImageLoader registerProps={register('image')} />
+            <ImageLoader
+              registerProps={register('image', { required: true })}
+            />
           </FormControl>
 
           <FormControl>
             <Label>Display name</Label>
-            <Input placeholder='Collection name' {...register('name')} />
+            <Input
+              placeholder='Collection name'
+              {...register('name', { required: true })}
+            />
           </FormControl>
 
           <FormControl>
             <Label>Symbol</Label>
-            <Input placeholder='Token symbol' {...register('symbol')} />
+            <Input
+              placeholder='Token symbol'
+              {...register('symbol', { required: true })}
+            />
           </FormControl>
 
           <FormControl>
@@ -168,7 +187,12 @@ export default function CreateCollectionPage() {
             />
           </FormControl>
 
-          <Button type='submit' primary>
+          <Button
+            type='submit'
+            primary
+            isDisabled={!isValid}
+            title={isValid ? undefined : 'All fields must be filled'}
+          >
             Mint
           </Button>
         </Form>
