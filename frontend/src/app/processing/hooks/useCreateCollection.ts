@@ -5,7 +5,7 @@ import { randomBytes } from 'ethers/lib/utils'
 import { useStatusState } from '../../hooks'
 import { BigNumber, ContractReceipt } from 'ethers'
 import { mark3dConfig } from '../../config/mark3d'
-import { Mark3dAccessTokenEvents } from '../types'
+import { Mark3dAccessTokenEventNames } from '../types'
 import { assertContract, assertSigner } from '../utils/assert'
 import assert from 'assert'
 
@@ -41,9 +41,9 @@ export function useCreateCollection(form: CreateCollectionForm) {
     const result = await contract.createCollection(salt, form.name, form.symbol, metadata.url, metadata.url, '0x00')
     const receipt = await result.wait()
     const createCollectionEvent = receipt.events
-      ?.find(event => event.event === Mark3dAccessTokenEvents.CollectionCreation)
+      ?.find(event => event.event === Mark3dAccessTokenEventNames.CollectionCreation)
     if (!createCollectionEvent) {
-      throw Error(`receipt does not contain ${Mark3dAccessTokenEvents.CollectionCreation} event`)
+      throw Error(`receipt does not contain ${Mark3dAccessTokenEventNames.CollectionCreation} event`)
     }
     return {
       collectionId: BigNumber.from(createCollectionEvent.topics[1]).toString(),
