@@ -1,16 +1,14 @@
 
-// You can eiter use collections outgoing or incoming field, or both
-// Component, using this hook, MUST be wrapped into observer
 import { useStores } from './useStores'
-import { useEffect } from 'react'
+import { useActivateDeactivateAddress } from './useActivateDeactivateStore'
 
+/**
+ * Component, using this hook, MUST be wrapped into observer.
+ * Returned store contains fields with collections, tokens and status fields like isLoading, isLoaded
+ * @param address
+ */
 export function useTransferListStore(address?: string) {
-  const { transferList } = useStores()
-  useEffect(() => {
-    if (address) {
-      transferList.activate(address)
-    }
-    return () => transferList.deactivate()
-  }, [address])
-  return transferList
+  const { transferListStore } = useStores()
+  useActivateDeactivateAddress(transferListStore, address)
+  return transferListStore
 }
