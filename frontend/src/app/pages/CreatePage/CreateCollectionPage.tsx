@@ -4,11 +4,16 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { styled } from '../../../styles'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
-import { Button, NavLink, PageLayout, textVariant } from '../../UIkit'
+import { Button, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
 import { useCreateCollection } from './hooks/useCreateCollection'
-import MintModal from './MintModal'
+import MintModal, {
+  ErrorBody,
+  extractMessageFromError,
+  InProgressBody,
+  SuccessBody
+} from './MintModal'
 
 export const Title = styled('h1', {
   ...textVariant('h3').true,
@@ -52,63 +57,6 @@ export const Form = styled('form', {
   marginRight: 'auto'
 })
 
-const ModalTitle = styled('h3', {
-  ...textVariant('primary1'),
-  fontSize: '$h5',
-  color: '$blue900',
-  fontWeight: 600,
-  textAlign: 'center',
-  paddingTop: '$3'
-})
-
-const ModalP = styled('p', {
-  ...textVariant('primary1'),
-  color: '$gray500',
-  textAlign: 'center',
-  paddingTop: '$2'
-})
-
-const InProcessBody = () => (
-  <>
-    <Loading size='xl' type='points' />
-    <ModalTitle>Collection is being minted</ModalTitle>
-    <ModalP>Please check your wallet and sign the transaction</ModalP>
-  </>
-)
-
-const SuccessBody = ({ id }: { id: string }) => (
-  <>
-    <ModalTitle css={{ paddingTop: 0, marginBottom: '$4' }}>Success</ModalTitle>
-    <NavLink
-      to={`/collection/${id}`}
-      css={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-    >
-      <Button primary>View collection</Button>
-    </NavLink>
-  </>
-)
-
-const ErrorBody = ({ message }: { message: string }) => (
-  <>
-    <ModalTitle css={{ paddingTop: 0 }}>Error</ModalTitle>
-    <ModalP css={{ color: '$red' }}>{message}</ModalP>
-  </>
-)
-
-const extractMessageFromError = (error: string) => {
-  const UNKNOWN_ERROR = 'Something went wrong, try again later'
-
-  const errorPartToShow = error.split('\n').shift()
-  if (!errorPartToShow) return UNKNOWN_ERROR
-
-  try {
-    const errorObject = JSON.parse(errorPartToShow)
-    return errorObject.message ?? UNKNOWN_ERROR
-  } catch {
-    return errorPartToShow
-  }
-}
-
 export interface CreateCollectionForm {
   image: FileList
   name: string
@@ -124,8 +72,14 @@ export default function CreateCollectionPage() {
     getValues
   } = useForm<CreateCollectionForm>()
 
-  const { error, isLoading, result, createCollection: mintCollection, setError, setIsLoading } =
-    useCreateCollection()
+  const {
+    error,
+    isLoading,
+    result,
+    createCollection: mintCollection,
+    setError,
+    setIsLoading
+  } = useCreateCollection()
 
   const onSubmit: SubmitHandler<CreateCollectionForm> = (data) => {
     console.log(isValid)
@@ -139,10 +93,15 @@ export default function CreateCollectionPage() {
   useAfterDidMountEffect(() => {
     if (isLoading) {
       void setModalOpen(true)
-      void setModalBody(<InProcessBody />)
+      void setModalBody(<InProgressBody text='Collection is being minted' />)
     } else if (result) {
       void setModalOpen(true)
-      void setModalBody(<SuccessBody id={result.collectionTokenAddress} />)
+      void setModalBody(
+        <SuccessBody
+          buttonText='View collection'
+          link={`/collection/${result.collectionTokenAddress}`}
+        />
+      )
     } else if (error) {
       void setModalOpen(true)
       void setModalBody(<ErrorBody message={extractMessageFromError(error)} />)
