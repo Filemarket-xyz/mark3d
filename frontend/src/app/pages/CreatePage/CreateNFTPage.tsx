@@ -30,7 +30,7 @@ import MintModal, {
   extractMessageFromError,
   InProgressBody,
   SuccessBody
-} from './MintModal'
+} from '../../components/Modal/Modal'
 
 const Description = styled('p', {
   fontSize: '12px',

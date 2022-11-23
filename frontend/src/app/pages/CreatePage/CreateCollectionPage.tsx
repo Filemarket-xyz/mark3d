@@ -1,4 +1,3 @@
-import { Loading } from '@nextui-org/react'
 import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { styled } from '../../../styles'
@@ -13,7 +12,7 @@ import MintModal, {
   extractMessageFromError,
   InProgressBody,
   SuccessBody
-} from './MintModal'
+} from '../../components/Modal/Modal'
 
 export const Title = styled('h1', {
   ...textVariant('h3').true,

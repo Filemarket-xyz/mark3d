@@ -73,9 +73,17 @@ interface MintModalProps {
   open: boolean
   handleClose: () => void
   body: JSX.Element
+  header?: JSX.Element
+  footer?: JSX.Element
 }
 
-export default function MintModal({ handleClose, open, body }: MintModalProps) {
+export default function MintModal({
+  handleClose,
+  open,
+  body,
+  header,
+  footer
+}: MintModalProps) {
   return (
     <Modal
       closeButton
@@ -83,9 +91,9 @@ export default function MintModal({ handleClose, open, body }: MintModalProps) {
       open={open}
       onClose={handleClose}
     >
-      <Modal.Header></Modal.Header>
+      <Modal.Header>{header}</Modal.Header>
       <Modal.Body>{body}</Modal.Body>
-      <Modal.Footer></Modal.Footer>
+      <Modal.Footer>{footer}</Modal.Footer>
     </Modal>
   )
 }
