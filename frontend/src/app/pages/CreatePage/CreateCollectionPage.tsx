@@ -120,10 +120,13 @@ export default function CreateCollectionPage() {
   const {
     register,
     handleSubmit,
-    formState: { isValid }
+    formState: { isValid },
+    getFieldState,
+    getValues
   } = useForm<CreateCollectionForm>()
 
-  const { error, isLoading, result, mintCollection, setError } = useMintCollection()
+  const { error, isLoading, result, mintCollection, setError, setIsLoading } =
+    useMintCollection()
 
   const onSubmit: SubmitHandler<CreateCollectionForm> = (data) => {
     console.log(isValid)
@@ -148,11 +151,16 @@ export default function CreateCollectionPage() {
     console.log(isLoading, error, result)
   }, [error, isLoading, result])
 
+  const [textareaLength, setTextareaLength] = useState(
+    getValues('description')?.length ?? 0
+  )
+
   return (
     <>
       <MintModal
         body={modalBody ?? <></>}
         handleClose={() => {
+          setIsLoading(false)
           setError(undefined)
           setModalOpen(false)
         }}
@@ -195,11 +203,16 @@ export default function CreateCollectionPage() {
               <Label>
                 Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
               </Label>
-              <LetterCounter>0/1000</LetterCounter>
+              <LetterCounter>{textareaLength}/1000</LetterCounter>
             </LabelWithCounter>
 
             <TextArea
-              {...register('description')}
+              {...register('description', {
+                onChange(event) {
+                  setTextareaLength(event?.target?.value?.length ?? 0)
+                },
+                maxLength: 1000
+              })}
               placeholder='Description of your token collection'
             />
           </FormControl>

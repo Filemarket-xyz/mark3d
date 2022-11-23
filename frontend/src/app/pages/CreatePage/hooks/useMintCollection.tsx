@@ -35,7 +35,8 @@ export const useMintCollection = () => {
   const {
     createCollection,
     statuses: { error, isLoading, result },
-    setError
+    setError,
+    setIsLoading
   } = useCreateCollection(formToTransfer)
 
   useAfterDidMountEffect(() => {
@@ -46,6 +47,7 @@ export const useMintCollection = () => {
     error,
     setError,
     isLoading,
+    setIsLoading,
     result,
     mintCollection: (form: CreateCollectionForm) => {
       setFormToTransfer(convertFormDataToCollectionDTO(form))
