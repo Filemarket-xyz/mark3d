@@ -268,7 +268,7 @@ func (p *postgres) InsertTransfer(ctx context.Context, tx pgx.Tx, transfer *doma
 	row := tx.QueryRow(ctx, `INSERT INTO transfers VALUES (DEFAULT,$1,$2,$3,$4,$5,$6,$7) RETURNING id`,
 		strings.ToLower(transfer.CollectionAddress.String()), transfer.TokenId.String(),
 		strings.ToLower(transfer.FromAddress.String()), strings.ToLower(transfer.ToAddress.String()),
-		transfer.FraudApproved)
+		transfer.FraudApproved, transfer.PublicKey, transfer.EncryptedPassword)
 	var id int64
 	if err := row.Scan(&id); err != nil {
 		return 0, err
