@@ -21,7 +21,7 @@ func (s *service) GetToken(ctx context.Context, address common.Address,
 	token, err := s.postgres.GetToken(ctx, tx, address, tokenId)
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return nil, tokenNotExistError
+			return nil, nil
 		}
 		log.Println("get token failed: ", err)
 		return nil, internalError
