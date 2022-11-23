@@ -1,6 +1,10 @@
-import React from 'react'
+import { toJS } from 'mobx'
+import { observer } from 'mobx-react-lite'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { styled } from '../../../styles'
 import NFTCard, { NFTCardProps } from '../../components/MarketCard/NFTCard'
+import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
 import nftImg from './img/cardImg.jpg'
 import userImg from './img/userImg.jpg'
 
@@ -19,27 +23,48 @@ export const CardsContainer = styled('div', {
   paddingBottom: '$3'
 })
 
-const card: NFTCardProps = {
-  collection: 'VR Glasses collection',
-  imageURL: nftImg,
-  price: 0.77777,
-  title: 'Ultra mega super VR Glasses 6353526 asjsdjsj',
-  user: {
-    img: userImg,
-    username: 'UnderKong'
-  }
-}
-const cards: NFTCardProps[] = []
-for (let i = 0; i < 30; i++) {
-  cards.push(card)
+const getIpfsCid = (ipfs: string) => {
+  const pattern = /ipfs:\/\/([A-Za-z0-9/.-_]+)/
+  return pattern.exec(ipfs)?.[1] ?? ''
 }
 
-export default function NftSection() {
+const getIHttpLinkFromIpfsString = (ipfs: string) => {
+  const ipfsCid = getIpfsCid(ipfs)
+  return `https://ipfs.io/ipfs/${ipfsCid}`
+}
+
+const NftSection = observer(() => {
+  const { collectionId } = useParams<{ collectionId: string }>()
+  const { data, isLoaded } = useCollectionTokenListStore(collectionId)
+  const [NFTs, setNFTs] = useState<NFTCardProps[]>([])
+
+  useEffect(() => {
+    if (!isLoaded) return
+
+    console.log(getIpfsCid(data[0].image ?? ''))
+    setNFTs(
+      toJS(data).map((token) => ({
+        collection: 'some collection',
+        imageURL: getIHttpLinkFromIpfsString(token.image ?? ''),
+        price: 99,
+        title: 'some title',
+        user: {
+          img: 'https://www.whatsappimages.in/wp-content/uploads/2021/07/Top-HD-sad-quotes-for-whatsapp-status-in-hindi-Pics-Images-Download-Free.gif',
+          username: 'some username'
+        }
+      }))
+    )
+
+    console.log(toJS(data), isLoaded)
+  }, [isLoaded])
+
   return (
     <CardsContainer>
-      {cards.map((card, index) => (
+      {NFTs.map((card, index) => (
         <NFTCard {...card} key={index} />
       ))}
     </CardsContainer>
   )
-}
+})
+
+export default NftSection
