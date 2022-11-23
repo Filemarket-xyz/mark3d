@@ -11,3 +11,6 @@ export const stringifyTokenFullId = (tokenFullId: TokenFullId) =>
   `{"collectionAddress":${tokenFullId.collectionAddress},"tokenId":${tokenFullId.tokenId}}`
 
 export const parseTokenFullId = (tokenFullId: string): TokenFullId => JSON.parse(tokenFullId)
+
+export const makeTokenFullId = (collectionAddress?: string, tokenId?: string): TokenFullId | undefined =>
+  collectionAddress && tokenId ? { collectionAddress, tokenId } : undefined

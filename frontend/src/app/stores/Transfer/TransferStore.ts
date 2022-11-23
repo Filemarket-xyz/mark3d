@@ -31,7 +31,7 @@ export class TransferStore implements IStoreRequester,
   private request(tokenFullId: TokenFullId) {
     storeRequest<Transfer>(
       this,
-      api.tokens.tokensDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
+      api.transfers.transfersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
       resp => {
         this.data = resp
       })

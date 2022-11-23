@@ -20,5 +20,6 @@ export const mark3dConfig = {
     abi: collectionToken.abi,
     name: collectionToken.contractName
   },
-  externalLink: 'https://mark3d.xyz/'
+  externalLink: 'https://mark3d.xyz/',
+  transferTimeout: 24 * 60 * 60 * 1000
 } as const

@@ -6,7 +6,7 @@ export interface ButtonInitTransferProps {
   tokenFullId: TokenFullId
 }
 
-// TODO: implement transfer
+// TODO implement init transfer
 export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId }) => {
   return (
     <Button

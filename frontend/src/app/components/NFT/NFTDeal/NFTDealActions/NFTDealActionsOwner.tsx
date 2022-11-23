@@ -8,13 +8,26 @@ import { Txt } from '../../../../UIkit'
 import { stringifyError } from '../../../../utils/error'
 import { ButtonApproveExchange } from './ActionButtons/ButtonApproveExchange'
 import { ButtonPlaceOrder } from './ActionButtons/ButtonPlaceOrder'
+import { transferPermissions } from '../../../../utils/transfer/status'
+import { ButtonCancelTransfer } from './ActionButtons/ButtonCancelTransfer'
+import { ButtonFinalizeTransfer } from './ActionButtons/ButtonFinalizeTransfer'
+import { ButtonApproveTransfer } from './ActionButtons/ButtonApproveTransfer'
 
 export interface NFTDealActionsOwnerProps {
   tokenFullId: TokenFullId
   transfer?: Transfer
+  reFetchOrder?: () => void // caveat, there are no contract events on order placement
+  ownerStatusChanged?: () => void
 }
 
-export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({ transfer, tokenFullId }) => {
+const permissions = transferPermissions.owner
+
+export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
+  transfer,
+  tokenFullId,
+  reFetchOrder,
+  ownerStatusChanged
+}) => {
   const { isApprovedExchange, error: isApprovedExchangeError, refetch } = useIsApprovedExchange(tokenFullId)
   const error = isApprovedExchangeError
   if (error) {
@@ -25,10 +38,23 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({ tran
     )
   }
   if (transfer) {
-    return <div>Transfer</div>
+    console.log('transfer', transfer)
+    return (
+     <>
+       {permissions.canApprove(transfer) && (
+         <ButtonApproveTransfer tokenFullId={tokenFullId}/>
+       )}
+       {permissions.canFinalize(transfer) && (
+         <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={ownerStatusChanged}/>
+       )}
+       {permissions.canCancel(transfer) && (
+         <ButtonCancelTransfer tokenFullId={tokenFullId}/>
+       )}
+     </>
+    )
   }
   if (isApprovedExchange) {
-    return <ButtonPlaceOrder tokenFullId={tokenFullId}/>
+    return <ButtonPlaceOrder tokenFullId={tokenFullId} callback={reFetchOrder}/>
   }
   return (
     <>
