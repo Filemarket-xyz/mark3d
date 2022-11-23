@@ -3,7 +3,7 @@ import { TokenFullId } from '../../../../processing/types'
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 import { ButtonInitTransfer } from './ActionButtons/ButtonInitTransfer'
-import { useIsApprovedExchange } from '../../../../processing/hooks/useIsApprovedExchange'
+import { useIsApprovedExchange } from '../../../../processing/hooks'
 import { Txt } from '../../../../UIkit'
 import { stringifyError } from '../../../../utils/error'
 import { ButtonApproveExchange } from './ActionButtons/ButtonApproveExchange'
@@ -12,6 +12,7 @@ import { transferPermissions } from '../../../../utils/transfer/status'
 import { ButtonCancelTransfer } from './ActionButtons/ButtonCancelTransfer'
 import { ButtonFinalizeTransfer } from './ActionButtons/ButtonFinalizeTransfer'
 import { ButtonApproveTransfer } from './ActionButtons/ButtonApproveTransfer'
+import { ButtonCancelOrder } from './ActionButtons/ButtonCancelOrder'
 
 export interface NFTDealActionsOwnerProps {
   tokenFullId: TokenFullId
@@ -46,6 +47,9 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
        )}
        {permissions.canFinalize(transfer) && (
          <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={ownerStatusChanged}/>
+       )}
+       {permissions.canCancelOrder(transfer) && (
+         <ButtonCancelOrder tokenFullId={tokenFullId}/>
        )}
        {permissions.canCancel(transfer) && (
          <ButtonCancelTransfer tokenFullId={tokenFullId}/>

@@ -21,13 +21,22 @@ export const transferPermissions = {
     },
     canCancel: (transfer?: Transfer) => {
       const status = transferStatus(transfer)
-      return status !== undefined &&
+      return ( // if transfer is drafted and there is an order, we should cancel an order
+        status === TransferStatus.Drafted &&
+        (transfer?.orderId === null || transfer?.orderId === undefined)
+      ) || (
+        status !== undefined &&
         [
-          TransferStatus.Drafted,
           TransferStatus.Created,
           TransferStatus.PublicKeySet,
           TransferStatus.PasswordSet
         ].includes(status)
+      )
+    },
+    canCancelOrder: (transfer?: Transfer) => {
+      const status = transferStatus(transfer)
+      return status === TransferStatus.Drafted &&
+        transfer?.orderId !== undefined && transfer?.orderId !== null
     }
   },
   buyer: {
@@ -37,7 +46,8 @@ export const transferPermissions = {
     },
     canFulfillOrder: (transfer?: Transfer) => {
       const status = transferStatus(transfer)
-      return status === TransferStatus.Drafted && transfer?.orderId !== undefined && transfer?.orderId !== null
+      return status === TransferStatus.Drafted &&
+        transfer?.orderId !== undefined && transfer?.orderId !== null
     },
     canSetPublicKey: (transfer?: Transfer) => {
       const status = transferStatus(transfer)

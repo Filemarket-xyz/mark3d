@@ -1,5 +1,5 @@
 import { useTransferStore } from './useTransferStore'
-import { useWatchHiddenFileTokenEvents } from '../processing/hooks/useWatchHiddenFileTokenEvents'
+import { useWatchHiddenFileTokenEvents } from '../processing/hooks'
 
 export function useTransferStoreWatchEvents(collectionAddress?: string, tokenId?: string) {
   const transferStore = useTransferStore(collectionAddress, tokenId)

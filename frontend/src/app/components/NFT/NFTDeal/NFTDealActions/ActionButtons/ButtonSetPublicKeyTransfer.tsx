@@ -1,7 +1,7 @@
 import { TokenFullId } from '../../../../../processing/types'
 import { FC, useEffect } from 'react'
 import { Button } from '../../../../../UIkit'
-import { useSetPublicKey } from '../../../../../processing/hooks/useSetPublicKey'
+import { useSetPublicKey } from '../../../../../processing/hooks'
 
 export interface ButtonSetPublicKeyTransferProps {
   tokenFullId: TokenFullId

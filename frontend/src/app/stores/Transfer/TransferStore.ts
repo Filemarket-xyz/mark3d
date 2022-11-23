@@ -8,6 +8,9 @@ import { normalizeCounterId } from '../../processing/utils/id'
 import { IHiddenFilesTokenEventsListener } from '../../processing'
 import { BigNumber } from 'ethers'
 
+/**
+ * Stores only ACTIVE (i.e. created and not finished/cancelled) order state
+ */
 export class TransferStore implements IStoreRequester,
   IActivateDeactivate<[string, string]>, IHiddenFilesTokenEventsListener {
   errorStore: ErrorStore
@@ -133,11 +136,8 @@ export class TransferStore implements IStoreRequester,
   }
 
   onTransferFinished(tokenId: BigNumber) {
-    this.checkData(tokenId, data => {
-      data.statuses?.push({
-        status: TransferStatus.Finished,
-        timestamp: Date.now()
-      })
+    this.checkActivation(tokenId, () => {
+      this.data = undefined
     })
   }
 
@@ -161,11 +161,8 @@ export class TransferStore implements IStoreRequester,
   }
 
   onTransferCancellation(tokenId: BigNumber) {
-    this.checkData(tokenId, data => {
-      data.statuses?.push({
-        status: TransferStatus.Cancelled,
-        timestamp: Date.now()
-      })
+    this.checkActivation(tokenId, () => {
+      this.data = undefined
     })
   }
 }
