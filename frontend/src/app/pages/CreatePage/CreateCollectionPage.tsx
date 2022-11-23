@@ -95,6 +95,20 @@ const ErrorBody = ({ message }: { message: string }) => (
   </>
 )
 
+const extractMessageFromError = (error: string) => {
+  const UNKNOWN_ERROR = 'Something went wrong, try again later'
+
+  const errorPartToShow = error.split('\n').shift()
+  if (!errorPartToShow) return UNKNOWN_ERROR
+
+  try {
+    const errorObject = JSON.parse(errorPartToShow)
+    return errorObject.message ?? UNKNOWN_ERROR
+  } catch {
+    return errorPartToShow
+  }
+}
+
 export interface CreateCollectionForm {
   image: FileList
   name: string
@@ -109,7 +123,7 @@ export default function CreateCollectionPage() {
     formState: { isValid }
   } = useForm<CreateCollectionForm>()
 
-  const { error, isLoading, result, mintCollection } = useMintCollection()
+  const { error, isLoading, result, mintCollection, setError } = useMintCollection()
 
   const onSubmit: SubmitHandler<CreateCollectionForm> = (data) => {
     console.log(isValid)
@@ -129,7 +143,7 @@ export default function CreateCollectionPage() {
       void setModalBody(<SuccessBody id={result.collectionTokenAddress} />)
     } else if (error) {
       void setModalOpen(true)
-      void setModalBody(<ErrorBody message={error.split('\n').shift() ?? ''} />)
+      void setModalBody(<ErrorBody message={extractMessageFromError(error)} />)
     }
     console.log(isLoading, error, result)
   }, [error, isLoading, result])
@@ -138,7 +152,10 @@ export default function CreateCollectionPage() {
     <>
       <MintModal
         body={modalBody ?? <></>}
-        handleClose={() => setModalOpen(false)}
+        handleClose={() => {
+          setError(undefined)
+          setModalOpen(false)
+        }}
         open={modalOpen}
       />
       <PageLayout

@@ -34,7 +34,8 @@ export const useMintCollection = () => {
 
   const {
     createCollection,
-    statuses: { error, isLoading, result }
+    statuses: { error, isLoading, result },
+    setError
   } = useCreateCollection(formToTransfer)
 
   useAfterDidMountEffect(() => {
@@ -43,6 +44,7 @@ export const useMintCollection = () => {
 
   return {
     error,
+    setError,
     isLoading,
     result,
     mintCollection: (form: CreateCollectionForm) => {
