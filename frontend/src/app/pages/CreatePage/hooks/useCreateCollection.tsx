@@ -1,17 +1,11 @@
 import { useState } from 'react'
 import { useAfterDidMountEffect } from '../../../hooks/useDidMountEffect'
 import {
-  useCreateCollection,
+  useMintCollection,
   CreateCollectionForm as FormDataToTransfer
 } from '../../../processing/hooks'
 import { CreateCollectionForm } from '../CreateCollectionPage'
-
-const convertFileListToFile = (file: FileList): File | undefined => {
-  if (!file || !file.length) return
-  const fileExtension = file[0].type.split('/').pop()
-
-  return new File([file[0]], `logo.${fileExtension}`, { type: file[0].type })
-}
+import { convertFileListToFile } from './shared'
 
 const convertFormDataToCollectionDTO = (
   form: CreateCollectionForm
@@ -23,8 +17,8 @@ const convertFormDataToCollectionDTO = (
   }
 }
 
-/** This hook provides methods to mint collection from given form */
-export const useMintCollection = () => {
+/** This hook is a wrapper above useMintCollection hook. It provides methods to mint collection from given raw form */
+export const useCreateCollection = () => {
   const [formToTransfer, setFormToTransfer] = useState<FormDataToTransfer>({
     description: '',
     image: undefined,
@@ -33,14 +27,14 @@ export const useMintCollection = () => {
   })
 
   const {
-    createCollection,
     statuses: { error, isLoading, result },
     setError,
-    setIsLoading
-  } = useCreateCollection(formToTransfer)
+    setIsLoading,
+    mintCollection
+  } = useMintCollection(formToTransfer)
 
   useAfterDidMountEffect(() => {
-    void createCollection()
+    void mintCollection()
   }, [formToTransfer])
 
   return {
@@ -49,7 +43,7 @@ export const useMintCollection = () => {
     isLoading,
     setIsLoading,
     result,
-    mintCollection: (form: CreateCollectionForm) => {
+    createCollection: (form: CreateCollectionForm) => {
       setFormToTransfer(convertFormDataToCollectionDTO(form))
     }
   }

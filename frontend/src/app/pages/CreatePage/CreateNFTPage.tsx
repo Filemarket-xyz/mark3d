@@ -72,15 +72,20 @@ const CollectionPickerContainer = styled('div', {
 })
 
 export interface CreateNFTForm {
-  image: File
-  hiddenFile: File
+  image: FileList
+  hiddenFile: FileList
   name: string
   collection: ComboBoxOption
   description: string
 }
 
 export default function CreateNftPage() {
-  const { register, handleSubmit, control } = useForm<CreateNFTForm>()
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { isValid }
+  } = useForm<CreateNFTForm>()
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => console.log(data)
 
   return (
@@ -90,7 +95,7 @@ export default function CreateNftPage() {
 
         <FormControl>
           <Label css={{ marginBottom: '$3' }}>Upload a preview</Label>
-          <ImageLoader registerProps={register('image')} />
+          <ImageLoader registerProps={register('image', { required: true })} />
         </FormControl>
 
         <FormControl>
@@ -101,12 +106,17 @@ export default function CreateNftPage() {
             UNITYPACKAGE.
             <TextBold>Max size:</TextBold> 100 MB.
           </Description>
-          <NftLoader registerProps={register('hiddenFile')} />
+          <NftLoader
+            registerProps={register('hiddenFile', { required: true })}
+          />
         </FormControl>
 
         <FormControl>
           <Label>Name</Label>
-          <Input placeholder='Item name' {...register('name')} />
+          <Input
+            placeholder='Item name'
+            {...register('name', { required: true })}
+          />
         </FormControl>
 
         <FormControl>
@@ -144,7 +154,12 @@ export default function CreateNftPage() {
           />
         </FormControl>
 
-        <Button primary type='submit'>
+        <Button
+          primary
+          type='submit'
+          isDisabled={!isValid}
+          title={isValid ? undefined : 'Required fields must be filled'}
+        >
           Mint
         </Button>
       </Form>

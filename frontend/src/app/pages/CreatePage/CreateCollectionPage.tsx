@@ -7,7 +7,7 @@ import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
 import { Button, NavLink, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
-import { useMintCollection } from './hooks/useMintCollection'
+import { useCreateCollection } from './hooks/useCreateCollection'
 import MintModal from './MintModal'
 
 export const Title = styled('h1', {
@@ -124,8 +124,8 @@ export default function CreateCollectionPage() {
     getValues
   } = useForm<CreateCollectionForm>()
 
-  const { error, isLoading, result, mintCollection, setError, setIsLoading } =
-    useMintCollection()
+  const { error, isLoading, result, createCollection: mintCollection, setError, setIsLoading } =
+    useCreateCollection()
 
   const onSubmit: SubmitHandler<CreateCollectionForm> = (data) => {
     console.log(isValid)
@@ -220,7 +220,7 @@ export default function CreateCollectionPage() {
             type='submit'
             primary
             isDisabled={!isValid}
-            title={isValid ? undefined : 'All fields must be filled'}
+            title={isValid ? undefined : 'Required fields must be filled'}
           >
             Mint
           </Button>
