@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { styled } from '../../../styles'
 import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
@@ -8,7 +8,6 @@ import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
 import {
   Form,
-  FormControl,
   Label,
   LabelWithCounter,
   LetterCounter,
@@ -19,6 +18,20 @@ import {
 import PlusIcon from './img/plus-icon.svg'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { observer } from 'mobx-react-lite'
+import { useCollectionAndTokenListStore } from '../../hooks'
+import { toJS } from 'mobx'
+import { useAccount } from 'wagmi'
+import { useCreateNft } from './hooks/useCreateNft'
+import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
+import MintModal, {
+  ErrorBody,
+  extractMessageFromError,
+  InProgressBody,
+  SuccessBody
+} from '../../components/Modal/Modal'
+import { FormControl } from '../../UIkit/Form/FormControl'
+import { useModalProperties } from './hooks/useModalProperties'
 
 const Description = styled('p', {
   fontSize: '12px',
@@ -72,82 +85,167 @@ const CollectionPickerContainer = styled('div', {
 })
 
 export interface CreateNFTForm {
-  image: File
-  hiddenFile: File
+  image: FileList
+  hiddenFile: FileList
   name: string
   collection: ComboBoxOption
   description: string
 }
 
-export default function CreateNftPage() {
-  const { register, handleSubmit, control } = useForm<CreateNFTForm>()
-  const onSubmit: SubmitHandler<CreateNFTForm> = (data) => console.log(data)
+const CreateNftPage = observer(() => {
+  const { address } = useAccount()
+
+  const {
+    collections,
+    isLoading: isCollectionLoading,
+    isLoaded: isCollectionLoaded
+  } = useCollectionAndTokenListStore(address)
+
+  const [collectionOptions, setCollectionOptions] = useState<ComboBoxOption[]>(
+    []
+  )
+
+  const { modalBody, modalOpen, setModalBody, setModalOpen } =
+    useModalProperties()
+
+  const {
+    createNft,
+    error: nftError,
+    isLoading: isNftLoading,
+    result: nftResult,
+    setError: setNftError,
+    setIsLoading: setIsNftLoading
+  } = useCreateNft()
+
+  useAfterDidMountEffect(() => {
+    if (!isCollectionLoaded) return
+
+    setCollectionOptions(
+      toJS(collections).map((collection) => ({
+        id: collection.address ?? '',
+        title: collection.name ?? ''
+      }))
+    )
+  }, [isCollectionLoaded])
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { isValid }
+  } = useForm<CreateNFTForm>()
+
+  const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
+    createNft(data)
+  }
+
+  useAfterDidMountEffect(() => {
+    if (isNftLoading) {
+      setModalOpen(true)
+      setModalBody(<InProgressBody text='NFT is being minted' />)
+    } else if (nftError) {
+      setModalOpen(true)
+      setModalBody(<ErrorBody message={extractMessageFromError(nftError)} />)
+    } else if (nftResult) {
+      setModalOpen(true)
+      setModalBody(
+        <SuccessBody
+          buttonText='View NFT'
+          link={`/collection/${nftResult.receipt.to}/${nftResult.tokenId}`}
+        />
+      )
+    }
+  }, [nftError, isNftLoading, nftResult])
 
   return (
-    <PageLayout css={{ paddingBottom: '$4' }}>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <Title>Create New NFT</Title>
+    <>
+      <MintModal
+        handleClose={() => {
+          setIsNftLoading(false)
+          setNftError(undefined)
+          setModalOpen(false)
+        }}
+        body={modalBody ?? <></>}
+        open={modalOpen}
+      />
+      <PageLayout css={{ paddingBottom: '$4' }}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <Title>Create New NFT</Title>
 
-        <FormControl>
-          <Label css={{ marginBottom: '$3' }}>Upload a preview</Label>
-          <ImageLoader registerProps={register('image')} />
-        </FormControl>
-
-        <FormControl>
-          <Label css={{ marginBottom: '$3' }}>Upload a 3D model</Label>
-          <Description>
-            <TextBold>Formats:</TextBold> FBX, 3DS, MAX, BLEND, OBJ, C4D, MB,
-            MA, LWO, LXO, SKP, STL, UASSET, DAE, PLY, GLB, GLTF, USDF,
-            UNITYPACKAGE.
-            <TextBold>Max size:</TextBold> 100 MB.
-          </Description>
-          <NftLoader registerProps={register('hiddenFile')} />
-        </FormControl>
-
-        <FormControl>
-          <Label>Name</Label>
-          <Input placeholder='Item name' {...register('name')} />
-        </FormControl>
-
-        <FormControl>
-          <Label>Collection</Label>
-          <CollectionPickerContainer>
-            <ControlledComboBox<CreateNFTForm>
-              name='collection'
-              control={control}
-              comboboxProps={{
-                options: [
-                  { title: 'first collection', id: '1' },
-                  { title: 'second collection', id: '2' }
-                ]
-              }}
+          <FormControl>
+            <Label css={{ marginBottom: '$3' }}>Upload a preview</Label>
+            <ImageLoader
+              registerProps={register('image', { required: true })}
             />
-            <NavLink to={'../collection'}>
-              <AddCollectionButton>
-                <Icon src={PlusIcon} />
-              </AddCollectionButton>
-            </NavLink>
-          </CollectionPickerContainer>
-        </FormControl>
+          </FormControl>
 
-        <FormControl>
-          <LabelWithCounter>
-            <Label>
-              Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
-            </Label>
-            <LetterCounter>0/1000</LetterCounter>
-          </LabelWithCounter>
+          <FormControl>
+            <Label css={{ marginBottom: '$3' }}>Upload a 3D model</Label>
+            <Description>
+              <TextBold>Formats:</TextBold> FBX, 3DS, MAX, BLEND, OBJ, C4D, MB,
+              MA, LWO, LXO, SKP, STL, UASSET, DAE, PLY, GLB, GLTF, USDF,
+              UNITYPACKAGE.
+              <TextBold>Max size:</TextBold> 100 MB.
+            </Description>
+            <NftLoader
+              registerProps={register('hiddenFile', { required: true })}
+            />
+          </FormControl>
 
-          <TextArea
-            placeholder='Description of your item'
-            {...register('description')}
-          />
-        </FormControl>
+          <FormControl>
+            <Label>Name</Label>
+            <Input
+              placeholder='Item name'
+              {...register('name', { required: true })}
+            />
+          </FormControl>
 
-        <Button primary type='submit'>
-          Mint
-        </Button>
-      </Form>
-    </PageLayout>
+          <FormControl>
+            <Label>Collection</Label>
+            <CollectionPickerContainer>
+              <ControlledComboBox<CreateNFTForm>
+                name='collection'
+                control={control}
+                comboboxProps={{
+                  options: collectionOptions,
+                  isLoading: isCollectionLoading
+                }}
+                rules={{ required: true }}
+              />
+              <NavLink to={'../collection'}>
+                <AddCollectionButton>
+                  <Icon src={PlusIcon} />
+                </AddCollectionButton>
+              </NavLink>
+            </CollectionPickerContainer>
+          </FormControl>
+
+          <FormControl>
+            <LabelWithCounter>
+              <Label>
+                Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
+              </Label>
+              <LetterCounter>0/1000</LetterCounter>
+            </LabelWithCounter>
+
+            <TextArea
+              placeholder='Description of your item'
+              {...register('description')}
+            />
+          </FormControl>
+
+          <Button
+            primary
+            type='submit'
+            isDisabled={!isValid}
+            title={isValid ? undefined : 'Required fields must be filled'}
+          >
+            Mint
+          </Button>
+        </Form>
+      </PageLayout>
+    </>
   )
-}
+})
+
+export default CreateNftPage
