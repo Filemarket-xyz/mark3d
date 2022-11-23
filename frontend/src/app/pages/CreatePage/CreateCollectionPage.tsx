@@ -121,7 +121,6 @@ export default function CreateCollectionPage() {
     register,
     handleSubmit,
     formState: { isValid },
-    getFieldState,
     getValues
   } = useForm<CreateCollectionForm>()
 
