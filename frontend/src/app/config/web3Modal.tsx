@@ -1,9 +1,10 @@
-import { chain, configureChains, createClient } from 'wagmi'
+import { configureChains, createClient } from 'wagmi'
 import { EthereumClient, modalConnectors, walletConnectProvider } from '@web3modal/ethereum'
 import { FC } from 'react'
 import { Web3Modal } from '@web3modal/react'
+import { mark3dConfig } from './mark3d'
 
-const chains = [chain.polygonMumbai]
+const chains = [mark3dConfig.chain]
 
 export const projectId = import.meta.env.VITE_WEB3_MODAL_PROJECT_ID
 

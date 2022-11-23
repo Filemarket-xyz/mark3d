@@ -1,19 +1,25 @@
 import { DialogStore } from './Dialog/DialogStore'
 import { ErrorStore } from './Error/ErrorStore'
-import { CollectionAndTokenList } from './CollectionAndTokenList/CollectionAndTokenListStore'
-import { TransferListStore } from './TransferList/TransferListStore'
+import { CollectionAndTokenListStore } from './CollectionAndTokenList/CollectionAndTokenListStore'
+import { TransferListStore } from './Transfer/TransferListStore'
+import { CollectionTokenListStore } from './CollectionTokenList/CollectionTokenListStore'
+import { TransferStore } from './Transfer/TransferStore'
 
 export class RootStore {
   dialogStore: DialogStore
   errorStore: ErrorStore
-  collectionAndTokenList: CollectionAndTokenList
-  transferList: TransferListStore
+  collectionAndTokenList: CollectionAndTokenListStore
+  transferListStore: TransferListStore
+  transferStore: TransferStore
+  collectionTokenList: CollectionTokenListStore
 
   constructor() {
     this.dialogStore = new DialogStore()
     this.errorStore = new ErrorStore(this)
-    this.collectionAndTokenList = new CollectionAndTokenList(this)
-    this.transferList = new TransferListStore(this)
+    this.collectionAndTokenList = new CollectionAndTokenListStore(this)
+    this.transferListStore = new TransferListStore(this)
+    this.transferStore = new TransferStore(this)
+    this.collectionTokenList = new CollectionTokenListStore(this)
   }
 }
 

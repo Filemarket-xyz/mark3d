@@ -5,13 +5,14 @@ import { makeAutoObservable } from 'mobx'
 import { stringifyTokenFullId } from '../../processing/utils/id'
 import { api } from '../../config/api'
 
-export class TransferListStore implements IActivateDeactivate, IStoreRequester {
+export class TransferListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
 
   currentRequest?: RequestContext
   requestCount = 0
   isLoaded = false
   isLoading = false
+  isActivated = false
 
   incoming: Transfer[] = []
   outgoing: Transfer[] = []
@@ -59,15 +60,14 @@ export class TransferListStore implements IActivateDeactivate, IStoreRequester {
   }
 
   activate(address: string): void {
-    // no double activation
-    if (!this.isLoaded) {
-      this.address = address
-      this.request(address)
-    }
+    this.isActivated = true
+    this.address = address
+    this.request(address)
   }
 
   deactivate(): void {
     this.reset()
+    this.isActivated = false
   }
 
   reload(): void {

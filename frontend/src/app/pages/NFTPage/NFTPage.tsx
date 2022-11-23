@@ -1,10 +1,11 @@
 import React from 'react'
 import { styled } from '../../../styles'
-import { Button, PageLayout, textVariant, Link } from '../../UIkit'
+import { PageLayout, textVariant, Link } from '../../UIkit'
 import creator from './img/creatorImg.jpg'
 import collection from './img/collection.jpg'
 import Badge from '../../components/Badge/Badge'
 import { Hr } from '../../UIkit/Hr/Hr'
+import { NFTDeal } from '../../components/NFT'
 
 const NFTPreviewContainer = styled('div', {
   paddingTop: '$layout$navbarheight',
@@ -51,45 +52,6 @@ const GridLayout = styled(PageLayout, {
 })
 
 const GridBlock = styled('div')
-
-const BuyContainer = styled('div', {
-  borderRadius: '$4',
-  border: '2px solid transparent',
-  background:
-    'linear-gradient($gray100 0 0) padding-box, linear-gradient(to right, #00DCFF80, #E14BEC80) border-box',
-  padding: '$3'
-})
-
-const BuyContainerInfo = styled('div', {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '$3',
-  gap: '$3',
-  '@sm': {
-    flexDirection: 'column'
-  }
-})
-
-const Price = styled('div', {
-  display: 'flex',
-  gap: '$1',
-  flexDirection: 'column'
-})
-
-const PriceTitle = styled('span', {
-  ...textVariant('primary1'),
-  color: '$gray500'
-})
-
-const PriceValue = styled('p', {
-  fontSize: '$h3',
-  fontWeight: 700,
-  color: '$blue900',
-  '@xl': {
-    fontSize: '$h4'
-  }
-})
 
 const PropertyTitle = styled('h2', {
   ...textVariant('h5').true,
@@ -174,22 +136,7 @@ export default function NFTPage() {
         </GridBlock>
 
         <GridBlock>
-          <BuyContainer>
-            <BuyContainerInfo>
-              <Badge
-                wrapperProps={{ css: { flexShrink: 0 } }}
-                imgUrl={creator}
-                content={{ title: 'Creator', value: 'Underkong' }}
-              />
-              <Price>
-                <PriceTitle>Price</PriceTitle>
-                <PriceValue>0.123456 ETH</PriceValue>
-              </Price>
-            </BuyContainerInfo>
-            <Button primary css={{ width: '100%' }}>
-              Buy now
-            </Button>
-          </BuyContainer>
+          <NFTDeal/>
         </GridBlock>
 
         <GridBlock>

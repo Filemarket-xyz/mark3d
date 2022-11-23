@@ -1,8 +1,10 @@
 import accessToken from '../../abi/Mark3dAccessToken'
 import exchangeToken from '../../abi/Mark3dExchange'
 import collectionToken from '../../abi/Mark3dCollection'
+import { chain } from 'wagmi'
 
 export const mark3dConfig = {
+  chain: chain.polygonMumbai,
   accessToken: {
     address: '0xf18A98B45445622e43945fc6e321eE6D553391a0',
     abi: accessToken.abi,

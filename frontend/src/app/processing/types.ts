@@ -26,7 +26,7 @@ export interface TokenFullId {
    */
   collectionAddress: string
   /**
-   * Token id (not address). Is obtained as a result of the mint.
+   * Normalized token id (not address). Is obtained as a result of the mint.
    */
   tokenId: string
 }
@@ -48,7 +48,7 @@ export interface FileMeta {
   type: string // mime type
 }
 
-export enum Mark3dAccessTokenEvents {
+export enum Mark3dAccessTokenEventNames {
   Approval = 'Approval',
   ApprovalForAll = 'ApprovalForAll',
   CollectionCreation = 'CollectionCreation',
@@ -59,8 +59,38 @@ export enum Mark3dAccessTokenEvents {
   Transfer = 'Transfer',
 }
 
-export enum ERC721TokenEvents {
+export enum HiddenFilesTokenEventNames {
+  TransferInit = 'TransferInit',
+  TransferDraft = 'TransferDraft',
+  TransferDraftCompletion = 'TransferDraftCompletion',
+  TransferPublicKeySet = 'TransferPublicKeySet',
+  TransferPasswordSet = 'TransferPasswordSet',
+  TransferFinished = 'TransferFinished',
+  TransferFraudReported = 'TransferFraudReported',
+  TransferFraudDecided = 'TransferFraudDecided',
+  TransferCancellation = 'TransferCancellation',
+}
+
+export enum HiddenFilesTokenEventSignatures {
+  TransferInit = 'TransferInit(uint256,address,address)',
+  TransferDraft = 'TransferDraft(uint256,address)',
+  TransferDraftCompletion = 'TransferDraftCompletion(uint256,address)',
+  TransferPublicKeySet = 'TransferPublicKeySet(uint256,bytes)',
+  TransferPasswordSet = 'TransferPasswordSet(uint256,bytes)',
+  TransferFinished = 'TransferFinished(uint256)',
+  TransferFraudReported = 'TransferFraudReported(uint256)',
+  TransferFraudDecided = 'TransferFraudDecided(uint256,bool)',
+  TransferCancellation = 'TransferCancellation(uint256)',
+}
+
+export enum ERC721TokenEventNames {
   Transfer = 'Transfer',
   Approval = 'Approval',
   ApprovalForAll = 'ApprovalForAll',
+}
+
+export enum ERC721TokenEventSignatures {
+  Approval = 'Approval(address,address,uint256)',
+  ApprovalForAll = 'ApprovalForAll(address,address,bool)',
+  Transfer = 'Transfer(address,address,uint256)',
 }

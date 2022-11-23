@@ -4,13 +4,14 @@ import { makeAutoObservable } from 'mobx'
 import { Collection, Token, TokensResponse } from '../../../swagger/Api'
 import { api } from '../../config/api'
 
-export class CollectionAndTokenList implements IActivateDeactivate, IStoreRequester {
+export class CollectionAndTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
 
   currentRequest?: RequestContext
   requestCount = 0
   isLoaded = false
   isLoading = false
+  isActivated = false
 
   collections: Collection[] = []
   tokens: Token[] = []
@@ -24,27 +25,29 @@ export class CollectionAndTokenList implements IActivateDeactivate, IStoreReques
   }
 
   private request(address: string) {
-    storeRequest<TokensResponse>(this, api.tokens.tokensDetail(address), resp => {
-      console.log('request response', resp)
-      if (resp.collections) {
-        this.collections = resp.collections
-      }
-      if (resp.tokens) {
-        this.tokens = resp.tokens
-      }
-    })
+    storeRequest<TokensResponse>(
+      this,
+      api.tokens.tokensDetail(address),
+      resp => {
+        console.log('request response', resp)
+        if (resp.collections) {
+          this.collections = resp.collections
+        }
+        if (resp.tokens) {
+          this.tokens = resp.tokens
+        }
+      })
   }
 
   activate(address: string): void {
-    // no double activation
-    if (!this.isLoaded) {
-      this.address = address
-      this.request(address)
-    }
+    this.isActivated = true
+    this.address = address
+    this.request(address)
   }
 
   deactivate(): void {
     this.reset()
+    this.isActivated = false
   }
 
   reset(): void {
