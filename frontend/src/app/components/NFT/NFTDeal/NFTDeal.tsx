@@ -12,6 +12,7 @@ export interface NFTDealProps {
   tokenFullId: TokenFullId
   transfer?: Transfer
   order?: Order
+  reFetchOrder?: () => void
 }
 
 const DealContainer = styled('div', {
@@ -42,7 +43,8 @@ const ButtonsContainer = styled('div', {
 export const NFTDeal: FC<NFTDealProps> = observer(({
   transfer,
   order,
-  tokenFullId
+  tokenFullId,
+  reFetchOrder
 }) => {
   return (
     <DealContainer>
@@ -60,6 +62,7 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
         <NFTDealActions
           transfer={transfer}
           tokenFullId={tokenFullId}
+          reFetchOrder={reFetchOrder}
         />
       </ButtonsContainer>
     </DealContainer>

@@ -23,7 +23,7 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, cal
       }}
       isDisabled={isLoading}
     >
-      Cancel deal
+      Cancel order
     </Button>
   )
 }

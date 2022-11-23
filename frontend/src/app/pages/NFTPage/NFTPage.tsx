@@ -125,7 +125,8 @@ const Bold = styled('span', {
 const NFTPage = observer(() => {
   const { collectionAddress, tokenId } = useParams<Params>()
   const tokenFullId = useMemo(() => makeTokenFullId(collectionAddress, tokenId), [collectionAddress, tokenId])
-  const { data: transfer } = useTransferStoreWatchEvents(collectionAddress, tokenId)
+  const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
+  const transfer = transferStore.data
   return (
     <>
       <NFTPreviewContainer></NFTPreviewContainer>
@@ -150,6 +151,7 @@ const NFTPage = observer(() => {
             <NFTDeal
               transfer={transfer}
               tokenFullId={tokenFullId}
+              reFetchOrder={() => transferStore.reload()}
             />
           )}
         </GridBlock>

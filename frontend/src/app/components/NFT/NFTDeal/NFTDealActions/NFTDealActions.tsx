@@ -11,9 +11,14 @@ import { useIsOwner } from '../../../../processing/hooks'
 export interface NFTDealActionsProps {
   tokenFullId: TokenFullId
   transfer?: Transfer
+  reFetchOrder?: () => void
 }
 
-export const NFTDealActions: FC<NFTDealActionsProps> = observer(({ tokenFullId, transfer }) => {
+export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
+  tokenFullId,
+  transfer,
+  reFetchOrder
+}) => {
   const { isOwner, error, refetch } = useIsOwner(tokenFullId)
   if (error) {
     return <Txt color="red">{stringifyError(error)}</Txt>
@@ -24,6 +29,7 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({ tokenFullId, 
         transfer={transfer}
         tokenFullId={tokenFullId}
         ownerStatusChanged={refetch}
+        reFetchOrder={reFetchOrder}
       />
     )
   } else {
@@ -31,6 +37,7 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({ tokenFullId, 
       <NFTDealActionsBuyer
         transfer={transfer}
         tokenFullId={tokenFullId}
+        ownerStatusChanged={refetch}
       />
     )
   }

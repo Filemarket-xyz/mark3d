@@ -9,10 +9,10 @@ export interface ButtonFulfillOrderProps {
 }
 
 export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = ({ tokenFullId, callback }) => {
-  const { fulfillOrder, isLoading, result } = useFulfillOrder(tokenFullId)
+  const { fulfillOrder, isLoading, result, error } = useFulfillOrder(tokenFullId)
   useEffect(() => {
-    console.log('fulfill order', 'isLoading', isLoading, 'result', result)
-  }, [isLoading, result])
+    console.log('fulfill order', 'isLoading', isLoading, 'result', result, 'error', error)
+  }, [isLoading, result, error])
   return (
     <Button
       secondary
