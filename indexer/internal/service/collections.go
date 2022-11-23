@@ -20,7 +20,7 @@ func (s *service) GetCollection(ctx context.Context,
 	collection, err := s.postgres.GetCollection(ctx, tx, address)
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return nil, collectionNotExistError
+			return nil, nil
 		}
 		log.Println("get collection failed: ", err)
 		return nil, internalError

@@ -69,7 +69,7 @@ func (s *service) GetOrder(ctx context.Context, address common.Address,
 	res, err := s.postgres.GetActiveOrder(ctx, tx, address, tokenId)
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return nil, orderNotExistError
+			return nil, nil
 		}
 		return nil, internalError
 	}
