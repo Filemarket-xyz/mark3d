@@ -2,6 +2,7 @@ import { styled } from '../../../../styles'
 import { textVariant } from '../../../UIkit'
 import React, { FC } from 'react'
 import { observer } from 'mobx-react-lite'
+import { formatCurrency } from '../../../utils/web3/currency'
 
 export interface NFTDealPriceProps {
   price: string // amount of wei
@@ -31,7 +32,7 @@ export const NFTDealPrice: FC<NFTDealPriceProps> = observer(({ price }) => {
   return (
     <Price>
       <PriceTitle>Price</PriceTitle>
-      <PriceValue>0.123456 ETH</PriceValue>
+      <PriceValue>{formatCurrency(price)}</PriceValue>
     </Price>
   )
 })

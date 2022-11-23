@@ -6,8 +6,9 @@ import { assertContract, assertSigner } from '../utils/assert'
 import { mark3dConfig } from '../../config/mark3d'
 import assert from 'assert'
 import { useHiddenFileProcessorFactory } from './useHiddenFileProcessorFactory'
+import { TokenFullId } from '../types'
 
-export function useReportFraud(collectionAddress: string, tokenId: string) {
+export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFullId>) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
 

@@ -5,8 +5,9 @@ import { useCallback } from 'react'
 import { assertContract, assertSigner } from '../utils/assert'
 import { mark3dConfig } from '../../config/mark3d'
 import assert from 'assert'
+import { TokenFullId } from '../types'
 
-export function useCancelTransfer(collectionAddress: string, tokenId: string) {
+export function useCancelTransfer({ collectionAddress, tokenId }: Partial<TokenFullId>) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
 

@@ -7,8 +7,9 @@ import { assertContract, assertSigner } from '../utils/assert'
 import { mark3dConfig } from '../../config/mark3d'
 import { Transfer } from '../../../swagger/Api'
 import assert from 'assert'
+import { TokenFullId } from '../types'
 
-export function useApproveTransfer(collectionAddress?: string, tokenId?: string, transfer?: Transfer) {
+export function useApproveTransfer({ collectionAddress, tokenId }: Partial<TokenFullId>, transfer?: Transfer) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
   const factory = useHiddenFileProcessorFactory()
