@@ -64,15 +64,46 @@ export class TransferStore implements IStoreRequester,
     }
   }
 
+  private checkActivation(tokenId: BigNumber, ifActivationOk: (tokenFullId: TokenFullId) => void) {
+    if (
+      this.isActivated &&
+      this.tokenFullId &&
+      normalizeCounterId(this.tokenFullId?.tokenId) === normalizeCounterId(tokenId)
+    ) {
+      ifActivationOk(this.tokenFullId)
+    }
+  }
+
   // We listen to only events related to transfer change, not transfer initialization
   // This store is supposed to be used only on existing transfers (TransferStatus.Drafted or TransferStatus.Created)
 
-  onTransferInit() {
-    // noop
+  onTransferInit(tokenId: BigNumber, from: string, to: string) {
+    this.checkActivation(tokenId, (tokenFullId) => {
+      this.data = {
+        collection: tokenFullId.collectionAddress,
+        tokenId: tokenFullId.tokenId,
+        from,
+        to,
+        statuses: [{
+          status: TransferStatus.Created,
+          timestamp: Date.now()
+        }]
+      }
+    })
   }
 
-  onTransferDraft() {
-    // noop
+  onTransferDraft(tokenId: BigNumber, from: string) {
+    this.checkActivation(tokenId, (tokenFullId) => {
+      this.data = {
+        collection: tokenFullId.collectionAddress,
+        tokenId: tokenFullId.tokenId,
+        from,
+        statuses: [{
+          status: TransferStatus.Drafted,
+          timestamp: Date.now()
+        }]
+      }
+    })
   }
 
   onTransferDraftCompletion(tokenId: BigNumber, to: string) {
