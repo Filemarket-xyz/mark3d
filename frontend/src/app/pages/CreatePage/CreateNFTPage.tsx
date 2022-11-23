@@ -8,7 +8,6 @@ import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
 import {
   Form,
-  FormControl,
   Label,
   LabelWithCounter,
   LetterCounter,
@@ -31,6 +30,7 @@ import MintModal, {
   InProgressBody,
   SuccessBody
 } from '../../components/Modal/Modal'
+import { FormControl } from '../../UIkit/Form/FormControl'
 
 const Description = styled('p', {
   fontSize: '12px',

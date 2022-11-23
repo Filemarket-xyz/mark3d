@@ -13,6 +13,7 @@ import MintModal, {
   InProgressBody,
   SuccessBody
 } from '../../components/Modal/Modal'
+import { FormControl } from '../../UIkit/Form/FormControl'
 
 export const Title = styled('h1', {
   ...textVariant('h3').true,
@@ -44,10 +45,6 @@ export const LetterCounter = styled('span', {
   display: 'block',
   ...textVariant('secondary3').true,
   color: '$gray400'
-})
-
-export const FormControl = styled('div', {
-  marginBottom: '$4'
 })
 
 export const Form = styled('form', {
