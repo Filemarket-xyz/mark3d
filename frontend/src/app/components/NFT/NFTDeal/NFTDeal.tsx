@@ -1,10 +1,18 @@
 import Badge from '../../Badge/Badge'
 import creator from '../../../pages/NFTPage/img/creatorImg.jpg'
-import { Button, textVariant } from '../../../UIkit'
-import React from 'react'
+import { Button } from '../../../UIkit'
+import React, { FC } from 'react'
 import { styled } from '../../../../styles'
+import { observer } from 'mobx-react-lite'
+import { Transfer } from '../../../../swagger/Api'
 
-const BuyContainer = styled('div', {
+export interface NFTDealProps {
+  transfer?: Transfer
+  collectionAddress?: string
+  tokenId?: string
+}
+
+const DealContainer = styled('div', {
   borderRadius: '$4',
   border: '2px solid transparent',
   background:
@@ -12,7 +20,7 @@ const BuyContainer = styled('div', {
   padding: '$3'
 })
 
-const BuyContainerInfo = styled('div', {
+const DealContainerInfo = styled('div', {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
@@ -23,43 +31,19 @@ const BuyContainerInfo = styled('div', {
   }
 })
 
-const Price = styled('div', {
-  display: 'flex',
-  gap: '$1',
-  flexDirection: 'column'
-})
-
-const PriceTitle = styled('span', {
-  ...textVariant('primary1'),
-  color: '$gray500'
-})
-
-const PriceValue = styled('p', {
-  fontSize: '$h3',
-  fontWeight: 700,
-  color: '$blue900',
-  '@xl': {
-    fontSize: '$h4'
-  }
-})
-
-export const NFTDeal = () => {
+export const NFTDeal: FC<NFTDealProps> = observer(() => {
   return (
-    <BuyContainer>
-      <BuyContainerInfo>
+    <DealContainer>
+      <DealContainerInfo>
         <Badge
           wrapperProps={{ css: { flexShrink: 0 } }}
           imgUrl={creator}
           content={{ title: 'Creator', value: 'Underkong' }}
         />
-        <Price>
-          <PriceTitle>Price</PriceTitle>
-          <PriceValue>0.123456 ETH</PriceValue>
-        </Price>
-      </BuyContainerInfo>
+      </DealContainerInfo>
       <Button primary css={{ width: '100%' }}>
         Buy now
       </Button>
-    </BuyContainer>
+    </DealContainer>
   )
-}
+})
