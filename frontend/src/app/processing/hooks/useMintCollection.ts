@@ -22,10 +22,10 @@ interface CreateCollectionResult {
   receipt: ContractReceipt // вся инфа о транзе
 }
 
-export function useCreateCollection(form: CreateCollectionForm) {
+export function useMintCollection(form: CreateCollectionForm) {
   const { contract, signer } = useAccessTokenContract()
   const { wrapPromise, ...statuses } = useStatusState<CreateCollectionResult>()
-  const createCollection = useCallback(wrapPromise(async () => {
+  const mintCollection = useCallback(wrapPromise(async () => {
     console.log('mint!', form)
     assertContract(contract, mark3dConfig.accessToken.name)
     assertSigner(signer)
@@ -51,5 +51,5 @@ export function useCreateCollection(form: CreateCollectionForm) {
       receipt
     }
   }), [contract, signer, form, wrapPromise])
-  return { ...statuses, createCollection }
+  return { ...statuses, mintCollection }
 }

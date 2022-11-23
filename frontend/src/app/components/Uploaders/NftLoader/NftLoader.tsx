@@ -72,14 +72,14 @@ interface NftLoaderProps {
 
 export default function NftLoader(props: NftLoaderProps) {
   return (
-    <File htmlFor='inputTag'>
+    <File htmlFor='nftInput'>
       <WhiteShade></WhiteShade>
       <Box src={BoxImage} />
       <BoxLabel>Choose File</BoxLabel>
       <FileInput
-        id='inputTag'
+        id='nftInput'
         type='file'
-        accept='.fbx, .3ds, .max, .blend, .obj, .c4d, .mb, .ma, .lwo, .lxo, .skp, .stl, .uasset, .dae, .ply, .glb, .gltf, .usdf, .unitypackage'
+        accept={'.fbx, .3ds, .max, .blend, .obj, .c4d, .mb, .ma, .lwo, .lxo, .skp, .stl, .uasset, .dae, .ply, .glb, .gltf, .usdf, .unitypackage'}
         {...props.registerProps}
       />
     </File>

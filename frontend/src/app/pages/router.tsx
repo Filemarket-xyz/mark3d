@@ -40,7 +40,7 @@ const routes: RouteObject[] = [
     children: collectionPageRoutes
   },
   {
-    path: 'nft/:id',
+    path: 'collection/:collectionId/:nftId',
     element: <NFTPage />
   },
   {
