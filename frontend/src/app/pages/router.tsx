@@ -35,7 +35,7 @@ const routes: RouteObject[] = [
     children: profileRoutes
   },
   {
-    path: 'collection/:id',
+    path: 'collection/:collectionId',
     element: <CollectionPage />,
     children: collectionPageRoutes
   },
