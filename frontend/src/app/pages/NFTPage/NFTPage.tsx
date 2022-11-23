@@ -5,7 +5,7 @@ import creator from './img/creatorImg.jpg'
 import collection from './img/collection.jpg'
 import Badge from '../../components/Badge/Badge'
 import { Hr } from '../../UIkit/Hr/Hr'
-import { NFTDeal } from '../../components/NFT/NFTDeal/NFTDeal'
+import { NFTDeal } from '../../components/NFT'
 
 const NFTPreviewContainer = styled('div', {
   paddingTop: '$layout$navbarheight',
