@@ -14,6 +14,7 @@ import MintModal, {
   SuccessBody
 } from '../../components/Modal/Modal'
 import { FormControl } from '../../UIkit/Form/FormControl'
+import { useModalProperties } from './hooks/useModalProperties'
 
 export const Title = styled('h1', {
   ...textVariant('h3').true,
@@ -78,13 +79,11 @@ export default function CreateCollectionPage() {
   } = useCreateCollection()
 
   const onSubmit: SubmitHandler<CreateCollectionForm> = (data) => {
-    console.log(isValid)
-
     mintCollection(data)
   }
 
-  const [modalOpen, setModalOpen] = useState(false)
-  const [modalBody, setModalBody] = useState<JSX.Element>()
+  const { modalBody, setModalBody, modalOpen, setModalOpen } =
+    useModalProperties()
 
   useAfterDidMountEffect(() => {
     if (isLoading) {

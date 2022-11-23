@@ -127,6 +127,9 @@ export interface ControlledComboboxProps<T extends FieldValues> {
   comboboxProps: Omit<ComboboxProps<T>, 'onChange' | 'value'>
   control: Control<T, any>
   name: Path<T>
+  rules?: {
+    required?: boolean
+  }
 }
 
 export const ControlledComboBox = <T extends FieldValues>(
@@ -135,6 +138,7 @@ export const ControlledComboBox = <T extends FieldValues>(
   <Controller
     control={props.control}
     name={props.name}
+    rules={props.rules}
     render={(p) => (
       <UncontrolledCombobox
         options={props.comboboxProps.options}
@@ -144,4 +148,4 @@ export const ControlledComboBox = <T extends FieldValues>(
       />
     )}
   />
-)
+  )

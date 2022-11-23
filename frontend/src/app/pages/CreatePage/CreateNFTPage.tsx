@@ -31,6 +31,7 @@ import MintModal, {
   SuccessBody
 } from '../../components/Modal/Modal'
 import { FormControl } from '../../UIkit/Form/FormControl'
+import { useModalProperties } from './hooks/useModalProperties'
 
 const Description = styled('p', {
   fontSize: '12px',
@@ -104,8 +105,8 @@ const CreateNftPage = observer(() => {
     []
   )
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [modalBody, setModalBody] = useState<JSX.Element>()
+  const { modalBody, modalOpen, setModalBody, setModalOpen } =
+    useModalProperties()
 
   const {
     createNft,
@@ -140,13 +141,13 @@ const CreateNftPage = observer(() => {
 
   useAfterDidMountEffect(() => {
     if (isNftLoading) {
-      setIsModalOpen(true)
+      setModalOpen(true)
       setModalBody(<InProgressBody text='NFT is being minted' />)
     } else if (nftError) {
-      setIsModalOpen(true)
+      setModalOpen(true)
       setModalBody(<ErrorBody message={extractMessageFromError(nftError)} />)
     } else if (nftResult) {
-      setIsModalOpen(true)
+      setModalOpen(true)
       setModalBody(
         <SuccessBody
           buttonText='View NFT'
@@ -162,10 +163,10 @@ const CreateNftPage = observer(() => {
         handleClose={() => {
           setIsNftLoading(false)
           setNftError(undefined)
-          setIsModalOpen(false)
+          setModalOpen(false)
         }}
         body={modalBody ?? <></>}
-        open={isModalOpen}
+        open={modalOpen}
       />
       <PageLayout css={{ paddingBottom: '$4' }}>
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -209,6 +210,7 @@ const CreateNftPage = observer(() => {
                   options: collectionOptions,
                   isLoading: isCollectionLoading
                 }}
+                rules={{ required: true }}
               />
               <NavLink to={'../collection'}>
                 <AddCollectionButton>
