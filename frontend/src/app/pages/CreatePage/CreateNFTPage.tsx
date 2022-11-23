@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { styled } from '../../../styles'
 import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
@@ -19,6 +19,10 @@ import {
 import PlusIcon from './img/plus-icon.svg'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { observer } from 'mobx-react-lite'
+import { useCollectionAndTokenListStore } from '../../hooks'
+import { toJS } from 'mobx'
+import { useAccount } from 'wagmi'
 
 const Description = styled('p', {
   fontSize: '12px',
@@ -79,7 +83,27 @@ export interface CreateNFTForm {
   description: string
 }
 
-export default function CreateNftPage() {
+const CreateNftPage = observer(() => {
+  const { address } = useAccount()
+  const {
+    collections,
+    isLoading,
+    isLoaded
+  } = useCollectionAndTokenListStore(address)
+  const [collectionOptions, setCollectionOptions] = useState<ComboBoxOption[]>([])
+
+  useEffect(() => {
+    if (!isLoaded) return
+
+    setCollectionOptions(
+      toJS(collections).map((collection) => ({
+        id: collection.address ?? '',
+        title: collection.name ?? ''
+      }))
+    )
+    console.log('collections loaded!', toJS(collections))
+  }, [isLoaded])
+
   const {
     register,
     handleSubmit,
@@ -126,10 +150,7 @@ export default function CreateNftPage() {
               name='collection'
               control={control}
               comboboxProps={{
-                options: [
-                  { title: 'first collection', id: '1' },
-                  { title: 'second collection', id: '2' }
-                ]
+                options: collectionOptions
               }}
             />
             <NavLink to={'../collection'}>
@@ -165,4 +186,6 @@ export default function CreateNftPage() {
       </Form>
     </PageLayout>
   )
-}
+})
+
+export default CreateNftPage
