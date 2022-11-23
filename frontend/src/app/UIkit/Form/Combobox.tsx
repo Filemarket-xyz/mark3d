@@ -1,10 +1,18 @@
+/* eslint-disable multiline-ternary */
 import * as React from 'react'
 import { useAutocomplete } from '@mui/base/AutocompleteUnstyled'
 import { styled } from '../../../styles'
 import PostfixedInput from './PostfixedInput'
 import bottomArrow from './img/arrow-bottom.svg'
-import { Control, Controller, ControllerRenderProps, FieldValues, Path } from 'react-hook-form'
+import {
+  Control,
+  Controller,
+  ControllerRenderProps,
+  FieldValues,
+  Path
+} from 'react-hook-form'
 import { AutocompleteChangeReason } from '@mui/material'
+import { Loading } from '@nextui-org/react'
 
 const Listbox = styled('ul', {
   maxWidth: '600px',
@@ -34,6 +42,13 @@ const Listbox = styled('ul', {
   }
 })
 
+const LoadingContainer = styled('div', {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: '$4'
+})
+
 export interface ComboBoxOption {
   title: string
   id: string
@@ -48,6 +63,7 @@ interface ComboboxProps<T extends FieldValues> {
     reason: AutocompleteChangeReason
   ) => void
   otherFieldProps?: ControllerRenderProps<T, Path<T>>
+  isLoading?: boolean
 }
 
 function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
@@ -66,6 +82,31 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
     onChange: props.onChange
   })
 
+  const ContentLoaded = () => {
+    return (
+      <>
+        {(groupedOptions as typeof props.options).map((option, index) => (
+          <li {...getOptionProps({ option, index })} key={option.id}>
+            {option.title}
+          </li>
+        ))}
+      </>
+    )
+  }
+
+  const ContentLoading = () => {
+    return (
+      <LoadingContainer>
+        <Loading size='xl' type='points' />
+      </LoadingContainer>
+    )
+  }
+
+  const Content = (): JSX.Element => {
+    if (props.isLoading) return <ContentLoading />
+    return <ContentLoaded />
+  }
+
   return (
     <div>
       <div {...getRootProps()}>
@@ -75,15 +116,9 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
           inputProps={getInputProps()}
         />
       </div>
-      {groupedOptions.length > 0 && (
-        <Listbox {...getListboxProps()}>
-          {(groupedOptions as typeof props.options).map((option, index) => (
-            <li {...getOptionProps({ option, index })} key={option.id}>
-              {option.title}
-            </li>
-          ))}
-        </Listbox>
-      )}
+      {groupedOptions.length > 0 && <Listbox {...getListboxProps()}>
+        <Content />
+      </Listbox>}
     </div>
   )
 }
@@ -94,7 +129,9 @@ export interface ControlledComboboxProps<T extends FieldValues> {
   name: Path<T>
 }
 
-export const ControlledComboBox = <T extends FieldValues>(props: ControlledComboboxProps<T>) => (
+export const ControlledComboBox = <T extends FieldValues>(
+  props: ControlledComboboxProps<T>
+) => (
   <Controller
     control={props.control}
     name={props.name}

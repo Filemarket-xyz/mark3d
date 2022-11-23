@@ -150,7 +150,8 @@ const CreateNftPage = observer(() => {
               name='collection'
               control={control}
               comboboxProps={{
-                options: collectionOptions
+                options: collectionOptions,
+                isLoading
               }}
             />
             <NavLink to={'../collection'}>
