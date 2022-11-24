@@ -7,6 +7,7 @@ import assert from 'assert'
 import { assertContract, assertSigner } from '../utils/assert'
 import { mark3dConfig } from '../../config/mark3d'
 import { useCollectionContract } from './useCollectionContract'
+import { useAccount } from 'wagmi'
 
 /**
  * Sets public key in a transfer process
@@ -15,6 +16,7 @@ import { useCollectionContract } from './useCollectionContract'
  */
 export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFullId>) {
   const { contract, signer } = useCollectionContract()
+  const { address } = useAccount()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
   const factory = useHiddenFileProcessorFactory()
   const setPublicKey = useCallback(wrapPromise(async () => {
@@ -22,13 +24,16 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
     assert(tokenId, 'tokenId is not provided')
     assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
-    const buyer = await factory.getBuyer({ collectionAddress, tokenId })
+    assert(address, 'need to connect wallet')
+    const tokenFullId = { collectionAddress, tokenId }
+    const buyer = await factory.getBuyer(address, tokenFullId)
+    await factory.registerTokenFullId(address, buyer, tokenFullId)
     const publicKey = await buyer.initBuy()
     const result = await contract.setTransferPublicKey(
       BigNumber.from(tokenId),
       publicKey as `0x${string}`
     )
     return await result.wait()
-  }), [contract, signer, collectionAddress, tokenId])
+  }), [contract, signer, address, collectionAddress, tokenId])
   return { ...statuses, setPublicKey }
 }

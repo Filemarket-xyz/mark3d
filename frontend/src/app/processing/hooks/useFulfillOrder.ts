@@ -7,6 +7,7 @@ import { useHiddenFileProcessorFactory } from './useHiddenFileProcessorFactory'
 import { mark3dConfig } from '../../config/mark3d'
 import { TokenFullId } from '../types'
 import assert from 'assert'
+import { useAccount } from 'wagmi'
 
 /**
  * Fulfills an existing order.
@@ -15,6 +16,7 @@ import assert from 'assert'
  */
 export function useFulfillOrder({ collectionAddress, tokenId }: Partial<TokenFullId>) {
   const { contract, signer } = useExchangeContract()
+  const { address } = useAccount()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
   const factory = useHiddenFileProcessorFactory()
   const fulfillOrder = useCallback(wrapPromise(async () => {
@@ -22,7 +24,10 @@ export function useFulfillOrder({ collectionAddress, tokenId }: Partial<TokenFul
     assert(tokenId, 'tokenId is not provided')
     assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
-    const buyer = await factory.getBuyer({ collectionAddress, tokenId })
+    assert(address, 'need to connect wallet')
+    const tokenFullId = { collectionAddress, tokenId }
+    const buyer = await factory.getBuyer(address, tokenFullId)
+    await factory.registerTokenFullId(address, buyer, tokenFullId)
     const publicKey = await buyer.initBuy()
     console.log('collectionAddress', collectionAddress, 'publicKey', publicKey, 'tokenId', tokenId)
     const result = await contract.fulfillOrder(

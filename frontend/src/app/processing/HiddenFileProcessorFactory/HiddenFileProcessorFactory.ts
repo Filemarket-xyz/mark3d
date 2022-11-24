@@ -8,24 +8,29 @@ import { TokenIdStorage } from '../TokenIdStorage'
 import { LocalStorageProvider } from '../StorageProvider'
 import { StatefulCryptoProvider } from '../StatefulCryptoProvider'
 import { NoopStorageSecurityProvider } from '../StorageSecurityProvider'
+import { utils } from 'ethers/lib.esm'
 
 export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
-  readonly storage: ISecureStorage
-  readonly tokenIdStorage: TokenIdStorage
+  readonly storages: Record<string, ISecureStorage> = Object.create(null)
+  readonly tokenIdStorages: Record<string, TokenIdStorage> = Object.create(null)
 
-  private readonly owners: Record<string, IHiddenFileOwner> = Object.create(null)
-  private readonly buyers: Record<string, IHiddenFileBuyer> = Object.create(null)
+  private readonly owners: Record<string, Record<string, IHiddenFileOwner>> = Object.create(null)
+  private readonly buyers: Record<string, Record<string, IHiddenFileBuyer>> = Object.create(null)
 
-  constructor() {
-    const storageProvider = new LocalStorageProvider('mark3d')
-    this.storage = new SecureStorage(storageProvider)
-    this.tokenIdStorage = new TokenIdStorage(this.storage)
-    void this.setStorageSecurityProvider()
-  }
-
-  private async setStorageSecurityProvider() {
-    const securityProvider = new NoopStorageSecurityProvider()
-    await this.storage.setSecurityProvider(securityProvider)
+  private async getStorages(account: string) {
+    account = utils.getAddress(account)
+    let storage = this.storages[account]
+    let tokenIdStorage = this.tokenIdStorages[account]
+    if (!storage || !tokenIdStorage) {
+      const storageProvider = new LocalStorageProvider(`mark3d/${utils.getAddress(account)}`)
+      storage = new SecureStorage(storageProvider)
+      tokenIdStorage = new TokenIdStorage(storage)
+      const securityProvider = new NoopStorageSecurityProvider()
+      await storage.setSecurityProvider(securityProvider)
+      this.storages[account] = storage
+      this.tokenIdStorages[account] = tokenIdStorage
+    }
+    return { storage, tokenIdStorage }
   }
 
   async buyerToOwner(buyer: IHiddenFileBuyer): Promise<IHiddenFileOwner> {
@@ -35,37 +40,52 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
     )
   }
 
-  async getBuyer(tokenFullId: TokenFullId): Promise<IHiddenFileBuyer> {
-    const surrogateId = await this.tokenIdStorage.getSurrogateIdOrCreate(tokenFullId)
-    const existing = this.buyers[surrogateId]
+  async getBuyer(account: string, tokenFullId: TokenFullId): Promise<IHiddenFileBuyer> {
+    account = utils.getAddress(account)
+    const { tokenIdStorage, storage } = await this.getStorages(account)
+    const surrogateId = await tokenIdStorage.getSurrogateIdOrCreate(tokenFullId)
+    const accountBuyers = this.buyers[account]
+    const existing = accountBuyers?.[surrogateId]
     if (existing) {
       return existing
     } else {
       const buyer = new HiddenFileBuyer(
-        new StatefulCryptoProvider(surrogateId, this.storage),
+        new StatefulCryptoProvider(surrogateId, storage),
         surrogateId
       )
-      this.buyers[surrogateId] = buyer
+      this.buyers[account] = {
+        ...accountBuyers,
+        [surrogateId]: buyer
+      }
       return buyer
     }
   }
 
-  async getOwner(tokenFullId: TokenFullId | undefined): Promise<IHiddenFileOwner> {
-    const surrogateId = await this.tokenIdStorage.getSurrogateIdOrCreate(tokenFullId)
-    const existing = this.owners[surrogateId]
+  async getOwner(account: string, tokenFullId: TokenFullId | undefined): Promise<IHiddenFileOwner> {
+    account = utils.getAddress(account)
+    const { tokenIdStorage, storage } = await this.getStorages(account)
+    const surrogateId = await tokenIdStorage.getSurrogateIdOrCreate(tokenFullId)
+    const accountOwners = this.owners[account]
+    const existing = accountOwners?.[surrogateId]
     if (existing) {
       return existing
     } else {
       const owner = new HiddenFileOwner(
-        new StatefulCryptoProvider(surrogateId, this.storage),
+        new StatefulCryptoProvider(surrogateId, storage),
         surrogateId
       )
-      this.owners[surrogateId] = owner
+      this.owners[account] = {
+        ...accountOwners,
+        [surrogateId]: owner
+      }
       return owner
     }
   }
 
-  async registerTokenFullId(hiddenFileProcessor: IHiddenFileBase, tokenFullId: TokenFullId): Promise<void> {
-    await this.tokenIdStorage.setTokenFullId(hiddenFileProcessor.surrogateId, tokenFullId)
+  async registerTokenFullId(
+    account: string, hiddenFileProcessor: IHiddenFileBase, tokenFullId: TokenFullId
+  ): Promise<void> {
+    const { tokenIdStorage } = await this.getStorages(account)
+    await tokenIdStorage.setTokenFullId(hiddenFileProcessor.surrogateId, tokenFullId)
   }
 }
