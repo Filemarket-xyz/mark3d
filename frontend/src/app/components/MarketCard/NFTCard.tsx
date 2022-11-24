@@ -60,7 +60,8 @@ export const UserContainer = styled('div', {
   display: 'flex',
   alignItems: 'center',
   gap: '$1',
-  color: '$gray500'
+  color: '$gray500',
+  height: 20
 })
 
 export const UserImg = styled('img', {
