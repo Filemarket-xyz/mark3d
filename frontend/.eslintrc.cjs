@@ -8,7 +8,7 @@ module.exports = {
     'standard-with-typescript',
     'plugin:storybook/recommended'
   ],
-  ignorePatterns: ['vite.config.ts','**/node_modules', 'src/abi/*'],
+  ignorePatterns: ['vite.config.ts', '**/node_modules', 'src/abi/*'],
   overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
@@ -28,6 +28,7 @@ module.exports = {
     '@typescript-eslint/strict-boolean-expressions': 'off',
     '@typescript-eslint/no-unnecessary-type-assertion': 'off',
     '@typescript-eslint/no-misused-promises': 'off',
+    '@typescript-eslint/prefer-nullish-coalescing': 'off',
     'max-len': [
       'warn',
       {
@@ -39,7 +40,7 @@ module.exports = {
     ],
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/no-dynamic-delete': 'off',
-    'no-void': 'off',
+    'no-void': 'off'
   },
   settings: {
     react: {
