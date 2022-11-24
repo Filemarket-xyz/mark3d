@@ -1,8 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { styled } from '../../../styles'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
-import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
 import { Button, PageLayout, textVariant } from '../../UIkit'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
@@ -85,12 +84,12 @@ export default function CreateCollectionPage() {
   const { modalBody, setModalBody, modalOpen, setModalOpen } =
     useModalProperties()
 
-  useAfterDidMountEffect(() => {
+  useEffect(() => {
+    if (!(result || error || isLoading)) return
+
     if (isLoading) {
-      void setModalOpen(true)
       void setModalBody(<InProgressBody text='Collection is being minted' />)
     } else if (result) {
-      void setModalOpen(true)
       void setModalBody(
         <SuccessNavBody
           buttonText='View collection'
@@ -98,10 +97,10 @@ export default function CreateCollectionPage() {
         />
       )
     } else if (error) {
-      void setModalOpen(true)
       void setModalBody(<ErrorBody message={extractMessageFromError(error)} />)
     }
-    console.log(isLoading, error, result)
+
+    setModalOpen(true)
   }, [error, isLoading, result])
 
   const [textareaLength, setTextareaLength] = useState(
