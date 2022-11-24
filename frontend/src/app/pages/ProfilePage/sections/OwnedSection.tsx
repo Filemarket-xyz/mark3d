@@ -1,3 +1,4 @@
+import { Skeleton } from '@mui/material'
 import { toJS } from 'mobx'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
@@ -7,9 +8,24 @@ import { useCollectionAndTokenListStore } from '../../../hooks'
 import { getIHttpLinkFromIpfsString } from '../../CollectionPage/sections/NftSection'
 import { CardsContainer } from '../../MarketPage/NftSection'
 
+const CardsPlaceholder = () => (
+  <>
+    {new Array<number>(5).fill(0).map((_, i) => (
+      <Skeleton
+        sx={{ borderRadius: '16px' }}
+        variant='rectangular'
+        width={259}
+        height={324}
+        key={i}
+      />
+    ))}
+  </>
+)
+
 export const OwnedSection = observer(() => {
   const { profileId } = useParams<{ profileId: `0x${string}` }>()
-  const { tokens, isLoaded } = useCollectionAndTokenListStore(profileId)
+  const { tokens, isLoaded, isLoading } =
+    useCollectionAndTokenListStore(profileId)
 
   const [cards, setCards] = useState<NFTCardProps[]>([])
 
@@ -30,13 +46,14 @@ export const OwnedSection = observer(() => {
       }))
     )
   }, [isLoaded])
-  console.log(toJS(tokens))
 
   return (
     <CardsContainer>
-      {cards.map((card, i) => (
-        <NFTCard {...card} key={i} />
-      ))}
+      {isLoading ? (
+        <CardsPlaceholder />
+      ) : (
+        cards.map((card, i) => <NFTCard {...card} key={i} />)
+      )}
     </CardsContainer>
   )
 })

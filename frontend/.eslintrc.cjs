@@ -29,6 +29,7 @@ module.exports = {
     '@typescript-eslint/no-unnecessary-type-assertion': 'off',
     '@typescript-eslint/no-misused-promises': 'off',
     '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    'multiline-ternary': 'off',
     'max-len': [
       'warn',
       {
