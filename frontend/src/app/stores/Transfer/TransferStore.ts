@@ -9,7 +9,7 @@ import { IHiddenFilesTokenEventsListener } from '../../processing'
 import { BigNumber } from 'ethers'
 
 /**
- * Stores only ACTIVE (i.e. created and not finished/cancelled) order state
+ * Stores only ACTIVE (i.e. created and not finished/cancelled) transfer state
  */
 export class TransferStore implements IStoreRequester,
   IActivateDeactivate<[string, string]>, IHiddenFilesTokenEventsListener {
@@ -32,11 +32,11 @@ export class TransferStore implements IStoreRequester,
   }
 
   private request(tokenFullId: TokenFullId) {
-    storeRequest<Transfer>(
+    storeRequest<Transfer | null>(
       this,
       api.transfers.transfersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
       resp => {
-        this.data = resp
+        this.data = resp ?? undefined
       })
   }
 

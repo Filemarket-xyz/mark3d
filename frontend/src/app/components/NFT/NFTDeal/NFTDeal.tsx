@@ -13,7 +13,7 @@ export interface NFTDealProps {
   tokenFullId: TokenFullId
   transfer?: Transfer
   order?: Order
-  reFetchOrder?: () => void
+  reFetchOrder?: () => void // currently order is refreshed only when it's created and cancelled
 }
 
 const DealContainer = styled('div', {

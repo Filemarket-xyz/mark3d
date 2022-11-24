@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom'
 import { Params } from '../../utils/router/Params'
 import { makeTokenFullId } from '../../processing/utils/id'
 import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
+import { useOrderStore } from '../../hooks/useOrderStore'
 
 const NFTPreviewContainer = styled('div', {
   paddingTop: '$layout$navbarheight',
@@ -126,7 +127,7 @@ const NFTPage = observer(() => {
   const { collectionAddress, tokenId } = useParams<Params>()
   const tokenFullId = useMemo(() => makeTokenFullId(collectionAddress, tokenId), [collectionAddress, tokenId])
   const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
-  const transfer = transferStore.data
+  const orderStore = useOrderStore(collectionAddress, tokenId)
   return (
     <>
       <NFTPreviewContainer></NFTPreviewContainer>
@@ -149,9 +150,13 @@ const NFTPage = observer(() => {
         <GridBlock>
           {tokenFullId && (
             <NFTDeal
-              transfer={transfer}
+              transfer={transferStore.data}
+              order={orderStore.data}
               tokenFullId={tokenFullId}
-              reFetchOrder={() => transferStore.reload()}
+              reFetchOrder={() => {
+                orderStore.reload()
+                transferStore.reload()
+              }}
             />
           )}
         </GridBlock>

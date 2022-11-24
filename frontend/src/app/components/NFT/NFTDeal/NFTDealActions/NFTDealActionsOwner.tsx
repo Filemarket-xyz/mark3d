@@ -48,7 +48,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
         <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={ownerStatusChanged}/>
       </HideAction>
       <HideAction hide={!transfer || !permissions.canCancelOrder(transfer)}>
-        <ButtonCancelOrder tokenFullId={tokenFullId}/>
+        <ButtonCancelOrder tokenFullId={tokenFullId} callback={reFetchOrder}/>
       </HideAction>
       <HideAction hide={!transfer || !permissions.canCancel(transfer)}>
         <ButtonCancelTransfer tokenFullId={tokenFullId}/>
