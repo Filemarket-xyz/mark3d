@@ -35,9 +35,9 @@ const generateHoverStylesForCard = () => {
     color: '$blue900',
     transitionDelay: '0s'
   }
-
   hoverStyles['&:hover'] = {
-    background: '$gradients$main',
+    border: '2px solid transparent',
+    background: 'linear-gradient($white 0 0) padding-box, $gradients$main border-box',
     transitionDelay: '0s'
   }
 
