@@ -63,6 +63,7 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
       <ButtonsContainer>
         <NFTDealActions
           transfer={transfer}
+          order={order}
           tokenFullId={tokenFullId}
           reFetchOrder={reFetchOrder}
         />

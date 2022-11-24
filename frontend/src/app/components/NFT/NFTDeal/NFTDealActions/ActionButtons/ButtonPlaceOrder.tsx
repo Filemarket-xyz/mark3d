@@ -1,10 +1,11 @@
-import { FC } from 'react'
+import { FC, useCallback, useState } from 'react'
 import { usePlaceOrder } from '../../../../../processing/hooks'
 import { TokenFullId } from '../../../../../processing/types'
-import { BigNumber } from 'ethers'
 import { Button } from '../../../../../UIkit'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
-import MintModal from '../../../../Modal/Modal'
+import MintModal, { ModalTitle } from '../../../../Modal/Modal'
+import { Modal } from '@nextui-org/react'
+import { OrderForm, OrderFormValue } from '../../OrderForm'
 
 export interface ButtonPlaceOrderProps {
   tokenFullId: TokenFullId
@@ -12,7 +13,11 @@ export interface ButtonPlaceOrderProps {
 }
 
 export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callback }) => {
-  const { placeOrder, ...statuses } = usePlaceOrder(tokenFullId, BigNumber.from('1337'))
+  const [modalOpen, setModalOpen] = useState<boolean>()
+  const closeModal = useCallback(() => setModalOpen(false), [modalOpen])
+  const openModal = useCallback(() => setModalOpen(true), [modalOpen])
+  const [form, setForm] = useState<OrderFormValue>()
+  const { placeOrder, ...statuses } = usePlaceOrder(tokenFullId, form?.price)
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -21,14 +26,28 @@ export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callb
   })
   return (
     <>
+      <Modal
+        closeButton
+        open={modalOpen}
+        onClose={closeModal}
+      >
+        <ModalTitle>Order</ModalTitle>
+        <Modal.Body>
+          <OrderForm
+            preSubmit={setForm}
+            onSubmit={async () => {
+              closeModal()
+              await placeOrder()
+              callback?.()
+            }}
+          />
+        </Modal.Body>
+      </Modal>
       <MintModal {...modalProps}/>
       <Button
         secondary
         fullWidth
-        onPress={async () => {
-          await placeOrder()
-          callback?.()
-        }}
+        onPress={openModal}
         isDisabled={isLoading}
       >
         Place order

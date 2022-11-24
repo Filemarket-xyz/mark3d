@@ -28,7 +28,7 @@ export function usePlaceOrder({ collectionAddress, tokenId }: Partial<TokenFullI
     } else {
       throw Error('collectionAddress or tokenId or price is undefined')
     }
-  }), [contract, signer, wrapPromise, collectionAddress, tokenId])
+  }), [contract, signer, wrapPromise, collectionAddress, tokenId, price])
   return {
     ...statuses,
     placeOrder

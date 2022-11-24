@@ -1,10 +1,10 @@
 import { Loading, Modal } from '@nextui-org/react'
 import React, { FC, ReactNode } from 'react'
 import { styled } from '../../../styles'
-import { Button, NavLink, textVariant, Txt } from '../../UIkit'
+import { Button, NavLink, textVariant } from '../../UIkit'
 import { stringifyError } from '../../utils/error'
 
-const ModalTitle = styled('h3', {
+export const ModalTitle = styled('h3', {
   ...textVariant('primary1'),
   fontSize: '$h5',
   color: '$blue900',
@@ -31,17 +31,13 @@ export const InProgressBody = ({ text }: InProcessBodyProps) => (
   </>
 )
 
-const SuccessTitle = () => (
-  <ModalTitle css={{ paddingTop: 0, marginBottom: '$4' }}>Success</ModalTitle>
-)
-
 interface SuccessNavBodyProps {
   buttonText: string
   link: string
 }
 export const SuccessNavBody = ({ buttonText, link }: SuccessNavBodyProps) => (
   <>
-    <SuccessTitle/>
+    <ModalTitle css={{ marginBottom: '$4' }}>Success</ModalTitle>
     <NavLink
       to={link}
       css={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -62,8 +58,8 @@ const Center = styled('div', {
 
 export const SuccessOkBody: FC<SuccessOkBodyProps> = ({ description, handleClose }) => (
   <>
-    <SuccessTitle/>
-    <Txt>{description}</Txt>
+    <ModalTitle>Success</ModalTitle>
+    <ModalP>{description}</ModalP>
     {handleClose && (
       <Center>
         <Button secondary onPress={handleClose}>Ok</Button>
@@ -91,7 +87,7 @@ export const extractMessageFromError = (error: any) => {
 
 export const ErrorBody = ({ message }: { message: string }) => (
   <>
-    <ModalTitle css={{ paddingTop: 0 }}>Error</ModalTitle>
+    <ModalTitle>Error</ModalTitle>
     <ModalP css={{ color: '$red', wordBreak: 'break-all' }}>{message}</ModalP>
   </>
 )
@@ -108,7 +104,6 @@ export default function MintModal({
   handleClose,
   open,
   body,
-  header,
   footer
 }: MintModalProps) {
   return (
@@ -118,7 +113,6 @@ export default function MintModal({
       open={open}
       onClose={handleClose}
     >
-      <Modal.Header>{header}</Modal.Header>
       <Modal.Body>{body}</Modal.Body>
       <Modal.Footer>{footer}</Modal.Footer>
     </Modal>

@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { Transfer } from '../../../../../swagger/Api'
+import { Order, Transfer } from '../../../../../swagger/Api'
 import { TokenFullId } from '../../../../processing/types'
 import { FC } from 'react'
 import { transferPermissions } from '../../../../utils/transfer/status'
@@ -14,6 +14,7 @@ import { HideAction } from './HideAction'
 export interface NFTDealActionsBuyerProps {
   tokenFullId: TokenFullId
   transfer?: Transfer
+  order?: Order
   ownerStatusChanged?: () => void
 }
 
@@ -21,13 +22,14 @@ const permissions = transferPermissions.buyer
 
 export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
   transfer,
+  order,
   tokenFullId,
   ownerStatusChanged
 }) => {
   return (
       <>
         <HideAction hide={!transfer || !permissions.canFulfillOrder(transfer)}>
-          <ButtonFulfillOrder tokenFullId={tokenFullId}/>
+          <ButtonFulfillOrder tokenFullId={tokenFullId} order={order}/>
         </HideAction>
         <HideAction hide={!transfer || !permissions.canSetPublicKey(transfer)}>
           <ButtonSetPublicKeyTransfer tokenFullId={tokenFullId}/>

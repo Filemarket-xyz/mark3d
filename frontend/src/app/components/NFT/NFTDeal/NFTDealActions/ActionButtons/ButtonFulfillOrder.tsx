@@ -4,14 +4,16 @@ import { useFulfillOrder } from '../../../../../processing/hooks'
 import { Button } from '../../../../../UIkit'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import MintModal from '../../../../Modal/Modal'
+import { Order } from '../../../../../../swagger/Api'
 
 export interface ButtonFulfillOrderProps {
   tokenFullId: TokenFullId
+  order?: Order
   callback?: () => void
 }
 
-export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = ({ tokenFullId, callback }) => {
-  const { fulfillOrder, ...statuses } = useFulfillOrder(tokenFullId)
+export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = ({ tokenFullId, order, callback }) => {
+  const { fulfillOrder, ...statuses } = useFulfillOrder(tokenFullId, order?.price)
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,

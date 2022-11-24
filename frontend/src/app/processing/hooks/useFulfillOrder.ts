@@ -1,6 +1,6 @@
 import { useExchangeContract } from './useExchangeContract'
 import { useStatusState } from '../../hooks'
-import { BigNumber, ContractReceipt } from 'ethers'
+import { BigNumber, BigNumberish, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { assertContract, assertSigner } from '../utils/assert'
 import { useHiddenFileProcessorFactory } from './useHiddenFileProcessorFactory'
@@ -13,8 +13,9 @@ import { useAccount } from 'wagmi'
  * Fulfills an existing order.
  * @param collectionAddress
  * @param tokenId assigned to a token by the mint function
+ * @param price an integer price
  */
-export function useFulfillOrder({ collectionAddress, tokenId }: Partial<TokenFullId>) {
+export function useFulfillOrder({ collectionAddress, tokenId }: Partial<TokenFullId>, price?: BigNumberish) {
   const { contract, signer } = useExchangeContract()
   const { address } = useAccount()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
@@ -25,6 +26,7 @@ export function useFulfillOrder({ collectionAddress, tokenId }: Partial<TokenFul
     assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
     assert(address, 'need to connect wallet')
+    assert(price, 'price is not provided')
     const tokenFullId = { collectionAddress, tokenId }
     const buyer = await factory.getBuyer(address, tokenFullId)
     await factory.registerTokenFullId(address, buyer, tokenFullId)
@@ -40,7 +42,7 @@ export function useFulfillOrder({ collectionAddress, tokenId }: Partial<TokenFul
       publicKey as `0x${string}`,
       BigNumber.from(tokenId),
       {
-        value: BigNumber.from('1337')
+        value: BigNumber.from(price)
       }
     )
     return await result.wait()
