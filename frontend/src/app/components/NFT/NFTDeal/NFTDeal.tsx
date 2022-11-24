@@ -7,6 +7,7 @@ import { Order, Transfer } from '../../../../swagger/Api'
 import { NFTDealPrice } from './NFTDealPrice'
 import { TokenFullId } from '../../../processing/types'
 import { NFTDealActions } from './NFTDealActions/NFTDealActions'
+import { useSyncAESFileKey } from '../../../processing/hooks/useSyncAESFileKey'
 
 export interface NFTDealProps {
   tokenFullId: TokenFullId
@@ -46,6 +47,7 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
   tokenFullId,
   reFetchOrder
 }) => {
+  useSyncAESFileKey(tokenFullId, transfer?.encryptedPassword)
   return (
     <DealContainer>
       <DealContainerInfo>

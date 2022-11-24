@@ -1,6 +1,6 @@
 import { useExchangeContract } from './useExchangeContract'
 import { useStatusState } from '../../hooks'
-import { BigNumber, ContractReceipt, ethers } from 'ethers'
+import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { assertContract, assertSigner } from '../utils/assert'
 import { useHiddenFileProcessorFactory } from './useHiddenFileProcessorFactory'
@@ -24,10 +24,14 @@ export function useFulfillOrder({ collectionAddress, tokenId }: Partial<TokenFul
     assertSigner(signer)
     const buyer = await factory.getBuyer({ collectionAddress, tokenId })
     const publicKey = await buyer.initBuy()
+    console.log('collectionAddress', collectionAddress, 'publicKey', publicKey, 'tokenId', tokenId)
     const result = await contract.fulfillOrder(
       collectionAddress as `0x${string}`,
-      ethers.utils.hexlify(Buffer.from(publicKey, 'utf-8')) as `0x${string}`,
-      BigNumber.from(tokenId)
+      publicKey as `0x${string}`,
+      BigNumber.from(tokenId),
+      {
+        value: BigNumber.from('1337')
+      }
     )
     return await result.wait()
   }), [contract, signer, collectionAddress, tokenId])

@@ -4,10 +4,9 @@ export const AESEncoding = 'base64' as const
 export type AESKey = string
 
 // We are not using higher abstractions specific to the libraries, cos libraries might change
-// RSA key is encoded as pkcs8 string
-export const RSAEncoding = 'pkcs8' as const
-export type RSAPublicKey = string
-export type RSAPrivateKey = string
+// RSA key is encoded as hex string, obtained by hex encoding result of pkcs8 or spki key export
+export type RSAPublicKey = string // 0x12...
+export type RSAPrivateKey = string // 0x12...
 
 export interface RSAKeyPair {
   pub: RSAPublicKey // public is reserved keyword

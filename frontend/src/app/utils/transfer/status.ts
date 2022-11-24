@@ -2,7 +2,7 @@ import { Transfer, TransferStatus } from '../../../swagger/Api'
 import { mark3dConfig } from '../../config/mark3d'
 
 export const transferStatusInfo = (transfer?: Transfer) =>
-  transfer?.statuses && transfer.statuses[transfer.statuses.length - 1]
+  transfer?.statuses && transfer.statuses[0]
 
 export const transferStatus = (transfer?: Transfer) =>
   transferStatusInfo(transfer)?.status

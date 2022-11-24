@@ -9,6 +9,7 @@ import { ButtonFinalizeTransfer } from './ActionButtons/ButtonFinalizeTransfer'
 import { ButtonReportFraudTransfer } from './ActionButtons/ButtonReportFraudTransfer'
 import { ButtonCancelTransfer } from './ActionButtons/ButtonCancelTransfer'
 import { Button } from '../../../../UIkit'
+import { toJS } from 'mobx'
 
 export interface NFTDealActionsBuyerProps {
   tokenFullId: TokenFullId
@@ -24,6 +25,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
   ownerStatusChanged
 }) => {
   if (transfer) {
+    console.log('transfer', toJS(transfer))
     return (
       <>
         {permissions.canFulfillOrder(transfer) && (

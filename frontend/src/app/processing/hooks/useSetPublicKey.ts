@@ -1,6 +1,6 @@
 import { TokenFullId } from '../types'
 import { useStatusState } from '../../hooks'
-import { BigNumber, ContractReceipt, ethers } from 'ethers'
+import { BigNumber, ContractReceipt } from 'ethers'
 import { useHiddenFileProcessorFactory } from './useHiddenFileProcessorFactory'
 import { useCallback } from 'react'
 import assert from 'assert'
@@ -26,7 +26,7 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
     const publicKey = await buyer.initBuy()
     const result = await contract.setTransferPublicKey(
       BigNumber.from(tokenId),
-      ethers.utils.hexlify(Buffer.from(publicKey, 'utf-8')) as `0x${string}`
+      publicKey as `0x${string}`
     )
     return await result.wait()
   }), [contract, signer, collectionAddress, tokenId])

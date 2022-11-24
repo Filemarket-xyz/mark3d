@@ -13,6 +13,7 @@ import { ButtonCancelTransfer } from './ActionButtons/ButtonCancelTransfer'
 import { ButtonFinalizeTransfer } from './ActionButtons/ButtonFinalizeTransfer'
 import { ButtonApproveTransfer } from './ActionButtons/ButtonApproveTransfer'
 import { ButtonCancelOrder } from './ActionButtons/ButtonCancelOrder'
+import { toJS } from 'mobx'
 
 export interface NFTDealActionsOwnerProps {
   tokenFullId: TokenFullId
@@ -39,11 +40,11 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
     )
   }
   if (transfer) {
-    console.log('transfer', transfer)
+    console.log('transfer', toJS(transfer))
     return (
      <>
        {permissions.canApprove(transfer) && (
-         <ButtonApproveTransfer tokenFullId={tokenFullId}/>
+         <ButtonApproveTransfer tokenFullId={tokenFullId} transfer={transfer}/>
        )}
        {permissions.canFinalize(transfer) && (
          <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={ownerStatusChanged}/>

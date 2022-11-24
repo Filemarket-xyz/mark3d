@@ -118,7 +118,7 @@ export class TransferStore implements IStoreRequester,
   onTransferPublicKeySet(tokenId: BigNumber, publicKeyHex: string) {
     this.checkData(tokenId, data => {
       data.publicKey = publicKeyHex
-      data.statuses?.push({
+      data.statuses?.unshift({
         status: TransferStatus.PublicKeySet,
         timestamp: Date.now()
       })
@@ -128,7 +128,7 @@ export class TransferStore implements IStoreRequester,
   onTransferPasswordSet(tokenId: BigNumber, encryptedPasswordHex: string) {
     this.checkData(tokenId, data => {
       data.encryptedPassword = encryptedPasswordHex
-      data.statuses?.push({
+      data.statuses?.unshift({
         status: TransferStatus.PasswordSet,
         timestamp: Date.now()
       })
@@ -143,7 +143,7 @@ export class TransferStore implements IStoreRequester,
 
   onTransferFraudReported(tokenId: BigNumber) {
     this.checkData(tokenId, data => {
-      data.statuses?.push({
+      data.statuses?.unshift({
         status: TransferStatus.FraudReported,
         timestamp: Date.now()
       })
@@ -153,7 +153,7 @@ export class TransferStore implements IStoreRequester,
   onTransferFraudDecided(tokenId: BigNumber, approved: boolean) {
     this.checkData(tokenId, data => {
       data.fraudApproved = approved
-      data.statuses?.push({
+      data.statuses?.unshift({
         status: TransferStatus.Finished,
         timestamp: Date.now()
       })

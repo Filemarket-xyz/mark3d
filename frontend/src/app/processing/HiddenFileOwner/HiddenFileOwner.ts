@@ -33,7 +33,6 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     if (!key) {
       throw new NoAESKeyToSendBuyerError(this.surrogateId)
     }
-    // TODO: check encoding
-    return encryptRSA(Buffer.from(key), publicKey)
+    return await encryptRSA(Buffer.from(key.slice(2), 'hex'), publicKey)
   }
 }

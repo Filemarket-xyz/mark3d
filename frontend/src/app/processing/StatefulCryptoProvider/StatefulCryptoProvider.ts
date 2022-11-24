@@ -46,7 +46,7 @@ export class StatefulCryptoProvider implements IStatefulCryptoProvider {
     if (!key) {
       throw new NoRSAPrivateKeyToDecrypt(this.id)
     }
-    return decryptRSA(message, key)
+    return await decryptRSA(message, key)
   }
 
   async encryptAES(message: CryptoMessage): Promise<CryptoMessage> {
@@ -62,7 +62,7 @@ export class StatefulCryptoProvider implements IStatefulCryptoProvider {
     if (!key) {
       throw new NoRSAPublicKeyToEncrypt(this.id)
     }
-    return encryptRSA(message, key)
+    return await encryptRSA(message, key)
   }
 
   async genAESKey(): Promise<AESKey> {
