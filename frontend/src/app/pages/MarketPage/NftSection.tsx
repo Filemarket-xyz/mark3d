@@ -5,8 +5,6 @@ import { useParams } from 'react-router-dom'
 import { styled } from '../../../styles'
 import NFTCard, { NFTCardProps } from '../../components/MarketCard/NFTCard'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
-import nftImg from './img/cardImg.jpg'
-import userImg from './img/userImg.jpg'
 
 export const CardsContainer = styled('div', {
   display: 'flex',
@@ -41,13 +39,12 @@ const NftSection = observer(() => {
   useEffect(() => {
     if (!isLoaded) return
 
-    console.log(getIpfsCid(data[0].image ?? ''))
     setNFTs(
       toJS(data).map((token) => ({
         collection: 'some collection',
         imageURL: getIHttpLinkFromIpfsString(token.image ?? ''),
         price: 99,
-        title: 'some title',
+        title: token.name ?? '',
         user: {
           img: 'https://www.whatsappimages.in/wp-content/uploads/2021/07/Top-HD-sad-quotes-for-whatsapp-status-in-hindi-Pics-Images-Download-Free.gif',
           username: 'some username'
