@@ -31,7 +31,7 @@ const routes: RouteObject[] = [
     children: createRoutes
   },
   {
-    path: 'profile/:id',
+    path: 'profile/:profileId',
     element: <ProfilePage />,
     children: profileRoutes
   },
