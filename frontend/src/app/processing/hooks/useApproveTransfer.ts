@@ -5,31 +5,35 @@ import { useCallback } from 'react'
 import { useHiddenFileProcessorFactory } from './useHiddenFileProcessorFactory'
 import { assertContract, assertSigner } from '../utils/assert'
 import { mark3dConfig } from '../../config/mark3d'
-import { Transfer } from '../../../swagger/Api'
 import assert from 'assert'
+import { TokenFullId } from '../types'
+import { useAccount } from 'wagmi'
 
-export function useApproveTransfer(collectionAddress?: string, tokenId?: string, transfer?: Transfer) {
+export function useApproveTransfer({ collectionAddress, tokenId }: Partial<TokenFullId>, publicKey?: string) {
   const { contract, signer } = useCollectionContract(collectionAddress)
+  const { address } = useAccount()
   const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
   const factory = useHiddenFileProcessorFactory()
-
-  const publicKeyHex = transfer?.publicKey
-
   const approveTransfer = useCallback(wrapPromise(async () => {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
+    assert(address, 'need to connect wallet')
     assert(collectionAddress, 'collection address not provided')
     assert(tokenId, 'tokenId is not provided')
-    assert(publicKeyHex, 'publicKey was not set (or transfer object is null)')
-    const publicKey = Buffer.from(publicKeyHex.slice(2), 'hex').toString('utf8')
-    const owner = await factory.getOwner({ collectionAddress, tokenId })
+    assert(publicKey, 'publicKey was not set (or transfer object is null)')
+    if (!publicKey.startsWith('0x')) {
+      publicKey = `0x${publicKey}`
+    }
+    console.log('tokenFullId', { collectionAddress, tokenId })
+    const owner = await factory.getOwner(address, { collectionAddress, tokenId })
     const encryptedAESPassword = await owner.prepareFileAESKeyForBuyer(publicKey)
+    console.log('owner', 'publicKey', publicKey, 'encrypted password', utils.hexlify(encryptedAESPassword))
     const res = await contract.approveTransfer(
       BigNumber.from(tokenId),
       utils.hexlify(encryptedAESPassword) as `0x${string}`
     )
     return await res.wait()
-  }), [contract, signer, wrapPromise, publicKeyHex])
+  }), [contract, signer, address, wrapPromise, publicKey])
 
   return {
     ...statuses,

@@ -1,6 +1,6 @@
 import { IHiddenFileOwner } from './IHiddenFileOwner'
 import { IStatefulCryptoProvider } from '../StatefulCryptoProvider'
-import { CryptoMessage, DecryptResult, FileMeta, RSAPublicKey } from '../types'
+import { AESEncoding, CryptoMessage, DecryptResult, FileMeta, RSAPublicKey } from '../types'
 import { NoAESKeyToSendBuyerError } from './errors'
 import { encryptRSA } from '../utils'
 
@@ -33,7 +33,6 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     if (!key) {
       throw new NoAESKeyToSendBuyerError(this.surrogateId)
     }
-    // TODO: check encoding
-    return encryptRSA(Buffer.from(key), publicKey)
+    return await encryptRSA(Buffer.from(key, AESEncoding), publicKey)
   }
 }

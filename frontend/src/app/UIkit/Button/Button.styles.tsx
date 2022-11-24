@@ -57,7 +57,8 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
               background: '$gray100',
               color: '$gray400',
               fill: '$gray400',
-              cursor: 'not-allowed'
+              cursor: 'not-allowed',
+              border: '2px solid $gray300'
             }
           }
         },
@@ -79,6 +80,11 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             height: '36px',
             minWidth: 0,
             padding: '0 18px'
+          }
+        },
+        fullWidth: {
+          true: {
+            width: '100%'
           }
         },
         icon: {

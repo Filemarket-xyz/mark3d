@@ -1,15 +1,19 @@
 import Badge from '../../Badge/Badge'
 import creator from '../../../pages/NFTPage/img/creatorImg.jpg'
-import { Button } from '../../../UIkit'
 import React, { FC } from 'react'
 import { styled } from '../../../../styles'
 import { observer } from 'mobx-react-lite'
-import { Transfer } from '../../../../swagger/Api'
+import { Order, Transfer } from '../../../../swagger/Api'
+import { NFTDealPrice } from './NFTDealPrice'
+import { TokenFullId } from '../../../processing/types'
+import { NFTDealActions } from './NFTDealActions/NFTDealActions'
+import { useSyncAESFileKey } from '../../../processing/hooks/useSyncAESFileKey'
 
 export interface NFTDealProps {
+  tokenFullId: TokenFullId
   transfer?: Transfer
-  collectionAddress?: string
-  tokenId?: string
+  order?: Order
+  reFetchOrder?: () => void
 }
 
 const DealContainer = styled('div', {
@@ -31,7 +35,19 @@ const DealContainerInfo = styled('div', {
   }
 })
 
-export const NFTDeal: FC<NFTDealProps> = observer(() => {
+const ButtonsContainer = styled('div', {
+  display: 'flex',
+  justifyContent: 'stretch',
+  gap: '$4'
+})
+
+export const NFTDeal: FC<NFTDealProps> = observer(({
+  transfer,
+  order,
+  tokenFullId,
+  reFetchOrder
+}) => {
+  useSyncAESFileKey(tokenFullId, transfer?.encryptedPassword)
   return (
     <DealContainer>
       <DealContainerInfo>
@@ -40,10 +56,17 @@ export const NFTDeal: FC<NFTDealProps> = observer(() => {
           imgUrl={creator}
           content={{ title: 'Creator', value: 'Underkong' }}
         />
+        {order && (
+          <NFTDealPrice price={order.price ?? '0'}/>
+        )}
       </DealContainerInfo>
-      <Button primary css={{ width: '100%' }}>
-        Buy now
-      </Button>
+      <ButtonsContainer>
+        <NFTDealActions
+          transfer={transfer}
+          tokenFullId={tokenFullId}
+          reFetchOrder={reFetchOrder}
+        />
+      </ButtonsContainer>
     </DealContainer>
   )
 })

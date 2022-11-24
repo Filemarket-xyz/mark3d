@@ -4,6 +4,7 @@ import { BigNumber, BigNumberish, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { assertContract, assertSigner } from '../utils/assert'
 import { mark3dConfig } from '../../config/mark3d'
+import { TokenFullId } from '../types'
 
 /**
  * Calls Mark3dExchange contract to place an order
@@ -11,7 +12,7 @@ import { mark3dConfig } from '../../config/mark3d'
  * @param tokenId assigned to a token by the mint function
  * @param price must be in wei (without floating point)
  */
-export function usePlaceOrder(collectionAddress?: string, tokenId?: string, price?: BigNumberish) {
+export function usePlaceOrder({ collectionAddress, tokenId }: Partial<TokenFullId>, price?: BigNumberish) {
   const { contract, signer } = useExchangeContract()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
   const placeOrder = useCallback(wrapPromise(async () => {

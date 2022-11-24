@@ -1,7 +1,8 @@
 import { Loading, Modal } from '@nextui-org/react'
-import React from 'react'
+import React, { FC, ReactNode } from 'react'
 import { styled } from '../../../styles'
-import { Button, NavLink, textVariant } from '../../UIkit'
+import { Button, NavLink, textVariant, Txt } from '../../UIkit'
+import { stringifyError } from '../../utils/error'
 
 const ModalTitle = styled('h3', {
   ...textVariant('primary1'),
@@ -20,7 +21,7 @@ const ModalP = styled('p', {
 })
 
 interface InProcessBodyProps {
-  text: string
+  text: ReactNode
 }
 export const InProgressBody = ({ text }: InProcessBodyProps) => (
   <>
@@ -30,13 +31,17 @@ export const InProgressBody = ({ text }: InProcessBodyProps) => (
   </>
 )
 
-interface SuccessBodyProps {
+const SuccessTitle = () => (
+  <ModalTitle css={{ paddingTop: 0, marginBottom: '$4' }}>Success</ModalTitle>
+)
+
+interface SuccessNavBodyProps {
   buttonText: string
   link: string
 }
-export const SuccessBody = ({ buttonText, link }: SuccessBodyProps) => (
+export const SuccessNavBody = ({ buttonText, link }: SuccessNavBodyProps) => (
   <>
-    <ModalTitle css={{ paddingTop: 0, marginBottom: '$4' }}>Success</ModalTitle>
+    <SuccessTitle/>
     <NavLink
       to={link}
       css={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -46,35 +51,57 @@ export const SuccessBody = ({ buttonText, link }: SuccessBodyProps) => (
   </>
 )
 
-export const extractMessageFromError = (error: string | undefined) => {
+export interface SuccessOkBodyProps {
+  description: ReactNode
+  handleClose?: () => void
+}
+
+const Center = styled('div', {
+  dflex: 'center'
+})
+
+export const SuccessOkBody: FC<SuccessOkBodyProps> = ({ description, handleClose }) => (
+  <>
+    <SuccessTitle/>
+    <Txt>{description}</Txt>
+    {handleClose && (
+      <Center>
+        <Button secondary onPress={handleClose}>Ok</Button>
+      </Center>
+    )}
+  </>
+)
+
+export const extractMessageFromError = (error: any) => {
   const UNKNOWN_ERROR = 'Something went wrong, try again later'
 
   if (!error) return UNKNOWN_ERROR
-
-  const errorPartToShow = error.split('\n').shift()
-  if (!errorPartToShow) return UNKNOWN_ERROR
-
-  try {
-    const errorObject = JSON.parse(errorPartToShow)
-    return errorObject.message ?? UNKNOWN_ERROR
-  } catch {
-    return errorPartToShow
+  if (typeof error === 'string') {
+    const errorPartToShow = error.split('\n').shift()
+    if (!errorPartToShow) return UNKNOWN_ERROR
+    try {
+      const errorObject = JSON.parse(errorPartToShow)
+      return errorObject.message ?? stringifyError(error)
+    } catch {
+      return errorPartToShow
+    }
   }
+  return stringifyError(error)
 }
 
 export const ErrorBody = ({ message }: { message: string }) => (
   <>
     <ModalTitle css={{ paddingTop: 0 }}>Error</ModalTitle>
-    <ModalP css={{ color: '$red' }}>{message}</ModalP>
+    <ModalP css={{ color: '$red', wordBreak: 'break-all' }}>{message}</ModalP>
   </>
 )
 
 interface MintModalProps {
   open: boolean
   handleClose: () => void
-  body: JSX.Element
-  header?: JSX.Element
-  footer?: JSX.Element
+  body: ReactNode
+  header?: ReactNode
+  footer?: ReactNode
 }
 
 export default function MintModal({

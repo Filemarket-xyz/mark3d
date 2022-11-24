@@ -79,7 +79,7 @@ export default function NftLoader(props: NftLoaderProps) {
       <FileInput
         id='nftInput'
         type='file'
-        accept={'.fbx, .3ds, .max, .blend, .obj, .c4d, .mb, .ma, .lwo, .lxo, .skp, .stl, .uasset, .dae, .ply, .glb, .gltf, .usdf, .unitypackage'}
+        accept={'.png, .jpg, .jpeg, .fbx, .3ds, .max, .blend, .obj, .c4d, .mb, .ma, .lwo, .lxo, .skp, .stl, .uasset, .dae, .ply, .glb, .gltf, .usdf, .unitypackage'}
         {...props.registerProps}
       />
     </File>

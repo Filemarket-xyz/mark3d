@@ -53,6 +53,7 @@ export const storeRequest = <Data>(
                 target.isLoaded = true
                 callback(data.data)
               } else {
+                console.log('req error', data.error)
                 target.errorStore.showError(errorResponseToMessage(data.error))
               }
             })
@@ -62,6 +63,7 @@ export const storeRequest = <Data>(
       .catch(
         action((error) => {
           finish(() => {
+            console.log('req error', error)
             target.errorStore.showError(stringifyError(error))
           })
         })

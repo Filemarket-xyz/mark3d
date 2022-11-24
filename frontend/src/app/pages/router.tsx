@@ -10,6 +10,7 @@ import { profileRoutes } from './ProfilePage/routes'
 import NFTPage from './NFTPage/NFTPage'
 import CollectionPage from './CollectionPage/CollectionPage'
 import { collectionPageRoutes } from './CollectionPage/routes'
+import { Params } from '../utils/router/Params'
 
 const routes: RouteObject[] = [
   {
@@ -40,7 +41,7 @@ const routes: RouteObject[] = [
     children: collectionPageRoutes
   },
   {
-    path: 'collection/:collectionId/:nftId',
+    path: `collection/:${Params.collectionAddress}/:${Params.tokenId}`,
     element: <NFTPage />
   },
   {

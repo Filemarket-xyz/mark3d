@@ -9,23 +9,26 @@ import { IHiddenFileBase } from '../HiddenFileBase'
  * Is responsible for creation and registration of HiddenFileProcessor instances.
  */
 export interface IHiddenFileProcessorFactory {
-  readonly storage: ISecureStorage
-  readonly tokenIdStorage: TokenIdStorage
+  readonly storages: Record<string, ISecureStorage>
+  readonly tokenIdStorages: Record<string, TokenIdStorage>
 
   /**
    * Create or uses existing IHiddenFileOwner to access a hidden file and sell the NFT.
+   * @param account address of the account, on behalf of which NFT is owned
    * @param tokenFullId if null always creates new owner
    */
-  getOwner: (tokenFullId?: TokenFullId) => Promise<IHiddenFileOwner>
+  getOwner: (account: string, tokenFullId?: TokenFullId) => Promise<IHiddenFileOwner>
 
   /**
    * Create or uses existing IHiddenFileBuyer if you want to initiate purchase
+   * @param account address of the account, on behalf of which NFT is buyed
    * @param tokenFullId
    */
-  getBuyer: (tokenFullId: TokenFullId) => Promise<IHiddenFileBuyer>
+  getBuyer: (account: string, tokenFullId: TokenFullId) => Promise<IHiddenFileBuyer>
 
   /**
    * Used after NFT was bought.
+   * @param account address of the account, on behalf of which NFT is processed
    * @param buyer
    */
   buyerToOwner: (buyer: IHiddenFileBuyer) => Promise<IHiddenFileOwner>
@@ -33,8 +36,11 @@ export interface IHiddenFileProcessorFactory {
   /**
    * Sets TokenFullId correspodning to the surrogateId. Usually called after NFT was minted and
    * TokenFullId becomes known.
+   * @param account address of the account, on behalf of which NFT is processed
    * @param hiddenFileProcessor
    * @param tokenFullId
    */
-  registerTokenFullId: (hiddenFileProcessor: IHiddenFileBase, tokenFullId: TokenFullId) => Promise<void>
+  registerTokenFullId: (
+    account: string, hiddenFileProcessor: IHiddenFileBase, tokenFullId: TokenFullId
+  ) => Promise<void>
 }

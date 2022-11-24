@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { styled } from '../../../styles'
 import { PageLayout, textVariant, Link } from '../../UIkit'
 import creator from './img/creatorImg.jpg'
@@ -6,6 +6,11 @@ import collection from './img/collection.jpg'
 import Badge from '../../components/Badge/Badge'
 import { Hr } from '../../UIkit/Hr/Hr'
 import { NFTDeal } from '../../components/NFT'
+import { observer } from 'mobx-react-lite'
+import { useParams } from 'react-router-dom'
+import { Params } from '../../utils/router/Params'
+import { makeTokenFullId } from '../../processing/utils/id'
+import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
 
 const NFTPreviewContainer = styled('div', {
   paddingTop: '$layout$navbarheight',
@@ -115,7 +120,13 @@ const Bold = styled('span', {
   fontWeight: 600
 })
 
-export default function NFTPage() {
+// { collectionAddress: '0xe37382f84dc2c72ef7eaac6e327bba054b30628c', tokenId: '0' }
+
+const NFTPage = observer(() => {
+  const { collectionAddress, tokenId } = useParams<Params>()
+  const tokenFullId = useMemo(() => makeTokenFullId(collectionAddress, tokenId), [collectionAddress, tokenId])
+  const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
+  const transfer = transferStore.data
   return (
     <>
       <NFTPreviewContainer></NFTPreviewContainer>
@@ -136,7 +147,13 @@ export default function NFTPage() {
         </GridBlock>
 
         <GridBlock>
-          <NFTDeal/>
+          {tokenFullId && (
+            <NFTDeal
+              transfer={transfer}
+              tokenFullId={tokenFullId}
+              reFetchOrder={() => transferStore.reload()}
+            />
+          )}
         </GridBlock>
 
         <GridBlock>
@@ -245,4 +262,6 @@ export default function NFTPage() {
       </GridLayout>
     </>
   )
-}
+})
+
+export default NFTPage

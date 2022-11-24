@@ -8,6 +8,9 @@ import { normalizeCounterId } from '../../processing/utils/id'
 import { IHiddenFilesTokenEventsListener } from '../../processing'
 import { BigNumber } from 'ethers'
 
+/**
+ * Stores only ACTIVE (i.e. created and not finished/cancelled) order state
+ */
 export class TransferStore implements IStoreRequester,
   IActivateDeactivate<[string, string]>, IHiddenFilesTokenEventsListener {
   errorStore: ErrorStore
@@ -31,7 +34,7 @@ export class TransferStore implements IStoreRequester,
   private request(tokenFullId: TokenFullId) {
     storeRequest<Transfer>(
       this,
-      api.tokens.tokensDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
+      api.transfers.transfersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
       resp => {
         this.data = resp
       })
@@ -115,7 +118,7 @@ export class TransferStore implements IStoreRequester,
   onTransferPublicKeySet(tokenId: BigNumber, publicKeyHex: string) {
     this.checkData(tokenId, data => {
       data.publicKey = publicKeyHex
-      data.statuses?.push({
+      data.statuses?.unshift({
         status: TransferStatus.PublicKeySet,
         timestamp: Date.now()
       })
@@ -125,7 +128,7 @@ export class TransferStore implements IStoreRequester,
   onTransferPasswordSet(tokenId: BigNumber, encryptedPasswordHex: string) {
     this.checkData(tokenId, data => {
       data.encryptedPassword = encryptedPasswordHex
-      data.statuses?.push({
+      data.statuses?.unshift({
         status: TransferStatus.PasswordSet,
         timestamp: Date.now()
       })
@@ -133,17 +136,14 @@ export class TransferStore implements IStoreRequester,
   }
 
   onTransferFinished(tokenId: BigNumber) {
-    this.checkData(tokenId, data => {
-      data.statuses?.push({
-        status: TransferStatus.Finished,
-        timestamp: Date.now()
-      })
+    this.checkActivation(tokenId, () => {
+      this.data = undefined
     })
   }
 
   onTransferFraudReported(tokenId: BigNumber) {
     this.checkData(tokenId, data => {
-      data.statuses?.push({
+      data.statuses?.unshift({
         status: TransferStatus.FraudReported,
         timestamp: Date.now()
       })
@@ -153,7 +153,7 @@ export class TransferStore implements IStoreRequester,
   onTransferFraudDecided(tokenId: BigNumber, approved: boolean) {
     this.checkData(tokenId, data => {
       data.fraudApproved = approved
-      data.statuses?.push({
+      data.statuses?.unshift({
         status: TransferStatus.Finished,
         timestamp: Date.now()
       })
@@ -161,11 +161,8 @@ export class TransferStore implements IStoreRequester,
   }
 
   onTransferCancellation(tokenId: BigNumber) {
-    this.checkData(tokenId, data => {
-      data.statuses?.push({
-        status: TransferStatus.Cancelled,
-        timestamp: Date.now()
-      })
+    this.checkActivation(tokenId, () => {
+      this.data = undefined
     })
   }
 }

@@ -11,7 +11,7 @@ import MintModal, {
   ErrorBody,
   extractMessageFromError,
   InProgressBody,
-  SuccessBody
+  SuccessNavBody
 } from '../../components/Modal/Modal'
 import { FormControl } from '../../UIkit/Form/FormControl'
 import { useModalProperties } from './hooks/useModalProperties'
@@ -92,7 +92,7 @@ export default function CreateCollectionPage() {
     } else if (result) {
       void setModalOpen(true)
       void setModalBody(
-        <SuccessBody
+        <SuccessNavBody
           buttonText='View collection'
           link={`/collection/${result.collectionTokenAddress}`}
         />
