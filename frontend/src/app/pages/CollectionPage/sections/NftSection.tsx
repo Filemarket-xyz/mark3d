@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { styled } from '../../../../styles'
+import { CardsPlaceholder } from '../../../components/CardsPlaceholder/CardsPlaceholder'
 import NFTCard, { NFTCardProps } from '../../../components/MarketCard/NFTCard'
 import { useCollectionTokenListStore } from '../../../hooks/useCollectionTokenListStore'
 
@@ -33,7 +34,8 @@ export const getIHttpLinkFromIpfsString = (ipfs: string) => {
 
 const NftSection = observer(() => {
   const { collectionId } = useParams<{ collectionId: string }>()
-  const { data, isLoaded } = useCollectionTokenListStore(collectionId)
+  const { data, isLoaded, isLoading } =
+    useCollectionTokenListStore(collectionId)
   const [NFTs, setNFTs] = useState<NFTCardProps[]>([])
 
   useEffect(() => {
@@ -57,9 +59,11 @@ const NftSection = observer(() => {
 
   return (
     <CardsContainer>
-      {NFTs.map((card, index) => (
-        <NFTCard {...card} key={index} />
-      ))}
+      {isLoading ? (
+        <CardsPlaceholder cardsAmount={5} />
+      ) : (
+        NFTs.map((card, index) => <NFTCard {...card} key={index} />)
+      )}
     </CardsContainer>
   )
 })
