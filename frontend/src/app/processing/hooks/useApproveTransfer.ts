@@ -27,6 +27,7 @@ export function useApproveTransfer({ collectionAddress, tokenId }: Partial<Token
     console.log('tokenFullId', { collectionAddress, tokenId })
     const owner = await factory.getOwner(address, { collectionAddress, tokenId })
     const encryptedAESPassword = await owner.prepareFileAESKeyForBuyer(publicKey)
+    console.log('owner', 'publicKey', publicKey, 'encrypted password', utils.hexlify(encryptedAESPassword))
     const res = await contract.approveTransfer(
       BigNumber.from(tokenId),
       utils.hexlify(encryptedAESPassword) as `0x${string}`

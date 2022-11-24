@@ -12,12 +12,16 @@ export function useSyncAESFileKey({ collectionAddress, tokenId }: Partial<TokenF
     if (!isOwner && address && AESKeyEncrypted && collectionAddress && tokenId) {
       const tokenFullId = { collectionAddress, tokenId }
       let key = AESKeyEncrypted
+      console.log('sync aes', key)
       factory
         .getBuyer(address, tokenFullId)
         .then(buyer => {
           if (key.startsWith('0x')) {
             key = key.slice(2)
           }
+          void buyer.revealFraudReportRSAPrivateKey().then(privateKey => {
+            console.log('buyer', 'privateKey', privateKey, 'encryptedKey', key)
+          })
           buyer
             .saveFileAESKey(Buffer.from(key, 'hex'))
             .then(decryptResult => {
