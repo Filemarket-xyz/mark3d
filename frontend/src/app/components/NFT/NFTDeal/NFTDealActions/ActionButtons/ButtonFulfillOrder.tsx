@@ -1,7 +1,9 @@
 import { TokenFullId } from '../../../../../processing/types'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { useFulfillOrder } from '../../../../../processing/hooks'
 import { Button } from '../../../../../UIkit'
+import { useStatusModal } from '../../../../../hooks/useStatusModal'
+import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonFulfillOrderProps {
   tokenFullId: TokenFullId
@@ -9,21 +11,28 @@ export interface ButtonFulfillOrderProps {
 }
 
 export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = ({ tokenFullId, callback }) => {
-  const { fulfillOrder, isLoading, result, error } = useFulfillOrder(tokenFullId)
-  useEffect(() => {
-    console.log('fulfill order', 'isLoading', isLoading, 'result', result, 'error', error)
-  }, [isLoading, result, error])
+  const { fulfillOrder, ...statuses } = useFulfillOrder(tokenFullId)
+  const { isLoading } = statuses
+  const { modalProps } = useStatusModal({
+    statuses,
+    okMsg: 'Order fulfilled! Now wait until owner of the NFT transfers you hidden files. ' +
+      'After that, check the hidden files and finalize the transfer',
+    loadingMsg: 'Fulfilling order'
+  })
   return (
-    <Button
-      secondary
-      fullWidth
-      onPress={async () => {
-        await fulfillOrder()
-        callback?.()
-      }}
-      isDisabled={isLoading}
-    >
-      Buy
-    </Button>
+    <>
+      <MintModal {...modalProps}/>
+      <Button
+        secondary
+        fullWidth
+        onPress={async () => {
+          await fulfillOrder()
+          callback?.()
+        }}
+        isDisabled={isLoading}
+      >
+        Buy
+      </Button>
+    </>
   )
 }

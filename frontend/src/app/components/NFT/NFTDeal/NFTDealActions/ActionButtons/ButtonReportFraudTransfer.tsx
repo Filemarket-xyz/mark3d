@@ -1,7 +1,9 @@
 import { TokenFullId } from '../../../../../processing/types'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { useReportFraud } from '../../../../../processing/hooks'
 import { Button } from '../../../../../UIkit'
+import { useStatusModal } from '../../../../../hooks/useStatusModal'
+import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonReportFraudTransferProps {
   tokenFullId: TokenFullId
@@ -9,21 +11,27 @@ export interface ButtonReportFraudTransferProps {
 }
 
 export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ tokenFullId, callback }) => {
-  const { reportFraud, isLoading, result } = useReportFraud(tokenFullId)
-  useEffect(() => {
-    console.log('report fraud order', 'isLoading', isLoading, 'result', result)
-  }, [isLoading, result])
+  const { reportFraud, ...statuses } = useReportFraud(tokenFullId)
+  const { isLoading } = statuses
+  const { modalProps } = useStatusModal({
+    statuses,
+    okMsg: 'Fraud reported! Expect a decision within a few minutes',
+    loadingMsg: 'Reporting fraud'
+  })
   return (
-    <Button
-      secondary
-      fullWidth
-      onPress={async () => {
-        await reportFraud()
-        callback?.()
-      }}
-      isDisabled={isLoading}
-    >
-      Report fraud
-    </Button>
+    <>
+      <MintModal {...modalProps}/>
+      <Button
+        secondary
+        fullWidth
+        onPress={async () => {
+          await reportFraud()
+          callback?.()
+        }}
+        isDisabled={isLoading}
+      >
+        Report fraud
+      </Button>
+    </>
   )
 }

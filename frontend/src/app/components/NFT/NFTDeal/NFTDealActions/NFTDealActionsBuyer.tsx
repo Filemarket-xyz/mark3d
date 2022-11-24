@@ -9,7 +9,7 @@ import { ButtonFinalizeTransfer } from './ActionButtons/ButtonFinalizeTransfer'
 import { ButtonReportFraudTransfer } from './ActionButtons/ButtonReportFraudTransfer'
 import { ButtonCancelTransfer } from './ActionButtons/ButtonCancelTransfer'
 import { Button } from '../../../../UIkit'
-import { toJS } from 'mobx'
+import { HideAction } from './HideAction'
 
 export interface NFTDealActionsBuyerProps {
   tokenFullId: TokenFullId
@@ -24,35 +24,32 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
   tokenFullId,
   ownerStatusChanged
 }) => {
-  if (transfer) {
-    console.log('transfer', toJS(transfer))
-    return (
-      <>
-        {permissions.canFulfillOrder(transfer) && (
-          <ButtonFulfillOrder tokenFullId={tokenFullId}/>
-        )}
-        {permissions.canSetPublicKey(transfer) && (
-          <ButtonSetPublicKeyTransfer tokenFullId={tokenFullId}/>
-        )}
-        {permissions.canFinalize(transfer) && (
-          <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={ownerStatusChanged}/>
-        )}
-        {permissions.canReportFraud(transfer) && (
-          <ButtonReportFraudTransfer tokenFullId={tokenFullId}/>
-        )}
-        {permissions.canCancel(transfer) && (
-          <ButtonCancelTransfer tokenFullId={tokenFullId}/>
-        )}
-      </>
-    )
-  }
   return (
-    <Button
-      secondary
-      isDisabled
-      fullWidth
-    >
-      NFT is not listed
-    </Button>
+      <>
+        <HideAction hide={!transfer || !permissions.canFulfillOrder(transfer)}>
+          <ButtonFulfillOrder tokenFullId={tokenFullId}/>
+        </HideAction>
+        <HideAction hide={!transfer || !permissions.canSetPublicKey(transfer)}>
+          <ButtonSetPublicKeyTransfer tokenFullId={tokenFullId}/>
+        </HideAction>
+        <HideAction hide={!transfer || !permissions.canFinalize(transfer)}>
+          <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={ownerStatusChanged}/>
+        </HideAction>
+        <HideAction hide={!transfer || !permissions.canReportFraud(transfer)}>
+          <ButtonReportFraudTransfer tokenFullId={tokenFullId}/>
+        </HideAction>
+        <HideAction hide={!transfer || !permissions.canCancel(transfer)}>
+          <ButtonCancelTransfer tokenFullId={tokenFullId}/>
+        </HideAction>
+        <HideAction hide={!!transfer}>
+          <Button
+            secondary
+            isDisabled
+            fullWidth
+          >
+            NFT is not listed
+          </Button>
+        </HideAction>
+      </>
   )
 })

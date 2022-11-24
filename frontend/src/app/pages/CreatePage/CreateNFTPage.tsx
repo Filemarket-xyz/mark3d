@@ -28,7 +28,7 @@ import MintModal, {
   ErrorBody,
   extractMessageFromError,
   InProgressBody,
-  SuccessBody
+  SuccessNavBody
 } from '../../components/Modal/Modal'
 import { FormControl } from '../../UIkit/Form/FormControl'
 import { useModalProperties } from './hooks/useModalProperties'
@@ -149,7 +149,7 @@ const CreateNftPage = observer(() => {
     } else if (nftResult) {
       setModalOpen(true)
       setModalBody(
-        <SuccessBody
+        <SuccessNavBody
           buttonText='View NFT'
           link={`/collection/${nftResult.receipt.to}/${nftResult.tokenId}`}
         />

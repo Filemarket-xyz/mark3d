@@ -1,7 +1,9 @@
 import { TokenFullId } from '../../../../../processing/types'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { useCancelOrder } from '../../../../../processing/hooks'
 import { Button } from '../../../../../UIkit'
+import { useStatusModal } from '../../../../../hooks/useStatusModal'
+import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonCancelOrderProps {
   tokenFullId: TokenFullId
@@ -9,21 +11,27 @@ export interface ButtonCancelOrderProps {
 }
 
 export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, callback }) => {
-  const { cancelOrder, isLoading, result } = useCancelOrder(tokenFullId)
-  useEffect(() => {
-    console.log('cancel order', 'isLoading', isLoading, 'result', result)
-  }, [isLoading, result])
+  const { cancelOrder, ...statuses } = useCancelOrder(tokenFullId)
+  const { isLoading } = statuses
+  const { modalProps } = useStatusModal({
+    statuses,
+    okMsg: 'Order cancelled',
+    loadingMsg: 'Cancelling order'
+  })
   return (
-    <Button
-      secondary
-      fullWidth
-      onPress={async () => {
-        await cancelOrder()
-        callback?.()
-      }}
-      isDisabled={isLoading}
-    >
-      Cancel order
-    </Button>
+    <>
+      <MintModal {...modalProps}/>
+      <Button
+        secondary
+        fullWidth
+        onPress={async () => {
+          await cancelOrder()
+          callback?.()
+        }}
+        isDisabled={isLoading}
+      >
+        Cancel order
+      </Button>
+    </>
   )
 }

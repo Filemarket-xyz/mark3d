@@ -1,7 +1,9 @@
 import { TokenFullId } from '../../../../../processing/types'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { useFinalizeTransfer } from '../../../../../processing/hooks'
 import { Button } from '../../../../../UIkit'
+import { useStatusModal } from '../../../../../hooks/useStatusModal'
+import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonFinalizeTransferProps {
   tokenFullId: TokenFullId
@@ -9,21 +11,27 @@ export interface ButtonFinalizeTransferProps {
 }
 
 export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenFullId, callback }) => {
-  const { finalizeTransfer, isLoading, result } = useFinalizeTransfer(tokenFullId)
-  useEffect(() => {
-    console.log('finalize transfer', 'isLoading', isLoading, 'result', result)
-  }, [isLoading, result])
+  const { finalizeTransfer, ...statuses } = useFinalizeTransfer(tokenFullId)
+  const { isLoading } = statuses
+  const { modalProps } = useStatusModal({
+    statuses,
+    okMsg: 'The deal is finished!',
+    loadingMsg: 'Finalizing the deal'
+  })
   return (
-    <Button
-      secondary
-      fullWidth
-      onPress={async () => {
-        await finalizeTransfer()
-        callback?.()
-      }}
-      isDisabled={isLoading}
-    >
-      Send payment
-    </Button>
+    <>
+      <MintModal {...modalProps}/>
+      <Button
+        secondary
+        fullWidth
+        onPress={async () => {
+          await finalizeTransfer()
+          callback?.()
+        }}
+        isDisabled={isLoading}
+      >
+        Send payment
+      </Button>
+    </>
   )
 }
