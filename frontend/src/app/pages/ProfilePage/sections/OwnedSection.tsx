@@ -1,13 +1,14 @@
+import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
 import { CardsPlaceholder } from '../../../components/CardsPlaceholder/CardsPlaceholder'
 import NFTCard, { NFTCardProps } from '../../../components/MarketCard/NFTCard'
+import { useCollectionAndTokenListStore } from '../../../hooks'
 import { getHttpLinkFromIpfsString } from '../../../utils/nfts/getHttpLinkFromIpfsString'
 import { reduceAddress } from '../../../utils/nfts/reduceAddress'
 import { CardsContainer } from '../../MarketPage/NftSection'
-import { useNfts } from '../ProfilePage'
 
-export const OwnedSection = () => {
-  const { isLoaded, isLoading, nfts } = useNfts()
+export const OwnedSection = observer(() => {
+  const { isLoaded, isLoading, tokens: nfts } = useCollectionAndTokenListStore()
 
   const [cards, setCards] = useState<NFTCardProps[]>([])
 
@@ -37,6 +38,6 @@ export const OwnedSection = () => {
       )}
     </CardsContainer>
   )
-}
+})
 
 export default OwnedSection

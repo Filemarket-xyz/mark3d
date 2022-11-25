@@ -1,4 +1,4 @@
-import { Outlet, useOutletContext, useParams } from 'react-router'
+import { Outlet, useParams } from 'react-router'
 import { styled } from '../../../styles'
 import Badge from '../../components/Badge/Badge'
 import { textVariant, Container } from '../../UIkit'
@@ -7,7 +7,6 @@ import bg from './img/Gradient.jpg'
 import creator from './img/creatorImg.jpg'
 import { observer } from 'mobx-react-lite'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
-import { CollectionData } from '../../../swagger/Api'
 import { Params } from '../../utils/router/Params'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 
@@ -122,7 +121,7 @@ const StyledContainer = styled(Container, {
 
 const CollectionPage = observer(() => {
   const { collectionAddress } = useParams<Params>()
-  const { data: collectionAndNfts, isLoaded, isLoading } =
+  const { data: collectionAndNfts } =
     useCollectionTokenListStore(collectionAddress)
 
   return (
@@ -173,21 +172,11 @@ const CollectionPage = observer(() => {
               ]}
             />
           </TabsContainer>
-          <Outlet context={{ collectionAndNfts, isLoading, isLoaded }} />
+          <Outlet />
         </Inventory>
       </GrayOverlay>
     </>
   )
 })
-
-interface ContextType {
-  collectionAndNfts: CollectionData
-  isLoading: boolean
-  isLoaded: boolean
-}
-
-export const useNftsAndCollections = () => {
-  return useOutletContext<ContextType>()
-}
 
 export default CollectionPage

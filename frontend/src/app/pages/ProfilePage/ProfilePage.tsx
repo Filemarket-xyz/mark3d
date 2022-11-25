@@ -1,8 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { Outlet } from 'react-router'
-import { useOutletContext, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { styled } from '../../../styles'
-import { Token } from '../../../swagger/Api'
 import { useCollectionAndTokenListStore } from '../../hooks'
 import { textVariant, Container } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
@@ -94,7 +93,7 @@ const TabsContainer = styled('div', {
 const ProfilePage = observer(() => {
   const { profileAddress } = useParams<Params>()
 
-  const { tokens: nfts, isLoaded, isLoading } =
+  const { tokens: nfts } =
     useCollectionAndTokenListStore(profileAddress)
 
   return (
@@ -136,21 +135,11 @@ const ProfilePage = observer(() => {
               ]}
             />
           </TabsContainer>
-          <Outlet context={{ nfts, isLoaded, isLoading }} />
+          <Outlet />
         </Inventory>
       </GrayOverlay>
     </>
   )
 })
-
-interface ContextType {
-  nfts: Token[]
-  isLoading: boolean
-  isLoaded: boolean
-}
-
-export const useNfts = () => {
-  return useOutletContext<ContextType>()
-}
 
 export default ProfilePage
