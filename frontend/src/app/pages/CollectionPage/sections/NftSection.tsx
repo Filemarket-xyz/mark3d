@@ -1,11 +1,9 @@
-import { toJS } from 'mobx'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { styled } from '../../../../styles'
 import { CardsPlaceholder } from '../../../components/CardsPlaceholder/CardsPlaceholder'
 import NFTCard, { NFTCardProps } from '../../../components/MarketCard/NFTCard'
-import { useCollectionTokenListStore } from '../../../hooks/useCollectionTokenListStore'
+import { useNfts } from '../CollectionPage'
 
 export const CardsContainer = styled('div', {
   display: 'flex',
@@ -33,16 +31,12 @@ export const getIHttpLinkFromIpfsString = (ipfs: string) => {
 }
 
 const NftSection = observer(() => {
-  const { collectionId } = useParams<{ collectionId: string }>()
-  const { data, isLoaded, isLoading } =
-    useCollectionTokenListStore(collectionId)
+  const { nfts, isLoading } = useNfts()
   const [NFTs, setNFTs] = useState<NFTCardProps[]>([])
 
   useEffect(() => {
-    if (!isLoaded) return
-
     setNFTs(
-      toJS(data).map((token) => ({
+      nfts.map((token) => ({
         collection: 'some collection',
         imageURL: getIHttpLinkFromIpfsString(token.image ?? ''),
         price: 99,
@@ -53,9 +47,7 @@ const NftSection = observer(() => {
         }
       }))
     )
-
-    console.log(toJS(data), isLoaded)
-  }, [isLoaded])
+  }, [nfts])
 
   return (
     <CardsContainer>

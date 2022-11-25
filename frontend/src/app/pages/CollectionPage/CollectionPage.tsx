@@ -1,11 +1,15 @@
-import React from 'react'
-import { Outlet } from 'react-router'
+import React, { useEffect, useState } from 'react'
+import { Outlet, useOutletContext, useParams } from 'react-router'
 import { styled } from '../../../styles'
 import Badge from '../../components/Badge/Badge'
 import { textVariant, Container } from '../../UIkit'
-import Tabs, { TabsProps } from '../../UIkit/Tabs/Tabs'
+import Tabs from '../../UIkit/Tabs/Tabs'
 import bg from './img/Gradient.jpg'
 import creator from './img/creatorImg.jpg'
+import { observer } from 'mobx-react-lite'
+import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
+import { toJS } from 'mobx'
+import { Token } from '../../../swagger/Api'
 
 const Background = styled('img', {
   width: '100%',
@@ -72,26 +76,6 @@ const Inventory = styled(Container, {
   }
 })
 
-const tabs: Pick<TabsProps, 'tabs'> = {
-  tabs: [
-    {
-      name: 'NFTs',
-      url: 'nfts',
-      amount: 3
-    },
-    {
-      name: 'Owners',
-      url: 'owners',
-      amount: 2
-    },
-    {
-      name: 'History',
-      url: 'history',
-      amount: 3
-    }
-  ]
-}
-
 const TabsContainer = styled('div', {
   marginBottom: '$4'
 })
@@ -136,7 +120,19 @@ const StyledContainer = styled(Container, {
   }
 })
 
-export default function CollectionPage() {
+interface ContextType { nfts: Token[], isLoading: boolean }
+
+const CollectionPage = observer(() => {
+  const { collectionId } = useParams<{ collectionId: string }>()
+  const { data, isLoaded, isLoading } = useCollectionTokenListStore(collectionId)
+
+  const [nfts, setNfts] = useState<Token[]>([])
+
+  useEffect(() => {
+    if (!isLoaded) return
+    setNfts(toJS(data))
+  }, [isLoaded])
+
   return (
     <>
       <GrayOverlay>
@@ -179,11 +175,35 @@ export default function CollectionPage() {
 
         <Inventory>
           <TabsContainer>
-            <Tabs {...tabs} />
+            <Tabs
+              tabs={[
+                {
+                  name: 'NFTs',
+                  url: 'nfts',
+                  amount: nfts.length
+                },
+                {
+                  name: 'Owners',
+                  url: 'owners',
+                  amount: 2
+                },
+                {
+                  name: 'History',
+                  url: 'history',
+                  amount: 3
+                }
+              ]}
+            />
           </TabsContainer>
-          <Outlet />
+          <Outlet context={{ nfts, isLoading }} />
         </Inventory>
       </GrayOverlay>
     </>
   )
+})
+
+export const useNfts = () => {
+  return useOutletContext<ContextType>()
 }
+
+export default CollectionPage
