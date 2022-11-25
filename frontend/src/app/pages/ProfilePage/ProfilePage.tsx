@@ -132,25 +132,6 @@ const ProfilePage = observer(() => {
                   name: 'Owned',
                   url: 'owned',
                   amount: nfts.length
-                },
-                {
-                  name: 'Created',
-                  url: 'created',
-                  amount: 2
-                },
-                {
-                  name: 'Namespaces',
-                  url: 'namespaces',
-                  amount: 3
-                },
-                {
-                  name: 'Collections',
-                  url: 'collections',
-                  amount: 1
-                },
-                {
-                  name: 'History',
-                  url: 'history'
                 }
               ]}
             />
