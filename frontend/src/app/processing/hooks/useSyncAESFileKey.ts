@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useIsOwner } from './useIsOwner'
 import { useAccount } from 'wagmi'
 
-export function useSyncAESFileKey({ collectionAddress, tokenId }: Partial<TokenFullId>, AESKeyEncrypted?: string) {
+export function useSyncAESFileKey({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, AESKeyEncrypted?: string) {
   const factory = useHiddenFileProcessorFactory()
   const { address } = useAccount()
   const { isOwner } = useIsOwner({ collectionAddress, tokenId })

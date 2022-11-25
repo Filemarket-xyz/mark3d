@@ -15,7 +15,7 @@ import { useAccount } from 'wagmi'
  * @param tokenId assigned to a token by the mint function
  * @param price an integer price
  */
-export function useFulfillOrder({ collectionAddress, tokenId }: Partial<TokenFullId>, price?: BigNumberish) {
+export function useFulfillOrder({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, price?: BigNumberish) {
   const { contract, signer } = useExchangeContract()
   const { address } = useAccount()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()

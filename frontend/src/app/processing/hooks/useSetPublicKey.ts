@@ -14,7 +14,7 @@ import { useAccount } from 'wagmi'
  * @param collectionAddress
  * @param tokenId assigned to a token by the mint function
  */
-export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFullId>) {
+export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
   const { contract, signer } = useCollectionContract()
   const { address } = useAccount()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()

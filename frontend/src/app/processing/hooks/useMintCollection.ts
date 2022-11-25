@@ -22,7 +22,7 @@ interface CreateCollectionResult {
   receipt: ContractReceipt // вся инфа о транзе
 }
 
-export function useMintCollection(form: CreateCollectionForm) {
+export function useMintCollection(form: CreateCollectionForm = {}) {
   const { contract, signer } = useAccessTokenContract()
   const { wrapPromise, ...statuses } = useStatusState<CreateCollectionResult>()
   const mintCollection = useCallback(wrapPromise(async () => {

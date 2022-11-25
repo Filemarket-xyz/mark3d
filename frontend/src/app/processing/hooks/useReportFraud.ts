@@ -9,7 +9,7 @@ import { useHiddenFileProcessorFactory } from './useHiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
 import { useAccount } from 'wagmi'
 
-export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFullId>) {
+export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
   const { statuses, wrapPromise } = useStatusState<ContractReceipt>()

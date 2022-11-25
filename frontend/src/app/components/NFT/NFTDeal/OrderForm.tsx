@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers'
 import { fromCurrency, toCurrency } from '../../../utils/web3/currency'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { useForm } from 'react-hook-form'
 import { Input } from '../../../UIkit/Form/Input'
 import { FormControl } from '../../../UIkit/Form/FormControl'
@@ -27,7 +27,6 @@ const exportFormValue = (rawValue: OrderFormRawValue): OrderFormValue => ({
 export interface OrderFormProps {
   defaultValues?: OrderFormValue
   onSubmit?: (value: OrderFormValue) => void
-  preSubmit?: (value: OrderFormValue) => void
 }
 
 const ButtonContainer = styled('div', {
@@ -35,21 +34,13 @@ const ButtonContainer = styled('div', {
   justifyContent: 'end'
 })
 
-export const OrderForm: FC<OrderFormProps> = ({ defaultValues, onSubmit, preSubmit }) => {
-  const [value, setValue] = useState<OrderFormValue>()
+export const OrderForm: FC<OrderFormProps> = ({ defaultValues, onSubmit }) => {
   const { register, handleSubmit } = useForm<OrderFormRawValue>({
     defaultValues: importFormValue(defaultValues)
   })
-  useEffect(() => {
-    if (value) {
-      onSubmit?.(value)
-    }
-  }, [value])
   return (
     <form onSubmit={handleSubmit(values => {
-      const v = exportFormValue(values)
-      preSubmit?.(v)
-      setValue(v)
+      onSubmit?.(exportFormValue(values))
     })}>
       <FormControl>
         <Label>Price</Label>

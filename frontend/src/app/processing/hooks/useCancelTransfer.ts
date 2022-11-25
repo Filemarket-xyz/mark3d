@@ -7,7 +7,7 @@ import { mark3dConfig } from '../../config/mark3d'
 import assert from 'assert'
 import { TokenFullId } from '../types'
 
-export function useCancelTransfer({ collectionAddress, tokenId }: Partial<TokenFullId>) {
+export function useCancelTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
 

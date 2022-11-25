@@ -5,7 +5,8 @@ import { Button } from '../../../../../UIkit'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import MintModal, { ModalTitle } from '../../../../Modal/Modal'
 import { Modal } from '@nextui-org/react'
-import { OrderForm, OrderFormValue } from '../../OrderForm'
+import { OrderForm } from '../../OrderForm'
+import { useHookToCallback } from '../../../../../hooks/useHookToCallback'
 
 export interface ButtonPlaceOrderProps {
   tokenFullId: TokenFullId
@@ -16,8 +17,7 @@ export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callb
   const [modalOpen, setModalOpen] = useState<boolean>()
   const closeModal = useCallback(() => setModalOpen(false), [modalOpen])
   const openModal = useCallback(() => setModalOpen(true), [modalOpen])
-  const [form, setForm] = useState<OrderFormValue>()
-  const { placeOrder, ...statuses } = usePlaceOrder(tokenFullId, form?.price)
+  const { placeOrder, ...statuses } = useHookToCallback(usePlaceOrder, 'placeOrder', { callbackOk: callback })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -34,11 +34,9 @@ export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callb
         <ModalTitle>Order</ModalTitle>
         <Modal.Body>
           <OrderForm
-            preSubmit={setForm}
-            onSubmit={async () => {
+            onSubmit={form => {
               closeModal()
-              await placeOrder()
-              callback?.()
+              placeOrder(tokenFullId, form.price)
             }}
           />
         </Modal.Body>

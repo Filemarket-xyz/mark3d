@@ -7,7 +7,7 @@ import { assertContract, assertSigner } from '../utils/assert'
 import { mark3dConfig } from '../../config/mark3d'
 import assert from 'assert'
 
-export function useDraftTransfer({ collectionAddress, tokenId }: Partial<TokenFullId>) {
+export function useDraftTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
 

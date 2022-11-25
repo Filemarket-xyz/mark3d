@@ -12,7 +12,7 @@ import assert from 'assert'
  * @param collectionAddress
  * @param tokenId
  */
-export function useApproveExchange({ collectionAddress, tokenId }: Partial<TokenFullId>) {
+export function useApproveExchange({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
   const approveExchange = useCallback(wrapPromise(async () => {
