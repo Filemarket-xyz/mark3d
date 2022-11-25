@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react'
 import { Outlet, useOutletContext, useParams } from 'react-router'
 import { styled } from '../../../styles'
 import Badge from '../../components/Badge/Badge'
@@ -8,7 +7,6 @@ import bg from './img/Gradient.jpg'
 import creator from './img/creatorImg.jpg'
 import { observer } from 'mobx-react-lite'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
-import { toJS } from 'mobx'
 import { CollectionData } from '../../../swagger/Api'
 import { getIHttpLinkFromIpfsString } from './sections/NftSection'
 import { Params } from '../../utils/router/Params'
@@ -124,15 +122,8 @@ const StyledContainer = styled(Container, {
 
 const CollectionPage = observer(() => {
   const { collectionAddress } = useParams<Params>()
-  const { data, isLoaded, isLoading } =
+  const { data: collectionAndNfts, isLoaded, isLoading } =
     useCollectionTokenListStore(collectionAddress)
-
-  const [collectionAndNfts, setCollectionAndNfts] = useState<CollectionData>({})
-
-  useEffect(() => {
-    if (!isLoaded) return
-    setCollectionAndNfts(toJS(data))
-  }, [isLoaded])
 
   return (
     <>
@@ -178,16 +169,6 @@ const CollectionPage = observer(() => {
                   name: 'NFTs',
                   url: 'nfts',
                   amount: collectionAndNfts?.tokens?.length ?? 0
-                },
-                {
-                  name: 'Owners',
-                  url: 'owners',
-                  amount: 2
-                },
-                {
-                  name: 'History',
-                  url: 'history',
-                  amount: 3
                 }
               ]}
             />

@@ -1,6 +1,4 @@
-import { toJS } from 'mobx'
 import { observer } from 'mobx-react-lite'
-import React, { useEffect, useState } from 'react'
 import { Outlet } from 'react-router'
 import { useOutletContext, useParams } from 'react-router-dom'
 import { styled } from '../../../styles'
@@ -96,15 +94,8 @@ const TabsContainer = styled('div', {
 const ProfilePage = observer(() => {
   const { profileAddress } = useParams<Params>()
 
-  const { tokens, isLoaded, isLoading } =
+  const { tokens: nfts, isLoaded, isLoading } =
     useCollectionAndTokenListStore(profileAddress)
-
-  const [nfts, setNfts] = useState<Token[]>([])
-
-  useEffect(() => {
-    if (!isLoaded) return
-    setNfts(toJS(tokens))
-  }, [isLoaded])
 
   return (
     <>
