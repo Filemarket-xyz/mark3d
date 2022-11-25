@@ -10,6 +10,7 @@ import { observer } from 'mobx-react-lite'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
 import { toJS } from 'mobx'
 import { CollectionData } from '../../../swagger/Api'
+import { getIHttpLinkFromIpfsString } from './sections/NftSection'
 
 const Background = styled('img', {
   width: '100%',
@@ -148,8 +149,8 @@ const CollectionPage = observer(() => {
         <StyledContainer>
           <Profile>
             <ProfileHeader>
-              <ProfileImage src={bg} />
-              <ProfileName>VR Glasses</ProfileName>
+              <ProfileImage src={getIHttpLinkFromIpfsString(collectionAndNfts.collection?.image ?? '')} />
+              <ProfileName>{collectionAndNfts.collection?.name}</ProfileName>
             </ProfileHeader>
 
             <Badges>
@@ -161,11 +162,7 @@ const CollectionPage = observer(() => {
             </Badges>
 
             <ProfileDescription>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sodales
-              id in facilisis donec. Aliquam sed volutpat posuere pharetra
-              viverra lacinia odio amet suscipit. A, quis arcu amet, nunc odio
-              suspendisse cursus mauris. Aliquam dictum in ornare odio eget ut
-              eleifend etiam.
+              {collectionAndNfts.collection?.description}
             </ProfileDescription>
           </Profile>
           <CollectionDataContainer>
