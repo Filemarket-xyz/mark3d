@@ -95,7 +95,7 @@ export interface NFTCardProps {
     img: string
     username: string
   }
-  price: number
+  price?: number
 }
 
 export const Card = styled(BasicCard, {})
@@ -128,7 +128,7 @@ export default function NFTCard(props: NFTCardProps) {
               <UserImg src={props.user.img} />
               <UserName>{props.user.username}</UserName>
             </UserContainer>
-            <Price>{formatPrice(props.price)}</Price>
+            {props.price !== undefined && <Price>{formatPrice(props.price)}</Price>}
           </PriceInfo>
           <ButtonContainer>
             <Button

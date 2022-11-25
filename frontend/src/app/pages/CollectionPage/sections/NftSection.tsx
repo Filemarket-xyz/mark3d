@@ -5,6 +5,7 @@ import { CardsPlaceholder } from '../../../components/CardsPlaceholder/CardsPlac
 import NFTCard, { NFTCardProps } from '../../../components/MarketCard/NFTCard'
 import { useCollectionTokenListStore } from '../../../hooks/useCollectionTokenListStore'
 import { getHttpLinkFromIpfsString } from '../../../utils/nfts/getHttpLinkFromIpfsString'
+import { getProfileImageUrl } from '../../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../../utils/nfts/reduceAddress'
 
 export const CardsContainer = styled('div', {
@@ -23,7 +24,11 @@ export const CardsContainer = styled('div', {
 })
 
 const NftSection = observer(() => {
-  const { data: collectionAndNfts, isLoading, isLoaded } = useCollectionTokenListStore()
+  const {
+    data: collectionAndNfts,
+    isLoading,
+    isLoaded
+  } = useCollectionTokenListStore()
   const [NFTs, setNFTs] = useState<NFTCardProps[]>([])
 
   useEffect(() => {
@@ -35,10 +40,9 @@ const NftSection = observer(() => {
       nfts.map((token) => ({
         collection: colllection?.name ?? '',
         imageURL: getHttpLinkFromIpfsString(token.image ?? ''),
-        price: 99,
         title: token.name ?? '',
         user: {
-          img: 'https://www.whatsappimages.in/wp-content/uploads/2021/07/Top-HD-sad-quotes-for-whatsapp-status-in-hindi-Pics-Images-Download-Free.gif',
+          img: getProfileImageUrl(token.owner ?? ''),
           username: reduceAddress(colllection?.owner ?? '')
         }
       }))
