@@ -5,9 +5,13 @@ import { getIHttpLinkFromIpfsString } from '../../CollectionPage/sections/NftSec
 import { CardsContainer } from '../../MarketPage/NftSection'
 import { useNfts } from '../ProfilePage'
 
+/** Reduce profile address to view like **0x1234...5678** */
+export const reduceProfileAddress = (profileAddress: string) => {
+  return `${profileAddress.slice(0, 6)}...${profileAddress.slice(-4)}`
+}
+
 export const OwnedSection = () => {
   const { isLoaded, isLoading, nfts } = useNfts()
-  console.log(nfts)
 
   const [cards, setCards] = useState<NFTCardProps[]>([])
 
@@ -22,7 +26,7 @@ export const OwnedSection = () => {
         title: nft.name ?? '',
         user: {
           img: '',
-          username: nft.creator ?? ''
+          username: reduceProfileAddress(nft.owner ?? '')
         }
       }))
     )
