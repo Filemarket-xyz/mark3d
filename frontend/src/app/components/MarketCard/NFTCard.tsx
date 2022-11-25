@@ -37,7 +37,8 @@ const generateHoverStylesForCard = () => {
   }
   hoverStyles['&:hover'] = {
     border: '2px solid transparent',
-    background: 'linear-gradient($white 0 0) padding-box, $gradients$main border-box',
+    background:
+      'linear-gradient($white 0 0) padding-box, $gradients$main border-box',
     transitionDelay: '0s'
   }
 
@@ -128,7 +129,9 @@ export default function NFTCard(props: NFTCardProps) {
               <UserImg src={props.user.img} />
               <UserName>{props.user.username}</UserName>
             </UserContainer>
-            {props.price !== undefined && <Price>{formatPrice(props.price)}</Price>}
+            {props.price !== undefined && (
+              <Price>{formatPrice(props.price)}</Price>
+            )}
           </PriceInfo>
           <ButtonContainer>
             <Button
