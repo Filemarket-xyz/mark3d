@@ -168,41 +168,6 @@ const NFTPage = observer(() => {
         </GridBlock>
 
         <GridBlock>
-          <PropertyTitle>Tags</PropertyTitle>
-          <StyledHr />
-          <TagsContainer>
-            <Tag value='VR' />
-            <Tag value='Metaverse' />
-            <Tag value='Web3' />
-            <Tag value='Jedi' />
-            <Tag value='3D Internet' />
-            <Tag value='NFT' />
-            <Tag value='DAO-ART' />
-            <Tag value='ART' />
-            <Tag value='Tag' />
-          </TagsContainer>
-        </GridBlock>
-
-        <GridBlock>
-          <PropertyTitle>Object Info</PropertyTitle>
-          <StyledHr />
-          <Ul>
-            <Li>
-              <Bold>formats:</Bold> .fbx, .max, .obj, .gltf, .usdz, .glb
-            </Li>
-            <Li>
-              <Bold>extra archive size:</Bold> 600kb
-            </Li>
-            <Li>
-              <Bold>poly count:</Bold> 50.000
-            </Li>
-            <Li>
-              <Bold>PBR:</Bold> Specular
-            </Li>
-          </Ul>
-        </GridBlock>
-
-        <GridBlock>
           <PropertyTitle>Hidden files</PropertyTitle>
           <StyledHr />
           {/* TODO later create separate component for interactivity */}
@@ -232,6 +197,41 @@ const NFTPage = observer(() => {
               <Bold>object4.glb</Bold> (64 MB)
             </Li>
           </Ul>
+        </GridBlock>
+
+        <GridBlock>
+          <PropertyTitle>Object Info</PropertyTitle>
+          <StyledHr />
+          <Ul>
+            <Li>
+              <Bold>formats:</Bold> .fbx, .max, .obj, .gltf, .usdz, .glb
+            </Li>
+            <Li>
+              <Bold>extra archive size:</Bold> 600kb
+            </Li>
+            <Li>
+              <Bold>poly count:</Bold> 50.000
+            </Li>
+            <Li>
+              <Bold>PBR:</Bold> Specular
+            </Li>
+          </Ul>
+        </GridBlock>
+
+        <GridBlock>
+          <PropertyTitle>Tags</PropertyTitle>
+          <StyledHr />
+          <TagsContainer>
+            <Tag value='VR' />
+            <Tag value='Metaverse' />
+            <Tag value='Web3' />
+            <Tag value='Jedi' />
+            <Tag value='3D Internet' />
+            <Tag value='NFT' />
+            <Tag value='DAO-ART' />
+            <Tag value='ART' />
+            <Tag value='Tag' />
+          </TagsContainer>
         </GridBlock>
 
         <GridBlock>
