@@ -1,10 +1,21 @@
 import { ErrorStore } from '../Error/ErrorStore'
-import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
-import { Token } from '../../../swagger/Api'
+import {
+  IActivateDeactivate,
+  IStoreRequester,
+  RequestContext,
+  storeRequest,
+  storeReset
+} from '../../utils/store'
+import { CollectionData } from '../../../swagger/Api'
 import { makeAutoObservable } from 'mobx'
 import { api } from '../../config/api'
+import { NFTCardProps } from '../../components/MarketCard/NFTCard'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
+import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+import { reduceAddress } from '../../utils/nfts/reduceAddress'
 
-export class CollectionTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
+export class CollectionTokenListStore
+implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
 
   currentRequest?: RequestContext
@@ -13,7 +24,8 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
   isLoading = false
   isActivated = false
 
-  data: Token[] = []
+  data: CollectionData = {}
+
   collectionAddress = ''
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
@@ -24,11 +36,13 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
   }
 
   private request(collectionAddress: string) {
-    storeRequest<Token[]>(
+    storeRequest<CollectionData>(
       this,
-      api.tokens.byCollectionDetail(collectionAddress), resp => {
+      api.collections.fullDetail(collectionAddress),
+      (resp) => {
         this.data = resp
-      })
+      }
+    )
   }
 
   activate(collectionAddress: string): void {
@@ -48,5 +62,20 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
 
   reload(): void {
     this.request(this.collectionAddress)
+  }
+
+  get nftCards(): NFTCardProps[] {
+    const tokens = this.data.tokens ?? []
+    const collection = this.data.collection
+
+    return tokens.map((token) => ({
+      collection: collection?.name ?? '',
+      imageURL: getHttpLinkFromIpfsString(token.image ?? ''),
+      title: token.name ?? '',
+      user: {
+        img: getProfileImageUrl(token.owner ?? ''),
+        username: reduceAddress(collection?.owner ?? '')
+      }
+    }))
   }
 }

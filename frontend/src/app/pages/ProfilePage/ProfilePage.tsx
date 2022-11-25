@@ -1,8 +1,11 @@
-import React from 'react'
+import { observer } from 'mobx-react-lite'
 import { Outlet } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { styled } from '../../../styles'
+import { useCollectionAndTokenListStore } from '../../hooks'
 import { textVariant, Container } from '../../UIkit'
-import Tabs, { TabsProps } from '../../UIkit/Tabs/Tabs'
+import Tabs from '../../UIkit/Tabs/Tabs'
+import { Params } from '../../utils/router/Params'
 import bg from './img/Gradient.jpg'
 
 const Background = styled('img', {
@@ -83,40 +86,16 @@ const Inventory = styled(Container, {
   }
 })
 
-const tabs: Pick<TabsProps, 'tabs'> = {
-  tabs: [
-    {
-      name: 'Owned',
-      url: 'owned',
-      amount: 3
-    },
-    {
-      name: 'Created',
-      url: 'created',
-      amount: 2
-    },
-    {
-      name: 'Namespaces',
-      url: 'namespaces',
-      amount: 3
-    },
-    {
-      name: 'Collections',
-      url: 'collections',
-      amount: 1
-    },
-    {
-      name: 'History',
-      url: 'history'
-    }
-  ]
-}
-
 const TabsContainer = styled('div', {
   marginBottom: '$4'
 })
 
-export default function ProfilePage() {
+const ProfilePage = observer(() => {
+  const { profileAddress } = useParams<Params>()
+
+  const { tokens: nfts } =
+    useCollectionAndTokenListStore(profileAddress)
+
   return (
     <>
       <GrayOverlay>
@@ -146,11 +125,21 @@ export default function ProfilePage() {
 
         <Inventory>
           <TabsContainer>
-            <Tabs {...tabs} />
+            <Tabs
+              tabs={[
+                {
+                  name: 'Owned',
+                  url: 'owned',
+                  amount: nfts.length
+                }
+              ]}
+            />
           </TabsContainer>
           <Outlet />
         </Inventory>
       </GrayOverlay>
     </>
   )
-}
+})
+
+export default ProfilePage

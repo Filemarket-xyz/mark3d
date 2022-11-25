@@ -1,6 +1,6 @@
 import { RouteObject, Navigate } from 'react-router-dom'
 import CreatorSection from '../MarketPage/CreatorSection'
-import NftSection from '../MarketPage/NftSection'
+import NftSection from './sections/NftSection'
 
 export const collectionPageRoutes: RouteObject[] = [
   {

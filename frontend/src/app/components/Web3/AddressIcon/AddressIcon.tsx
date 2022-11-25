@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { toSvg } from 'jdenticon'
+import { getProfileImageUrl } from '../../../utils/nfts/getProfileImageUrl'
 
 export interface AddressIconProps {
   size?: number
@@ -7,11 +7,10 @@ export interface AddressIconProps {
 }
 
 export const AddressIcon: FC<AddressIconProps> = ({ size = 20, address }) => {
-  const image = toSvg(address, size)
   return (
       <img
         alt="Identicon"
-        src={`data:image/svg+xml;utf8,${encodeURIComponent(image)}`}
+        src={getProfileImageUrl(address, size)}
       />
   )
 }

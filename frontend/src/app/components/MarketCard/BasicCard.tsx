@@ -13,13 +13,14 @@ export const BasicCard = styled('div', {
 })
 
 export const BasicCardSquareImg = styled('img', {
-  width: '100%',
+  width: '255px',
   height: '255px',
   borderRadius: 'inherit',
   borderBottomLeftRadius: '0',
   borderBottomRightRadius: '0',
   outline: '1px solid $whiteOp50',
-  outlineOffset: '-1px'
+  outlineOffset: '-1px',
+  objectFit: 'cover'
 })
 
 export const BasicCardControls = styled('div', {
