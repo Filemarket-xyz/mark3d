@@ -51,3 +51,14 @@ func (h *handler) handleGetOrder(w http.ResponseWriter, r *http.Request) {
 	}
 	sendResponse(w, 200, order)
 }
+
+func (h *handler) handleGetAllActiveOrders(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
+	defer cancel()
+	tokens, e := h.service.GetAllActiveOrders(ctx)
+	if e != nil {
+		sendResponse(w, e.Code, e)
+		return
+	}
+	sendResponse(w, 200, tokens)
+}

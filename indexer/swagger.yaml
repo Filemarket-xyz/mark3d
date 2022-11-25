@@ -201,6 +201,24 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+  /orders/all_active:
+    get:
+      tags:
+        - orders
+      description: Получение списка всех активных ордеров с информацией о токенах
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Список ордеров
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/OrderWithToken"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
   /orders/{address}:
     get:
       tags:
@@ -331,6 +349,16 @@ definitions:
         description: Исходящие ордера (где пользователь - продавец)
         items:
           $ref: "#/definitions/Order"
+  OrderWithToken:
+    type: object
+    description: Ордер с токеном
+    properties:
+      order:
+        $ref: "#/definitions/Order"
+      token:
+        $ref: "#/definitions/Token"
+      transfer:
+        $ref: "#/definitions/Transfer"
   CollectionData:
     type: object
     description: Коллекция со всеми токенами

@@ -10,6 +10,45 @@ import (
 	"strings"
 )
 
+func (p *postgres) GetAllActiveOrders(ctx context.Context, tx pgx.Tx) ([]*domain.Order, error) {
+	// language=PostgreSQL
+	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price FROM orders AS o 
+    	JOIN transfers t on o.transfer_id = t.id WHERE 
+    	    NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
+                ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
+                    ANY('{Finished,Cancelled}') ORDER BY o.id DESC `)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var (
+		res []*domain.Order
+		ids []int64
+	)
+	for rows.Next() {
+		var price string
+		o := &domain.Order{}
+		if err := rows.Scan(&o.Id, &o.TransferId, &price); err != nil {
+			return nil, err
+		}
+		var ok bool
+		o.Price, ok = big.NewInt(0).SetString(price, 10)
+		if !ok {
+			return nil, fmt.Errorf("failed to parse big int: %s", price)
+		}
+
+		res, ids = append(res, o), append(ids, o.Id)
+	}
+	statuses, err := p.getOrderStatuses(ctx, tx, ids)
+	if err != nil {
+		return nil, err
+	}
+	for _, t := range res {
+		t.Statuses = statuses[t.Id]
+	}
+	return res, nil
+}
+
 func (p *postgres) GetIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx,
 	address common.Address) ([]*domain.Order, error) {
 	// language=PostgreSQL
@@ -231,7 +270,7 @@ func (p *postgres) GetActiveOrder(ctx context.Context, tx pgx.Tx, contractAddres
 	if !ok {
 		return nil, fmt.Errorf("failed to parse big int: %s", price)
 	}
-	
+
 	statuses, err := p.getOrderStatuses(ctx, tx, []int64{o.Id})
 	if err != nil {
 		return nil, err
