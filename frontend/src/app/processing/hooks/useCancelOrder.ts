@@ -13,7 +13,7 @@ import assert from 'assert'
  * @param tokenId assigned to a token by the mint function
  * @param price must be in wei (without floating point)
  */
-export function useCancelOrder({ collectionAddress, tokenId }: Partial<TokenFullId>) {
+export function useCancelOrder({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
   const { contract, signer } = useExchangeContract()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
   const cancelOrder = useCallback(wrapPromise(async () => {

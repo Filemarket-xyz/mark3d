@@ -14,8 +14,8 @@ import { useAccount } from 'wagmi'
  * @param collectionAddress
  * @param tokenId assigned to a token by the mint function
  */
-export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFullId>) {
-  const { contract, signer } = useCollectionContract()
+export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
+  const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
   const factory = useHiddenFileProcessorFactory()

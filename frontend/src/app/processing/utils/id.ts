@@ -14,3 +14,7 @@ export const parseTokenFullId = (tokenFullId: string): TokenFullId => JSON.parse
 
 export const makeTokenFullId = (collectionAddress?: string, tokenId?: string): TokenFullId | undefined =>
   collectionAddress && tokenId ? { collectionAddress, tokenId } : undefined
+
+const addressLen = 40
+
+export const nullAddress = `0x${Array(addressLen).fill('0').join('')}` as const

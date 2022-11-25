@@ -6,8 +6,9 @@ import { useCallback } from 'react'
 import { assertContract, assertSigner } from '../utils/assert'
 import { mark3dConfig } from '../../config/mark3d'
 import assert from 'assert'
+import { nullAddress } from '../utils/id'
 
-export function useDraftTransfer({ collectionAddress, tokenId }: Partial<TokenFullId>) {
+export function useDraftTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
 
@@ -16,7 +17,7 @@ export function useDraftTransfer({ collectionAddress, tokenId }: Partial<TokenFu
     assertSigner(signer)
     assert(collectionAddress, 'collection address not provided')
     assert(tokenId, 'tokenId is not provided')
-    const res = await contract.draftTransfer(BigNumber.from(tokenId), '0x00')
+    const res = await contract.draftTransfer(BigNumber.from(tokenId), nullAddress)
     return await res.wait()
   }), [contract, signer, wrapPromise])
 

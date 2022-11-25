@@ -12,7 +12,7 @@ import { TokenFullId } from '../types'
  * @param tokenId assigned to a token by the mint function
  * @param price must be in wei (without floating point)
  */
-export function usePlaceOrder({ collectionAddress, tokenId }: Partial<TokenFullId>, price?: BigNumberish) {
+export function usePlaceOrder({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, price?: BigNumberish) {
   const { contract, signer } = useExchangeContract()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
   const placeOrder = useCallback(wrapPromise(async () => {
@@ -28,7 +28,7 @@ export function usePlaceOrder({ collectionAddress, tokenId }: Partial<TokenFullI
     } else {
       throw Error('collectionAddress or tokenId or price is undefined')
     }
-  }), [contract, signer, wrapPromise, collectionAddress, tokenId])
+  }), [contract, signer, wrapPromise, collectionAddress, tokenId, price])
   return {
     ...statuses,
     placeOrder

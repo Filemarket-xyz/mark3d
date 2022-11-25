@@ -9,7 +9,7 @@ import assert from 'assert'
 import { TokenFullId } from '../types'
 import { useAccount } from 'wagmi'
 
-export function useApproveTransfer({ collectionAddress, tokenId }: Partial<TokenFullId>, publicKey?: string) {
+export function useApproveTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, publicKey?: string) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
   const { statuses, wrapPromise } = useStatusState<ContractReceipt>()

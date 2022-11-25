@@ -24,7 +24,7 @@ interface MintNFTResult {
   receipt: ContractReceipt // вся инфа о транзе
 }
 
-export function useMintNFT(form: MintNFTForm) {
+export function useMintNFT(form: MintNFTForm = {}) {
   const { contract, signer } = useCollectionContract(form.collectionAddress)
   const { address } = useAccount()
   const { wrapPromise, ...statuses } = useStatusState<MintNFTResult>()

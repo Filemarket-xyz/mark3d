@@ -1,10 +1,13 @@
 import { FC } from 'react'
 import { usePlaceOrder } from '../../../../../processing/hooks'
 import { TokenFullId } from '../../../../../processing/types'
-import { BigNumber } from 'ethers'
 import { Button } from '../../../../../UIkit'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
-import MintModal from '../../../../Modal/Modal'
+import MintModal, { ModalTitle } from '../../../../Modal/Modal'
+import { Modal } from '@nextui-org/react'
+import { OrderForm } from '../../OrderForm'
+import { useHookToCallback } from '../../../../../hooks/useHookToCallback'
+import { useModalOpen } from '../../../../../hooks/useModalOpen'
 
 export interface ButtonPlaceOrderProps {
   tokenFullId: TokenFullId
@@ -12,7 +15,8 @@ export interface ButtonPlaceOrderProps {
 }
 
 export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callback }) => {
-  const { placeOrder, ...statuses } = usePlaceOrder(tokenFullId, BigNumber.from('1337'))
+  const { modalOpen, openModal, closeModal } = useModalOpen()
+  const { placeOrder, ...statuses } = useHookToCallback(usePlaceOrder, 'placeOrder', { callbackOk: callback })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -21,14 +25,26 @@ export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callb
   })
   return (
     <>
+      <Modal
+        closeButton
+        open={modalOpen}
+        onClose={closeModal}
+      >
+        <ModalTitle>Order</ModalTitle>
+        <Modal.Body>
+          <OrderForm
+            onSubmit={form => {
+              closeModal()
+              placeOrder(tokenFullId, form.price)
+            }}
+          />
+        </Modal.Body>
+      </Modal>
       <MintModal {...modalProps}/>
       <Button
         secondary
         fullWidth
-        onPress={async () => {
-          await placeOrder()
-          callback?.()
-        }}
+        onPress={openModal}
         isDisabled={isLoading}
       >
         Place order
