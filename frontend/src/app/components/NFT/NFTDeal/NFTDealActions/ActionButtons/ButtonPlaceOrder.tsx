@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from 'react'
+import { FC } from 'react'
 import { usePlaceOrder } from '../../../../../processing/hooks'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
@@ -7,6 +7,7 @@ import MintModal, { ModalTitle } from '../../../../Modal/Modal'
 import { Modal } from '@nextui-org/react'
 import { OrderForm } from '../../OrderForm'
 import { useHookToCallback } from '../../../../../hooks/useHookToCallback'
+import { useModalOpen } from '../../../../../hooks/useModalOpen'
 
 export interface ButtonPlaceOrderProps {
   tokenFullId: TokenFullId
@@ -14,9 +15,7 @@ export interface ButtonPlaceOrderProps {
 }
 
 export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callback }) => {
-  const [modalOpen, setModalOpen] = useState<boolean>()
-  const closeModal = useCallback(() => setModalOpen(false), [modalOpen])
-  const openModal = useCallback(() => setModalOpen(true), [modalOpen])
+  const { modalOpen, openModal, closeModal } = useModalOpen()
   const { placeOrder, ...statuses } = useHookToCallback(usePlaceOrder, 'placeOrder', { callbackOk: callback })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
