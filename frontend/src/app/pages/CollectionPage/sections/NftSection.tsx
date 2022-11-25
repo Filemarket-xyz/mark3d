@@ -31,13 +31,17 @@ export const getIHttpLinkFromIpfsString = (ipfs: string) => {
 }
 
 const NftSection = observer(() => {
-  const { nfts, isLoading } = useNfts()
+  const { collectionAndNfts, isLoading, isLoaded } = useNfts()
   const [NFTs, setNFTs] = useState<NFTCardProps[]>([])
 
   useEffect(() => {
+    if (!isLoaded) return
+    const nfts = collectionAndNfts?.tokens ?? []
+    const colllection = collectionAndNfts?.collection
+
     setNFTs(
       nfts.map((token) => ({
-        collection: 'some collection',
+        collection: colllection?.name ?? '',
         imageURL: getIHttpLinkFromIpfsString(token.image ?? ''),
         price: 99,
         title: token.name ?? '',
@@ -47,7 +51,7 @@ const NftSection = observer(() => {
         }
       }))
     )
-  }, [nfts])
+  }, [isLoaded])
 
   return (
     <CardsContainer>

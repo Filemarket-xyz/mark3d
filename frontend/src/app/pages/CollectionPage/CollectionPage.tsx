@@ -9,7 +9,7 @@ import creator from './img/creatorImg.jpg'
 import { observer } from 'mobx-react-lite'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
 import { toJS } from 'mobx'
-import { Token } from '../../../swagger/Api'
+import { Collection, Token } from '../../../swagger/Api'
 
 const Background = styled('img', {
   width: '100%',
@@ -120,17 +120,30 @@ const StyledContainer = styled(Container, {
   }
 })
 
-interface ContextType { nfts: Token[], isLoading: boolean }
+interface ContextType {
+  collectionAndNfts: {
+    collection: Collection
+    tokens: Token[]
+  } | null
+  isLoading: boolean
+  isLoaded: boolean
+}
 
 const CollectionPage = observer(() => {
   const { collectionId } = useParams<{ collectionId: string }>()
-  const { data, isLoaded, isLoading } = useCollectionTokenListStore(collectionId)
+  const { data, isLoaded, isLoading } =
+    useCollectionTokenListStore(collectionId)
 
-  const [nfts, setNfts] = useState<Token[]>([])
+  const [collectionAndNfts, setCollectionAndNfts] = useState<{
+    collection: Collection
+    tokens: Token[]
+  } | null>(null)
 
   useEffect(() => {
+    console.log(toJS(data))
+
     if (!isLoaded) return
-    setNfts(toJS(data))
+    setCollectionAndNfts(toJS(data))
   }, [isLoaded])
 
   return (
@@ -180,7 +193,7 @@ const CollectionPage = observer(() => {
                 {
                   name: 'NFTs',
                   url: 'nfts',
-                  amount: nfts.length
+                  amount: collectionAndNfts?.tokens?.length ?? 0
                 },
                 {
                   name: 'Owners',
@@ -195,7 +208,7 @@ const CollectionPage = observer(() => {
               ]}
             />
           </TabsContainer>
-          <Outlet context={{ nfts, isLoading }} />
+          <Outlet context={{ collectionAndNfts, isLoading, isLoaded }} />
         </Inventory>
       </GrayOverlay>
     </>
