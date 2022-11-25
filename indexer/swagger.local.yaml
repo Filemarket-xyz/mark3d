@@ -7,11 +7,12 @@ info:
 schemes:
   - http
 host: localhost:9202
+basePath: /api
 paths:
   /collections/{address}:
     get:
       tags:
-        - tokens
+        - collections
       description: Получение коллекции по адресу
       produces:
         - application/json
@@ -20,6 +21,28 @@ paths:
           description: Коллекция
           schema:
             $ref: "#/definitions/Collection"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /collections/full/{address}:
+    get:
+      tags:
+        - collections
+      description: Получение коллекции со всем ее токенами по адресу
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Коллекция
+          schema:
+            $ref: "#/definitions/CollectionData"
         default:
           description: Ошибка
           schema:
@@ -308,6 +331,16 @@ definitions:
         description: Исходящие ордера (где пользователь - продавец)
         items:
           $ref: "#/definitions/Order"
+  CollectionData:
+    type: object
+    description: Коллекция со всеми токенами
+    properties:
+      collection:
+        $ref: "#/definitions/Collection"
+      tokens:
+        type: array
+        items:
+          $ref: "#/definitions/Token"
   Collection:
     type: object
     description: Коллекция
@@ -324,9 +357,6 @@ definitions:
         type: string
         description: Владелец коллекции
         pattern: "0x[0-9a-f-A-F]{40}"
-      name:
-        type: string
-        description: имя токена
       tokenId:
         type: string
         description: Id Access токена
@@ -334,6 +364,15 @@ definitions:
       metaUri:
         type: string
         description: uri метаданных access токена
+      name:
+        type: string
+        description: Имя токена из метаданных
+      description:
+        type: string
+        description: Описание токена из метаданных
+      image:
+        type: string
+        description: Ссылка на пикчу из метаданных
   Token:
     type: object
     description: Токен
@@ -350,9 +389,25 @@ definitions:
         type: string
         description: Владелец
         pattern: "0x[0-9a-f-A-F]{40}"
+      creator:
+        type: string
+        description: Создатель
+        pattern: "0x[0-9a-f-A-F]{40}"
       metaUri:
         type: string
         description: uri метаданных токена
+      name:
+        type: string
+        description: Имя токена из метаданных
+      description:
+        type: string
+        description: Описание токена из метаданных
+      image:
+        type: string
+        description: Ссылка на пикчу из метаданных
+      hiddenFile:
+        type: string
+        description: Ссылка на зашифрованный файл из метаданных
       pendingTransferId:
         type: integer
         format: int64
@@ -442,7 +497,6 @@ definitions:
   TransferStatus:
     description: Статус трансфера <br />
       * `Drafted` - Создан черновик трансфера <br />
-      * `DraftCompleted` - Черновик трансфера завершен <br />
       * `Created` - Трансфер инициализирован <br />
       * `PublicKeySet` - Сохранен публичный ключ получателя <br />
       * `PasswordSet` - Сохранен зашифрованный пароль <br />
@@ -452,12 +506,10 @@ definitions:
     type: string
     enum:
       - Drafted
-      - DraftCompleted
       - Created
       - PublicKeySet
       - PasswordSet
       - FraudReported
-      - FraudDecided
       - Finished
       - Cancelled
   OrderStatusInfo:
