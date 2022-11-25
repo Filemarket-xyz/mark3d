@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { styled } from '../../../../styles'
 import { CardsPlaceholder } from '../../../components/CardsPlaceholder/CardsPlaceholder'
 import NFTCard, { NFTCardProps } from '../../../components/MarketCard/NFTCard'
-import { useNfts } from '../CollectionPage'
+import { useNftsAndCollections } from '../CollectionPage'
 
 export const CardsContainer = styled('div', {
   display: 'flex',
@@ -31,7 +31,7 @@ export const getIHttpLinkFromIpfsString = (ipfs: string) => {
 }
 
 const NftSection = observer(() => {
-  const { collectionAndNfts, isLoading, isLoaded } = useNfts()
+  const { collectionAndNfts, isLoading, isLoaded } = useNftsAndCollections()
   const [NFTs, setNFTs] = useState<NFTCardProps[]>([])
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const NftSection = observer(() => {
         }
       }))
     )
-  }, [isLoaded])
+  }, [collectionAndNfts])
 
   return (
     <CardsContainer>

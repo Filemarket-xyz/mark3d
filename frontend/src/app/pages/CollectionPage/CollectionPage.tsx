@@ -121,12 +121,6 @@ const StyledContainer = styled(Container, {
   }
 })
 
-interface ContextType {
-  collectionAndNfts: CollectionData
-  isLoading: boolean
-  isLoaded: boolean
-}
-
 const CollectionPage = observer(() => {
   const { collectionId } = useParams<{ collectionId: string }>()
   const { data, isLoaded, isLoading } =
@@ -204,7 +198,13 @@ const CollectionPage = observer(() => {
   )
 })
 
-export const useNfts = () => {
+interface ContextType {
+  collectionAndNfts: CollectionData
+  isLoading: boolean
+  isLoaded: boolean
+}
+
+export const useNftsAndCollections = () => {
   return useOutletContext<ContextType>()
 }
 

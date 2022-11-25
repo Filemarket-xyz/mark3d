@@ -1,8 +1,13 @@
-import React from 'react'
+import { toJS } from 'mobx'
+import { observer } from 'mobx-react-lite'
+import React, { useEffect, useState } from 'react'
 import { Outlet } from 'react-router'
+import { useOutletContext, useParams } from 'react-router-dom'
 import { styled } from '../../../styles'
+import { Token } from '../../../swagger/Api'
+import { useCollectionAndTokenListStore } from '../../hooks'
 import { textVariant, Container } from '../../UIkit'
-import Tabs, { TabsProps } from '../../UIkit/Tabs/Tabs'
+import Tabs from '../../UIkit/Tabs/Tabs'
 import bg from './img/Gradient.jpg'
 
 const Background = styled('img', {
@@ -83,40 +88,23 @@ const Inventory = styled(Container, {
   }
 })
 
-const tabs: Pick<TabsProps, 'tabs'> = {
-  tabs: [
-    {
-      name: 'Owned',
-      url: 'owned',
-      amount: 3
-    },
-    {
-      name: 'Created',
-      url: 'created',
-      amount: 2
-    },
-    {
-      name: 'Namespaces',
-      url: 'namespaces',
-      amount: 3
-    },
-    {
-      name: 'Collections',
-      url: 'collections',
-      amount: 1
-    },
-    {
-      name: 'History',
-      url: 'history'
-    }
-  ]
-}
-
 const TabsContainer = styled('div', {
   marginBottom: '$4'
 })
 
-export default function ProfilePage() {
+const ProfilePage = observer(() => {
+  const { profileId } = useParams<{ profileId: `0x${string}` }>()
+
+  const { tokens, isLoaded, isLoading } =
+    useCollectionAndTokenListStore(profileId)
+
+  const [nfts, setNfts] = useState<Token[]>([])
+
+  useEffect(() => {
+    if (!isLoaded) return
+    setNfts(toJS(tokens))
+  }, [isLoaded])
+
   return (
     <>
       <GrayOverlay>
@@ -146,11 +134,50 @@ export default function ProfilePage() {
 
         <Inventory>
           <TabsContainer>
-            <Tabs {...tabs} />
+            <Tabs
+              tabs={[
+                {
+                  name: 'Owned',
+                  url: 'owned',
+                  amount: nfts.length
+                },
+                {
+                  name: 'Created',
+                  url: 'created',
+                  amount: 2
+                },
+                {
+                  name: 'Namespaces',
+                  url: 'namespaces',
+                  amount: 3
+                },
+                {
+                  name: 'Collections',
+                  url: 'collections',
+                  amount: 1
+                },
+                {
+                  name: 'History',
+                  url: 'history'
+                }
+              ]}
+            />
           </TabsContainer>
-          <Outlet />
+          <Outlet context={{ nfts, isLoaded, isLoading }} />
         </Inventory>
       </GrayOverlay>
     </>
   )
+})
+
+interface ContextType {
+  nfts: Token[]
+  isLoading: boolean
+  isLoaded: boolean
 }
+
+export const useNfts = () => {
+  return useOutletContext<ContextType>()
+}
+
+export default ProfilePage
