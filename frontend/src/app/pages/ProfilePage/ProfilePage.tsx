@@ -8,6 +8,7 @@ import { Token } from '../../../swagger/Api'
 import { useCollectionAndTokenListStore } from '../../hooks'
 import { textVariant, Container } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
+import { Params } from '../../utils/router/Params'
 import bg from './img/Gradient.jpg'
 
 const Background = styled('img', {
@@ -93,10 +94,10 @@ const TabsContainer = styled('div', {
 })
 
 const ProfilePage = observer(() => {
-  const { profileId } = useParams<{ profileId: `0x${string}` }>()
+  const { profileAddress } = useParams<Params>()
 
   const { tokens, isLoaded, isLoading } =
-    useCollectionAndTokenListStore(profileId)
+    useCollectionAndTokenListStore(profileAddress)
 
   const [nfts, setNfts] = useState<Token[]>([])
 

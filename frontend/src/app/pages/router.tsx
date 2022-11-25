@@ -31,12 +31,12 @@ const routes: RouteObject[] = [
     children: createRoutes
   },
   {
-    path: 'profile/:profileId',
+    path: `profile/:${Params.profileAddress}`,
     element: <ProfilePage />,
     children: profileRoutes
   },
   {
-    path: 'collection/:collectionId',
+    path: `collection/:${Params.collectionAddress}`,
     element: <CollectionPage />,
     children: collectionPageRoutes
   },

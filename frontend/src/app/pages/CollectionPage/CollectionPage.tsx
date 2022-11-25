@@ -11,6 +11,7 @@ import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListS
 import { toJS } from 'mobx'
 import { CollectionData } from '../../../swagger/Api'
 import { getIHttpLinkFromIpfsString } from './sections/NftSection'
+import { Params } from '../../utils/router/Params'
 
 const Background = styled('img', {
   width: '100%',
@@ -122,9 +123,9 @@ const StyledContainer = styled(Container, {
 })
 
 const CollectionPage = observer(() => {
-  const { collectionId } = useParams<{ collectionId: string }>()
+  const { collectionAddress } = useParams<Params>()
   const { data, isLoaded, isLoading } =
-    useCollectionTokenListStore(collectionId)
+    useCollectionTokenListStore(collectionAddress)
 
   const [collectionAndNfts, setCollectionAndNfts] = useState<CollectionData>({})
 
