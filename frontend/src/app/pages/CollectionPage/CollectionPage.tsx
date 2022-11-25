@@ -9,7 +9,7 @@ import creator from './img/creatorImg.jpg'
 import { observer } from 'mobx-react-lite'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
 import { toJS } from 'mobx'
-import { Collection, Token } from '../../../swagger/Api'
+import { CollectionData } from '../../../swagger/Api'
 
 const Background = styled('img', {
   width: '100%',
@@ -80,7 +80,7 @@ const TabsContainer = styled('div', {
   marginBottom: '$4'
 })
 
-const CollectionData = styled('div', {
+const CollectionDataContainer = styled('div', {
   display: 'flex',
   gap: '$4',
   height: 'max-content',
@@ -121,10 +121,7 @@ const StyledContainer = styled(Container, {
 })
 
 interface ContextType {
-  collectionAndNfts: {
-    collection: Collection
-    tokens: Token[]
-  } | null
+  collectionAndNfts: CollectionData
   isLoading: boolean
   isLoaded: boolean
 }
@@ -134,10 +131,7 @@ const CollectionPage = observer(() => {
   const { data, isLoaded, isLoading } =
     useCollectionTokenListStore(collectionId)
 
-  const [collectionAndNfts, setCollectionAndNfts] = useState<{
-    collection: Collection
-    tokens: Token[]
-  } | null>(null)
+  const [collectionAndNfts, setCollectionAndNfts] = useState<CollectionData>({})
 
   useEffect(() => {
     console.log(toJS(data))
@@ -174,7 +168,7 @@ const CollectionPage = observer(() => {
               eleifend etiam.
             </ProfileDescription>
           </Profile>
-          <CollectionData>
+          <CollectionDataContainer>
             <CollectionDataItem>
               <ItemTitle>Volume</ItemTitle>
               <ItemValue>110 ETH</ItemValue>
@@ -183,7 +177,7 @@ const CollectionPage = observer(() => {
               <ItemTitle>Floor price</ItemTitle>
               <ItemValue>3.05 ETH</ItemValue>
             </CollectionDataItem>
-          </CollectionData>
+          </CollectionDataContainer>
         </StyledContainer>
 
         <Inventory>

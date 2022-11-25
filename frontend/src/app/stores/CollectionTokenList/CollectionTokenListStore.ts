@@ -6,7 +6,7 @@ import {
   storeRequest,
   storeReset
 } from '../../utils/store'
-import { Token, Collection } from '../../../swagger/Api'
+import { CollectionData } from '../../../swagger/Api'
 import { makeAutoObservable } from 'mobx'
 import { api } from '../../config/api'
 
@@ -20,13 +20,7 @@ implements IActivateDeactivate<[string]>, IStoreRequester {
   isLoading = false
   isActivated = false
 
-  data: {
-    collection: Collection
-    tokens: Token[]
-  } = {
-      collection: {},
-      tokens: []
-    }
+  data: CollectionData = {}
 
   collectionAddress = ''
 
@@ -38,9 +32,9 @@ implements IActivateDeactivate<[string]>, IStoreRequester {
   }
 
   private request(collectionAddress: string) {
-    storeRequest<{ collection: Collection, tokens: Token[] }>(
+    storeRequest<CollectionData>(
       this,
-      api.collections.fullCollectionsDetail(collectionAddress),
+      api.collections.fullDetail(collectionAddress),
       (resp) => {
         this.data = resp
       }
