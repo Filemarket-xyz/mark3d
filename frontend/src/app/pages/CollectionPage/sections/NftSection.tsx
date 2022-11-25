@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { styled } from '../../../../styles'
 import { CardsPlaceholder } from '../../../components/CardsPlaceholder/CardsPlaceholder'
 import NFTCard, { NFTCardProps } from '../../../components/MarketCard/NFTCard'
+import { reduceAddress } from '../../ProfilePage/sections/OwnedSection'
 import { useNftsAndCollections } from '../CollectionPage'
 
 export const CardsContainer = styled('div', {
@@ -47,7 +48,7 @@ const NftSection = observer(() => {
         title: token.name ?? '',
         user: {
           img: 'https://www.whatsappimages.in/wp-content/uploads/2021/07/Top-HD-sad-quotes-for-whatsapp-status-in-hindi-Pics-Images-Download-Free.gif',
-          username: 'some username'
+          username: reduceAddress(colllection?.owner ?? '')
         }
       }))
     )

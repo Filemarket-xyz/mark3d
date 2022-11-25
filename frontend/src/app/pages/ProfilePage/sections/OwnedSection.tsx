@@ -5,8 +5,8 @@ import { getIHttpLinkFromIpfsString } from '../../CollectionPage/sections/NftSec
 import { CardsContainer } from '../../MarketPage/NftSection'
 import { useNfts } from '../ProfilePage'
 
-/** Reduce profile address to view like **0x1234...5678** */
-export const reduceProfileAddress = (profileAddress: string) => {
+/** Reduce address to view like **0x1234...5678** */
+export const reduceAddress = (profileAddress: string) => {
   return `${profileAddress.slice(0, 6)}...${profileAddress.slice(-4)}`
 }
 
@@ -20,13 +20,13 @@ export const OwnedSection = () => {
 
     setCards(
       nfts.map((nft) => ({
-        collection: nft.collection ?? '',
+        collection: reduceAddress(nft.collection ?? ''),
         imageURL: getIHttpLinkFromIpfsString(nft.image ?? ''),
         price: 999,
         title: nft.name ?? '',
         user: {
           img: '',
-          username: reduceProfileAddress(nft.owner ?? '')
+          username: reduceAddress(nft.owner ?? '')
         }
       }))
     )
