@@ -1,10 +1,17 @@
 import { ErrorStore } from '../Error/ErrorStore'
-import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
-import { Token } from '../../../swagger/Api'
+import {
+  IActivateDeactivate,
+  IStoreRequester,
+  RequestContext,
+  storeRequest,
+  storeReset
+} from '../../utils/store'
+import { Token, Collection } from '../../../swagger/Api'
 import { makeAutoObservable } from 'mobx'
 import { api } from '../../config/api'
 
-export class CollectionTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
+export class CollectionTokenListStore
+implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
 
   currentRequest?: RequestContext
@@ -13,7 +20,14 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
   isLoading = false
   isActivated = false
 
-  data: Token[] = []
+  data: {
+    collection: Collection
+    tokens: Token[]
+  } = {
+      collection: {},
+      tokens: []
+    }
+
   collectionAddress = ''
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
@@ -24,11 +38,13 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
   }
 
   private request(collectionAddress: string) {
-    storeRequest<Token[]>(
+    storeRequest<{ collection: Collection, tokens: Token[] }>(
       this,
-      api.tokens.byCollectionDetail(collectionAddress), resp => {
+      api.collections.fullCollectionsDetail(collectionAddress),
+      (resp) => {
         this.data = resp
-      })
+      }
+    )
   }
 
   activate(collectionAddress: string): void {
