@@ -1,9 +1,11 @@
-const getIpfsCid = (ipfs: string) => {
+const getIpfsCidWithFilePath = (ipfs: string) => {
   const pattern = /ipfs:\/\/([A-Za-z0-9/.-_]+)/
   return pattern.exec(ipfs)?.[1] ?? ''
 }
 
 export const getHttpLinkFromIpfsString = (ipfs: string) => {
-  const ipfsCid = getIpfsCid(ipfs)
-  return `https://nftstorage.link/ipfs/${ipfsCid}`
+  const cidWithFilePath = getIpfsCidWithFilePath(ipfs)
+  const [cid, filePath] = cidWithFilePath.split(/\/(.*)/s)
+
+  return `https://${cid}.ipfs.nftstorage.link/${filePath}`
 }
