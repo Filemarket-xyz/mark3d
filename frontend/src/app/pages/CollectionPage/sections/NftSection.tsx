@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { styled } from '../../../../styles'
 import { CardsPlaceholder } from '../../../components/CardsPlaceholder/CardsPlaceholder'
 import NFTCard, { NFTCardProps } from '../../../components/MarketCard/NFTCard'
-import { reduceAddress } from '../../ProfilePage/sections/OwnedSection'
+import { getHttpLinkFromIpfsString } from '../../../utils/nfts/getHttpLinkFromIpfsString'
+import { reduceAddress } from '../../../utils/nfts/reduceAddress'
 import { useNftsAndCollections } from '../CollectionPage'
 
 export const CardsContainer = styled('div', {
@@ -21,16 +22,6 @@ export const CardsContainer = styled('div', {
   paddingBottom: '$3'
 })
 
-const getIpfsCid = (ipfs: string) => {
-  const pattern = /ipfs:\/\/([A-Za-z0-9/.-_]+)/
-  return pattern.exec(ipfs)?.[1] ?? ''
-}
-
-export const getIHttpLinkFromIpfsString = (ipfs: string) => {
-  const ipfsCid = getIpfsCid(ipfs)
-  return `https://ipfs.io/ipfs/${ipfsCid}`
-}
-
 const NftSection = observer(() => {
   const { collectionAndNfts, isLoading, isLoaded } = useNftsAndCollections()
   const [NFTs, setNFTs] = useState<NFTCardProps[]>([])
@@ -43,7 +34,7 @@ const NftSection = observer(() => {
     setNFTs(
       nfts.map((token) => ({
         collection: colllection?.name ?? '',
-        imageURL: getIHttpLinkFromIpfsString(token.image ?? ''),
+        imageURL: getHttpLinkFromIpfsString(token.image ?? ''),
         price: 99,
         title: token.name ?? '',
         user: {

@@ -8,8 +8,8 @@ import creator from './img/creatorImg.jpg'
 import { observer } from 'mobx-react-lite'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
 import { CollectionData } from '../../../swagger/Api'
-import { getIHttpLinkFromIpfsString } from './sections/NftSection'
 import { Params } from '../../utils/router/Params'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 
 const Background = styled('img', {
   width: '100%',
@@ -133,7 +133,7 @@ const CollectionPage = observer(() => {
         <StyledContainer>
           <Profile>
             <ProfileHeader>
-              <ProfileImage src={getIHttpLinkFromIpfsString(collectionAndNfts.collection?.image ?? '')} />
+              <ProfileImage src={getHttpLinkFromIpfsString(collectionAndNfts.collection?.image ?? '')} />
               <ProfileName>{collectionAndNfts.collection?.name}</ProfileName>
             </ProfileHeader>
 

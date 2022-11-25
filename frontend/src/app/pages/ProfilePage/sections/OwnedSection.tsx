@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { CardsPlaceholder } from '../../../components/CardsPlaceholder/CardsPlaceholder'
 import NFTCard, { NFTCardProps } from '../../../components/MarketCard/NFTCard'
-import { getIHttpLinkFromIpfsString } from '../../CollectionPage/sections/NftSection'
+import { getHttpLinkFromIpfsString } from '../../../utils/nfts/getHttpLinkFromIpfsString'
+import { reduceAddress } from '../../../utils/nfts/reduceAddress'
 import { CardsContainer } from '../../MarketPage/NftSection'
 import { useNfts } from '../ProfilePage'
-
-/** Reduce address to view like **0x1234...5678** */
-export const reduceAddress = (profileAddress: string) => {
-  return `${profileAddress.slice(0, 6)}...${profileAddress.slice(-4)}`
-}
 
 export const OwnedSection = () => {
   const { isLoaded, isLoading, nfts } = useNfts()
@@ -21,7 +17,7 @@ export const OwnedSection = () => {
     setCards(
       nfts.map((nft) => ({
         collection: reduceAddress(nft.collection ?? ''),
-        imageURL: getIHttpLinkFromIpfsString(nft.image ?? ''),
+        imageURL: getHttpLinkFromIpfsString(nft.image ?? ''),
         price: 999,
         title: nft.name ?? '',
         user: {
