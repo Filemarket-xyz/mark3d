@@ -135,8 +135,6 @@ const CollectionPage = observer(() => {
   const [collectionAndNfts, setCollectionAndNfts] = useState<CollectionData>({})
 
   useEffect(() => {
-    console.log(toJS(data))
-
     if (!isLoaded) return
     setCollectionAndNfts(toJS(data))
   }, [isLoaded])
