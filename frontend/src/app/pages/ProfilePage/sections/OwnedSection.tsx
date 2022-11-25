@@ -4,6 +4,7 @@ import { CardsPlaceholder } from '../../../components/CardsPlaceholder/CardsPlac
 import NFTCard, { NFTCardProps } from '../../../components/MarketCard/NFTCard'
 import { useCollectionAndTokenListStore } from '../../../hooks'
 import { getHttpLinkFromIpfsString } from '../../../utils/nfts/getHttpLinkFromIpfsString'
+import { getProfileImageUrl } from '../../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../../utils/nfts/reduceAddress'
 import { CardsContainer } from '../../MarketPage/NftSection'
 
@@ -22,7 +23,7 @@ export const OwnedSection = observer(() => {
         price: 999,
         title: nft.name ?? '',
         user: {
-          img: '',
+          img: getProfileImageUrl(nft.owner ?? ''),
           username: reduceAddress(nft.owner ?? '')
         }
       }))
