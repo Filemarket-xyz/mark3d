@@ -12,7 +12,7 @@ paths:
   /collections/{address}:
     get:
       tags:
-        - tokens
+        - collections
       description: Получение коллекции по адресу
       produces:
         - application/json
@@ -21,6 +21,28 @@ paths:
           description: Коллекция
           schema:
             $ref: "#/definitions/Collection"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /collections/full/{address}:
+    get:
+      tags:
+        - collections
+      description: Получение коллекции со всем ее токенами по адресу
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Коллекция
+          schema:
+            $ref: "#/definitions/CollectionData"
         default:
           description: Ошибка
           schema:
@@ -309,6 +331,16 @@ definitions:
         description: Исходящие ордера (где пользователь - продавец)
         items:
           $ref: "#/definitions/Order"
+  CollectionData:
+    type: object
+    description: Коллекция со всеми токенами
+    properties:
+      collection:
+        $ref: "#/definitions/Collection"
+      tokens:
+        type: array
+        items:
+          $ref: "#/definitions/Token"
   Collection:
     type: object
     description: Коллекция
