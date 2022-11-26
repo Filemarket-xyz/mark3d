@@ -53,6 +53,7 @@ type Transfers interface {
 }
 
 type Orders interface {
+	GetAllActiveOrders(ctx context.Context, tx pgx.Tx) ([]*domain.Order, error)
 	GetIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error)
 	GetOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error)
 	GetActiveIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error)

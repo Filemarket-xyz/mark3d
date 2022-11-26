@@ -3,6 +3,10 @@ import { ErrorStore } from '../Error/ErrorStore'
 import { makeAutoObservable } from 'mobx'
 import { Collection, Token, TokensResponse } from '../../../swagger/Api'
 import { api } from '../../config/api'
+import { NFTCardProps } from '../../components/MarketCard/NFTCard'
+import { reduceAddress } from '../../utils/nfts/reduceAddress'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
+import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 
 export class CollectionAndTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
@@ -56,5 +60,20 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
 
   reload(): void {
     this.request(this.address)
+  }
+
+  get nftCards(): NFTCardProps[] {
+    const tokens = this.tokens ?? []
+
+    return tokens.map((token) => ({
+      collection: reduceAddress(token.collection ?? ''),
+      imageURL: getHttpLinkFromIpfsString(token.image ?? ''),
+      price: 999,
+      title: token.name ?? '',
+      user: {
+        img: getProfileImageUrl(token.owner ?? ''),
+        username: reduceAddress(token.owner ?? '')
+      }
+    }))
   }
 }

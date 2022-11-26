@@ -59,6 +59,7 @@ type EthClient interface {
 
 type Collections interface {
 	GetCollection(ctx context.Context, address common.Address) (*models.Collection, *models.ErrorResponse)
+	GetCollectionWithTokens(ctx context.Context, address common.Address) (*models.CollectionData, *models.ErrorResponse)
 }
 
 type Tokens interface {
@@ -77,6 +78,7 @@ type Orders interface {
 	GetOrders(ctx context.Context, address common.Address) (*models.OrdersResponse, *models.ErrorResponse)
 	GetOrdersHistory(ctx context.Context, address common.Address) (*models.OrdersResponse, *models.ErrorResponse)
 	GetOrder(ctx context.Context, address common.Address, tokenId *big.Int) (*models.Order, *models.ErrorResponse)
+	GetAllActiveOrders(ctx context.Context) ([]*models.OrderWithToken, *models.ErrorResponse)
 }
 
 type service struct {

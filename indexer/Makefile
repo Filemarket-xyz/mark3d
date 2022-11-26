@@ -37,6 +37,9 @@ migrate.status:
 	goose -dir migrations  postgres "host=localhost port=1338 user=indexer password=1337 dbname=mark3d_indexer sslmode=disable" status
 
 swagger.start:
+	cp swagger.yaml swagger.local.yaml
+	sed -i "s/mark3d.xyz/localhost:9202/g" swagger.local.yaml
+	sed -i "s/https/http/g" swagger.local.yaml
 	docker run --restart unless-stopped -d --name mark3d-indexer-swagger -p 9201:8080 -e SWAGGER_JSON=/swagger.local.yaml -v $(shell pwd)/swagger.local.yaml:/swagger.local.yaml swaggerapi/swagger-ui
 
 swagger.stop:

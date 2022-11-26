@@ -2,6 +2,7 @@ import { Navigate, RouteObject } from 'react-router-dom'
 import CollectionSection from '../MarketPage/CollectionSection'
 import NamespaceSection from '../MarketPage/NamespaceSection'
 import NftSection from '../MarketPage/NftSection'
+import OwnedSection from './sections/OwnedSection'
 
 export const profileRoutes: RouteObject[] = [
   {
@@ -10,7 +11,7 @@ export const profileRoutes: RouteObject[] = [
   },
   {
     path: 'owned',
-    element: <NftSection />
+    element: <OwnedSection />
   },
   {
     path: 'created',

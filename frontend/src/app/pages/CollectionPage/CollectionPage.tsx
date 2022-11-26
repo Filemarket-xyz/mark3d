@@ -1,11 +1,14 @@
-import React from 'react'
-import { Outlet } from 'react-router'
+import { Outlet, useParams } from 'react-router'
 import { styled } from '../../../styles'
 import Badge from '../../components/Badge/Badge'
 import { textVariant, Container } from '../../UIkit'
-import Tabs, { TabsProps } from '../../UIkit/Tabs/Tabs'
+import Tabs from '../../UIkit/Tabs/Tabs'
 import bg from './img/Gradient.jpg'
 import creator from './img/creatorImg.jpg'
+import { observer } from 'mobx-react-lite'
+import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
+import { Params } from '../../utils/router/Params'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 
 const Background = styled('img', {
   width: '100%',
@@ -72,31 +75,11 @@ const Inventory = styled(Container, {
   }
 })
 
-const tabs: Pick<TabsProps, 'tabs'> = {
-  tabs: [
-    {
-      name: 'NFTs',
-      url: 'nfts',
-      amount: 3
-    },
-    {
-      name: 'Owners',
-      url: 'owners',
-      amount: 2
-    },
-    {
-      name: 'History',
-      url: 'history',
-      amount: 3
-    }
-  ]
-}
-
 const TabsContainer = styled('div', {
   marginBottom: '$4'
 })
 
-const CollectionData = styled('div', {
+const CollectionDataContainer = styled('div', {
   display: 'flex',
   gap: '$4',
   height: 'max-content',
@@ -136,7 +119,11 @@ const StyledContainer = styled(Container, {
   }
 })
 
-export default function CollectionPage() {
+const CollectionPage = observer(() => {
+  const { collectionAddress } = useParams<Params>()
+  const { data: collectionAndNfts } =
+    useCollectionTokenListStore(collectionAddress)
+
   return (
     <>
       <GrayOverlay>
@@ -145,8 +132,8 @@ export default function CollectionPage() {
         <StyledContainer>
           <Profile>
             <ProfileHeader>
-              <ProfileImage src={bg} />
-              <ProfileName>VR Glasses</ProfileName>
+              <ProfileImage src={getHttpLinkFromIpfsString(collectionAndNfts.collection?.image ?? '')} />
+              <ProfileName>{collectionAndNfts.collection?.name}</ProfileName>
             </ProfileHeader>
 
             <Badges>
@@ -158,14 +145,10 @@ export default function CollectionPage() {
             </Badges>
 
             <ProfileDescription>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sodales
-              id in facilisis donec. Aliquam sed volutpat posuere pharetra
-              viverra lacinia odio amet suscipit. A, quis arcu amet, nunc odio
-              suspendisse cursus mauris. Aliquam dictum in ornare odio eget ut
-              eleifend etiam.
+              {collectionAndNfts.collection?.description}
             </ProfileDescription>
           </Profile>
-          <CollectionData>
+          <CollectionDataContainer>
             <CollectionDataItem>
               <ItemTitle>Volume</ItemTitle>
               <ItemValue>110 ETH</ItemValue>
@@ -174,16 +157,26 @@ export default function CollectionPage() {
               <ItemTitle>Floor price</ItemTitle>
               <ItemValue>3.05 ETH</ItemValue>
             </CollectionDataItem>
-          </CollectionData>
+          </CollectionDataContainer>
         </StyledContainer>
 
         <Inventory>
           <TabsContainer>
-            <Tabs {...tabs} />
+            <Tabs
+              tabs={[
+                {
+                  name: 'NFTs',
+                  url: 'nfts',
+                  amount: collectionAndNfts?.tokens?.length ?? 0
+                }
+              ]}
+            />
           </TabsContainer>
           <Outlet />
         </Inventory>
       </GrayOverlay>
     </>
   )
-}
+})
+
+export default CollectionPage

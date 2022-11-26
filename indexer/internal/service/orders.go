@@ -69,9 +69,42 @@ func (s *service) GetOrder(ctx context.Context, address common.Address,
 	res, err := s.postgres.GetActiveOrder(ctx, tx, address, tokenId)
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return nil, orderNotExistError
+			return nil, nil
 		}
 		return nil, internalError
 	}
 	return domain.OrderToModel(res), nil
+}
+
+func (s *service) GetAllActiveOrders(ctx context.Context) ([]*models.OrderWithToken, *models.ErrorResponse) {
+	tx, err := s.postgres.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		log.Println("begin tx failed: ", err)
+		return nil, internalError
+	}
+	defer s.postgres.RollbackTransaction(ctx, tx)
+	orders, err := s.postgres.GetAllActiveOrders(ctx, tx)
+	if err != nil {
+		log.Println("get all active orders failed", err)
+		return nil, internalError
+	}
+	res := make([]*models.OrderWithToken, len(orders))
+	for i, o := range orders {
+		transfer, err := s.postgres.GetTransfer(ctx, tx, o.TransferId)
+		if err != nil {
+			log.Println("get transfer for order failed", err)
+			return nil, internalError
+		}
+		token, err := s.postgres.GetToken(ctx, tx, transfer.CollectionAddress, transfer.TokenId)
+		if err != nil {
+			log.Println("get token for order failed", err)
+			return nil, internalError
+		}
+		res[i] = &models.OrderWithToken{
+			Order:    domain.OrderToModel(o),
+			Token:    domain.TokenToModel(token),
+			Transfer: domain.TransferToModel(transfer),
+		}
+	}
+	return res, nil
 }
