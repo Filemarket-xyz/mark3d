@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { styled } from '../../../styles'
-import { PageLayout, textVariant, Link } from '../../UIkit'
+import { PageLayout, textVariant } from '../../UIkit'
 import Badge from '../../components/Badge/Badge'
 import { Hr } from '../../UIkit/Hr/Hr'
 import { NFTDeal } from '../../components/NFT'
@@ -77,52 +77,6 @@ const StyledHr = styled(Hr, {
   marginBottom: '$3'
 })
 
-const Tag = ({
-  value,
-  smallText,
-  isGray
-}: {
-  value: string
-  smallText?: boolean
-  isGray?: boolean
-}) => {
-  let fz = '$primary2'
-  let color
-  if (smallText) {
-    fz = '$primary3'
-  }
-
-  if (isGray) {
-    color = '$gray400'
-  }
-  return (
-    <Badge content={{ value }} valueStyles={{ css: { fontSize: fz, color } }} />
-  )
-}
-const TagsContainer = styled('div', {
-  display: 'flex',
-  gap: '$2',
-  flexWrap: 'wrap'
-})
-
-const Ul = styled('ul', {
-  listStyle: 'inside'
-})
-
-const Li = styled('li', {
-  color: '$gray500',
-  lineHeight: '125%',
-  '&::marker': {
-    fontSize: '10px',
-    display: 'block',
-    color: '$gray500'
-  }
-})
-
-const Bold = styled('span', {
-  fontWeight: 600
-})
-
 // { collectionAddress: '0xe37382f84dc2c72ef7eaac6e327bba054b30628c', tokenId: '0' }
 
 const NFTPage = observer(() => {
@@ -172,106 +126,9 @@ const NFTPage = observer(() => {
         <GridBlock>
           <PropertyTitle>Description</PropertyTitle>
           <StyledHr />
-          <P>Mark3d NFT collection for 3D Internet and virtual worlds</P>
+          <P>{collection?.description}</P>
         </GridBlock>
 
-        <GridBlock>
-          <PropertyTitle>Tags</PropertyTitle>
-          <StyledHr />
-          <TagsContainer>
-            <Tag value='VR' />
-            <Tag value='Metaverse' />
-            <Tag value='Web3' />
-            <Tag value='Jedi' />
-            <Tag value='3D Internet' />
-            <Tag value='NFT' />
-            <Tag value='DAO-ART' />
-            <Tag value='ART' />
-            <Tag value='Tag' />
-          </TagsContainer>
-        </GridBlock>
-
-        <GridBlock>
-          <PropertyTitle>Object Info</PropertyTitle>
-          <StyledHr />
-          <Ul>
-            <Li>
-              <Bold>formats:</Bold> .fbx, .max, .obj, .gltf, .usdz, .glb
-            </Li>
-            <Li>
-              <Bold>extra archive size:</Bold> 600kb
-            </Li>
-            <Li>
-              <Bold>poly count:</Bold> 50.000
-            </Li>
-            <Li>
-              <Bold>PBR:</Bold> Specular
-            </Li>
-          </Ul>
-        </GridBlock>
-
-        <GridBlock>
-          <PropertyTitle>Hidden files</PropertyTitle>
-          <StyledHr />
-          {/* TODO later create separate component for interactivity */}
-          <TagsContainer css={{ marginBottom: '$3' }}>
-            <Tag value='All_files/' smallText isGray />
-            <Tag value='3D_files/' smallText />
-            <Tag value='Proccessed_Textures/' smallText />
-          </TagsContainer>
-          <Ul
-            css={{
-              listStyle: 'none',
-              '& li:not(:last-child)': {
-                marginBottom: '$2'
-              }
-            }}
-          >
-            <Li>
-              <Bold>object1.glb</Bold> (64 MB)
-            </Li>
-            <Li>
-              <Bold>object2.glb</Bold> (64 MB)
-            </Li>
-            <Li>
-              <Bold>object3.glb</Bold> (64 MB)
-            </Li>
-            <Li>
-              <Bold>object4.glb</Bold> (64 MB)
-            </Li>
-          </Ul>
-        </GridBlock>
-
-        <GridBlock>
-          <PropertyTitle>Links</PropertyTitle>
-          <StyledHr />
-          <Ul
-            css={{
-              listStyle: 'none',
-              '& li:not(:last-child)': {
-                marginBottom: '$3'
-              }
-            }}
-          >
-            <Li>
-              <Link>View on Etherscan</Link>
-            </Li>
-            <Li>
-              <Link>View metadata</Link>
-            </Li>
-            <Li>
-              <Link>View on IPFS</Link>
-            </Li>
-            <Li>
-              <Link>Share</Link>
-            </Li>
-          </Ul>
-        </GridBlock>
-
-        <GridBlock>
-          <PropertyTitle>History</PropertyTitle>
-          <StyledHr />
-        </GridBlock>
       </GridLayout>
     </>
   )
