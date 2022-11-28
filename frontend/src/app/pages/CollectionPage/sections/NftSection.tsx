@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite'
+import { useAccount } from 'wagmi'
 import { styled } from '../../../../styles'
 import { CardsPlaceholder } from '../../../components/CardsPlaceholder/CardsPlaceholder'
 import NFTCard from '../../../components/MarketCard/NFTCard'
@@ -44,27 +45,42 @@ const NftSection = observer(() => {
     data: { collection }
   } = useCollectionTokenListStore()
 
+  const { address: currentAddress } = useAccount()
+
+  const generateContentIfNoCards = () => {
+    if (currentAddress === collection?.owner) {
+      return (
+        <>
+          <P>There is no NFT yet, wish to add one?</P>
+          <NavButton
+            primary
+            to={'/create/nft'}
+            state={{
+              collection: {
+                address: collection?.address,
+                name: collection?.name
+              }
+            }}
+            css={{ textDecoration: 'none' }}
+          >
+            Create NFT
+          </NavButton>
+        </>
+      )
+    }
+
+    return <P>The NFT list is empty</P>
+  }
+
   return (
     <CardsContainer>
       {isLoading ? (
         <CardsPlaceholder cardsAmount={5} />
-      ) : (
+      ) : nftCards.length ? (
         nftCards.map((card, index) => <NFTCard {...card} key={index} />)
+      ) : (
+        <NoNftContainer>{generateContentIfNoCards()}</NoNftContainer>
       )}
-
-      <NoNftContainer>
-        <P>There is no NFT yet, wish to add one?</P>
-        <NavButton
-          primary
-          to={'/create/nft'}
-          state={{
-            collection: { address: collection?.address, name: collection?.name }
-          }}
-          css={{ textDecoration: 'none' }}
-        >
-          Create NFT
-        </NavButton>
-      </NoNftContainer>
     </CardsContainer>
   )
 })
