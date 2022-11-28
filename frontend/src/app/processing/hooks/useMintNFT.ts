@@ -39,7 +39,8 @@ export function useMintNFT(form: MintNFTForm = {}) {
       const hiddenFileEncrypted = new Blob([await owner.encryptFile(hiddenFile)])
       const hiddenFileMeta: FileMeta = {
         name: hiddenFile.name,
-        type: hiddenFile.type
+        type: hiddenFile.type,
+        size: hiddenFile.size
       }
       const metadata = await nftStorage.store({
         name,

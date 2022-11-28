@@ -11,12 +11,12 @@ export class HiddenFileOwner implements IHiddenFileOwner {
   ) {
   }
 
-  async decryptFile(encryptedFileData: CryptoMessage, meta: FileMeta): Promise<DecryptResult<File>> {
-    const result = await this.cryptoProvider.decryptRSA(encryptedFileData)
+  async decryptFile(encryptedFileData: CryptoMessage, meta?: FileMeta): Promise<DecryptResult<File>> {
+    const result = await this.cryptoProvider.decryptAES(encryptedFileData)
     if (result.ok) {
       return {
         ok: true,
-        result: new File([result.result], meta.name, { type: meta.type })
+        result: new File([result.result], meta?.name || 'hidden_file', { type: meta?.type })
       }
     }
     return result

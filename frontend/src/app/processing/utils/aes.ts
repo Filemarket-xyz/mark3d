@@ -12,6 +12,7 @@ export const genAESKey = async (): Promise<AESKey> => {
       randomBytes(32),
       1,
       32,
+      'sha512',
       (err, derivedKey) => {
         if (err) {
           reject(err)
@@ -29,7 +30,7 @@ export const encryptAES = (message: CryptoMessage, key: AESKey): Uint8Array => {
 
   let toEncrypt: Uint8Array = padding.pkcs7.pad(message)
 
-  const hash = sha256(toEncrypt)
+  const hash = sha256(toEncrypt).slice(2) // cut 0x
   toEncrypt = Buffer.concat([toEncrypt, Buffer.from(hash, 'hex')])
 
   // TODO: use secure CBC with initial vector
@@ -54,9 +55,8 @@ export const decryptAES = (message: CryptoMessage, key: AESKey): DecryptResult =
   }
 
   const chunks: Uint8Array[] = []
-  for (let i = 0; i < message.length; i++) {
+  for (let i = 0; i < message.length; i += 16) {
     const encryptedChunk = message.subarray(i, i + 16)
-    // types are missing for the decrypt function
     const chunk: ByteSource = (cipher as any).decrypt(encryptedChunk)
     chunks.push(new Uint8Array(chunk))
   }
@@ -67,7 +67,7 @@ export const decryptAES = (message: CryptoMessage, key: AESKey): DecryptResult =
 
   const withoutHash = decrypted.subarray(0, decrypted.length - 32)
 
-  const computedHash = sha256(withoutHash)
+  const computedHash = sha256(withoutHash).slice(2) // cut 0x
 
   if (!hash.equals(Buffer.from(computedHash, 'hex'))) {
     return {

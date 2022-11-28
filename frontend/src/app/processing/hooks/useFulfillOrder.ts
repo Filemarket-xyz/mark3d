@@ -31,12 +31,6 @@ export function useFulfillOrder({ collectionAddress, tokenId }: Partial<TokenFul
     const buyer = await factory.getBuyer(address, tokenFullId)
     await factory.registerTokenFullId(address, buyer, tokenFullId)
     const publicKey = await buyer.initBuy()
-    // const message = Buffer.from('I am gay', 'utf8')
-    const privateKey = await buyer.revealFraudReportRSAPrivateKey()
-    console.log('buyer', 'publicKey', publicKey, 'privateKey', privateKey)
-    // const decrypted = await decryptRSA(await encryptRSA(message, publicKey), privateKey)
-    // console.log('crypto test', decrypted.ok && Buffer.from(decrypted.result).toString('utf8'))
-    console.log('collectionAddress', collectionAddress, 'publicKey', publicKey, 'tokenId', tokenId)
     const result = await contract.fulfillOrder(
       collectionAddress as `0x${string}`,
       publicKey as `0x${string}`,

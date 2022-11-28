@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { styled } from '../../../styles'
-import { PageLayout, textVariant, Link } from '../../UIkit'
+import { PageLayout, textVariant, Link, Button } from '../../UIkit'
 import creator from './img/creatorImg.jpg'
 import collection from './img/collection.jpg'
 import Badge from '../../components/Badge/Badge'
@@ -12,6 +12,10 @@ import { Params } from '../../utils/router/Params'
 import { makeTokenFullId } from '../../processing/utils/id'
 import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
 import { useOrderStore } from '../../hooks/useOrderStore'
+import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
+import { useStores } from '../../hooks'
+import { useTokenStore } from '../../hooks/useTokenStore'
+import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 
 const NFTPreviewContainer = styled('div', {
   paddingTop: '$layout$navbarheight',
@@ -128,6 +132,10 @@ const NFTPage = observer(() => {
   const tokenFullId = useMemo(() => makeTokenFullId(collectionAddress, tokenId), [collectionAddress, tokenId])
   const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
   const orderStore = useOrderStore(collectionAddress, tokenId)
+  const { data: token } = useTokenStore(collectionAddress, tokenId)
+  const tokenMetaStore = useTokenMetaStore(token?.metaUri)
+  const { errorStore } = useStores()
+  const files = useHiddenFileDownload(tokenMetaStore, errorStore, token)
   return (
     <>
       <NFTPreviewContainer></NFTPreviewContainer>
@@ -171,11 +179,11 @@ const NFTPage = observer(() => {
           <PropertyTitle>Hidden files</PropertyTitle>
           <StyledHr />
           {/* TODO later create separate component for interactivity */}
-          <TagsContainer css={{ marginBottom: '$3' }}>
-            <Tag value='All_files/' smallText isGray />
-            <Tag value='3D_files/' smallText />
-            <Tag value='Proccessed_Textures/' smallText />
-          </TagsContainer>
+          {/* <TagsContainer css={{ marginBottom: '$3' }}> */}
+          {/*  <Tag value='All_files/' smallText isGray /> */}
+          {/*  <Tag value='3D_files/' smallText /> */}
+          {/*  <Tag value='Proccessed_Textures/' smallText /> */}
+          {/* </TagsContainer> */}
           <Ul
             css={{
               listStyle: 'none',
@@ -184,18 +192,17 @@ const NFTPage = observer(() => {
               }
             }}
           >
-            <Li>
-              <Bold>object1.glb</Bold> (64 MB)
-            </Li>
-            <Li>
-              <Bold>object2.glb</Bold> (64 MB)
-            </Li>
-            <Li>
-              <Bold>object3.glb</Bold> (64 MB)
-            </Li>
-            <Li>
-              <Bold>object4.glb</Bold> (64 MB)
-            </Li>
+            {files.map(({ cid, label, download }) =>
+              <li key={cid}>
+                <Button
+                  onPress={download}
+                  tertiary
+                  small
+                >
+                  {label}
+                </Button>
+              </li>
+            )}
           </Ul>
         </GridBlock>
 

@@ -18,7 +18,7 @@ export interface IHiddenFileOwner extends IHiddenFileBase {
    * @throws {@link NoAESKeyToDecrypt}
    * @param file
    */
-  decryptFile: (encryptedFileData: CryptoMessage, meta: FileMeta) => Promise<DecryptResult<File>>
+  decryptFile: (encryptedFileData: CryptoMessage, meta?: FileMeta) => Promise<DecryptResult<File>>
 
   /**
    * Encrypts stored AES key (AES key used to encrypt file) with provided publicKey.
