@@ -77,6 +77,7 @@ const StyledHr = styled(Hr, {
   marginBottom: '$3'
 })
 
+// collection address and token id dev example
 // { collectionAddress: '0xe37382f84dc2c72ef7eaac6e327bba054b30628c', tokenId: '0' }
 
 const NFTPage = observer(() => {
