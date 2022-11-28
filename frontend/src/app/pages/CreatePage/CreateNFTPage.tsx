@@ -140,7 +140,9 @@ const CreateNftPage = observer(() => {
     formState: { isValid }
   } = useForm<CreateNFTForm>({
     defaultValues: {
-      collection: { id: predefinedCollection?.address, title: predefinedCollection?.name }
+      collection: predefinedCollection
+        ? { id: predefinedCollection.address, title: predefinedCollection.name }
+        : undefined
     }
   })
 
