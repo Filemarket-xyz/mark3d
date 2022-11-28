@@ -5,7 +5,6 @@ import { useMemo } from 'react'
 import { utils } from 'ethers'
 import { useAccount } from 'wagmi'
 import { ipfsService } from '../services/IPFSService'
-import { formatFileSize } from '../utils/nfts/formatFileSize'
 import { saveAs } from 'file-saver'
 import { TokenMetaStore } from '../stores/Token/TokenMetaStore'
 import { ErrorStore } from '../stores/Error/ErrorStore'
@@ -13,7 +12,8 @@ import { getIpfsCidWithFilePath } from '../utils/nfts/getHttpLinkFromIpfsString'
 
 export interface HiddenFileDownload {
   cid: string
-  label: string
+  name: string
+  size: number
   download: () => void
 }
 
@@ -34,9 +34,8 @@ export function useHiddenFileDownload(
       }
       return [{
         cid: getIpfsCidWithFilePath(hiddenFileURI),
-        label: hiddenMeta?.name
-          ? hiddenMeta.name + (hiddenMeta?.size ? `(${formatFileSize(hiddenMeta.size)})` : '')
-          : hiddenFileURI,
+        name: hiddenMeta?.name || hiddenFileURI,
+        size: hiddenMeta?.size || 0,
         download: async () => {
           const encryptedFile = await ipfsService.fetchBytes(hiddenFileURI)
           const owner = await factory.getOwner(address, tokenFullId)

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { styled } from '../../../styles'
-import { PageLayout, textVariant, Link, Button } from '../../UIkit'
+import { PageLayout, textVariant, Link, Txt } from '../../UIkit'
 import creator from './img/creatorImg.jpg'
 import collection from './img/collection.jpg'
 import Badge from '../../components/Badge/Badge'
@@ -16,6 +16,7 @@ import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
 import { useStores } from '../../hooks'
 import { useTokenStore } from '../../hooks/useTokenStore'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
+import { formatFileSize } from '../../utils/nfts/formatFileSize'
 
 const NFTPreviewContainer = styled('div', {
   paddingTop: '$layout$navbarheight',
@@ -192,15 +193,19 @@ const NFTPage = observer(() => {
               }
             }}
           >
-            {files.map(({ cid, label, download }) =>
+            {files.map(({ cid, name, size, download }) =>
               <li key={cid}>
-                <Button
+                <Link
                   onPress={download}
-                  tertiary
-                  small
+                  gray
                 >
-                  {label}
-                </Button>
+                  {name}
+                </Link>
+                {size > 0 && (
+                  <Txt secondary2 css={{ color: '$gray500' }}>
+                    {` (${formatFileSize(size)})`}
+                  </Txt>
+                )}
               </li>
             )}
           </Ul>

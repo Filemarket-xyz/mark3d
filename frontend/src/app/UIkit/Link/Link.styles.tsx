@@ -29,5 +29,13 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
         color: '$gray400',
         fill: '$gray400',
         cursor: 'not-allowed'
+      },
+      variants: {
+        gray: {
+          true: {
+            color: '$gray500',
+            fill: '$gray500'
+          }
+        }
       }
     })
