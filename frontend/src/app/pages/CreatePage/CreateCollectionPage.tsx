@@ -72,9 +72,7 @@ export default function CreateCollectionPage() {
     error,
     isLoading,
     result,
-    createCollection: mintCollection,
-    setError,
-    setIsLoading
+    createCollection: mintCollection
   } = useCreateCollection()
 
   const onSubmit: SubmitHandler<CreateCollectionForm> = (data) => {
@@ -85,23 +83,31 @@ export default function CreateCollectionPage() {
     useModalProperties()
 
   useEffect(() => {
-    if (!(result || error || isLoading)) return
+    if (!isLoading) return
 
-    if (isLoading) {
-      void setModalBody(<InProgressBody text='Collection is being minted' />)
-    } else if (result) {
-      void setModalBody(
-        <SuccessNavBody
-          buttonText='View collection'
-          link={`/collection/${result.collectionTokenAddress}`}
-        />
-      )
-    } else if (error) {
-      void setModalBody(<ErrorBody message={extractMessageFromError(error)} />)
-    }
+    void setModalBody(<InProgressBody text='Collection is being minted' />)
+    void setModalOpen(true)
+  }, [isLoading])
 
-    setModalOpen(true)
-  }, [error, isLoading, result])
+  useEffect(() => {
+    if (!result) return
+    console.log(result)
+
+    void setModalBody(
+      <SuccessNavBody
+        buttonText='View collection'
+        link={`/collection/${result.collectionTokenAddress}`}
+      />
+    )
+    void setModalOpen(true)
+  }, [result])
+
+  useEffect(() => {
+    if (!error) return
+
+    void setModalBody(<ErrorBody message={extractMessageFromError(error)} />)
+    void setModalOpen(true)
+  }, [error])
 
   const [textareaLength, setTextareaLength] = useState(
     getValues('description')?.length ?? 0
@@ -112,8 +118,6 @@ export default function CreateCollectionPage() {
       <MintModal
         body={modalBody ?? <></>}
         handleClose={() => {
-          setIsLoading(false)
-          setError(undefined)
           setModalOpen(false)
         }}
         open={modalOpen}
