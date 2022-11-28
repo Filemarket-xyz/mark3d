@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react'
 import { styled } from '../../../styles'
 import { PageLayout, textVariant, Link } from '../../UIkit'
-import creator from './img/creatorImg.jpg'
-import collection from './img/collection.jpg'
 import Badge from '../../components/Badge/Badge'
 import { Hr } from '../../UIkit/Hr/Hr'
 import { NFTDeal } from '../../components/NFT'
@@ -12,6 +10,10 @@ import { Params } from '../../utils/router/Params'
 import { makeTokenFullId } from '../../processing/utils/id'
 import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
 import { useOrderStore } from '../../hooks/useOrderStore'
+import { useCollectionStore } from '../../hooks/useCollectionStore'
+import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+import { reduceAddress } from '../../utils/nfts/reduceAddress'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 
 const NFTPreviewContainer = styled('div', {
   paddingTop: '$layout$navbarheight',
@@ -125,24 +127,30 @@ const Bold = styled('span', {
 
 const NFTPage = observer(() => {
   const { collectionAddress, tokenId } = useParams<Params>()
-  const tokenFullId = useMemo(() => makeTokenFullId(collectionAddress, tokenId), [collectionAddress, tokenId])
+  const tokenFullId = useMemo(
+    () => makeTokenFullId(collectionAddress, tokenId),
+    [collectionAddress, tokenId]
+  )
   const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
   const orderStore = useOrderStore(collectionAddress, tokenId)
+
+  const { collection } = useCollectionStore(collectionAddress)
+
   return (
     <>
       <NFTPreviewContainer></NFTPreviewContainer>
       <GridLayout>
         <GridBlock>
-          <NftName>VR Glasses</NftName>
+          <NftName>{collection?.name}</NftName>
           <MintTime>Minted on Sep 9, 2022</MintTime>
           <BadgesContainer>
             <Badge
-              imgUrl={creator}
-              content={{ title: 'Creator', value: 'Underkong' }}
+              imgUrl={getProfileImageUrl(collection?.owner ?? '')}
+              content={{ title: 'Creator', value: reduceAddress(collection?.owner ?? '') }}
             />
             <Badge
-              imgUrl={collection}
-              content={{ title: 'Collection', value: 'VR Glasses by Mark3d' }}
+              imgUrl={getHttpLinkFromIpfsString(collection?.image ?? '')}
+              content={{ title: 'Collection', value: collection?.name ?? '' }}
             />
           </BadgesContainer>
         </GridBlock>

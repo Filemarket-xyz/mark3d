@@ -6,6 +6,7 @@ import { CollectionTokenListStore } from './CollectionTokenList/CollectionTokenL
 import { TransferStore } from './Transfer/TransferStore'
 import { OrderStore } from './Order/OrderStore'
 import { OpenOrderListStore } from './OrderList/OrderListStore'
+import { CollectionStore } from './Collection/CollectionStore'
 
 export class RootStore {
   dialogStore: DialogStore
@@ -16,6 +17,7 @@ export class RootStore {
   collectionTokenList: CollectionTokenListStore
   orderStore: OrderStore
   orderListStore: OpenOrderListStore
+  collectionStore: CollectionStore
 
   constructor() {
     this.dialogStore = new DialogStore()
@@ -26,6 +28,7 @@ export class RootStore {
     this.collectionTokenList = new CollectionTokenListStore(this)
     this.orderStore = new OrderStore(this)
     this.orderListStore = new OpenOrderListStore(this)
+    this.collectionStore = new CollectionStore(this)
   }
 }
 
