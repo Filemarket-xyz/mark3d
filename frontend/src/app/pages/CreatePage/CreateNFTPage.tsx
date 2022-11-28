@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { styled } from '../../../styles'
 import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
 import { Button, PageLayout } from '../../UIkit'
@@ -94,6 +94,11 @@ export interface CreateNFTForm {
 
 const CreateNftPage = observer(() => {
   const { address } = useAccount()
+  const location = useLocation()
+  const predefinedCollection: {
+    address: string
+    name: string
+  } | undefined = location.state?.collection
 
   const {
     collections,
@@ -133,7 +138,11 @@ const CreateNftPage = observer(() => {
     handleSubmit,
     control,
     formState: { isValid }
-  } = useForm<CreateNFTForm>()
+  } = useForm<CreateNFTForm>({
+    defaultValues: {
+      collection: { id: predefinedCollection?.address, title: predefinedCollection?.name }
+    }
+  })
 
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
     createNft(data)
