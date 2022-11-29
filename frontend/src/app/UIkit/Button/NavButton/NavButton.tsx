@@ -11,9 +11,9 @@ import { buttonStyled } from '../Button.styles'
 import { Link } from 'react-router-dom'
 
 const NavButtonStyled = buttonStyled(Link)
-export type ButtonProps = AriaButtonProps & ComponentProps<typeof NavButtonStyled>
+export type NavButtonProps = AriaButtonProps & ComponentProps<typeof NavButtonStyled>
 
-export const NavButton = forwardRef<HTMLAnchorElement, ButtonProps>(
+export const NavButton = forwardRef<HTMLAnchorElement, NavButtonProps>(
   (
     {
       children,

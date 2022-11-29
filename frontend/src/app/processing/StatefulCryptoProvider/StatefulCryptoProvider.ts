@@ -43,7 +43,6 @@ export class StatefulCryptoProvider implements IStatefulCryptoProvider {
 
   async decryptRSA(message: CryptoMessage): Promise<DecryptResult> {
     const key = await this.getRSAPrivateKey()
-    console.log('decrypt rsa', 'privateKey', key, 'encryptedKey', message)
     if (!key) {
       throw new NoRSAPrivateKeyToDecrypt(this.id)
     }

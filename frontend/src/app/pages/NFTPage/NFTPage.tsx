@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { styled } from '../../../styles'
-import { PageLayout, textVariant } from '../../UIkit'
+import { PageLayout, textVariant, Link, Txt } from '../../UIkit'
 import Badge from '../../components/Badge/Badge'
 import { Hr } from '../../UIkit/Hr/Hr'
 import { NFTDeal } from '../../components/NFT'
@@ -14,6 +14,11 @@ import { useCollectionStore } from '../../hooks/useCollectionStore'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
+import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
+import { useStores } from '../../hooks'
+import { useTokenStore } from '../../hooks/useTokenStore'
+import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
+import { formatFileSize } from '../../utils/nfts/formatFileSize'
 
 const NFTPreviewContainer = styled('div', {
   paddingTop: '$layout$navbarheight',
@@ -77,6 +82,10 @@ const StyledHr = styled(Hr, {
   marginBottom: '$3'
 })
 
+const Ul = styled('ul', {
+  listStyle: 'inside'
+})
+
 // collection address and token id dev example
 // { collectionAddress: '0xe37382f84dc2c72ef7eaac6e327bba054b30628c', tokenId: '0' }
 
@@ -88,6 +97,10 @@ const NFTPage = observer(() => {
   )
   const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
   const orderStore = useOrderStore(collectionAddress, tokenId)
+  const { data: token } = useTokenStore(collectionAddress, tokenId)
+  const tokenMetaStore = useTokenMetaStore(token?.metaUri)
+  const { errorStore } = useStores()
+  const files = useHiddenFileDownload(tokenMetaStore, errorStore, token)
 
   const { collection } = useCollectionStore(collectionAddress)
 
@@ -130,6 +143,34 @@ const NFTPage = observer(() => {
           <P>{collection?.description}</P>
         </GridBlock>
 
+        <GridBlock>
+          <PropertyTitle>Hidden files</PropertyTitle>
+          <StyledHr />
+          <Ul
+            css={{
+              listStyle: 'none',
+              '& li:not(:last-child)': {
+                marginBottom: '$2'
+              }
+            }}
+          >
+            {files.map(({ cid, name, size, download }) =>
+              <li key={cid}>
+                <Link
+                  onPress={download}
+                  gray
+                >
+                  {name}
+                </Link>
+                {size > 0 && (
+                  <Txt secondary2 css={{ color: '$gray500' }}>
+                    {` (${formatFileSize(size)})`}
+                  </Txt>
+                )}
+              </li>
+            )}
+          </Ul>
+        </GridBlock>
       </GridLayout>
     </>
   )

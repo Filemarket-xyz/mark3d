@@ -1,9 +1,9 @@
 import { FC, ReactNode } from 'react'
 import { ConnectButton } from '../ConnectButton'
-import { Button } from '../../../UIkit'
 import { AddressIcon } from '../AddressIcon'
 import { styled } from '../../../../styles'
 import { useAccount } from 'wagmi'
+import { NavButton } from '../../../UIkit'
 
 export interface ConnectWidgetProps {
   connectedContent?: ReactNode
@@ -20,11 +20,11 @@ export const ConnectWidget: FC<ConnectWidgetProps> = ({ connectedContent }) => {
     return (
       <>
         {connectedContent}
-        <Button icon primary small iconCover>
+        <NavButton icon primary small iconCover to={`/profile/${address}`}>
           <IconWrapper>
             <AddressIcon address={address} size={36}/>
           </IconWrapper>
-        </Button>
+        </NavButton>
       </>
     )
   } else {
