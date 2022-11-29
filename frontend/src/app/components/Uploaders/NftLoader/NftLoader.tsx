@@ -52,7 +52,7 @@ const File = styled('label', {
   height: '232px',
   backgroundColor: '$white',
   borderRadius: '16px',
-  backgroundImage: 'url("./img/box.svg")',
+  backgroundImage: 'url("/img/box.svg")',
   backgroundSize: '56px 45px',
   backgroundPosition: 'center',
   display: 'flex',
