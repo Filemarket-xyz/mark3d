@@ -19,13 +19,17 @@ import { useStores } from '../../hooks'
 import { useTokenStore } from '../../hooks/useTokenStore'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 import { formatFileSize } from '../../utils/nfts/formatFileSize'
+import gradientBg from '../ProfilePage/img/Gradient.jpg'
 
 const NFTPreviewContainer = styled('div', {
   paddingTop: '$layout$navbarheight',
   width: '100%',
   // TODO height will be set by 3d previewer
-  height: 800,
-  background: '$gray300'
+  height: 400,
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
+  backgroundImage: `url(${gradientBg})`
 })
 
 const NftName = styled('h1', {
@@ -109,12 +113,12 @@ const NFTPage = observer(() => {
       <NFTPreviewContainer></NFTPreviewContainer>
       <GridLayout>
         <GridBlock>
-          <NftName>{collection?.name}</NftName>
+          <NftName>{token?.name}</NftName>
           <MintTime>Minted on Sep 9, 2022</MintTime>
           <BadgesContainer>
             <Badge
-              imgUrl={getProfileImageUrl(collection?.owner ?? '')}
-              content={{ title: 'Creator', value: reduceAddress(collection?.owner ?? '') }}
+              imgUrl={getProfileImageUrl(token?.owner ?? '')}
+              content={{ title: 'Creator', value: reduceAddress(token?.creator ?? '') }}
             />
             <Badge
               imgUrl={getHttpLinkFromIpfsString(collection?.image ?? '')}
@@ -140,7 +144,7 @@ const NFTPage = observer(() => {
         <GridBlock>
           <PropertyTitle>Description</PropertyTitle>
           <StyledHr />
-          <P>{collection?.description}</P>
+          <P>{token?.description}</P>
         </GridBlock>
 
         <GridBlock>

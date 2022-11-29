@@ -80,36 +80,6 @@ const TabsContainer = styled('div', {
   marginBottom: '$4'
 })
 
-const CollectionDataContainer = styled('div', {
-  display: 'flex',
-  gap: '$4',
-  height: 'max-content',
-  padding: '$4',
-  borderRadius: '$4',
-  border: '2px solid transparent',
-  background:
-    'linear-gradient($gray100 0 0) padding-box, linear-gradient(to right, #00DCFF25, #E14BEC25) border-box'
-})
-
-const CollectionDataItem = styled('div', {
-  display: 'flex',
-  flexDirection: 'column'
-})
-
-const ItemTitle = styled('span', {
-  ...textVariant('primary1').true,
-  marginBottom: '$1'
-})
-
-const ItemValue = styled('span', {
-  ...textVariant('h3').true,
-  fontWeight: 700,
-  '@sm': {
-    fontSize: '$h5'
-  },
-  color: '$blue900'
-})
-
 const StyledContainer = styled(Container, {
   display: 'flex',
   justifyContent: 'space-between',
@@ -149,16 +119,6 @@ const CollectionPage = observer(() => {
               {collectionAndNfts.collection?.description}
             </ProfileDescription>
           </Profile>
-          <CollectionDataContainer>
-            <CollectionDataItem>
-              <ItemTitle>Volume</ItemTitle>
-              <ItemValue>110 ETH</ItemValue>
-            </CollectionDataItem>
-            <CollectionDataItem>
-              <ItemTitle>Floor price</ItemTitle>
-              <ItemValue>3.05 ETH</ItemValue>
-            </CollectionDataItem>
-          </CollectionDataContainer>
         </StyledContainer>
 
         <Inventory>

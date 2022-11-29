@@ -5,6 +5,8 @@ import { styled } from '../../../styles'
 import { useCollectionAndTokenListStore } from '../../hooks'
 import { textVariant, Container } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
+import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { Params } from '../../utils/router/Params'
 import bg from './img/Gradient.jpg'
 
@@ -46,33 +48,8 @@ const ProfileName = styled('h2', {
   }
 })
 
-const ProfileCredentials = styled('div', {
-  display: 'flex',
-  gap: '$2',
-  marginBottom: '$4'
-})
-
-const CredentialsItem = styled('div', {
-  height: '$4',
-  padding: '8px 12px',
-  fontSize: '$primary3',
-  color: '$blue500',
-  fontWeight: 600,
-  lineHeight: '$primary1',
-  display: 'flex',
-  alignItems: 'center',
-  backgroundColor: '$white',
-  borderRadius: '$2'
-})
-
 const GrayOverlay = styled('div', {
   backgroundColor: '$gray100'
-})
-
-const ProfileDescription = styled('p', {
-  ...textVariant('body3'),
-  maxWidth: 540,
-  color: '$gray500'
 })
 
 const Inventory = styled(Container, {
@@ -104,22 +81,9 @@ const ProfilePage = observer(() => {
         <Container>
           <Profile>
             <ProfileHeader>
-              <ProfileImage src={bg} />
-              <ProfileName>UnderKong</ProfileName>
+              <ProfileImage src={getProfileImageUrl(profileAddress ?? '')} />
+              <ProfileName>{reduceAddress(profileAddress ?? '')}</ProfileName>
             </ProfileHeader>
-
-            <ProfileCredentials>
-              <CredentialsItem>something</CredentialsItem>
-              <CredentialsItem>twitter</CredentialsItem>
-            </ProfileCredentials>
-
-            <ProfileDescription>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sodales
-              id in facilisis donec. Aliquam sed volutpat posuere pharetra
-              viverra lacinia odio amet suscipit. A, quis arcu amet, nunc odio
-              suspendisse cursus mauris. Aliquam dictum in ornare odio eget ut
-              eleifend etiam.
-            </ProfileDescription>
           </Profile>
         </Container>
 

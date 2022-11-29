@@ -61,7 +61,7 @@ const NftSection = observer(() => {
                 name: collection?.name
               }
             }}
-            css={{ textDecoration: 'none' }}
+            css={{ textDecoration: 'none', marginBottom: '$3' }}
           >
             Create NFT
           </NavButton>

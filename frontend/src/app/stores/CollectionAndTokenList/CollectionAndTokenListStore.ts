@@ -68,11 +68,14 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
     return tokens.map((token) => ({
       collection: reduceAddress(token.collection ?? ''),
       imageURL: getHttpLinkFromIpfsString(token.image ?? ''),
-      price: 999,
       title: token.name ?? '',
       user: {
         img: getProfileImageUrl(token.owner ?? ''),
         username: reduceAddress(token.owner ?? '')
+      },
+      button: {
+        text: 'Go to page',
+        link: `/collection/${token.collection}/${token.tokenId}`
       }
     }))
   }

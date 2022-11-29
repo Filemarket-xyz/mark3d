@@ -47,6 +47,10 @@ const Preview = styled('div', {
   }
 })
 
+const A = styled('a', {
+  textDecoration: 'none'
+})
+
 interface Props extends IRowContent {
   title: ReactNode
 }
@@ -69,9 +73,11 @@ export default function RowContent({
             Description
           </Txt>
           <Description>{description}</Description>
-          <a href={link} target='_blank' rel='noopener noreferrer'>
-            <Button primary>Explore</Button>
-          </a>
+          <A href={link} target='_blank' rel='noopener noreferrer'>
+            <Button primary >
+              Explore
+            </Button>
+          </A>
         </MainInfo>
         <Preview>
           <Txt primary1>Visual preview</Txt>
