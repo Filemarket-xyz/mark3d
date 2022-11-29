@@ -10,7 +10,7 @@ import { textVariant } from '../../../UIkit'
 const ItemWrapper = styled('div', {
   backgroundColor: '$white',
   borderRadius: '$3',
-  height: '80px',
+  minHeight: '80px',
   color: '$gray500',
   fontSize: '14px',
   display: 'flex',
