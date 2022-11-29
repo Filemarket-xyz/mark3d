@@ -4,11 +4,12 @@ import Badge from '../../components/Badge/Badge'
 import { textVariant, Container } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
 import bg from './img/Gradient.jpg'
-import creator from './img/creatorImg.jpg'
 import { observer } from 'mobx-react-lite'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
 import { Params } from '../../utils/router/Params'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
+import { reduceAddress } from '../../utils/nfts/reduceAddress'
+import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 
 const Background = styled('img', {
   width: '100%',
@@ -138,8 +139,8 @@ const CollectionPage = observer(() => {
 
             <Badges>
               <Badge
-                content={{ title: 'Creator', value: 'Underkong' }}
-                imgUrl={creator}
+                content={{ title: 'Creator', value: reduceAddress(collectionAndNfts.collection?.owner ?? '') }}
+                imgUrl={getProfileImageUrl(collectionAndNfts.collection?.owner ?? '')}
               />
               <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
             </Badges>
