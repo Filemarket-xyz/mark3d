@@ -109,12 +109,12 @@ const NFTPage = observer(() => {
       <NFTPreviewContainer></NFTPreviewContainer>
       <GridLayout>
         <GridBlock>
-          <NftName>{collection?.name}</NftName>
+          <NftName>{token?.name}</NftName>
           <MintTime>Minted on Sep 9, 2022</MintTime>
           <BadgesContainer>
             <Badge
-              imgUrl={getProfileImageUrl(collection?.owner ?? '')}
-              content={{ title: 'Creator', value: reduceAddress(collection?.owner ?? '') }}
+              imgUrl={getProfileImageUrl(token?.owner ?? '')}
+              content={{ title: 'Creator', value: reduceAddress(token?.creator ?? '') }}
             />
             <Badge
               imgUrl={getHttpLinkFromIpfsString(collection?.image ?? '')}
@@ -140,7 +140,7 @@ const NFTPage = observer(() => {
         <GridBlock>
           <PropertyTitle>Description</PropertyTitle>
           <StyledHr />
-          <P>{collection?.description}</P>
+          <P>{token?.description}</P>
         </GridBlock>
 
         <GridBlock>

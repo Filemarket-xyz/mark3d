@@ -14,8 +14,7 @@ import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsS
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 
-export class CollectionTokenListStore
-implements IActivateDeactivate<[string]>, IStoreRequester {
+export class CollectionTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
 
   currentRequest?: RequestContext
@@ -75,6 +74,10 @@ implements IActivateDeactivate<[string]>, IStoreRequester {
       user: {
         img: getProfileImageUrl(token.owner ?? ''),
         username: reduceAddress(collection?.owner ?? '')
+      },
+      button: {
+        link: `/collection/${token.collection}/${token.tokenId}`,
+        text: 'Go to page'
       }
     }))
   }

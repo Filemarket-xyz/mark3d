@@ -72,6 +72,10 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
       user: {
         img: getProfileImageUrl(token.owner ?? ''),
         username: reduceAddress(token.owner ?? '')
+      },
+      button: {
+        text: 'Go to page',
+        link: `/collection/${token.collection}/${token.tokenId}`
       }
     }))
   }
