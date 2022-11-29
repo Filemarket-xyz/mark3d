@@ -3,6 +3,7 @@ export class LighthouseService {
     const params = new URLSearchParams()
     params.set('publicKey', address)
     return await fetch(`https://api.lighthouse.storage/api/auth/get_message?${params}`, {
+      mode: 'cors',
       method: 'GET'
     }).then(async resp => {
       const text = await resp.text()
@@ -17,6 +18,7 @@ export class LighthouseService {
   async getAccessToken(address: string, signedMessage: string): Promise<string> {
     return await fetch('https://api.lighthouse.storage/api/auth/verify_signer', {
       method: 'POST',
+      mode: 'cors',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -27,7 +29,7 @@ export class LighthouseService {
     }).then(async resp => {
       if (resp.ok) {
         const json = await resp.json()
-        return json.data.accessToken
+        return json.accessToken
       } else {
         throw new Error(await resp.text())
       }

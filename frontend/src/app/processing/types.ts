@@ -58,6 +58,15 @@ export interface ERC721TokenMeta {
   hidden_file_meta?: FileMeta
 }
 
+export interface ERC721TokenMetaInput {
+  name?: string
+  description?: string
+  image?: File
+  external_link?: string
+  hidden_file?: File
+  hidden_file_meta?: FileMeta
+}
+
 export enum Mark3dAccessTokenEventNames {
   Approval = 'Approval',
   ApprovalForAll = 'ApprovalForAll',

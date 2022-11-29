@@ -1,6 +1,5 @@
 import { useAccessTokenContract } from './useAccessTokenContract'
 import { useCallback } from 'react'
-import { nftStorage } from '../../config/nftStorage'
 import { randomBytes } from 'ethers/lib/utils'
 import { useStatusState } from '../../hooks'
 import { BigNumber, ContractReceipt } from 'ethers'
@@ -8,6 +7,7 @@ import { mark3dConfig } from '../../config/mark3d'
 import { Mark3dAccessTokenEventNames } from '../types'
 import { assertContract, assertSigner } from '../utils/assert'
 import assert from 'assert'
+import { useUploadLighthouse } from './useUploadLighthouse'
 
 export interface CreateCollectionForm {
   name?: string // required, hook will return error if omitted
@@ -25,12 +25,13 @@ interface CreateCollectionResult {
 export function useMintCollection(form: CreateCollectionForm = {}) {
   const { contract, signer } = useAccessTokenContract()
   const { wrapPromise, ...statuses } = useStatusState<CreateCollectionResult>()
+  const upload = useUploadLighthouse()
   const mintCollection = useCallback(wrapPromise(async () => {
     console.log('mint!', form)
     assertContract(contract, mark3dConfig.accessToken.name)
     assertSigner(signer)
     assert(form.name && form.symbol && form.image, 'CreateCollection form is not filled')
-    const metadata = await nftStorage.store({
+    const metadata = await upload({
       name: form.name,
       description: form.description ?? '',
       image: form.image,
@@ -50,6 +51,6 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       collectionTokenAddress: createCollectionEvent.topics[2],
       receipt
     }
-  }), [contract, signer, form, wrapPromise])
+  }), [contract, signer, form, wrapPromise, upload])
   return { ...statuses, mintCollection }
 }
