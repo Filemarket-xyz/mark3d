@@ -2,12 +2,13 @@ import { useAccessTokenContract } from './useAccessTokenContract'
 import { useCallback } from 'react'
 import { randomBytes } from 'ethers/lib/utils'
 import { useStatusState } from '../../hooks'
-import { BigNumber, ContractReceipt } from 'ethers'
+import { ContractReceipt } from 'ethers'
 import { mark3dConfig } from '../../config/mark3d'
 import { Mark3dAccessTokenEventNames } from '../types'
 import { assertContract, assertSigner } from '../utils/assert'
 import assert from 'assert'
 import { useUploadLighthouse } from './useUploadLighthouse'
+import { normalizeCounterId } from '../utils/id'
 
 export interface CreateCollectionForm {
   name?: string // required, hook will return error if omitted
@@ -46,9 +47,17 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
     if (!createCollectionEvent) {
       throw Error(`receipt does not contain ${Mark3dAccessTokenEventNames.CollectionCreation} event`)
     }
+    const collectionIdArgIndex = 0
+    const collectionAddressArgIndex = 1
+    const getArg = (index: number): any => {
+      const arg = createCollectionEvent.args?.[index]
+      assert(arg, `${Mark3dAccessTokenEventNames.CollectionCreation} does not have an arg with index ${index}`)
+    }
+    const collectionId = normalizeCounterId(getArg(collectionIdArgIndex))
+    const collectionTokenAddress: string = getArg(collectionAddressArgIndex)
     return {
-      collectionId: BigNumber.from(createCollectionEvent.topics[1]).toString(),
-      collectionTokenAddress: createCollectionEvent.topics[2],
+      collectionId,
+      collectionTokenAddress,
       receipt
     }
   }), [contract, signer, form, wrapPromise, upload])

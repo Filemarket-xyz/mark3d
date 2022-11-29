@@ -16,7 +16,7 @@ declare module '@lighthouse-web3/sdk' {
       progress: number
       total: number
       uploaded: number
-    }) => void = null,
+    }) => void,
   ): Promise< {
     Name: string
     Size: number
