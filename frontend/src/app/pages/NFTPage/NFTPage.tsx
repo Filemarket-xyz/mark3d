@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react'
 import { styled } from '../../../styles'
 import { PageLayout, textVariant, Link, Txt } from '../../UIkit'
-import creator from './img/creatorImg.jpg'
-import collection from './img/collection.jpg'
 import Badge from '../../components/Badge/Badge'
 import { Hr } from '../../UIkit/Hr/Hr'
 import { NFTDeal } from '../../components/NFT'
@@ -12,6 +10,10 @@ import { Params } from '../../utils/router/Params'
 import { makeTokenFullId } from '../../processing/utils/id'
 import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
 import { useOrderStore } from '../../hooks/useOrderStore'
+import { useCollectionStore } from '../../hooks/useCollectionStore'
+import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+import { reduceAddress } from '../../utils/nfts/reduceAddress'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
 import { useStores } from '../../hooks'
 import { useTokenStore } from '../../hooks/useTokenStore'
@@ -80,78 +82,43 @@ const StyledHr = styled(Hr, {
   marginBottom: '$3'
 })
 
-const Tag = ({
-  value,
-  smallText,
-  isGray
-}: {
-  value: string
-  smallText?: boolean
-  isGray?: boolean
-}) => {
-  let fz = '$primary2'
-  let color
-  if (smallText) {
-    fz = '$primary3'
-  }
-
-  if (isGray) {
-    color = '$gray400'
-  }
-  return (
-    <Badge content={{ value }} valueStyles={{ css: { fontSize: fz, color } }} />
-  )
-}
-const TagsContainer = styled('div', {
-  display: 'flex',
-  gap: '$2',
-  flexWrap: 'wrap'
-})
-
 const Ul = styled('ul', {
   listStyle: 'inside'
 })
 
-const Li = styled('li', {
-  color: '$gray500',
-  lineHeight: '125%',
-  '&::marker': {
-    fontSize: '10px',
-    display: 'block',
-    color: '$gray500'
-  }
-})
-
-const Bold = styled('span', {
-  fontWeight: 600
-})
-
+// collection address and token id dev example
 // { collectionAddress: '0xe37382f84dc2c72ef7eaac6e327bba054b30628c', tokenId: '0' }
 
 const NFTPage = observer(() => {
   const { collectionAddress, tokenId } = useParams<Params>()
-  const tokenFullId = useMemo(() => makeTokenFullId(collectionAddress, tokenId), [collectionAddress, tokenId])
+  const tokenFullId = useMemo(
+    () => makeTokenFullId(collectionAddress, tokenId),
+    [collectionAddress, tokenId]
+  )
   const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
   const orderStore = useOrderStore(collectionAddress, tokenId)
   const { data: token } = useTokenStore(collectionAddress, tokenId)
   const tokenMetaStore = useTokenMetaStore(token?.metaUri)
   const { errorStore } = useStores()
   const files = useHiddenFileDownload(tokenMetaStore, errorStore, token)
+
+  const { collection } = useCollectionStore(collectionAddress)
+
   return (
     <>
       <NFTPreviewContainer></NFTPreviewContainer>
       <GridLayout>
         <GridBlock>
-          <NftName>VR Glasses</NftName>
+          <NftName>{collection?.name}</NftName>
           <MintTime>Minted on Sep 9, 2022</MintTime>
           <BadgesContainer>
             <Badge
-              imgUrl={creator}
-              content={{ title: 'Creator', value: 'Underkong' }}
+              imgUrl={getProfileImageUrl(collection?.owner ?? '')}
+              content={{ title: 'Creator', value: reduceAddress(collection?.owner ?? '') }}
             />
             <Badge
-              imgUrl={collection}
-              content={{ title: 'Collection', value: 'VR Glasses by Mark3d' }}
+              imgUrl={getHttpLinkFromIpfsString(collection?.image ?? '')}
+              content={{ title: 'Collection', value: collection?.name ?? '' }}
             />
           </BadgesContainer>
         </GridBlock>
@@ -173,18 +140,12 @@ const NFTPage = observer(() => {
         <GridBlock>
           <PropertyTitle>Description</PropertyTitle>
           <StyledHr />
-          <P>Mark3d NFT collection for 3D Internet and virtual worlds</P>
+          <P>{collection?.description}</P>
         </GridBlock>
 
         <GridBlock>
           <PropertyTitle>Hidden files</PropertyTitle>
           <StyledHr />
-          {/* TODO later create separate component for interactivity */}
-          {/* <TagsContainer css={{ marginBottom: '$3' }}> */}
-          {/*  <Tag value='All_files/' smallText isGray /> */}
-          {/*  <Tag value='3D_files/' smallText /> */}
-          {/*  <Tag value='Proccessed_Textures/' smallText /> */}
-          {/* </TagsContainer> */}
           <Ul
             css={{
               listStyle: 'none',
@@ -209,72 +170,6 @@ const NFTPage = observer(() => {
               </li>
             )}
           </Ul>
-        </GridBlock>
-
-        <GridBlock>
-          <PropertyTitle>Object Info</PropertyTitle>
-          <StyledHr />
-          <Ul>
-            <Li>
-              <Bold>formats:</Bold> .fbx, .max, .obj, .gltf, .usdz, .glb
-            </Li>
-            <Li>
-              <Bold>extra archive size:</Bold> 600kb
-            </Li>
-            <Li>
-              <Bold>poly count:</Bold> 50.000
-            </Li>
-            <Li>
-              <Bold>PBR:</Bold> Specular
-            </Li>
-          </Ul>
-        </GridBlock>
-
-        <GridBlock>
-          <PropertyTitle>Tags</PropertyTitle>
-          <StyledHr />
-          <TagsContainer>
-            <Tag value='VR' />
-            <Tag value='Metaverse' />
-            <Tag value='Web3' />
-            <Tag value='Jedi' />
-            <Tag value='3D Internet' />
-            <Tag value='NFT' />
-            <Tag value='DAO-ART' />
-            <Tag value='ART' />
-            <Tag value='Tag' />
-          </TagsContainer>
-        </GridBlock>
-
-        <GridBlock>
-          <PropertyTitle>Links</PropertyTitle>
-          <StyledHr />
-          <Ul
-            css={{
-              listStyle: 'none',
-              '& li:not(:last-child)': {
-                marginBottom: '$3'
-              }
-            }}
-          >
-            <Li>
-              <Link>View on Etherscan</Link>
-            </Li>
-            <Li>
-              <Link>View metadata</Link>
-            </Li>
-            <Li>
-              <Link>View on IPFS</Link>
-            </Li>
-            <Li>
-              <Link>Share</Link>
-            </Li>
-          </Ul>
-        </GridBlock>
-
-        <GridBlock>
-          <PropertyTitle>History</PropertyTitle>
-          <StyledHr />
         </GridBlock>
       </GridLayout>
     </>

@@ -8,6 +8,7 @@ import { OrderStore } from './Order/OrderStore'
 import { TokenStore } from './Token/TokenStore'
 import { TokenMetaStore } from './Token/TokenMetaStore'
 import { OpenOrderListStore } from './OrderList/OrderListStore'
+import { CollectionStore } from './Collection/CollectionStore'
 
 export class RootStore {
   dialogStore: DialogStore
@@ -20,6 +21,7 @@ export class RootStore {
   tokenStore: TokenStore
   tokenMetaStore: TokenMetaStore
   orderListStore: OpenOrderListStore
+  collectionStore: CollectionStore
 
   constructor() {
     this.dialogStore = new DialogStore()
@@ -32,6 +34,7 @@ export class RootStore {
     this.tokenStore = new TokenStore(this)
     this.tokenMetaStore = new TokenMetaStore(this)
     this.orderListStore = new OpenOrderListStore(this)
+    this.collectionStore = new CollectionStore(this)
   }
 }
 
