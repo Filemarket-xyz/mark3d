@@ -177,7 +177,7 @@ pub fn decrypt_password(
 pub async fn fetch_file(report: &FraudReported) -> Result<Vec<u8>, web3::Error> {
     let link = if report.cid.starts_with("ipfs://") {
         format!(
-            "https://nftstorage.link/ipfs/{}",
+            "https://gateway.lighthouse.storage/ipfs/{}",
             report.cid.replace("ipfs://", "")
         )
     } else {
@@ -198,7 +198,7 @@ pub async fn fetch_file(report: &FraudReported) -> Result<Vec<u8>, web3::Error> 
 
     let hidden_file_link = if file.hidden_file.starts_with("ipfs://") {
         format!(
-            "https://nftstorage.link/ipfs/{}",
+            "https://gateway.lighthouse.storage/ipfs/{}",
             file.hidden_file.replace("ipfs://", "")
         )
     } else {
