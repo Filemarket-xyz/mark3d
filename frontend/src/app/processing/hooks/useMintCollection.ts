@@ -52,6 +52,7 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
     const getArg = (index: number): any => {
       const arg = createCollectionEvent.args?.[index]
       assert(arg, `${Mark3dAccessTokenEventNames.CollectionCreation} does not have an arg with index ${index}`)
+      return arg
     }
     const collectionId = normalizeCounterId(getArg(collectionIdArgIndex))
     const collectionTokenAddress: string = getArg(collectionAddressArgIndex)
