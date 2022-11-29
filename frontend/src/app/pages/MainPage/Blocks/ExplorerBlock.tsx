@@ -1,26 +1,12 @@
 import React from 'react'
 import { styled } from '../../../../styles'
-import sandbox from '../img/sandbox.png'
 import arrowLeft from '../img/arrow-left.svg'
-
 import sandboxTitle from '../img/sandbox-title.svg'
-
 import { BlockWrapper, Subtitle } from './ToolsBlock'
 import { Button } from '../../../UIkit'
+import slideImg from '../img/explorer-slide.jpg'
 
-const ExplorerImg = styled('img', {
-  width: '100%',
-  objectFit: 'contain'
-})
-const ExplorerInfo = styled('div', {
-  marginTop: '-64px',
-  '@md': {
-    marginTop: '-48px'
-  },
-  '@sm': {
-    marginTop: '-32px'
-  }
-})
+const ExplorerInfo = styled('div', {})
 const ExplorerTitle = styled('div', {
   marginLeft: 'auto',
   marginRight: 'auto',
@@ -83,11 +69,67 @@ const ButtonContainer = styled('div', {
   paddingBottom: '$5'
 })
 
+const SliderContainer = styled('div', {
+  width: '100%',
+  height: 400,
+  display: 'flex',
+  gap: '$2',
+  '@sm': {
+    gap: '$1',
+    height: 200
+  }
+})
+
+const SlideContainer = styled('div', {
+  perspective: 2000,
+  width: '30%',
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
+})
+
+const Slide = styled('img', {
+  display: 'flex',
+  width: '100%',
+  border: '2px solid transparent',
+  background:
+    'linear-gradient(#fff 0 0) padding-box, $gradients$main border-box',
+  objectFit: 'cover',
+  boxShadow: '0px 10px 30px rgba(89, 89, 108, 0.4)',
+  borderRadius: '$1'
+})
+
+const LeftSlide = styled(Slide, {
+  transform: 'rotate3d(0, 1, 0, 40deg) scale(1.3)'
+})
+
+const CenterSlide = styled(Slide, {
+  transform: 'scale(0.93)'
+})
+
+const RightSlide = styled(Slide, {
+  transform: 'rotate3d(0, 1, 0, -40deg) scale(1.3)'
+})
+
 export default function ExplorerBlock() {
   return (
     <BlockWrapper css={{ maxWidth: '1110px' }}>
       <Subtitle css={{ marginBottom: '$4' }}>Metaverse explorer</Subtitle>
-      <ExplorerImg src={sandbox} />
+      <SliderContainer>
+        <SlideContainer>
+          <LeftSlide src={slideImg} />
+        </SlideContainer>
+
+        <SlideContainer css={{ flexGrow: 1 }}>
+          <CenterSlide src={slideImg} />
+        </SlideContainer>
+
+        <SlideContainer>
+          <RightSlide src={slideImg} />
+        </SlideContainer>
+      </SliderContainer>
+
       <ExplorerInfo>
         <ExplorerTitle />
         <ExploreControls>
