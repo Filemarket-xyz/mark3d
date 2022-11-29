@@ -2,15 +2,11 @@ import { NavBarItemData } from '../../../UIkit'
 
 export const paths: NavBarItemData[] = [
   {
-    to: '/?test=1',
+    to: '/create/nft',
     label: 'Mint new NFT'
   },
   {
-    to: '/explorer?test=2',
+    to: '/create/collection',
     label: 'Mint new collection'
-  },
-  {
-    to: '/?test=3',
-    label: 'Mint new namespace'
   }
 ]

@@ -22,14 +22,13 @@ export interface RequestContext {
   req?: Promise<any>
 }
 
-// Promise will fire void if the error is thrown and handled
-export const storeRequest = <Data>(
+export const storeRequestGeneric = <ResponseType>(
   target: IStoreRequester,
-  requester: Promise<HttpResponse<Data, ErrorResponse>>,
-  callback: (data: Data) => void
+  requester: Promise<ResponseType>,
+  responseHandler: (response: ResponseType) => void,
+  errorHandler: (error: any) => void
 ): void => {
   if (!target.currentRequest) {
-    console.log('request, start execution!')
     target.isLoading = true
     const context: RequestContext = {
       id: target.requestCount++
@@ -49,13 +48,7 @@ export const storeRequest = <Data>(
         tap(
           action((data) => {
             finish(() => {
-              if (data.ok) {
-                target.isLoaded = true
-                callback(data.data)
-              } else {
-                console.log('req error', data.error)
-                target.errorStore.showError(errorResponseToMessage(data.error))
-              }
+              responseHandler(data)
             })
           })
         )
@@ -63,13 +56,54 @@ export const storeRequest = <Data>(
       .catch(
         action((error) => {
           finish(() => {
-            console.log('req error', error)
-            target.errorStore.showError(stringifyError(error))
+            errorHandler(error)
           })
         })
       )
     target.currentRequest = context
   }
+}
+
+// Promise will fire void if the error is thrown and handled
+export const storeRequest = <Data>(
+  target: IStoreRequester,
+  requester: Promise<HttpResponse<Data, ErrorResponse>>,
+  callback: (data: Data) => void
+): void => {
+  storeRequestGeneric(
+    target,
+    requester,
+    response => {
+      if (response.ok) {
+        target.isLoaded = true
+        callback(response.data)
+      } else {
+        console.log('req error', response.error)
+        target.errorStore.showError(errorResponseToMessage(response.error))
+      }
+    },
+    error => {
+      target.errorStore.showError(stringifyError(error))
+    }
+  )
+}
+
+export const storeRequestFetch = <Data>(
+  target: IStoreRequester,
+  requester: Promise<Data>,
+  callback: (data: Data) => void
+): void => {
+  storeRequestGeneric(
+    target,
+    requester,
+    response => {
+      target.isLoaded = true
+      callback(response)
+    },
+    error => {
+      target.errorStore.showError(stringifyError(error))
+    }
+  )
 }
 
 export const storeReset = <Target extends IStoreRequester>(target: Target) => {

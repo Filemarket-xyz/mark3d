@@ -1,5 +1,6 @@
 
 // AES key is base64 encoded
+
 export const AESEncoding = 'base64' as const
 export type AESKey = string
 
@@ -43,8 +44,18 @@ export interface DecryptResultError {
 export type DecryptResult<ResultType = CryptoMessage> = DecryptResultOk<ResultType> | DecryptResultError
 
 export interface FileMeta {
-  name: string
-  type: string // mime type
+  name?: string
+  type?: string // mime type
+  size?: number // in bytes
+}
+
+export interface ERC721TokenMeta {
+  name?: string
+  description?: string
+  image?: string
+  external_link?: string
+  hidden_file?: string
+  hidden_file_meta?: FileMeta
 }
 
 export enum Mark3dAccessTokenEventNames {
