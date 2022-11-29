@@ -21,7 +21,7 @@ export function useUploadLighthouse() {
     const accessToken = await getAccessToken()
 
     const uploadFile = async (file: File) => {
-      const output = await lighthouse.upload({ target: { files: [file] } }, accessToken)
+      const output = await lighthouse.upload({ target: { files: [file] }, persist: () => void 0 }, accessToken)
 
       return {
         url: `ipfs://${output.Hash}/${output.Name}`,

@@ -6,11 +6,10 @@ export class LighthouseService {
       mode: 'cors',
       method: 'GET'
     }).then(async resp => {
-      const text = await resp.text()
       if (resp.ok) {
-        return text
+        return await resp.json()
       } else {
-        throw new Error(text)
+        throw new Error(await resp.text())
       }
     })
   }
@@ -20,7 +19,8 @@ export class LighthouseService {
       method: 'POST',
       mode: 'cors',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Accept: 'application/json, text/plain, */*'
       },
       body: JSON.stringify({
         publicKey: address,
