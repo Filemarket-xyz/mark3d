@@ -19,13 +19,17 @@ import { useStores } from '../../hooks'
 import { useTokenStore } from '../../hooks/useTokenStore'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 import { formatFileSize } from '../../utils/nfts/formatFileSize'
+import gradientBg from '../ProfilePage/img/Gradient.jpg'
 
 const NFTPreviewContainer = styled('div', {
   paddingTop: '$layout$navbarheight',
   width: '100%',
   // TODO height will be set by 3d previewer
-  height: 800,
-  background: '$gray300'
+  height: 400,
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
+  backgroundImage: `url(${gradientBg})`
 })
 
 const NftName = styled('h1', {
