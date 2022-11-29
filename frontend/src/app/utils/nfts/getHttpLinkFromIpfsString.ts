@@ -5,7 +5,6 @@ export const getIpfsCidWithFilePath = (ipfs: string) => {
 
 export const getHttpLinkFromIpfsString = (ipfs: string) => {
   const cidWithFilePath = getIpfsCidWithFilePath(ipfs)
-  const [cid, filePath] = cidWithFilePath.split(/\/(.*)/s)
 
-  return `https://${cid}.ipfs.nftstorage.link/${filePath}`
+  return `https://gateway.lighthouse.storage/ipfs/${cidWithFilePath}`
 }
