@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { styled } from '../../../styles'
-import { Button, textVariant, Txt } from '../../UIkit'
+import { NavButton, textVariant, Txt } from '../../UIkit'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
 
 export const CardControls = styled(BasicCardControls, {
@@ -96,6 +96,10 @@ export interface NFTCardProps {
     img: string
     username: string
   }
+  button: {
+    text: string
+    link: string
+  }
   price?: number
 }
 
@@ -134,13 +138,14 @@ export default function NFTCard(props: NFTCardProps) {
             )}
           </PriceInfo>
           <ButtonContainer>
-            <Button
+            <NavButton
               primary
-              small={'true'}
-              css={{ marginLeft: 'auto', marginRight: 'auto' }}
+              to={props.button.link}
+              small={true}
+              css={{ textDecoration: 'none', marginLeft: 'auto', marginRight: 'auto' }}
             >
-              <Txt primary3>Buy now</Txt>
-            </Button>
+              <Txt primary3>{props.button.text}</Txt>
+            </NavButton>
           </ButtonContainer>
         </CardControls>
       </Card>

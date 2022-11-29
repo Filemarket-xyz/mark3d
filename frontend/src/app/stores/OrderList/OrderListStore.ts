@@ -71,6 +71,10 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
         user: {
           img: getProfileImageUrl(token?.owner ?? ''),
           username: reduceAddress(token?.owner ?? '')
+        },
+        button: {
+          link: `/collection/${token?.collection}/${token?.tokenId}`,
+          text: 'Go to page'
         }
       })
     )

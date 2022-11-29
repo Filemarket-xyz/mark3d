@@ -126,7 +126,7 @@ func (s *service) loadTokenParams(ctx context.Context, cid string) metaData {
 	}
 	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://nftstorage.link/ipfs/%s", cid), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://gateway.lighthouse.storage/ipfs/%s", cid), nil)
 	if err != nil {
 		return metaData{}
 	}

@@ -10,7 +10,7 @@ import { textVariant } from '../../../UIkit'
 const ItemWrapper = styled('div', {
   backgroundColor: '$white',
   borderRadius: '$3',
-  height: '80px',
+  minHeight: '80px',
   color: '$gray500',
   fontSize: '14px',
   display: 'flex',
@@ -64,6 +64,10 @@ const ItemArrow = styled('button', {
 export const RowCell = styled('div', {
   height: '100%',
   display: 'flex',
+  flexGrow: 1,
+  flexShrink: 1,
+  flexBasis: 0,
+  width: 0,
   alignItems: 'center',
   variants: {
     title: {
