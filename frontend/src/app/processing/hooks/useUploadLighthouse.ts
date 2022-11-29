@@ -20,7 +20,13 @@ export function useUploadLighthouse() {
 
     const accessToken = await getAccessToken()
 
-    const uploadFile = async (file: File) => {
+    const uploadFile = async (fileOrBlob: File | Blob) => {
+      let file: File
+      if (fileOrBlob instanceof Blob && !(fileOrBlob instanceof File)) {
+        file = new File([fileOrBlob], 'file')
+      } else {
+        file = fileOrBlob
+      }
       const output = await lighthouse.upload(
         { target: { files: [file] }, persist: () => void 0 },
         accessToken, () => void 0
@@ -39,7 +45,7 @@ export function useUploadLighthouse() {
     for (const key of Object.keys(meta)) {
       // @ts-expect-error
       const value: any = meta[key]
-      if (value instanceof File) {
+      if (value instanceof Blob) {
         const fileUploaded = await uploadFile(value)
         fileProps[key] = fileUploaded.url
       }

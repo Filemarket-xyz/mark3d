@@ -1,6 +1,5 @@
 import { useStatusState } from '../../hooks'
 import { useCallback } from 'react'
-import { nftStorage } from '../../config/nftStorage'
 import { mark3dConfig } from '../../config/mark3d'
 import { ERC721TokenEventNames, FileMeta } from '../types'
 import { ContractReceipt } from 'ethers'
@@ -10,6 +9,7 @@ import { normalizeCounterId } from '../utils/id'
 import { assertContract, assertSigner } from '../utils/assert'
 import { useAccount } from 'wagmi'
 import assert from 'assert'
+import { useUploadLighthouse } from './useUploadLighthouse'
 
 export interface MintNFTForm {
   name?: string // required, hook will return error if omitted
@@ -29,6 +29,7 @@ export function useMintNFT(form: MintNFTForm = {}) {
   const { address } = useAccount()
   const { wrapPromise, ...statuses } = useStatusState<MintNFTResult>()
   const factory = useHiddenFileProcessorFactory()
+  const upload = useUploadLighthouse()
   const mintNFT = useCallback(wrapPromise(async () => {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
@@ -42,7 +43,7 @@ export function useMintNFT(form: MintNFTForm = {}) {
         type: hiddenFile.type,
         size: hiddenFile.size
       }
-      const metadata = await nftStorage.store({
+      const metadata = await upload({
         name,
         description: description ?? '',
         image,
