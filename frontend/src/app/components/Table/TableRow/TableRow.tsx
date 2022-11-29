@@ -64,6 +64,10 @@ const ItemArrow = styled('button', {
 export const RowCell = styled('div', {
   height: '100%',
   display: 'flex',
+  flexGrow: 1,
+  flexShrink: 1,
+  flexBasis: 0,
+  width: 0,
   alignItems: 'center',
   variants: {
     title: {
