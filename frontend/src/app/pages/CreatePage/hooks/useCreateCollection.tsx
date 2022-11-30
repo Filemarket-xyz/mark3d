@@ -5,7 +5,6 @@ import {
   CreateCollectionForm as FormDataToTransfer
 } from '../../../processing/hooks'
 import { CreateCollectionForm } from '../CreateCollectionPage'
-import { convertFileListToFile } from './shared'
 
 const convertFormDataToCollectionDTO = (
   form: CreateCollectionForm
@@ -13,7 +12,7 @@ const convertFormDataToCollectionDTO = (
   return {
     ...form,
     name: form.name,
-    image: convertFileListToFile(form.image)
+    image: form.image[0]
   }
 }
 

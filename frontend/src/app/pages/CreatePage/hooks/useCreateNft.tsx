@@ -5,15 +5,14 @@ import {
   MintNFTForm as FormToTransfer
 } from '../../../processing/hooks'
 import { CreateNFTForm } from '../CreateNFTPage'
-import { convertFileListToFile } from './shared'
 
 const convertFormDataToNftDTO = (form: CreateNFTForm): FormToTransfer => {
   return {
     name: form.name,
     collectionAddress: form.collection.id,
     description: form.description,
-    hiddenFile: convertFileListToFile(form.hiddenFile, 'hiddenFile'),
-    image: convertFileListToFile(form.image, 'preview')
+    hiddenFile: form.hiddenFile[0],
+    image: form.image[0]
   }
 }
 
