@@ -5,7 +5,8 @@ export class IPFSService {
     console.log('fetch bytes', getHttpLinkFromIpfsString(fileURI))
     return await fetch(
       getHttpLinkFromIpfsString(fileURI), {
-        method: 'GET'
+        method: 'GET',
+        mode: 'cors'
       }).then(async resp => {
       if (resp.ok) {
         return await resp
@@ -26,7 +27,8 @@ export class IPFSService {
     console.log('fetch text', getHttpLinkFromIpfsString(fileURI))
     return await fetch(
       getHttpLinkFromIpfsString(fileURI), {
-        method: 'GET'
+        method: 'GET',
+        mode: 'cors'
       }).then(async resp => {
       if (resp.ok) {
         return await resp
