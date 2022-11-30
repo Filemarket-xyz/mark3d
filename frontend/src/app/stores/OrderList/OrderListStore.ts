@@ -13,6 +13,7 @@ import { NFTCardProps } from '../../components/MarketCard/NFTCard'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 
 /**
  * Stores only ACTIVE order state.
@@ -66,8 +67,8 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
     return this.data.map(
       ({ token }): NFTCardProps => ({
         collection: reduceAddress(token?.collection ?? ''),
-        imageURL: getHttpLinkFromIpfsString(token?.image ?? ''),
-        title: token?.name ?? '',
+        imageURL: token?.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
+        title: token?.name ?? '—',
         user: {
           img: getProfileImageUrl(token?.owner ?? ''),
           username: reduceAddress(token?.owner ?? '')
