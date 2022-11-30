@@ -3,21 +3,38 @@ import { utils } from 'ethers'
 
 const crypto = window.crypto
 
+const publicKeyWrap = {
+  begin: '-----BEGIN PUBLIC KEY-----\n',
+  end: '\n-----END PUBLIC KEY-----'
+}
+
+const privateKeyWrap = {
+  begin: '-----BEGIN PRIVATE KEY-----\n',
+  end: '\n-----END PRIVATE KEY-----'
+}
+
 export const exportRSAPublicKey = async (key: CryptoKey): Promise<string> => {
   const exportedKey = await crypto.subtle.exportKey('spki', key)
-  return utils.hexlify(Buffer.from(exportedKey))
+  // non-optimal key encoding, just temporary, to not fix oracle
+  const exportedB64 = Buffer.from(exportedKey).toString('base64')
+  const exportedPem = `${publicKeyWrap.begin}${exportedB64}${publicKeyWrap.end}`
+  return utils.hexlify(Buffer.from(exportedPem, 'utf8'))
 }
 
 export const exportRSAPrivateKey = async (key: CryptoKey): Promise<string> => {
   const exportedKey = await crypto.subtle.exportKey('pkcs8', key)
-  return utils.hexlify(Buffer.from(exportedKey))
+  const exportedB64 = Buffer.from(exportedKey).toString('base64')
+  const exportedPem = `${privateKeyWrap.begin}${exportedB64}${privateKeyWrap.end}`
+  return utils.hexlify(Buffer.from(exportedPem, 'utf8'))
 }
 
 export const importRSAPublicKey = async (keyHex: RSAPublicKey) => {
-  const key = Buffer.from(keyHex.slice(2), 'hex')
+  const keyPem = Buffer.from(keyHex.slice(3), 'hex').toString('utf8')
+  const keyB64 = keyPem.slice(publicKeyWrap.begin.length, -publicKeyWrap.end.length)
+  const keyBytes = Buffer.from(keyB64, 'base64')
   return await crypto.subtle.importKey(
     'spki',
-    key,
+    keyBytes,
     {
       name: 'RSA-OAEP',
       hash: 'SHA-256'
@@ -28,10 +45,12 @@ export const importRSAPublicKey = async (keyHex: RSAPublicKey) => {
 }
 
 export const importRSAPrivateKey = async (keyHex: RSAPrivateKey) => {
-  const key = Buffer.from(keyHex.slice(2), 'hex')
+  const keyPem = Buffer.from(keyHex.slice(3), 'hex').toString('utf8')
+  const keyB64 = keyPem.slice(privateKeyWrap.begin.length, -privateKeyWrap.end.length)
+  const keyBytes = Buffer.from(keyB64, 'base64')
   return await crypto.subtle.importKey(
     'pkcs8',
-    key,
+    keyBytes,
     {
       name: 'RSA-OAEP',
       hash: 'SHA-256'
