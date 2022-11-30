@@ -1,18 +1,14 @@
 import React from 'react'
 import { styled } from '../../../../styles'
-import {
-  Card,
-  Container,
-  Button,
-  textVariant
-} from '../../../UIkit'
+import { Card, Container, textVariant, NavButton } from '../../../UIkit'
 import bg from '../img/bg.jpg'
 
 const WelcomeScreenWrapper = styled('section', {
   background: `url(${bg})`,
   width: '100%',
   backgroundSize: 'cover',
-  backgroundRepeat: 'no-repeat'
+  backgroundRepeat: 'no-repeat',
+  backgroundPositionX: '85%'
 })
 
 const Title = styled('h1', {
@@ -20,17 +16,33 @@ const Title = styled('h1', {
   fontSize: '70px',
   color: '$white',
   fontWeight: '600',
-  textShadow: '1px 1px 0 #00DCFF80, -1px -1px 0 #E14BEC80',
   '@lg': {
     fontSize: 'calc(3vw + 35px)',
-    textAlign: 'center'
+    textAlign: 'center',
+    margin: 'auto'
   },
   maxWidth: '755px',
   marginBottom: 0
 })
 
+const Description = styled('p', {
+  ...textVariant('body1').true,
+  fontWeight: 500,
+  color: '$white',
+  maxWidth: 730,
+  marginTop: 64,
+  '@lg': {
+    textAlign: 'center',
+    marginLeft: 'auto',
+    marginRight: 'auto'
+  },
+  '@sm': {
+    marginTop: '$5'
+  }
+})
+
 const ToolCard = styled(Card, {
-  background: 'rgba(63, 63, 63, 0.25)',
+  background: 'rgba(34, 34, 34, 0.45)',
   borderRadius: '$2',
   width: '350px',
   padding: '$4',
@@ -40,7 +52,8 @@ const ToolCard = styled(Card, {
   justifyContent: 'space-between',
   '@sm': {
     width: '90%'
-  }
+  },
+  backdropFilter: 'blur(45px)'
 })
 
 const ToolTitle = styled('h4', {
@@ -70,25 +83,26 @@ const WelcomeInfo = styled(Container, {
   paddingBottom: '140px',
   '@sm': {
     paddingBottom: '$5'
+  },
+  '@md': {
+    paddingTop: 'calc($layout$navBarHeight + 96px)'
   }
 })
 
 const ToolsContainer = styled('div', {
   display: 'flex',
   gap: '$4',
-  marginTop: 160,
+  marginTop: 64,
   '@lg': {
-    justifyContent: 'center',
-    marginTop: 100
+    justifyContent: 'center'
   },
   '@sm': {
     flexDirection: 'column',
-    alignItems: 'center',
-    marginTop: '$5'
+    alignItems: 'center'
   }
 })
 
-const ButtonStyled = styled(Button, {
+const ButtonStyled = styled(NavButton, {
   color: '$blue900',
   variants: {
     magenta: {
@@ -104,22 +118,24 @@ const ButtonStyled = styled(Button, {
   },
   '@sm': {
     fontSize: '$primary2'
-  }
+  },
+  textDecoration: 'none'
 })
 
 export default function WelcomeBlock() {
   return (
     <WelcomeScreenWrapper>
       <WelcomeInfo>
-        <Title>ESSENTIAL TOOLS<br/>FOR 3D INTERNET</Title>
+        <Title>
+          WEB3 TOOLS FOR <br />
+          NEW 3D INTERNET
+        </Title>
+        <Description>
+          Building a universal toolkit for decentralized & transparent economic
+          system of the Interoperable Metaverse, which is the key to justice in
+          the society of the future
+        </Description>
         <ToolsContainer>
-          <ToolCard css={{ border: '6px solid $blue300' }}>
-            <ToolTitle css={{ color: '$gradient0' }}>For 3D creators</ToolTitle>
-            <ToolDescription>
-              DAO-governed Platform for metaverse builders
-            </ToolDescription>
-            <ButtonStyled blue>Mint 3D NFT</ButtonStyled>
-          </ToolCard>
           <ToolCard css={{ border: '6px solid $magenta' }}>
             <ToolTitle css={{ color: '$gradient1' }}>
               For virtual worlds
@@ -127,7 +143,19 @@ export default function WelcomeBlock() {
             <ToolDescription>
               SDK, smartontracts, API and oracle for games and virtual worlds
             </ToolDescription>
-            <ButtonStyled magenta>Coming soon</ButtonStyled>
+            <ButtonStyled magenta to={''}>
+              Coming soon
+            </ButtonStyled>
+          </ToolCard>
+
+          <ToolCard css={{ border: '6px solid $blue300' }}>
+            <ToolTitle css={{ color: '$gradient0' }}>For 3D creators</ToolTitle>
+            <ToolDescription>
+              DAO-governed Platform for metaverse builders
+            </ToolDescription>
+            <ButtonStyled blue to={'/create/nft'}>
+              Mint 3D NFT
+            </ButtonStyled>
           </ToolCard>
         </ToolsContainer>
       </WelcomeInfo>
