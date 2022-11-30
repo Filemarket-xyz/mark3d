@@ -36,7 +36,9 @@ const ProfileImage = styled('img', {
   width: 160,
   height: 160,
   borderRadius: '50%',
-  border: '8px solid $white'
+  border: '8px solid $white',
+  background: '$white',
+  objectFit: 'fill'
 })
 
 const ProfileName = styled('h2', {
