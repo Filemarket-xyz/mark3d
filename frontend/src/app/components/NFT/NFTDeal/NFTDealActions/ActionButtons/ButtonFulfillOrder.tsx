@@ -5,6 +5,7 @@ import { Button } from '../../../../../UIkit'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import MintModal from '../../../../Modal/Modal'
 import { Order } from '../../../../../../swagger/Api'
+import { observer } from 'mobx-react-lite'
 
 export interface ButtonFulfillOrderProps {
   tokenFullId: TokenFullId
@@ -12,7 +13,7 @@ export interface ButtonFulfillOrderProps {
   callback?: () => void
 }
 
-export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = ({ tokenFullId, order, callback }) => {
+export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({ tokenFullId, order, callback }) => {
   const { fulfillOrder, ...statuses } = useFulfillOrder(tokenFullId, order?.price)
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -37,4 +38,4 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = ({ tokenFullId, o
       </Button>
     </>
   )
-}
+})

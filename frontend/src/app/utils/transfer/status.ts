@@ -61,6 +61,11 @@ export const transferPermissions = {
       const status = transferStatus(transfer)
       return status === TransferStatus.PasswordSet
     },
+    canViewHiddenFiles: (transfer?: Transfer) => {
+      const status = transferStatus(transfer)
+      return status === TransferStatus.PasswordSet ||
+        status === TransferStatus.Finished
+    },
     canCancel: (transfer?: Transfer) => {
       const statusInfo = transferStatusInfo(transfer)
       return statusInfo?.status === TransferStatus.PublicKeySet &&

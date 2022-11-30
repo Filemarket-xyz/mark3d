@@ -20,6 +20,8 @@ import { useTokenStore } from '../../hooks/useTokenStore'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 import { formatFileSize } from '../../utils/nfts/formatFileSize'
 import gradientBg from '../ProfilePage/img/Gradient.jpg'
+import { useIsOwner } from '../../processing/hooks'
+import { transferPermissions } from '../../utils/transfer/status'
 
 const NFTPreviewContainer = styled('div', {
   paddingTop: '$layout$navbarheight',
@@ -105,6 +107,8 @@ const NFTPage = observer(() => {
   const tokenMetaStore = useTokenMetaStore(token?.metaUri)
   const { errorStore } = useStores()
   const files = useHiddenFileDownload(tokenMetaStore, errorStore, token)
+  const { isOwner } = useIsOwner(tokenFullId)
+  const canViewHiddenFiles = transferPermissions.buyer.canViewHiddenFiles(transferStore.data)
 
   const { collection } = useCollectionStore(collectionAddress)
 
@@ -158,21 +162,23 @@ const NFTPage = observer(() => {
               }
             }}
           >
-            {files.map(({ cid, name, size, download }) =>
-              <li key={cid}>
-                <Link
-                  onPress={download}
-                  gray
-                >
-                  {name}
-                </Link>
-                {size > 0 && (
-                  <Txt secondary2 css={{ color: '$gray500' }}>
-                    {` (${formatFileSize(size)})`}
-                  </Txt>
-                )}
-              </li>
-            )}
+            {isOwner || canViewHiddenFiles
+              ? files.map(({ cid, name, size, download }) =>
+                <li key={cid}>
+                  <Link
+                    onPress={download}
+                    gray
+                  >
+                    {name}
+                  </Link>
+                  {size > 0 && (
+                    <Txt secondary2 css={{ color: '$gray500' }}>
+                      {` (${formatFileSize(size)})`}
+                    </Txt>
+                  )}
+                </li>
+              )
+              : <Txt secondary2 css={{ color: '$gray500' }}>Hidden files are only shown to the owner</Txt>}
           </Ul>
         </GridBlock>
       </GridLayout>

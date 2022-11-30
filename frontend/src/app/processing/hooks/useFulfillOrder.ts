@@ -40,6 +40,6 @@ export function useFulfillOrder({ collectionAddress, tokenId }: Partial<TokenFul
       }
     )
     return await result.wait()
-  }), [contract, signer, collectionAddress, tokenId])
+  }), [contract, address, wrapPromise, signer, collectionAddress, tokenId, price])
   return { ...statuses, fulfillOrder }
 }

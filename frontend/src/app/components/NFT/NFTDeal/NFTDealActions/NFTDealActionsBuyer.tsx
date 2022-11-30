@@ -16,6 +16,7 @@ export interface NFTDealActionsBuyerProps {
   transfer?: Transfer
   order?: Order
   ownerStatusChanged?: () => void
+  reFetchOrder?: () => void
 }
 
 const permissions = transferPermissions.buyer
@@ -24,7 +25,8 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
   transfer,
   order,
   tokenFullId,
-  ownerStatusChanged
+  ownerStatusChanged,
+  reFetchOrder
 }) => {
   return (
       <>
@@ -35,13 +37,16 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
           <ButtonSetPublicKeyTransfer tokenFullId={tokenFullId}/>
         </HideAction>
         <HideAction hide={!transfer || !permissions.canFinalize(transfer)}>
-          <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={ownerStatusChanged}/>
+          <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={() => {
+            ownerStatusChanged?.()
+            reFetchOrder?.()
+          }}/>
         </HideAction>
         <HideAction hide={!transfer || !permissions.canReportFraud(transfer)}>
           <ButtonReportFraudTransfer tokenFullId={tokenFullId}/>
         </HideAction>
         <HideAction hide={!transfer || !permissions.canCancel(transfer)}>
-          <ButtonCancelTransfer tokenFullId={tokenFullId}/>
+          <ButtonCancelTransfer tokenFullId={tokenFullId} callback={reFetchOrder}/>
         </HideAction>
         <HideAction hide={!!transfer}>
           <Button
