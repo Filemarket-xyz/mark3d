@@ -72,8 +72,7 @@ const TabsContainer = styled('div', {
 const ProfilePage = observer(() => {
   const { profileAddress } = useParams<Params>()
 
-  const { tokens: nfts } =
-    useCollectionAndTokenListStore(profileAddress)
+  const { tokens: nfts } = useCollectionAndTokenListStore(profileAddress)
 
   return (
     <>
