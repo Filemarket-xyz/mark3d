@@ -41,6 +41,7 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
         order={order}
         tokenFullId={tokenFullId}
         ownerStatusChanged={refetch}
+        reFetchOrder={reFetchOrder}
       />
     )
   }
