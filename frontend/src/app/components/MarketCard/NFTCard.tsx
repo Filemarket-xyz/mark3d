@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react'
 import { styled } from '../../../styles'
+import { gradientPlaceholderImg } from '../Placeholder/GradientPlaceholder'
 import { NavButton, textVariant, Txt } from '../../UIkit'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
 
@@ -124,7 +125,13 @@ export default function NFTCard(props: NFTCardProps) {
   return (
     <BorderLayout>
       <Card>
-        <BasicCardSquareImg src={props.imageURL} />
+        <BasicCardSquareImg
+          src={props.imageURL}
+          onError={({ currentTarget }) => {
+            currentTarget.onerror = null
+            currentTarget.src = gradientPlaceholderImg
+          }}
+        />
         <CardControls>
           <CardTitle title={props.title}>{props.title}</CardTitle>
           <CardCollection>{props.collection}</CardCollection>
@@ -142,7 +149,11 @@ export default function NFTCard(props: NFTCardProps) {
               primary
               to={props.button.link}
               small={true}
-              css={{ textDecoration: 'none', marginLeft: 'auto', marginRight: 'auto' }}
+              css={{
+                textDecoration: 'none',
+                marginLeft: 'auto',
+                marginRight: 'auto'
+              }}
             >
               <Txt primary3>{props.button.text}</Txt>
             </NavButton>

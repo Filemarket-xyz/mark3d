@@ -7,6 +7,7 @@ import { NFTCardProps } from '../../components/MarketCard/NFTCard'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 
 export class CollectionAndTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
@@ -67,7 +68,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
 
     return tokens.map((token) => ({
       collection: reduceAddress(token.collection ?? ''),
-      imageURL: getHttpLinkFromIpfsString(token.image ?? ''),
+      imageURL: token.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
       title: token.name ?? '—',
       user: {
         img: getProfileImageUrl(token.owner ?? ''),

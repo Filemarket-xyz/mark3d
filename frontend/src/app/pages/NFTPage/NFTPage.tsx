@@ -22,6 +22,7 @@ import { formatFileSize } from '../../utils/nfts/formatFileSize'
 import gradientBg from '../ProfilePage/img/Gradient.jpg'
 import { useIsOwner } from '../../processing/hooks'
 import { transferPermissions } from '../../utils/transfer/status'
+import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 
 const NFTPreviewContainer = styled('div', {
   paddingTop: '$layout$navbarheight',
@@ -125,7 +126,7 @@ const NFTPage = observer(() => {
               content={{ title: 'Creator', value: reduceAddress(token?.creator ?? '') }}
             />
             <Badge
-              imgUrl={getHttpLinkFromIpfsString(collection?.image ?? '')}
+              imgUrl={collection?.image ? getHttpLinkFromIpfsString(collection.image) : gradientPlaceholderImg}
               content={{ title: 'Collection', value: collection?.name ?? '' }}
             />
           </BadgesContainer>
