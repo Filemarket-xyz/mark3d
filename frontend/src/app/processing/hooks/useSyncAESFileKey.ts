@@ -3,13 +3,25 @@ import { useHiddenFileProcessorFactory } from './useHiddenFileProcessorFactory'
 import { useEffect } from 'react'
 import { useIsOwner } from './useIsOwner'
 import { useAccount } from 'wagmi'
+import { Transfer } from '../../../swagger/Api'
+import { utils } from 'ethers'
 
-export function useSyncAESFileKey({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, AESKeyEncrypted?: string) {
+export function useSyncAESFileKey({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, transfer?: Transfer) {
   const factory = useHiddenFileProcessorFactory()
   const { address } = useAccount()
   const { isOwner } = useIsOwner({ collectionAddress, tokenId })
+  const AESKeyEncrypted = transfer?.encryptedPassword
+  const to = transfer?.to
   useEffect(() => {
-    if (!isOwner && address && AESKeyEncrypted && collectionAddress && tokenId) {
+    if (
+      !isOwner &&
+      address &&
+      to &&
+      utils.getAddress(address) === utils.getAddress(to) &&
+      AESKeyEncrypted &&
+      collectionAddress &&
+      tokenId
+    ) {
       const tokenFullId = { collectionAddress, tokenId }
       let key = AESKeyEncrypted
       factory
@@ -33,5 +45,5 @@ export function useSyncAESFileKey({ collectionAddress, tokenId }: Partial<TokenF
           throw error
         })
     }
-  }, [factory, address, isOwner, collectionAddress, tokenId, AESKeyEncrypted])
+  }, [factory, address, to, isOwner, collectionAddress, tokenId, AESKeyEncrypted])
 }
