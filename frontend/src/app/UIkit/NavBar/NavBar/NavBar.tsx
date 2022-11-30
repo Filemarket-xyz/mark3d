@@ -3,13 +3,14 @@ import { BreakpointsOptions, styled } from '../../../../styles'
 import { Container } from '../../Container'
 import { NavBarCollapse } from '../NavBarCollapse'
 import { NavBarToggle } from '../NavBarToggle'
-import { NavBarItem } from '../NavBarItem'
+import { NavBarItem, NavBarItemLink } from '../NavBarItem'
 import { NavBarCollapseItem } from '../NavBarCollapseItem'
 import { useLocation } from 'react-router-dom'
 
 export interface NavBarItemData {
   to: string
   label?: ReactNode
+  isLink?: boolean
 }
 
 export interface NavBarProps {
@@ -75,7 +76,16 @@ export const NavBar: FC<NavBarProps> = ({
             {brand}
             {items && (
               <NavBarHorizontalSpacer css={{ flexGrow: 1 }}>
-                {items.map(item => (
+                {items.map(item => item.isLink ? (
+                    <NavBarItemLink
+                      key={item.to}
+                      href={item.to}
+                      target="_blank"
+                      hideIn={mobileBp}
+                    >
+                      {item.label}
+                    </NavBarItemLink>
+                ) : (
                   <NavBarItem
                     key={item.to}
                     to={item.to}

@@ -1,9 +1,9 @@
 import { cssShowHideIn, styled } from '../../../../styles'
 import { ComponentProps, FC, PropsWithChildren } from 'react'
 import { Txt } from '../../Txt'
-import { NavLink } from '../../Link'
+import { Link, NavLink } from '../../Link'
 
-export const NavLinkStyled = styled(NavLink, cssShowHideIn, {
+const navBarItemStyles = {
   color: '$blue900',
   position: 'relative',
   '&::after': {
@@ -22,7 +22,11 @@ export const NavLinkStyled = styled(NavLink, cssShowHideIn, {
   '&.active::after': {
     opacity: 1
   }
-})
+}
+
+export const NavLinkStyled = styled(NavLink, cssShowHideIn, navBarItemStyles)
+
+export const LinkStyled = styled(Link, cssShowHideIn, navBarItemStyles)
 
 export type NavBarItemProps = PropsWithChildren<ComponentProps<typeof NavLinkStyled>>
 
@@ -35,5 +39,19 @@ export const NavBarItem: FC<NavBarItemProps> = ({ children, ...navLinkProps }) =
         {children}
       </Txt>
     </NavLinkStyled>
+  )
+}
+
+export type NavBarItemLinkProps = PropsWithChildren<ComponentProps<typeof LinkStyled>>
+
+export const NavBarItemLink: FC<NavBarItemLinkProps> = ({ children, ...navLinkProps }) => {
+  return (
+    <LinkStyled
+      {...navLinkProps}
+    >
+      <Txt button1>
+        {children}
+      </Txt>
+    </LinkStyled>
   )
 }

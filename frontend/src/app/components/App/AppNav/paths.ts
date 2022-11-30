@@ -9,5 +9,10 @@ export const paths: NavBarItemData[] = [
   {
     to: '/market',
     label: '3D Market'
+  },
+  {
+    to: 'https://metaeden.mark3d.xyz/',
+    label: 'MetaEden',
+    isLink: true
   }
 ]
