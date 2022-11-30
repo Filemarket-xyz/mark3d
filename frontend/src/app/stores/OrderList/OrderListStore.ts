@@ -67,7 +67,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
       ({ token }): NFTCardProps => ({
         collection: reduceAddress(token?.collection ?? ''),
         imageURL: getHttpLinkFromIpfsString(token?.image ?? ''),
-        title: token?.name ?? '',
+        title: token?.name ?? '—',
         user: {
           img: getProfileImageUrl(token?.owner ?? ''),
           username: reduceAddress(token?.owner ?? '')

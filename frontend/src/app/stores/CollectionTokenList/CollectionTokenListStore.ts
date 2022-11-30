@@ -70,7 +70,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
     return tokens.map((token) => ({
       collection: collection?.name ?? '',
       imageURL: getHttpLinkFromIpfsString(token.image ?? ''),
-      title: token.name ?? '',
+      title: token.name ?? '—',
       user: {
         img: getProfileImageUrl(token.owner ?? ''),
         username: reduceAddress(collection?.owner ?? '')
