@@ -29,7 +29,7 @@ export const exportRSAPrivateKey = async (key: CryptoKey): Promise<string> => {
 }
 
 export const importRSAPublicKey = async (keyHex: RSAPublicKey) => {
-  const keyPem = Buffer.from(keyHex.slice(3), 'hex').toString('utf8')
+  const keyPem = Buffer.from(keyHex.slice(2), 'hex').toString('utf8')
   const keyB64 = keyPem.slice(publicKeyWrap.begin.length, -publicKeyWrap.end.length)
   const keyBytes = Buffer.from(keyB64, 'base64')
   return await crypto.subtle.importKey(
@@ -45,7 +45,7 @@ export const importRSAPublicKey = async (keyHex: RSAPublicKey) => {
 }
 
 export const importRSAPrivateKey = async (keyHex: RSAPrivateKey) => {
-  const keyPem = Buffer.from(keyHex.slice(3), 'hex').toString('utf8')
+  const keyPem = Buffer.from(keyHex.slice(2), 'hex').toString('utf8')
   const keyB64 = keyPem.slice(privateKeyWrap.begin.length, -privateKeyWrap.end.length)
   const keyBytes = Buffer.from(keyB64, 'base64')
   return await crypto.subtle.importKey(
