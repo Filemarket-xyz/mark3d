@@ -10,6 +10,7 @@ import { Params } from '../../utils/router/Params'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 
 const Background = styled('img', {
   width: '100%',
@@ -103,14 +104,29 @@ const CollectionPage = observer(() => {
         <StyledContainer>
           <Profile>
             <ProfileHeader>
-              <ProfileImage src={getHttpLinkFromIpfsString(collectionAndNfts.collection?.image ?? '')} />
+              <ProfileImage
+                src={
+                  collectionAndNfts.collection?.image
+                    ? getHttpLinkFromIpfsString(
+                      collectionAndNfts.collection?.image ?? ''
+                    )
+                    : gradientPlaceholderImg
+                }
+              />
               <ProfileName>{collectionAndNfts.collection?.name}</ProfileName>
             </ProfileHeader>
 
             <Badges>
               <Badge
-                content={{ title: 'Creator', value: reduceAddress(collectionAndNfts.collection?.owner ?? '') }}
-                imgUrl={getProfileImageUrl(collectionAndNfts.collection?.owner ?? '')}
+                content={{
+                  title: 'Creator',
+                  value: reduceAddress(
+                    collectionAndNfts.collection?.owner ?? ''
+                  )
+                }}
+                imgUrl={getProfileImageUrl(
+                  collectionAndNfts.collection?.owner ?? ''
+                )}
               />
               <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
             </Badges>

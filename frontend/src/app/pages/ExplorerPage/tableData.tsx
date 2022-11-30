@@ -25,6 +25,10 @@ import dc6 from './images/Decentraland/6.jpg'
 import dc7 from './images/Decentraland/7.jpg'
 import dc8 from './images/Decentraland/8.jpg'
 
+// OnCyber
+import oc1 from './images/OnCyber/1.jpg'
+import oc2 from './images/OnCyber/2.jpg'
+
 export const columnNames = [
   'Name',
   'Type',
@@ -227,6 +231,41 @@ const cellsWithoutColumnNames5: Array<Omit<IRowCell, 'columnName'>> = [
   }
 ]
 
+const cellsWithoutColumnNames6: Array<Omit<IRowCell, 'columnName'>> = [
+  {
+    hide: false,
+    value: 'OnCyber'
+  },
+  {
+    hide: false,
+    value: 'Separated spaces'
+  },
+  {
+    hide: 'sm',
+    value: 'Ethereum, Polygon, Solana, Tezos, Klaytn'
+  },
+  {
+    hide: 'md',
+    value: '.glb, .gltf'
+  },
+  {
+    hide: 'lg',
+    value: <>40mb</>
+  },
+  {
+    hide: 'lg',
+    value: true
+  },
+  {
+    hide: 'lg',
+    value: false
+  },
+  {
+    hide: 'lg',
+    value: '5/10'
+  }
+]
+
 const cells: IRowCell[] = cellsWithoutColumnNames.map(
   (cell, i): IRowCell => ({ ...cell, columnName: columnNames[i] })
 )
@@ -246,6 +285,11 @@ const cells4: IRowCell[] = cellsWithoutColumnNames4.map(
 const cells5: IRowCell[] = cellsWithoutColumnNames5.map(
   (cell, i): IRowCell => ({ ...cell, columnName: columnNames[i] })
 )
+
+const cells6: IRowCell[] = cellsWithoutColumnNames6.map(
+  (cell, i): IRowCell => ({ ...cell, columnName: columnNames[i] })
+)
+
 export const mockRows: IRow[] = [
   {
     title: 'Decentraland',
@@ -265,6 +309,15 @@ export const mockRows: IRow[] = [
         'Somnium Space is an open-source virtual reality world built on the Ethereum blockchain. It provides social activities and allows users to buy digital land, buildings, and other in-game assets.',
       imageURLS: [sm1],
       link: 'https://somniumspace.com/'
+    }
+  },
+  {
+    title: 'OnCyber',
+    cells: cells6,
+    content: {
+      description: 'Oncyber is a free virtual reality platform with high image quality that aims to help 3D artists to display their NFTs with fully immersive 3D experiences',
+      imageURLS: [oc1, oc2],
+      link: 'https://oncyber.io/'
     }
   },
   {
