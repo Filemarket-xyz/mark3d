@@ -1,6 +1,7 @@
 import React, { ComponentProps } from 'react'
 import { styled } from '../../../styles'
 import { textVariant } from '../../UIkit'
+import { gradientPlaceholderImg } from '../Placeholder/GradientPlaceholder'
 
 const Wrapper = styled('div', {
   backgroundColor: '$white',
@@ -32,7 +33,8 @@ const Image = styled('img', {
   width: 48,
   height: 48,
   borderRadius: '50%',
-  border: '2px solid $blue500'
+  border: '2px solid $blue500',
+  objectFit: 'cover'
 })
 
 export interface BadgeProps {
@@ -48,7 +50,15 @@ export interface BadgeProps {
 export default function Badge(props: BadgeProps) {
   return (
     <Wrapper {...props.wrapperProps}>
-      {props.imgUrl && <Image src={props.imgUrl} />}
+      {props.imgUrl && (
+        <Image
+          src={props.imgUrl}
+          onError={({ currentTarget }) => {
+            currentTarget.onerror = null
+            currentTarget.src = gradientPlaceholderImg
+          }}
+        />
+      )}
       <Content>
         {props.content.title && <Title>{props.content.title}</Title>}
         <Value css={props.valueStyles?.css}>{props.content.value}</Value>
