@@ -24,7 +24,7 @@ export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFull
     assert(tokenId, 'tokenId is not provided')
     const buyer = await factory.getBuyer(address, { collectionAddress, tokenId })
     const privateKey = await buyer.revealFraudReportRSAPrivateKey()
-    const res = await contract.finalizeTransfer(
+    const res = await contract.reportFraud(
       BigNumber.from(tokenId),
       ethers.utils.hexlify(Buffer.from(privateKey, 'utf-8')) as `0x${string}`
     )

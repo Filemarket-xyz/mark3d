@@ -47,7 +47,8 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
   tokenFullId,
   reFetchOrder
 }) => {
-  useSyncAESFileKey(tokenFullId, transfer?.encryptedPassword)
+  console.log('transfer', transfer)
+  useSyncAESFileKey(tokenFullId, transfer)
   return (
     <DealContainer>
       <DealContainerInfo>
