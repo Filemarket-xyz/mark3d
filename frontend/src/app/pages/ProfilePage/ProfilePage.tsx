@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { Outlet } from 'react-router'
 import { useParams } from 'react-router-dom'
 import { styled } from '../../../styles'
+import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 import { useCollectionAndTokenListStore } from '../../hooks'
 import { textVariant, Container } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
@@ -82,7 +83,13 @@ const ProfilePage = observer(() => {
         <Container>
           <Profile>
             <ProfileHeader>
-              <ProfileImage src={getProfileImageUrl(profileAddress ?? '')} />
+              <ProfileImage
+                src={getProfileImageUrl(profileAddress ?? '')}
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null
+                  currentTarget.src = gradientPlaceholderImg
+                }}
+              />
               <ProfileName>{reduceAddress(profileAddress ?? '')}</ProfileName>
             </ProfileHeader>
           </Profile>
@@ -96,6 +103,11 @@ const ProfilePage = observer(() => {
                   name: 'Owned',
                   url: 'owned',
                   amount: nfts.length
+                },
+                {
+                  name: 'History',
+                  url: 'history',
+                  amount: 100
                 }
               ]}
             />
