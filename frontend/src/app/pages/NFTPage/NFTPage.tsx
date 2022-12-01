@@ -38,12 +38,6 @@ const NFTPreviewContainer = styled('div', {
 const NftName = styled('h1', {
   ...textVariant('h3').true,
   color: '$blue900',
-  marginBottom: '$1'
-})
-
-const MintTime = styled('p', {
-  ...textVariant('primary1').true,
-  color: '$gray500',
   marginBottom: '$3'
 })
 
@@ -119,7 +113,6 @@ const NFTPage = observer(() => {
       <GridLayout>
         <GridBlock>
           <NftName>{token?.name}</NftName>
-          <MintTime>Minted on Sep 9, 2022</MintTime>
           <BadgesContainer>
             <Badge
               imgUrl={getProfileImageUrl(token?.owner ?? '')}
