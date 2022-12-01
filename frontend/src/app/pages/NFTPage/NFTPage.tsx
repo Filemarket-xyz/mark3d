@@ -38,7 +38,7 @@ const NFTPreviewContainer = styled('div', {
 const NftName = styled('h1', {
   ...textVariant('h3').true,
   color: '$blue900',
-  marginBottom: '$3'
+  marginBottom: '$4'
 })
 
 const BadgesContainer = styled('div', {
