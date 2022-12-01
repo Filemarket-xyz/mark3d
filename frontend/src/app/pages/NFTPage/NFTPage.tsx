@@ -121,7 +121,10 @@ const NFTPage = observer(() => {
               to={token?.owner ? `/profile/${token?.owner}` : location.pathname}
             >
               <Badge
-                imgUrl={getProfileImageUrl(token?.owner ?? '')}
+                image={{
+                  borderRadius: 'circle',
+                  url: getProfileImageUrl(token?.owner ?? '')
+                }}
                 content={{
                   title: 'Creator',
                   value: reduceAddress(token?.creator ?? '')
@@ -137,11 +140,12 @@ const NFTPage = observer(() => {
               }
             >
               <Badge
-                imgUrl={
-                  collection?.image
+                image={{
+                  url: collection?.image
                     ? getHttpLinkFromIpfsString(collection.image)
-                    : gradientPlaceholderImg
-                }
+                    : gradientPlaceholderImg,
+                  borderRadius: 'roundedSquare'
+                }}
                 content={{ title: 'Collection', value: collection?.name ?? '' }}
               />
             </NavLink>
