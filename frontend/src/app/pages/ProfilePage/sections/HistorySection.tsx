@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { ComponentProps, ReactNode } from 'react'
 import { styled } from '../../../../styles'
 import Badge from '../../../components/Badge/Badge'
 import { gradientPlaceholderImg } from '../../../components/Placeholder/GradientPlaceholder'
-import { TableBody } from '../../../components/Table/Table'
+import { HeadItem, TableBody } from '../../../components/Table/Table'
 import {
   ItemBody as RowBody,
   ItemWrapper as RowWrapper,
@@ -12,7 +12,8 @@ import { Button } from '../../../UIkit'
 import openLinkIcon from '../img/open-link-icon.svg'
 
 const Wrapper = styled(TableBody, {
-  gap: '$2'
+  gap: '$2',
+  paddingTop: 28
 })
 
 const ItemShareButton = styled(Button, {
@@ -32,12 +33,85 @@ const ItemShareButton = styled(Button, {
 const RowCellStyled = styled(RowCell, {
   fontSize: '$primary3',
   fontWeight: 600,
-  flexShrink: 1
+  flexShrink: 1,
+  variants: {
+    title: {
+      true: {
+        fontSize: '$primary3'
+      }
+    }
+  },
+  position: 'relative'
 })
 
-export const HistorySection = () => {
-  return (
-    <Wrapper>
+// TODO rename when delete old interfaces
+
+interface ITableColumn {
+  name: string
+  hide: 'sm' | 'md' | 'lg' | 'xl' | false
+}
+
+interface ITableCell {
+  value: ReactNode
+  columnName: string
+  cellAttributes?: ComponentProps<typeof RowCellStyled>
+  additionalData?: any
+}
+
+interface ITableRow {
+  cells: ITableCell[]
+}
+
+/** This class provides logic to transform given data structures to more convinient and fast ones */
+export class TableBuilderBase {
+  protected table: {
+    rows: Array<Map<string, ITableCell>>
+    /** Columns to iterate to get correct cells order */
+    columns: ITableColumn[]
+  } = {
+    columns: [],
+    rows: []
+  }
+
+  constructor(
+    private readonly columns: ITableColumn[],
+    private readonly rows: ITableRow[]
+  ) {
+    this.table = {
+      columns: this.columns,
+      rows: this.convertRowsToMaps()
+    }
+    console.log('table is', this.table)
+  }
+
+  private convertRowsToMaps() {
+    console.log(this.rows)
+    return this.rows.map((row) => this.convertRowToMap(row))
+  }
+
+  private convertRowToMap(row: ITableRow) {
+    const map = new Map<string, ITableCell>()
+
+    this.columns.forEach(({ name: columnName }, index) => {
+      const cell = row.cells.find((cell) => cell.columnName === columnName)
+      if (!cell) {
+        throw new Error(
+          `Column name "${columnName}" in row with index ${index} was not found`
+        )
+      }
+      map.set(columnName, cell)
+    })
+    return map
+  }
+}
+
+export class HistoryTableBuilder extends TableBuilderBase {
+  public renderRows() {
+    return this.table.rows.map((row, index) => this.renderRow(index, row))
+  }
+
+  private renderRow(rowIndex: number, row: Map<string, ITableCell>) {
+    return (
       <RowWrapper
         css={{
           alignItems: 'center',
@@ -48,35 +122,59 @@ export const HistorySection = () => {
         }}
       >
         <RowBody>
-          <RowCellStyled css={{ flexGrow: 0.5 }}>Sale</RowCellStyled>
-          <RowCellStyled
-            css={{ flexGrow: 1.5, flexShrink: 0, width: 'initial' }}
-          >
-            <Badge
-              image={{
-                url: gradientPlaceholderImg,
-                borderRadius: 'roundedSquare'
-              }}
-              content={{ title: 'VR glassess by Mark3d', value: 'UnderKong' }}
-              small
-              valueStyles={{
-                css: {
-                  fontSize: '$primary3'
-                }
-              }}
-            />
-          </RowCellStyled>
-
-          <RowCellStyled title>Underkong</RowCellStyled>
-          <RowCellStyled title>0xabcdef</RowCellStyled>
-
-          <RowCellStyled>0.5555</RowCellStyled>
-          <RowCellStyled css={{ flexGrow: 2.1 }}>
-            Sep 9, 2022 at 06:06 at 06:59
-          </RowCellStyled>
+          {this.table.columns.map((column) => {
+            const cell = row.get(column.name)
+            if (!cell) return null
+            return (
+              <RowCellStyled
+                hide={column.hide || undefined}
+                {...cell?.cellAttributes}
+                key={column.name}
+              >
+                {this.renderCell(column, cell, rowIndex)}
+              </RowCellStyled>
+            )
+          })}
         </RowBody>
         <ItemShareButton></ItemShareButton>
       </RowWrapper>
-    </Wrapper>
-  )
+    )
+  }
+
+  /** If index is 0 renders column name inside cell and moves it to the top by positioning */
+  private renderCell(column: ITableColumn, cell: ITableCell, index: number) {
+    return (
+      <>
+        {index === 0 && <HeadItem css={{bottom: 48}}>{column.name}</HeadItem>}
+        {cell?.value}
+      </>
+    )
+  }
+}
+
+const cols: ITableColumn[] = [
+  { name: 'Event', hide: false },
+  { name: 'Object', hide: false },
+  { name: 'From', hide: false },
+  { name: 'To', hide: false },
+  { name: 'Price', hide: false },
+  { name: 'Date', hide: 'lg' }
+]
+
+const rows: ITableRow[] = [
+  {
+    cells: [
+      { columnName: 'Event', value: 'Sale' },
+      { columnName: 'Object', value: 'Sale' },
+      { columnName: 'From', value: 'Sale' },
+      { columnName: 'To', value: 'Sale' },
+      { columnName: 'Price', value: 'Sale' },
+      { columnName: 'Date', value: 'Some date' }
+    ]
+  }
+]
+
+export const HistorySection = () => {
+  const historyTableBuilder = new HistoryTableBuilder(cols, rows)
+  return <Wrapper>{historyTableBuilder.renderRows()}</Wrapper>
 }
