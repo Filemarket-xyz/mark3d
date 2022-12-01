@@ -1,7 +1,7 @@
-import { Outlet, useParams } from 'react-router'
+import { Outlet, useLocation, useParams } from 'react-router'
 import { styled } from '../../../styles'
 import Badge from '../../components/Badge/Badge'
-import { textVariant, Container } from '../../UIkit'
+import { textVariant, Container, NavLink, Link } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
 import bg from './img/Gradient.jpg'
 import { observer } from 'mobx-react-lite'
@@ -97,6 +97,8 @@ const CollectionPage = observer(() => {
   const { data: collectionAndNfts } =
     useCollectionTokenListStore(collectionAddress)
 
+  const { pathname: currentPath } = useLocation()
+
   return (
     <>
       <GrayOverlay>
@@ -118,18 +120,35 @@ const CollectionPage = observer(() => {
             </ProfileHeader>
 
             <Badges>
-              <Badge
-                content={{
-                  title: 'Creator',
-                  value: reduceAddress(
+              <NavLink
+                to={
+                  collectionAndNfts.collection?.owner
+                    ? `/profile/${collectionAndNfts.collection.owner}`
+                    : currentPath
+                }
+              >
+                <Badge
+                  content={{
+                    title: 'Creator',
+                    value: reduceAddress(
+                      collectionAndNfts.collection?.owner ?? ''
+                    )
+                  }}
+                  imgUrl={getProfileImageUrl(
                     collectionAndNfts.collection?.owner ?? ''
-                  )
-                }}
-                imgUrl={getProfileImageUrl(
-                  collectionAndNfts.collection?.owner ?? ''
-                )}
-              />
-              <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
+                  )}
+                />
+              </NavLink>
+
+              {collectionAndNfts.collection?.address && (
+                <Link
+                  href={`https://mumbai.polygonscan.com/token/${collectionAndNfts.collection?.address}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
+                </Link>
+              )}
             </Badges>
 
             <ProfileDescription>
