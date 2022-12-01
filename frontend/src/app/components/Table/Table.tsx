@@ -6,7 +6,7 @@ const TableWrapper = styled('div', {
   paddingTop: '$4'
 })
 
-const TableBody = styled('div', {
+export const TableBody = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   gap: '$3'

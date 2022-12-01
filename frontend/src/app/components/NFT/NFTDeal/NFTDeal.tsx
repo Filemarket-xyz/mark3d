@@ -52,8 +52,11 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
     <DealContainer>
       <DealContainerInfo>
         <Badge
+          image={{
+            url: creator,
+            borderRadius: 'circle'
+          }}
           wrapperProps={{ css: { flexShrink: 0 } }}
-          imgUrl={creator}
           content={{ title: 'Creator', value: 'Underkong' }}
         />
         {order && (

@@ -134,9 +134,12 @@ const CollectionPage = observer(() => {
                       collectionAndNfts.collection?.owner ?? ''
                     )
                   }}
-                  imgUrl={getProfileImageUrl(
-                    collectionAndNfts.collection?.owner ?? ''
-                  )}
+                  image={{
+                    url: getProfileImageUrl(
+                      collectionAndNfts.collection?.owner ?? ''
+                    ),
+                    borderRadius: 'circle'
+                  }}
                 />
               </NavLink>
 

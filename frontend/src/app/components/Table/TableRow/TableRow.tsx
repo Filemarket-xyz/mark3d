@@ -7,7 +7,7 @@ import RowContent from './RowContent'
 import { IRowContent } from '../utils/tableBuilder'
 import { textVariant } from '../../../UIkit'
 
-const ItemWrapper = styled('div', {
+export const ItemWrapper = styled('div', {
   backgroundColor: '$white',
   borderRadius: '$3',
   minHeight: '80px',
@@ -25,7 +25,7 @@ const ItemWrapper = styled('div', {
   }
 })
 
-const ItemBody = styled('div', {
+export const ItemBody = styled('div', {
   display: 'flex',
   padding: '$3 $4',
   alignItems: 'center',
