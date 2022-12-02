@@ -101,7 +101,7 @@ pub async fn get_events(
     fraud_decider: &Contract,
 ) -> Result<(TransferFraudReported, FraudReported), web3::Error> {
     let tx = get_tx_receipt(hash, web3).await?;
-    if tx.logs.len() != 2 {
+    if tx.logs.len() < 2 {
         return Err(web3::Error::Internal);
     }
 
