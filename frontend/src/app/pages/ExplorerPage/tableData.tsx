@@ -1,7 +1,4 @@
-import {
-  ITableColumn,
-  ITableRow
-} from '../../components/Table/TableBuilder'
+import { ITableColumn, ITableRow } from '../../components/Table/TableBuilder'
 
 // Spatial imgs
 import sp1 from './images/Spatial/1.jpg'
@@ -106,7 +103,7 @@ export const rows: ITableRow[] = [
       },
       {
         columnName: 'Visual quality',
-        value: '3/10'
+        value: 'coming soon'
       }
     ],
     additionalData: {
@@ -119,27 +116,28 @@ export const rows: ITableRow[] = [
       }
     }
   },
+
   {
     cells: [
       {
         columnName: 'Name',
-        value: 'Somnium Space'
+        value: 'Voxels'
       },
       {
         columnName: 'Type',
-        value: 'Separated spaces'
+        value: 'Separated World'
       },
       {
         columnName: 'Blockchains',
-        value: 'Ethereum, Solana'
+        value: 'Etherium, Polygon'
       },
       {
         columnName: '3D formats compatibility',
-        value: '.glb, .gltf'
+        value: '.vox'
       },
       {
         columnName: 'Max file size',
-        value: <>🤷🏻‍♂️</>
+        value: 'no data'
       },
       {
         columnName: 'Show NFTs',
@@ -147,23 +145,24 @@ export const rows: ITableRow[] = [
       },
       {
         columnName: 'Create NFTs',
-        value: <>🤷🏻‍♂️</>
+        value: 'no data'
       },
       {
         columnName: 'Visual quality',
-        value: '2/10'
+        value: 'coming soon'
       }
     ],
     additionalData: {
-      title: 'Somnium Space',
+      title: 'Voxels',
       content: {
         description:
-          'Somnium Space is an open-source virtual reality world built on the Ethereum blockchain. It provides social activities and allows users to buy digital land, buildings, and other in-game assets.',
-        imageURLS: [sm1],
-        link: 'https://somniumspace.com/'
+          'The Voxels, formerly known as Cryptovoxels, is a virtual world built on the Ethereum blockchain. The players of the Voxels metaverse can create customised avatars, buy digital land and interact with other players',
+        imageURLS: [],
+        link: 'https://www.voxels.com/'
       }
     }
   },
+
   {
     cells: [
       {
@@ -184,7 +183,7 @@ export const rows: ITableRow[] = [
       },
       {
         columnName: 'Max file size',
-        value: <>🤷🏻‍♂️</>
+        value: 'no data'
       },
       {
         columnName: 'Show NFTs',
@@ -196,7 +195,7 @@ export const rows: ITableRow[] = [
       },
       {
         columnName: 'Visual quality',
-        value: '3/10'
+        value: 'coming soon'
       }
     ],
     additionalData: {
@@ -210,6 +209,7 @@ export const rows: ITableRow[] = [
       }
     }
   },
+
   {
     cells: [
       {
@@ -252,7 +252,7 @@ export const rows: ITableRow[] = [
       },
       {
         columnName: 'Visual quality',
-        value: '4/10'
+        value: 'coming soon'
       }
     ],
     additionalData: {
@@ -265,51 +265,53 @@ export const rows: ITableRow[] = [
       }
     }
   },
+
   {
     cells: [
       {
         columnName: 'Name',
-        value: 'Nvidia Omniverse'
+        value: 'Somnium Space'
       },
       {
         columnName: 'Type',
-        value: 'Set of tools'
+        value: 'Separated spaces'
       },
       {
         columnName: 'Blockchains',
-        value: <>🤷🏻‍♂️</>
+        value: 'Ethereum, Solana'
       },
       {
         columnName: '3D formats compatibility',
-        value: '.usd, .usdz'
+        value: '.glb, .gltf'
       },
       {
         columnName: 'Max file size',
-        value: <>🤷🏻‍♂️</>
+        value: 'no data'
       },
       {
         columnName: 'Show NFTs',
-        value: <>🤷🏻‍♂️</>
+        value: true
       },
       {
         columnName: 'Create NFTs',
-        value: <>🤷🏻‍♂️</>
+        value: 'no data'
       },
       {
         columnName: 'Visual quality',
-        value: '2/10'
+        value: 'coming soon'
       }
     ],
     additionalData: {
-      title: 'Nvidia Omniverse',
+      title: 'Somnium Space',
       content: {
         description:
-          'The Sandbox Game is a decentralised gaming virtual world built on the Ethereum blockchain. It allows non-tech-savvy users to create, sell, use, and monetise their VOX NFTs. The game is a vast map divided into parcels of land that are not connected.',
-        imageURLS: [],
-        link: 'https://www.nvidia.com/en-us/omniverse/'
+          'Somnium Space is an open-source virtual reality world built on the Ethereum blockchain. It provides social activities and allows users to buy digital land, buildings, and other in-game assets.',
+        imageURLS: [sm1],
+        link: 'https://somniumspace.com/'
       }
     }
   },
+
   {
     cells: [
       {
@@ -342,7 +344,7 @@ export const rows: ITableRow[] = [
       },
       {
         columnName: 'Visual quality',
-        value: '5/10'
+        value: 'coming soon'
       }
     ],
     additionalData: {
@@ -352,6 +354,236 @@ export const rows: ITableRow[] = [
           'Oncyber is a free virtual reality platform with high image quality that aims to help 3D artists to display their NFTs with fully immersive 3D experiences',
         imageURLS: [oc1, oc2],
         link: 'https://oncyber.io/'
+      }
+    }
+  },
+
+  {
+    cells: [
+      {
+        columnName: 'Name',
+        value: 'Viverse'
+      },
+      {
+        columnName: 'Type',
+        value: 'Separated spaces'
+      },
+      {
+        columnName: 'Blockchains',
+        value: 'Ethereum, Polygon'
+      },
+      {
+        columnName: '3D formats compatibility',
+        value: '.glb, .gltf'
+      },
+      {
+        columnName: 'Max file size',
+        value: '50mb'
+      },
+      {
+        columnName: 'Show NFTs',
+        value: true
+      },
+      {
+        columnName: 'Create NFTs',
+        value: false
+      },
+      {
+        columnName: 'Visual quality',
+        value: 'coming soon'
+      }
+    ],
+    additionalData: {
+      title: 'Viverse',
+      content: {
+        description:
+          'Viverse is a decentralised virtual reality platform focused on social activity and private digital life',
+        imageURLS: [],
+        link: 'https://www.viverse.com/us'
+      }
+    }
+  },
+
+  {
+    cells: [
+      {
+        columnName: 'Name',
+        value: 'Arhead'
+      },
+      {
+        columnName: 'Type',
+        value: 'Separated spaces'
+      },
+      {
+        columnName: 'Blockchains',
+        value: 'Polygon, (coming soon NEAR)'
+      },
+      {
+        columnName: '3D formats compatibility',
+        value: '.glb, .gltf, .fbx'
+      },
+      {
+        columnName: 'Max file size',
+        value: '50mb, 10mb for images, 300mb for videos'
+      },
+      {
+        columnName: 'Show NFTs',
+        value: false
+      },
+      {
+        columnName: 'Create NFTs',
+        value: false
+      },
+      {
+        columnName: 'Visual quality',
+        value: 'coming soon'
+      }
+    ],
+    additionalData: {
+      title: 'Arhead',
+      content: {
+        description:
+          'Arhead is a creators driven virtual platform to produce content, spaces and events in the metaverse with high image quality',
+        imageURLS: [],
+        link: 'https://arhead.io/'
+      }
+    }
+  },
+
+  {
+    cells: [
+      {
+        columnName: 'Name',
+        value: '3XR'
+      },
+      {
+        columnName: 'Type',
+        value: 'Separated spaces'
+      },
+      {
+        columnName: 'Blockchains',
+        value: 'NEAR'
+      },
+      {
+        columnName: '3D formats compatibility',
+        value: '.glb, .gltf'
+      },
+      {
+        columnName: 'Max file size',
+        value: 'no data'
+      },
+      {
+        columnName: 'Show NFTs',
+        value: true
+      },
+      {
+        columnName: 'Create NFTs',
+        value: true
+      },
+      {
+        columnName: 'Visual quality',
+        value: 'coming soon'
+      }
+    ],
+    additionalData: {
+      title: '3XR',
+      content: {
+        description:
+          '3XR is a virtual shop which is connecting the spatial web with digital tokens where you can mint your own gallery',
+        imageURLS: [],
+        link: 'https://3xr.space/'
+      }
+    }
+  },
+
+  {
+    cells: [
+      {
+        columnName: 'Name',
+        value: 'Varjo Reality Cloud'
+      },
+      {
+        columnName: 'Type',
+        value: 'Set of tools'
+      },
+      {
+        columnName: 'Blockchains',
+        value: false
+      },
+      {
+        columnName: '3D formats compatibility',
+        value: '.glb, .gltf'
+      },
+      {
+        columnName: 'Max file size',
+        value: 'no data'
+      },
+      {
+        columnName: 'Show NFTs',
+        value: 'no data'
+      },
+      {
+        columnName: 'Create NFTs',
+        value: 'no data'
+      },
+      {
+        columnName: 'Visual quality',
+        value: 'coming soon'
+      }
+    ],
+    additionalData: {
+      title: 'Varjo Reality Cloud',
+      content: {
+        description:
+          'The Varjo Reality Cloud platform drastically simplifies VR and XR software use, and the hardware required to run it, empowering professionals of all skill levels to engage in the future of virtual collaboration.',
+        imageURLS: [],
+        link: 'https://varjo.com/products/realitycloud/'
+      }
+    }
+  },
+
+  {
+    cells: [
+      {
+        columnName: 'Name',
+        value: 'Nvidia Omniverse'
+      },
+      {
+        columnName: 'Type',
+        value: 'Set of tools'
+      },
+      {
+        columnName: 'Blockchains',
+        value: 'no data'
+      },
+      {
+        columnName: '3D formats compatibility',
+        value: '.usd, .usdz'
+      },
+      {
+        columnName: 'Max file size',
+        value: 'no data'
+      },
+      {
+        columnName: 'Show NFTs',
+        value: 'no data'
+      },
+      {
+        columnName: 'Create NFTs',
+        value: 'no data'
+      },
+      {
+        columnName: 'Visual quality',
+        value: 'coming soon'
+      }
+    ],
+    additionalData: {
+      title: 'Nvidia Omniverse',
+      content: {
+        description:
+          'The Sandbox Game is a decentralised gaming virtual world built on the Ethereum blockchain. It allows non-tech-savvy users to create, sell, use, and monetise their VOX NFTs. The game is a vast map divided into parcels of land that are not connected.',
+        imageURLS: [],
+        link: 'https://www.nvidia.com/en-us/omniverse/'
       }
     }
   }

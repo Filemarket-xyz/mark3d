@@ -2,9 +2,11 @@ import { styled } from '../../../../../styles'
 import { textVariant } from '../../../../UIkit'
 import { ITableColumn, ITableRow } from '../../../../components/Table/TableBuilder'
 import { ExplorerTableBuilder } from './ExplorerTableBuilder'
+import { ComponentProps } from 'react'
 
 const TableWrapper = styled('div', {
-  paddingTop: '$4'
+  paddingTop: '$4',
+  paddingBottom: '$5'
 })
 
 export const TableBody = styled('div', {
@@ -25,13 +27,14 @@ interface Props {
   columns: ITableColumn[]
   rows: ITableRow[]
   columnsToDisplay: string[]
+  tableWrapperAttributes?: ComponentProps<typeof TableWrapper>
 }
 
 // TODO implement columnsToDisplay when filters are ready
-export default function Table({ columns, rows, columnsToDisplay }: Props) {
+export default function Table({ columns, rows, columnsToDisplay, tableWrapperAttributes }: Props) {
   const table = new ExplorerTableBuilder(columns, rows)
   return (
-    <TableWrapper>
+    <TableWrapper {...tableWrapperAttributes}>
       <TableBody>{table.renderRows()}</TableBody>
     </TableWrapper>
   )
