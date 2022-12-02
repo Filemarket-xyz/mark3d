@@ -29,6 +29,7 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
     const buyer = await factory.getBuyer(address, tokenFullId)
     await factory.registerTokenFullId(address, buyer, tokenFullId)
     const publicKey = await buyer.initBuy()
+    console.log('setTransferPublicKey', 'tokenId', tokenId, 'publicKey', publicKey)
     const result = await contract.setTransferPublicKey(
       BigNumber.from(tokenId),
       publicKey as `0x${string}`

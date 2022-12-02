@@ -28,7 +28,6 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
   const { wrapPromise, ...statuses } = useStatusState<CreateCollectionResult>()
   const upload = useUploadLighthouse()
   const mintCollection = useCallback(wrapPromise(async () => {
-    console.log('mint!', form)
     assertContract(contract, mark3dConfig.accessToken.name)
     assertSigner(signer)
     assert(form.name && form.symbol && form.image, 'CreateCollection form is not filled')
@@ -38,7 +37,7 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       image: form.image,
       external_link: mark3dConfig.externalLink
     })
-    console.log('metadata', metadata)
+    console.log('mint metadata', metadata)
     const salt = `0x${Buffer.from(randomBytes(32)).toString('hex')}` as const
     const result = await contract.createCollection(salt, form.name, form.symbol, metadata.url, metadata.url, '0x00')
     const receipt = await result.wait()

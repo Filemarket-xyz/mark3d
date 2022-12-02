@@ -20,6 +20,7 @@ export function useApproveExchange({ collectionAddress, tokenId }: Partial<Token
     assert(tokenId, 'tokenId is not provided')
     assertContract(contract, 'Mark3dCollection')
     assertSigner(signer)
+    console.log('approve exchange', 'exchange contract address', mark3dConfig.exchangeToken.address, 'tokenId', tokenId)
     const result = await contract.approve(mark3dConfig.exchangeToken.address, BigNumber.from(tokenId))
     return await result.wait()
   }), [wrapPromise, contract, signer, tokenId])

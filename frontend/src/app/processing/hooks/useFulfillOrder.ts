@@ -31,6 +31,7 @@ export function useFulfillOrder({ collectionAddress, tokenId }: Partial<TokenFul
     const buyer = await factory.getBuyer(address, tokenFullId)
     await factory.registerTokenFullId(address, buyer, tokenFullId)
     const publicKey = await buyer.initBuy()
+    console.log('fulfill order', 'collectionAddress', collectionAddress, 'publicKey', publicKey, 'tokenId', tokenId, 'price', price)
     const result = await contract.fulfillOrder(
       collectionAddress as `0x${string}`,
       publicKey as `0x${string}`,
