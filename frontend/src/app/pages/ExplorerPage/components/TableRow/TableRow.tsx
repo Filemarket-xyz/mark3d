@@ -5,6 +5,7 @@ import check from './img/check.svg'
 import arrow from './img/arrow.svg'
 import RowContent from './RowContent'
 import { textVariant } from '../../../../UIkit'
+import { RowBody, RowWrapper } from '../../../../components/Table'
 
 /** Defines content when row is expanded */
 export interface IRowContent {
@@ -12,36 +13,6 @@ export interface IRowContent {
   imageURLS: string[]
   link: string
 }
-
-export const ItemWrapper = styled('div', {
-  backgroundColor: '$white',
-  borderRadius: '$3',
-  minHeight: '80px',
-  color: '$gray500',
-  fontSize: '14px',
-  display: 'flex',
-  justifyContent: 'space-between',
-  variants: {
-    open: {
-      true: {
-        borderBottomLeftRadius: '0',
-        borderBottomRightRadius: '0'
-      }
-    }
-  }
-})
-
-export const ItemBody = styled('div', {
-  display: 'flex',
-  padding: '$3 $4',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  flex: '1 1 auto',
-  gap: '$3',
-  '@sm': {
-    paddingLR: '$3'
-  }
-})
 
 const ArrowImg = styled('img', {
   variants: {
@@ -136,12 +107,12 @@ export const TableRow: FC<Props> = ({ children, content, contentTitle }) => {
 
   return (
     <ItemWithContent>
-      <ItemWrapper open={isOpen}>
-        <ItemBody>{children}</ItemBody>
+      <RowWrapper open={isOpen}>
+        <RowBody>{children}</RowBody>
         <ItemArrow onClick={toggleRow}>
           <ArrowImg up={isOpen} src={arrow} alt='' />
         </ItemArrow>
-      </ItemWrapper>
+      </RowWrapper>
       {isOpen && (
         <RowContent
           title={contentTitle}
