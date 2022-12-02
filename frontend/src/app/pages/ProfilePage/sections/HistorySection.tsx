@@ -1,13 +1,12 @@
 import React, { ComponentProps, ReactNode } from 'react'
 import { styled } from '../../../../styles'
-import Badge from '../../../components/Badge/Badge'
-import { gradientPlaceholderImg } from '../../../components/Placeholder/GradientPlaceholder'
-import { HeadItem, TableBody } from '../../../components/Table/Table'
+import { HeadItem, TableBody } from '../../ExplorerPage/components/Table/Table'
 import {
   ItemBody as RowBody,
   ItemWrapper as RowWrapper,
   RowCell
-} from '../../../components/Table/TableRow/TableRow'
+} from '../../ExplorerPage/components/TableRow/TableRow'
+import { ITableBuilder } from '../../../components/Table/TableBuilder'
 import { Button } from '../../../UIkit'
 import openLinkIcon from '../img/open-link-icon.svg'
 
@@ -40,8 +39,7 @@ const RowCellStyled = styled(RowCell, {
         fontSize: '$primary3'
       }
     }
-  },
-  position: 'relative'
+  }
 })
 
 // TODO rename when delete old interfaces
@@ -69,9 +67,9 @@ export class TableBuilderBase {
     /** Columns to iterate to get correct cells order */
     columns: ITableColumn[]
   } = {
-    columns: [],
-    rows: []
-  }
+      columns: [],
+      rows: []
+    }
 
   constructor(
     private readonly columns: ITableColumn[],
@@ -105,7 +103,7 @@ export class TableBuilderBase {
   }
 }
 
-export class HistoryTableBuilder extends TableBuilderBase {
+export class HistoryTableBuilder extends TableBuilderBase implements ITableBuilder {
   public renderRows() {
     return this.table.rows.map((row, index) => this.renderRow(index, row))
   }
@@ -141,11 +139,10 @@ export class HistoryTableBuilder extends TableBuilderBase {
     )
   }
 
-  /** If index is 0 renders column name inside cell and moves it to the top by positioning */
   private renderCell(column: ITableColumn, cell: ITableCell, index: number) {
     return (
       <>
-        {index === 0 && <HeadItem css={{bottom: 48}}>{column.name}</HeadItem>}
+        {index === 0 && <HeadItem css={{ bottom: 48 }}>{column.name}</HeadItem>}
         {cell?.value}
       </>
     )

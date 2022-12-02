@@ -5,7 +5,7 @@ import 'swiper/css/navigation'
 import * as css from './styles.module.css'
 
 import { Navigation } from 'swiper'
-import { IRowContent } from '../Table/utils/tableBuilder'
+import { IRowContent } from '../Table/TableBuilder'
 import { styled } from '../../../styles'
 
 type Props = Pick<IRowContent, 'imageURLS'>
