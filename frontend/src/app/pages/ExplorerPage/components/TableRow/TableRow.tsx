@@ -1,11 +1,17 @@
 import React, { FC, ReactNode, useState } from 'react'
-import { styled } from '../../../../styles'
+import { styled } from '../../../../../styles'
 import cross from './img/cross.svg'
 import check from './img/check.svg'
 import arrow from './img/arrow.svg'
 import RowContent from './RowContent'
-import { IRowContent } from '../utils/tableBuilder'
-import { textVariant } from '../../../UIkit'
+import { textVariant } from '../../../../UIkit'
+
+/** Defines content when row is expanded */
+export interface IRowContent {
+  description: string
+  imageURLS: string[]
+  link: string
+}
 
 export const ItemWrapper = styled('div', {
   backgroundColor: '$white',
@@ -62,6 +68,7 @@ const ItemArrow = styled('button', {
 })
 
 export const RowCell = styled('div', {
+  position: 'relative',
   height: '100%',
   display: 'flex',
   flexGrow: 1,
