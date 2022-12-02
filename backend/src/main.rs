@@ -164,13 +164,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     }
                 };
 
-                let mut public_key = match private_key.public_key_to_pem() {
+                let public_key = match private_key.public_key_to_pem() {
                     Ok(key) => key,
                     Err(_) => continue,
                 };
-                public_key.pop();   // removing line break
+                let report_public_key_s = String::from_utf8(report.public_key.clone()).unwrap().replace("\n", "");
+                let public_key_s = String::from_utf8(public_key).unwrap().replace("\n", "");
 
-                if report.public_key != public_key {
+                if report_public_key_s != public_key_s {
                     println!("not approved, because of unmatching keys");
                     match call_late_decision(
                         &upgraded_fraud_decider_web2_contract,
