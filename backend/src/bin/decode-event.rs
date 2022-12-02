@@ -14,6 +14,14 @@ use openssl::{
     pkey::Private,
     rsa::{Padding},
 };
+use aes::{
+    cipher::{BlockDecrypt, KeyInit},
+    Aes256,
+};
+
+use generic_array::GenericArray;
+use sha2::{Digest, Sha256};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 pub struct TransferFraudReported {
@@ -185,27 +193,102 @@ pub async fn get_contract(path: &str) -> web3::ethabi::Contract {
 
     web3::ethabi::Contract::load(&*x).expect("load contract err")
 }
-
 pub fn decrypt_password(
     private_key: &Rsa<Private>,
     report: &FraudReported,
-) -> Result<String, web3::Error> {
+) -> Result<Vec<u8>, web3::Error> {
     let mut buf: Vec<u8> = vec![0; private_key.size() as usize];
 
     let res_size = match private_key.private_decrypt(
         &report.encrypted_password,
         &mut buf,
-        Padding::NONE,
+        Padding::PKCS1_OAEP,
     ) {
         Ok(v) => v,
         Err(e) => return Err(web3::Error::Decoder(format!("{e}"))),
     };
-    println!("well well");
+    println!("{:?}", res_size);
+    println!("{:?}", buf);
 
-    match std::str::from_utf8(&buf[..res_size]) {
-        Ok(s) => Ok(s.to_string()),
-        Err(e) => Err(web3::Error::Decoder(format!("{e}"))),
+    return Ok(Vec::from(&buf[..res_size]));
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct File {
+    name: String,
+    description: String,
+    image: String,
+    pub hidden_file: String,
+}
+
+
+pub async fn fetch_file(report: &FraudReported) -> Result<Vec<u8>, web3::Error> {
+    let link = if report.cid.starts_with("ipfs://") {
+        format!(
+            "https://gateway.lighthouse.storage/ipfs/{}",
+            report.cid.replace("ipfs://", "")
+        )
+    } else {
+        return Err(web3::Error::Decoder("invalid cid".to_string()));
+    };
+
+    let file: File = match reqwest::Client::new().get(link).send().await {
+        Ok(r) => match r.json().await {
+            Ok(f) => f,
+            Err(e) => {
+                return Err(web3::Error::Decoder(format!(
+                    "convert file in JSON error: {e}"
+                )))
+            }
+        },
+        Err(e) => return Err(web3::Error::Decoder(format!("get file in JSON error: {e}"))),
+    };
+
+    let hidden_file_link = if file.hidden_file.starts_with("ipfs://") {
+        format!(
+            "https://gateway.lighthouse.storage/ipfs/{}",
+            file.hidden_file.replace("ipfs://", "")
+        )
+    } else {
+        return Err(web3::Error::Decoder("invalid hidden file link".to_string()));
+    };
+
+    match reqwest::Client::new().get(hidden_file_link).send().await {
+        Ok(r) => match r.bytes().await {
+            Ok(b) => Ok(b.to_vec()),
+            Err(e) => Err(web3::Error::Decoder(format!(
+                "convert hidden file to bytes error: {e}"
+            ))),
+        },
+        Err(e) => Err(web3::Error::Decoder(format!("get hidden file error: {e}"))),
     }
+}
+
+pub fn decrypt_file(file: &[u8], key_bytes: &[u8]) -> Result<bool, web3::Error> {
+    let cipher = match Aes256::new_from_slice(&key_bytes) {
+        Ok(c) => c,
+        Err(e) => {
+            return Err(web3::Error::Decoder(format!("parse key failed: {e}")));
+        }
+    };
+    let mut decrypted: Vec<u8> = vec![0; file.len()];
+
+    for i in 0..file.len() / 16 {
+        let mut block: Vec<u8> = vec![0; 16];
+        block.clone_from_slice(&file[i * 16..(i + 1) * 16]);
+
+        cipher.decrypt_block(GenericArray::from_mut_slice(block.as_mut_slice()));
+
+        decrypted[i * 16..(i + 1) * 16].copy_from_slice(block.as_slice());
+    }
+
+    let hash = &decrypted[decrypted.len() - 32..];
+    let mut hasher = Sha256::new();
+    hasher.update(&decrypted[..decrypted.len() - 32]);
+    let res = hasher.finalize();
+    let result = res.as_slice();
+
+    Ok(result == hash)
 }
 
 #[tokio::main]
@@ -265,4 +348,21 @@ async fn main() {
             panic!("approved, because passwor decryption failed {:?}", _e);
         }
     };
+
+    let hidden_file: Vec<u8> = match fetch_file(&report).await {
+        Ok(f) => f,
+        Err(e) => {
+            panic!("{:?}", e)
+        }
+    };
+
+    println!("{:}", decrypted_password.len());
+
+    let hash_matched = match decrypt_file(&hidden_file, &decrypted_password) {
+        Ok(res) => res,
+        Err(e) => {
+            panic!("{:?}", e)
+        }
+    };
+    println!("{:}", hash_matched);
 }

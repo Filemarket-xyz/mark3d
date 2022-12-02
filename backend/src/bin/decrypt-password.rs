@@ -34,10 +34,6 @@ async fn main() {
         Ok(v) => v,
         Err(err) => panic!("encrypt failed: {:?}", err),
     };
-
-    let res = match str::from_utf8(&buf[..res_size]) {
-        Ok(s) => s,
-        Err(err) => panic!("res to string failed: {:?}", err),
-    };
-    println!("res: {:?}", res);
+    println!("{:?}", res_size);
+    println!("{:?}", buf);
 }

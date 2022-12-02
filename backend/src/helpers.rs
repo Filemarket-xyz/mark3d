@@ -162,7 +162,7 @@ pub fn decrypt_password(
     let res_size = match private_key.private_decrypt(
         &report.encrypted_password,
         &mut buf,
-        Padding::NONE,
+        Padding::PKCS1_OAEP,
     ) {
         Ok(v) => v,
         Err(e) => return Err(web3::Error::Decoder(format!("{e}"))),

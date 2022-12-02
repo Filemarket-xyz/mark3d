@@ -26,6 +26,7 @@ async fn main() {
         Err(err) => panic!("make key failed: {:?}", err),
     };
     let key_bytes = buf.clone();
+    println!("{:?}", buf.len());
     println!("{:?}", hex::encode(buf));
 
     let cipher = match Aes256::new_from_slice(&key_bytes) {

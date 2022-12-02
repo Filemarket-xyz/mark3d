@@ -37,7 +37,7 @@ export const importRSAPublicKey = async (keyHex: RSAPublicKey) => {
     keyBytes,
     {
       name: 'RSA-OAEP',
-      hash: 'SHA-256'
+      hash: 'SHA-1'
     },
     true,
     ['encrypt']
@@ -53,7 +53,7 @@ export const importRSAPrivateKey = async (keyHex: RSAPrivateKey) => {
     keyBytes,
     {
       name: 'RSA-OAEP',
-      hash: 'SHA-256'
+      hash: 'SHA-1',
     },
     true,
     ['decrypt']
@@ -64,7 +64,7 @@ export const genRSAKeyPair = async (): Promise<RSAKeyPair> => {
   const keys = await crypto.subtle.generateKey(
     {
       name: 'RSA-OAEP',
-      hash: 'SHA-256', // SHA-1, SHA-256, SHA-384, or SHA-512
+      hash: 'SHA-1', // SHA-1, SHA-256, SHA-384, or SHA-512
       publicExponent: new Uint8Array([1, 0, 1]), // 0x03 or 0x010001
       modulusLength: 2048 // 1024, 2048, or 4096
     },
@@ -78,7 +78,7 @@ export const genRSAKeyPair = async (): Promise<RSAKeyPair> => {
 
 export const encryptRSA = async (message: CryptoMessage, key: RSAPublicKey): Promise<Uint8Array> => {
   const publicKey = await importRSAPublicKey(key)
-  const ecnData = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, publicKey, message)
+  const ecnData = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, publicKey, message);
   return new Uint8Array(ecnData)
 }
 
