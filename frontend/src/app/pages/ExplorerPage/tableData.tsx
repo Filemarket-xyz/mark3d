@@ -25,9 +25,40 @@ import dc6 from './images/Decentraland/6.jpg'
 import dc7 from './images/Decentraland/7.jpg'
 import dc8 from './images/Decentraland/8.jpg'
 
-// OnCyber
+// OnCyber imgs
 import oc1 from './images/OnCyber/1.jpg'
 import oc2 from './images/OnCyber/2.jpg'
+
+// 3XR imgs
+import xr1 from './images/3XR/1.jpg'
+import xr2 from './images/3XR/2.jpg'
+import xr3 from './images/3XR/3.jpg'
+import xr4 from './images/3XR/4.jpg'
+
+// Arhead imgs
+import ah1 from './images/Arhead/1.jpg'
+import ah2 from './images/Arhead/2.jpg'
+import ah3 from './images/Arhead/3.jpg'
+import ah4 from './images/Arhead/4.jpg'
+
+// Sandbox imgs
+import sb1 from './images/Sandbox/1.jpg'
+import sb2 from './images/Sandbox/2.jpg'
+import sb3 from './images/Sandbox/3.jpg'
+import sb4 from './images/Sandbox/4.jpg'
+
+// Viverse imgs
+import vv1 from './images/Viverse/1.jpg'
+import vv2 from './images/Viverse/2.jpg'
+import vv3 from './images/Viverse/3.jpg'
+import vv4 from './images/Viverse/4.jpg'
+
+// Voxels imgs
+import vx1 from './images/Voxels/1.jpg'
+import vx2 from './images/Voxels/2.jpg'
+import vx3 from './images/Voxels/3.jpg'
+import vx4 from './images/Voxels/4.jpg'
+import vx5 from './images/Voxels/5.jpg'
 
 export const columns: ITableColumn[] = [
   {
@@ -157,7 +188,7 @@ export const rows: ITableRow[] = [
       content: {
         description:
           'The Voxels, formerly known as Cryptovoxels, is a virtual world built on the Ethereum blockchain. The players of the Voxels metaverse can create customised avatars, buy digital land and interact with other players',
-        imageURLS: [],
+        imageURLS: [vx1, vx2, vx3, vx4, vx5],
         link: 'https://www.voxels.com/'
       }
     }
@@ -398,7 +429,7 @@ export const rows: ITableRow[] = [
       content: {
         description:
           'Viverse is a decentralised virtual reality platform focused on social activity and private digital life',
-        imageURLS: [],
+        imageURLS: [vv1, vv2, vv3, vv4],
         link: 'https://www.viverse.com/us'
       }
     }
@@ -444,7 +475,7 @@ export const rows: ITableRow[] = [
       content: {
         description:
           'Arhead is a creators driven virtual platform to produce content, spaces and events in the metaverse with high image quality',
-        imageURLS: [],
+        imageURLS: [ah1, ah2, ah3, ah4],
         link: 'https://arhead.io/'
       }
     }
@@ -490,7 +521,7 @@ export const rows: ITableRow[] = [
       content: {
         description:
           '3XR is a virtual shop which is connecting the spatial web with digital tokens where you can mint your own gallery',
-        imageURLS: [],
+        imageURLS: [xr1, xr2, xr3, xr4],
         link: 'https://3xr.space/'
       }
     }
@@ -582,7 +613,7 @@ export const rows: ITableRow[] = [
       content: {
         description:
           'The Sandbox Game is a decentralised gaming virtual world built on the Ethereum blockchain. It allows non-tech-savvy users to create, sell, use, and monetise their VOX NFTs. The game is a vast map divided into parcels of land that are not connected.',
-        imageURLS: [],
+        imageURLS: [sb1, sb2, sb3, sb4],
         link: 'https://www.nvidia.com/en-us/omniverse/'
       }
     }
