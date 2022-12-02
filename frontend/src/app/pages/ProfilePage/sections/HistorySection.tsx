@@ -5,6 +5,7 @@ import { ITableColumn, ITableRow } from '../../../components/Table/TableBuilder'
 import { Button } from '../../../UIkit'
 import openLinkIcon from '../img/open-link-icon.svg'
 import { HistoryTableBuilder } from './HistoryTableBuilder'
+import { observer } from 'mobx-react-lite'
 
 export const Wrapper = styled(TableBody, {
   gap: '$2',
@@ -60,7 +61,7 @@ const rows: ITableRow[] = [
   }
 ]
 
-export const HistorySection = () => {
+export const HistorySection = observer(() => {
   const historyTableBuilder = new HistoryTableBuilder(cols, rows)
   return <Wrapper>{historyTableBuilder.renderRows()}</Wrapper>
-}
+})
