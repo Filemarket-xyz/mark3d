@@ -13,12 +13,17 @@ const Title = styled('h1', {
 export default function ExplorerPage() {
   // TODO use when filters are ready
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [columnsToDisplay, setColumnsToDisplay] =
-    useState<string[]>(columns.map((c) => c.name))
+  const [columnsToDisplay, setColumnsToDisplay] = useState<string[]>(
+    columns.map((c) => c.name)
+  )
   return (
     <PageLayout>
       <Title>Metaverse explorer</Title>
-      <Table columns={columns} rows={rows} columnsToDisplay={columnsToDisplay}></Table>
+      <Table
+        columns={columns}
+        rows={rows}
+        columnsToDisplay={columnsToDisplay}
+      ></Table>
     </PageLayout>
   )
 }
