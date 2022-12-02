@@ -156,22 +156,19 @@ pub async fn get_events(
 pub fn decrypt_password(
     private_key: &Rsa<Private>,
     report: &FraudReported,
-) -> Result<String, web3::Error> {
+) -> Result<Vec<u8>, web3::Error> {
     let mut buf: Vec<u8> = vec![0; private_key.size() as usize];
 
     let res_size = match private_key.private_decrypt(
         &report.encrypted_password,
         &mut buf,
-        Padding::PKCS1_OAEP,
+        Padding::NONE,
     ) {
         Ok(v) => v,
         Err(e) => return Err(web3::Error::Decoder(format!("{e}"))),
     };
 
-    match std::str::from_utf8(&buf[..res_size]) {
-        Ok(s) => Ok(s.to_string()),
-        Err(e) => Err(web3::Error::Decoder(format!("{e}"))),
-    }
+    return Ok(Vec::from(&buf[..res_size]));
 }
 
 pub async fn fetch_file(report: &FraudReported) -> Result<Vec<u8>, web3::Error> {
@@ -216,20 +213,7 @@ pub async fn fetch_file(report: &FraudReported) -> Result<Vec<u8>, web3::Error> 
     }
 }
 
-pub fn decrypt_file(file: &[u8], password: &str) -> Result<bool, web3::Error> {
-    let salt = "salt";
-    let mut buf: Vec<u8> = vec![0; 32];
-    if let Err(e) = pbkdf2_hmac(
-        password.as_bytes(),
-        salt.as_bytes(),
-        1,
-        MessageDigest::sha512(),
-        &mut buf,
-    ) {
-        return Err(web3::Error::Decoder(format!("make key failed: {e}")));
-    };
-    let key_bytes = buf.clone();
-
+pub fn decrypt_file(file: &[u8], key_bytes: &[u8]) -> Result<bool, web3::Error> {
     let cipher = match Aes256::new_from_slice(&key_bytes) {
         Ok(c) => c,
         Err(e) => {

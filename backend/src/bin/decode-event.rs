@@ -7,6 +7,13 @@ use web3::{
     signing::Key, contract::Options,
     types::{H160, U256},
 };
+use openssl::rsa::Rsa;
+use openssl::{
+    hash::MessageDigest,
+    pkcs5::pbkdf2_hmac,
+    pkey::Private,
+    rsa::{Padding},
+};
 
 #[derive(Debug)]
 pub struct TransferFraudReported {
@@ -179,6 +186,28 @@ pub async fn get_contract(path: &str) -> web3::ethabi::Contract {
     web3::ethabi::Contract::load(&*x).expect("load contract err")
 }
 
+pub fn decrypt_password(
+    private_key: &Rsa<Private>,
+    report: &FraudReported,
+) -> Result<String, web3::Error> {
+    let mut buf: Vec<u8> = vec![0; private_key.size() as usize];
+
+    let res_size = match private_key.private_decrypt(
+        &report.encrypted_password,
+        &mut buf,
+        Padding::NONE,
+    ) {
+        Ok(v) => v,
+        Err(e) => return Err(web3::Error::Decoder(format!("{e}"))),
+    };
+    println!("well well");
+
+    match std::str::from_utf8(&buf[..res_size]) {
+        Ok(s) => Ok(s.to_string()),
+        Err(e) => Err(web3::Error::Decoder(format!("{e}"))),
+    }
+}
+
 #[tokio::main]
 async fn main() {
     let args: Vec<String> = env::args().collect();
@@ -204,8 +233,7 @@ async fn main() {
     let contract = get_contract(&args[3]).await;
     let contract2 = get_contract(&args[4]).await;
 
-    let (_report_flag, report) =
-                    match get_events(
+    let (_report_flag, report) = match get_events(
                         tx.transaction_hash,
                         &web3,
                         &contract,
@@ -214,6 +242,27 @@ async fn main() {
                         Err(e) => {
                             panic!("parse events failed: {e}");
                         }
-                    };
-                println!("fraud events: {:?} {:?}", _report_flag, report);
+    };
+    println!("fraud events: {:?} {:?}", _report_flag, report);
+    let private_key = match Rsa::private_key_from_pem(&report.private_key) {
+                    Ok(k) => k,
+                    Err(_) => {
+                        panic!("not approved, because invalid private key");
+                    }
+    };
+
+    let mut public_key = match private_key.public_key_to_pem() {
+        Ok(key) => key,
+        Err(_) => panic!("to pub key failed"),
+    };
+
+    println!("{:}", String::from_utf8(public_key).unwrap().replace("\n", ""));
+    println!("{:}", String::from_utf8(report.public_key.clone()).unwrap().replace("\n", ""));
+
+    let decrypted_password = match decrypt_password(&private_key, &report) {
+        Ok(p) => p,
+        Err(_e) => {
+            panic!("approved, because passwor decryption failed {:?}", _e);
+        }
+    };
 }
