@@ -31,7 +31,6 @@ export function useUploadLighthouse() {
         { target: { files: [file] }, persist: () => void 0 },
         accessToken, () => void 0
       )
-      console.log('output', output)
 
       return {
         url: `ipfs://${output.data.Hash}`,
@@ -55,8 +54,6 @@ export function useUploadLighthouse() {
       ...meta,
       ...fileProps
     }, undefined, 2)
-
-    console.log('metadata to upload', metaToUpload)
 
     const metaFile = new File([metaToUpload], 'metadata.json', { type: 'text/plain' })
 

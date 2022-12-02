@@ -1,6 +1,6 @@
 import { useCollectionContract } from './useCollectionContract'
 import { useStatusState } from '../../hooks'
-import { BigNumber, ContractReceipt, ethers } from 'ethers'
+import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { assertContract, assertSigner } from '../utils/assert'
 import { mark3dConfig } from '../../config/mark3d'
@@ -24,9 +24,10 @@ export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFull
     assert(tokenId, 'tokenId is not provided')
     const buyer = await factory.getBuyer(address, { collectionAddress, tokenId })
     const privateKey = await buyer.revealFraudReportRSAPrivateKey()
+    console.log('report fraud', 'tokenId', tokenId, 'privateKey', privateKey)
     const res = await contract.reportFraud(
       BigNumber.from(tokenId),
-      ethers.utils.hexlify(Buffer.from(privateKey, 'utf-8')) as `0x${string}`
+      privateKey as `0x${string}`
     )
     return await res.wait()
   }), [contract, signer, address, wrapPromise])

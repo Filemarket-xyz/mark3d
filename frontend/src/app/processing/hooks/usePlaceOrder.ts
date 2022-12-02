@@ -19,6 +19,7 @@ export function usePlaceOrder({ collectionAddress, tokenId }: Partial<TokenFullI
     assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
     if (collectionAddress && tokenId && price) {
+      console.log('place order', 'collectionAddress', collectionAddress, 'tokenId', tokenId, 'price', price)
       const result = await contract.placeOrder(
         collectionAddress as `0x${string}`,
         BigNumber.from(tokenId),

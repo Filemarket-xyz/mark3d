@@ -2,7 +2,6 @@ import { getHttpLinkFromIpfsString } from '../utils/nfts/getHttpLinkFromIpfsStri
 
 export class IPFSService {
   async fetchBytes(fileURI: string): Promise<Uint8Array> {
-    console.log('fetch bytes', getHttpLinkFromIpfsString(fileURI))
     return await fetch(
       getHttpLinkFromIpfsString(fileURI), {
         method: 'GET',
@@ -16,7 +15,6 @@ export class IPFSService {
         return await resp
           .text()
           .then(text => {
-            console.log('fetch bytes error', resp)
             throw new Error(text)
           })
       }
@@ -24,7 +22,6 @@ export class IPFSService {
   }
 
   async fetchText(fileURI: string): Promise<string> {
-    console.log('fetch text', getHttpLinkFromIpfsString(fileURI))
     return await fetch(
       getHttpLinkFromIpfsString(fileURI), {
         method: 'GET',
@@ -37,7 +34,6 @@ export class IPFSService {
         return await resp
           .text()
           .then(text => {
-            console.log('fetch text error', resp)
             throw new Error(text)
           })
       }

@@ -34,7 +34,6 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
       this,
       api.tokens.tokensDetail(address),
       resp => {
-        console.log('request response', resp)
         if (resp.collections) {
           this.collections = resp.collections
         }

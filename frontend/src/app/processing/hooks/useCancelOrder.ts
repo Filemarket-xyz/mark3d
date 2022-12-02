@@ -21,6 +21,7 @@ export function useCancelOrder({ collectionAddress, tokenId }: Partial<TokenFull
     assert(tokenId, 'tokenId is not provided')
     assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
+    console.log('cancel order', 'collectionAddress', collectionAddress, 'tokenId', tokenId)
     const result = await contract.cancelOrder(
       collectionAddress as `0x${string}`,
       BigNumber.from(tokenId)

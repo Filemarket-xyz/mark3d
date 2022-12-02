@@ -16,6 +16,7 @@ export function useFinalizeTransfer({ collectionAddress, tokenId }: Partial<Toke
     assertSigner(signer)
     assert(collectionAddress, 'collection address not provided')
     assert(tokenId, 'tokenId is not provided')
+    console.log('finalize transfer', 'tokenId', tokenId)
     const res = await contract.finalizeTransfer(BigNumber.from(tokenId))
     return await res.wait()
   }), [contract, signer, wrapPromise])

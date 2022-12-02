@@ -15,6 +15,7 @@ export function useInitTransfer({ collectionAddress, tokenId }: Partial<TokenFul
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     assert(to, 'receiver address ("to") is undefined')
+    console.log('init transfer', 'tokenId', tokenId, 'to', to, 'callbackReceiver', nullAddress)
     const result = await contract.initTransfer(
       BigNumber.from(tokenId),
       to as `0x${string}`,
