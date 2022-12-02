@@ -6,12 +6,12 @@ import { chain } from 'wagmi'
 export const mark3dConfig = {
   chain: chain.polygonMumbai,
   accessToken: {
-    address: '0xf18A98B45445622e43945fc6e321eE6D553391a0',
+    address: '0xdB3A0a1bC30CBdce2DEB9FCc387AD7bb6889f74F',
     abi: accessToken.abi,
     name: accessToken.contractName
   },
   exchangeToken: {
-    address: '0x087f62bf61378BEaCB8704C6C3F0e60130048638',
+    address: '0x6977F3aDa02857c1Bc2632a38158257D8BE672bb',
     abi: exchangeToken.abi,
     name: exchangeToken.contractName
   },
