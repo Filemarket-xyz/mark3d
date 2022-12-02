@@ -125,6 +125,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     continue;
                 }
 
+                println!("collection event");
                 let (_report_flag, report) =
                     match get_events(
                         tx.hash,

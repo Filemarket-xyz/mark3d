@@ -26,16 +26,12 @@ pub struct File {
 #[derive(Debug)]
 pub struct TransferFraudReported {
     pub token_id: U256,
-    pub decided: bool,
-    pub approved: bool,
 }
 
 impl TransferFraudReported {
     fn new() -> TransferFraudReported {
         TransferFraudReported {
             token_id: U256::default(),
-            decided: false,
-            approved: false,
         }
     }
 
@@ -45,14 +41,6 @@ impl TransferFraudReported {
             match log.name.as_str() {
                 "tokenId" => match log.value {
                     web3::ethabi::Token::Uint(u) => e.token_id = u,
-                    _ => continue,
-                },
-                "decided" => match log.value {
-                    web3::ethabi::Token::Bool(b) => e.decided = b,
-                    _ => continue,
-                },
-                "approved" => match log.value {
-                    web3::ethabi::Token::Bool(b) => e.approved = b,
                     _ => continue,
                 },
                 &_ => continue,
