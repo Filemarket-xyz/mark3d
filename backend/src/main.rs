@@ -52,7 +52,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .expect("secret key create err"),
     };
 
-    let web3 = web3::Web3::new(web3::transports::WebSocket::new(&conf.eth_api_url).await?);
+    let web3 = web3::Web3::new(web3::transports::Http::new(&conf.eth_api_url).unwrap());
     let mut old_block_num: u64 = match get_latest_block_num(&web3).await {
         Ok(n) => n,
         Err(e) => panic!("{}", e),

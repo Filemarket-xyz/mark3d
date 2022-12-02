@@ -16,7 +16,7 @@ use sha2::{Digest, Sha256};
 use std::{collections::HashSet, env, error::Error};
 use web3::{
     ethabi::{Contract, Log, RawLog},
-    transports::WebSocket,
+    transports::Http,
     types::{Block, BlockId, BlockNumber, Transaction, TransactionReceipt, H160, H256},
     Web3,
     signing::Key, contract::Options
@@ -50,7 +50,7 @@ pub async fn get_contract(env_var: &str) -> web3::ethabi::Contract {
 
 async fn get_tx_receipt(
     hash: H256,
-    web3: &Web3<WebSocket>,
+    web3: &Web3<Http>,
 ) -> Result<TransactionReceipt, web3::Error> {
     if let Some(tx) = match web3.eth().transaction_receipt(hash).await {
         Ok(tx) => tx,
@@ -64,7 +64,7 @@ async fn get_tx_receipt(
 
 pub async fn get_collection_creation_event(
     hash: H256,
-    web3: &Web3<WebSocket>,
+    web3: &Web3<Http>,
     cont: &Contract,
 ) -> Result<CollectionCreation, web3::Error> {
     let tx = get_tx_receipt(hash, web3).await?;
@@ -96,7 +96,7 @@ pub async fn get_collection_creation_event(
 
 pub async fn get_events(
     hash: H256,
-    web3: &Web3<WebSocket>,
+    web3: &Web3<Http>,
     collection: &Contract,
     fraud_decider: &Contract,
 ) -> Result<(TransferFraudReported, FraudReported), web3::Error> {
@@ -256,7 +256,7 @@ pub fn decrypt_file(file: &[u8], password: &str) -> Result<bool, web3::Error> {
     Ok(result == hash)
 }
 
-pub async fn get_latest_block_num(web3: &Web3<WebSocket>) -> Result<u64, web3::Error> {
+pub async fn get_latest_block_num(web3: &Web3<Http>) -> Result<u64, web3::Error> {
     let block = web3
         .eth()
         .block(BlockId::Number(BlockNumber::Latest))
@@ -273,7 +273,7 @@ pub async fn get_latest_block_num(web3: &Web3<WebSocket>) -> Result<u64, web3::E
 
 pub async fn get_block(
     block_num: u64,
-    web3: &Web3<WebSocket>,
+    web3: &Web3<Http>,
 ) -> Result<Block<Transaction>, web3::Error> {
     let block_num: [u64; 1] = [block_num];
     let block = web3
@@ -294,7 +294,7 @@ pub async fn get_block(
 }
 
 pub async fn call_late_decision(
-    contract: &web3::contract::Contract<WebSocket>,
+    contract: &web3::contract::Contract<Http>,
     approved: bool,
     report: &FraudReported,
     key: &SecretKey,
