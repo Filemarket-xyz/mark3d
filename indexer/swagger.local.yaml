@@ -201,6 +201,80 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+  /v2/transfers/{address}:
+    get:
+      tags:
+        - transfers
+      description: Получение списка трансферов пользователя
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Трансферы
+          schema:
+            $ref: '#/definitions/TransfersResponseV2'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+  /v2/transfers/{address}/{id}:
+    get:
+      tags:
+        - transfers
+      description: Получение **активного** трансфера по адресу коллекции и id токена
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Трансфер
+          schema:
+            $ref: "#/definitions/TransferWithData"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
+  /v2/transfers_history/{address}:
+    get:
+      tags:
+        - transfers
+      description: Получение истории трансферов пользователя
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Трансферы
+          schema:
+            $ref: '#/definitions/TransfersResponseV2'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: address
+          in: path
+          description: Адрес аккаунта
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
   /orders/all_active:
     get:
       tags:
@@ -335,6 +409,20 @@ definitions:
         description: Исходящие трансферы
         items:
           $ref: "#/definitions/Transfer"
+  TransfersResponseV2:
+    type: object
+    description: Ответ на запрос трансферов токенов от пользователя
+    properties:
+      incoming:
+        type: array
+        description: Входящие трансферы
+        items:
+          $ref: "#/definitions/TransferWithData"
+      outgoing:
+        type: array
+        description: Исходящие трансферы
+        items:
+          $ref: "#/definitions/TransferWithData"
   OrdersResponse:
     type: object
     description: Ответ на запрос ордеров
@@ -444,6 +532,18 @@ definitions:
         type: integer
         format: int64
         description: id ордера, находящегося в процессе
+  TransferWithData:
+    type: object
+    description: Данные трансфера (Трансфер, токен, ордер если есть)
+    properties:
+      transfer:
+        $ref: "#/definitions/Transfer"
+      token:
+        $ref: "#/definitions/Token"
+      order:
+        $ref: "#/definitions/Order"
+      collection:
+        $ref: "#/definitions/Collection"
   Transfer:
     type: object
     description: Трансфер

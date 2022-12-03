@@ -20,6 +20,9 @@ type OrderStatus struct {
 }
 
 func OrderToModel(o *Order) *models.Order {
+	if o == nil {
+		return nil
+	}
 	return &models.Order{
 		ID:         o.Id,
 		Statuses:   MapSlice(o.Statuses, OrderStatusToModel),
