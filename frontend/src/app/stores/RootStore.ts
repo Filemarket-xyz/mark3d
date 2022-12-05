@@ -9,7 +9,7 @@ import { TokenStore } from './Token/TokenStore'
 import { TokenMetaStore } from './Token/TokenMetaStore'
 import { OpenOrderListStore } from './OrderList/OrderListStore'
 import { CollectionStore } from './Collection/CollectionStore'
-import { TransfersHistoryStore } from './TransfersHistory/TransfersHistory'
+import { TransfersHistoryStore } from './TransfersHistory/TransfersHistoryStore'
 
 export class RootStore {
   dialogStore: DialogStore

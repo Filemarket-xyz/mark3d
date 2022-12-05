@@ -27,7 +27,7 @@ export class HistoryTableBuilder extends TableBuilder implements ITableBuilder {
         }}
         key={rowIndex}
       >
-        <RowBody>
+        <RowBody css={{ height: '100%' }}>
           {this.table.columns.map((column) => {
             const cell = row.row.get(column.name)
             if (!cell) return null

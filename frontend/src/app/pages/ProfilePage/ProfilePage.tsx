@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { styled } from '../../../styles'
 import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 import { useCollectionAndTokenListStore } from '../../hooks'
+import { useTransfersHistory } from '../../hooks/useTransfersHistory'
 import { textVariant, Container } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
@@ -73,6 +74,8 @@ const TabsContainer = styled('div', {
 const ProfilePage = observer(() => {
   const { profileAddress } = useParams<Params>()
 
+  const { tableRows: table } = useTransfersHistory(profileAddress)
+
   const { tokens: nfts } = useCollectionAndTokenListStore(profileAddress)
 
   return (
@@ -107,7 +110,7 @@ const ProfilePage = observer(() => {
                 {
                   name: 'History',
                   url: 'history',
-                  amount: 100
+                  amount: table.length
                 }
               ]}
             />
