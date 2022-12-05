@@ -1,6 +1,7 @@
 import { Navigate, RouteObject } from 'react-router-dom'
 import { HistorySection } from './sections/HistorySection'
 import OwnedSection from './sections/OwnedSection'
+import TransfersSection from './sections/TransfersSection'
 
 export const profileRoutes: RouteObject[] = [
   {
@@ -14,5 +15,9 @@ export const profileRoutes: RouteObject[] = [
   {
     path: 'history',
     element: <HistorySection />
+  },
+  {
+    path: 'transfers',
+    element: <TransfersSection />
   }
 ]
