@@ -54,7 +54,7 @@ const cols: ITableColumn[] = [
   { name: 'Date', hide: 'lg' }
 ]
 
-const EmptyTablePlaceholder = styled('div', {
+export const EmptyTablePlaceholder = styled('div', {
   dflex: 'center',
   justifyContent: 'center',
   color: '$gray500',

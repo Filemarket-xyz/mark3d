@@ -16,7 +16,7 @@ import {
   UserName
 } from './NFTCard'
 
-interface TransferCardProps {
+export interface TransferCardProps {
   imageURL: string
   title: string
   collection: string

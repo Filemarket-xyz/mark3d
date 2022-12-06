@@ -7,8 +7,30 @@ import {
 } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
 import { makeAutoObservable } from 'mobx'
-import { TransfersResponseV2 } from '../../../swagger/Api'
+import { TransfersResponseV2, TransferWithData } from '../../../swagger/Api'
 import { api } from '../../config/api'
+import { TransferCardProps } from '../../components/MarketCard/TransferCard'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
+import { reduceAddress } from '../../utils/nfts/reduceAddress'
+import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+
+const convertTransferToTransferCards = (
+  transfer: TransferWithData
+): TransferCardProps => ({
+  status: transfer.order?.id === 0 ? 'Receive' : 'Buy',
+  button: {
+    link: `/collection/${transfer.collection?.address}/${transfer.token?.tokenId}`,
+    text: 'Go to page'
+  },
+  collection: `${transfer.collection?.name}`,
+  imageURL: getHttpLinkFromIpfsString(transfer.token?.image ?? ''),
+  title: `${transfer.token?.name}`,
+  user: {
+    username: reduceAddress(transfer.token?.owner ?? '—'),
+    img: getProfileImageUrl(transfer.token?.owner ?? '')
+  },
+  price: Number(transfer.order?.price)
+})
 
 export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
@@ -56,5 +78,14 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
 
   reload(): void {
     this.request(this.address)
+  }
+
+  get transferCards(): TransferCardProps[] {
+    const { incoming = [], outgoing = [] } = this.data
+
+    const incomingCards = incoming.map<TransferCardProps>(convertTransferToTransferCards)
+    const outgoingCards = outgoing.map<TransferCardProps>(convertTransferToTransferCards)
+
+    return incomingCards.concat(outgoingCards)
   }
 }

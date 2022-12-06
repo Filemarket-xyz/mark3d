@@ -7,8 +7,8 @@ import { useActivateDeactivateRequireParams } from './useActivateDeactivateStore
  * @param collectionAddress
  * @param tokenId
  */
-export function useUserTransferStore(address: string) {
+export function useUserTransferStore(address?: string) {
   const { userTransferStore } = useStores()
-  useActivateDeactivateRequireParams(userTransferStore)
+  useActivateDeactivateRequireParams(userTransferStore, address)
   return userTransferStore
 }

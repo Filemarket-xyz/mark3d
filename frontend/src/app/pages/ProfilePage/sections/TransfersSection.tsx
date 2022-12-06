@@ -1,14 +1,18 @@
+import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAccount } from 'wagmi'
+import { CardsPlaceholder } from '../../../components/CardsPlaceholder/CardsPlaceholder'
 import { TransferCard } from '../../../components/MarketCard/TransferCard'
-import { gradientPlaceholderImg } from '../../../components/Placeholder/GradientPlaceholder'
+import { useUserTransferStore } from '../../../hooks/useUserTransfers'
 import { Params } from '../../../utils/router/Params'
 import { CardsContainer } from '../../MarketPage/NftSection'
+import { EmptyTablePlaceholder } from './HistorySection'
 
-function TransfersSection() {
+const TransfersSection = observer(() => {
   const { address: currentAddress } = useAccount()
   const { profileAddress } = useParams<Params>()
+
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -17,19 +21,23 @@ function TransfersSection() {
     }
   }, [])
 
+  const { transferCards, isLoading } = useUserTransferStore(profileAddress)
+
   return (
-    <CardsContainer>
-      <TransferCard
-        button={{ link: 'https://google.com', text: 'Go to page' }}
-        collection='some collection'
-        imageURL={gradientPlaceholderImg}
-        status='Active'
-        title='Ultra VR'
-        user={{ img: gradientPlaceholderImg, username: 'Beb beb' }}
-        price={555}
-      />
-    </CardsContainer>
+    <>
+      {isLoading ? (
+        <CardsPlaceholder cardsAmount={5}/>
+      ) : transferCards.length ? (
+        <CardsContainer>
+          {transferCards.map((card, i) => (
+            <TransferCard {...card} key={i} />
+          ))}
+        </CardsContainer>
+      ) : (
+        <EmptyTablePlaceholder>No active transfers</EmptyTablePlaceholder>
+      )}
+    </>
   )
-}
+})
 
 export default TransfersSection
