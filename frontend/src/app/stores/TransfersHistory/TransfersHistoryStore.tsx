@@ -17,6 +17,7 @@ import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { ITableRow } from '../../components/Table/TableBuilder'
 import ethIcon from '../../pages/ProfilePage/img/eth-icon.svg'
 import { styled } from '../../../styles'
+import * as dayjs from 'dayjs'
 
 const getLatestStatusTimestamp = (statuses?: OrderStatusInfo[]) => {
   if (!statuses) return 0
@@ -25,22 +26,6 @@ const getLatestStatusTimestamp = (statuses?: OrderStatusInfo[]) => {
     (acc, value) => (value > acc ? value.timestamp ?? 0 : acc),
     -Infinity
   )
-}
-
-const formatDate = (date: Date) => {
-  const localMonthAndTime = date.toLocaleTimeString('en-US', { month: 'short' })
-
-  const day = date.getDate()
-  const month = localMonthAndTime.split(',').shift()
-  const year = date.getFullYear()
-  let [time, period]: [string, string] = (
-    localMonthAndTime.split(',').at(-1) as string
-  )
-    .trim()
-    .split(' ') as [string, string]
-  time = time.split(':').slice(0, -1).join(':')
-
-  return `${month} ${day}, ${year} at ${time} ${period}`
 }
 
 const PriceContainer = styled('div', {
@@ -91,8 +76,8 @@ const convertTransferToTableRows = (transfer: TransferWithData) => ({
       columnName: 'Date',
       value:
         transfer.order?.statuses !== undefined
-          ? formatDate(
-            new Date(getLatestStatusTimestamp(transfer.order?.statuses))
+          ? dayjs(getLatestStatusTimestamp(transfer.order?.statuses)).format(
+            'MMM D[,] YYYY [at] HH[:]mm'
           )
           : '—'
     }
