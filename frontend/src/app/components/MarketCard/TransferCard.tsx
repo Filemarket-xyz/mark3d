@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { NavButton, Txt } from '../../UIkit'
 import { gradientPlaceholderImg } from '../Placeholder/GradientPlaceholder'
 import { BasicCardSquareImg } from './BasicCard'
@@ -28,15 +28,11 @@ export interface TransferCardProps {
     link: string
     text: string
   }
-  price?: number
+  price?: string
   status: string
 }
 
 export const TransferCard = (props: TransferCardProps) => {
-  const formatPrice = useCallback((price: number) => {
-    return `${price.toFixed(3)} ETH`
-  }, [])
-
   return (
     <BorderLayout>
       <Card>
@@ -56,7 +52,7 @@ export const TransferCard = (props: TransferCardProps) => {
               <UserName>{props.user.username}</UserName>
             </UserContainer>
             {props.price !== undefined && (
-              <Price>{formatPrice(props.price)}</Price>
+              <Price>{props.price}</Price>
             )}
           </PriceInfo>
           <PriceInfo css={{ marginBottom: '$3' }}>

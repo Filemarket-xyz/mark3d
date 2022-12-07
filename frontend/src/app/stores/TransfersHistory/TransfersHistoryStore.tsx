@@ -18,6 +18,7 @@ import { ITableRow } from '../../components/Table/TableBuilder'
 import ethIcon from '../../pages/ProfilePage/img/eth-icon.svg'
 import { styled } from '../../../styles'
 import * as dayjs from 'dayjs'
+import { formatCurrency } from '../../utils/web3/currency'
 
 const getLatestStatusTimestamp = (statuses?: OrderStatusInfo[]) => {
   if (!statuses) return 0
@@ -69,7 +70,7 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
             <PriceContainer>
               <Price>
                 {transfer.order?.price !== undefined
-                  ? Number(transfer.order?.price).toFixed(5)
+                  ? formatCurrency(transfer.order.price)
                   : '—'}
               </Price>
               <EthImg src={ethIcon} />

@@ -13,6 +13,7 @@ import { TransferCardProps } from '../../components/MarketCard/TransferCard'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+import { formatCurrency } from '../../utils/web3/currency'
 
 const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
   const eventOptions =
@@ -31,7 +32,7 @@ const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
       username: reduceAddress(transfer.token?.owner ?? '—'),
       img: getProfileImageUrl(transfer.token?.owner ?? '')
     },
-    price: Number(transfer.order?.price)
+    price: transfer.order?.price ? formatCurrency(transfer.order?.price) : undefined
   })
 }
 
