@@ -19,6 +19,8 @@ import ethIcon from '../../pages/ProfilePage/img/eth-icon.svg'
 import { styled } from '../../../styles'
 import * as dayjs from 'dayjs'
 import { formatCurrency } from '../../utils/web3/currency'
+import Badge from '../../components/Badge/Badge'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 
 const getLatestStatusTimestamp = (statuses?: OrderStatusInfo[]) => {
   if (!statuses) return 0
@@ -54,7 +56,23 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
         value:
           (transfer.order?.id ?? 0) === 0 ? eventOptions[0] : eventOptions[1]
       },
-      { columnName: 'Object', value: 'Sale' },
+      {
+        columnName: 'Object',
+        value: (
+          <Badge
+            image={{
+              borderRadius: 'roundedSquare',
+              url: getHttpLinkFromIpfsString(transfer.collection?.image ?? '')
+            }}
+            content={{
+              value: reduceAddress(transfer.collection?.owner ?? '—'),
+              title: transfer.collection?.name ?? '—'
+            }}
+            small
+            wrapperProps={{ css: { padding: 0 } }}
+          />
+        )
+      },
       {
         columnName: 'From',
         value: reduceAddress(transfer.transfer?.from ?? '—')
@@ -147,8 +165,12 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
       return []
     }
 
-    const incomingRows = incoming.map<ITableRow>(convertTransferToTableRows('incoming'))
-    const outgoingRows = outgoing.map<ITableRow>(convertTransferToTableRows('outgoing'))
+    const incomingRows = incoming.map<ITableRow>(
+      convertTransferToTableRows('incoming')
+    )
+    const outgoingRows = outgoing.map<ITableRow>(
+      convertTransferToTableRows('outgoing')
+    )
 
     return incomingRows.concat(outgoingRows)
   }
