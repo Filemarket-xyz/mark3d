@@ -14,23 +14,26 @@ import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsS
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 
-const convertTransferToTransferCards = (
-  transfer: TransferWithData
-): TransferCardProps => ({
-  status: transfer.order?.id === 0 ? 'Receive' : 'Buy',
-  button: {
-    link: `/collection/${transfer.collection?.address}/${transfer.token?.tokenId}`,
-    text: 'Go to page'
-  },
-  collection: `${transfer.collection?.name}`,
-  imageURL: getHttpLinkFromIpfsString(transfer.token?.image ?? ''),
-  title: `${transfer.token?.name}`,
-  user: {
-    username: reduceAddress(transfer.token?.owner ?? '—'),
-    img: getProfileImageUrl(transfer.token?.owner ?? '')
-  },
-  price: Number(transfer.order?.price)
-})
+const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
+  const eventOptions =
+    target === 'incoming' ? ['Receive', 'Buy'] : ['Send', 'Sale']
+
+  return (transfer: TransferWithData): TransferCardProps => ({
+    status: transfer.order?.id === 0 ? eventOptions[0] : eventOptions[1],
+    button: {
+      link: `/collection/${transfer.collection?.address}/${transfer.token?.tokenId}`,
+      text: 'Go to page'
+    },
+    collection: `${transfer.collection?.name}`,
+    imageURL: getHttpLinkFromIpfsString(transfer.token?.image ?? ''),
+    title: `${transfer.token?.name}`,
+    user: {
+      username: reduceAddress(transfer.token?.owner ?? '—'),
+      img: getProfileImageUrl(transfer.token?.owner ?? '')
+    },
+    price: Number(transfer.order?.price)
+  })
+}
 
 export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
@@ -83,8 +86,12 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
   get transferCards(): TransferCardProps[] {
     const { incoming = [], outgoing = [] } = this.data
 
-    const incomingCards = incoming.map<TransferCardProps>(convertTransferToTransferCards)
-    const outgoingCards = outgoing.map<TransferCardProps>(convertTransferToTransferCards)
+    const incomingCards = incoming.map<TransferCardProps>(
+      convertTransferToTransferCards('incoming')
+    )
+    const outgoingCards = outgoing.map<TransferCardProps>(
+      convertTransferToTransferCards('outgoing')
+    )
 
     return incomingCards.concat(outgoingCards)
   }

@@ -42,47 +42,53 @@ const EthImg = styled('img', {
   objectFit: 'contain'
 })
 
-const convertTransferToTableRows = (transfer: TransferWithData) => ({
-  cells: [
-    {
-      columnName: 'Event',
-      value: (transfer.order?.id ?? 0) === 0 ? 'Receive' : 'Buy'
-    },
-    { columnName: 'Object', value: 'Sale' },
-    {
-      columnName: 'From',
-      value: reduceAddress(transfer.transfer?.from ?? '—')
-    },
-    {
-      columnName: 'To',
-      value: reduceAddress(transfer.transfer?.to ?? '—')
-    },
-    {
-      columnName: 'Price',
-      value: (
-        <>
-          <PriceContainer>
-            <Price>
-              {transfer.order?.price !== undefined
-                ? Number(transfer.order?.price).toFixed(5)
-                : '—'}
-            </Price>
-            <EthImg src={ethIcon} />
-          </PriceContainer>
-        </>
-      )
-    },
-    {
-      columnName: 'Date',
-      value:
-        transfer.order?.statuses !== undefined
-          ? dayjs(getLatestStatusTimestamp(transfer.order?.statuses)).format(
-            'MMM D[,] YYYY [at] HH[:]mm'
-          )
-          : '—'
-    }
-  ]
-})
+const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
+  const eventOptions =
+    target === 'incoming' ? ['Receive', 'Buy'] : ['Send', 'Sale']
+
+  return (transfer: TransferWithData) => ({
+    cells: [
+      {
+        columnName: 'Event',
+        value:
+          (transfer.order?.id ?? 0) === 0 ? eventOptions[0] : eventOptions[1]
+      },
+      { columnName: 'Object', value: 'Sale' },
+      {
+        columnName: 'From',
+        value: reduceAddress(transfer.transfer?.from ?? '—')
+      },
+      {
+        columnName: 'To',
+        value: reduceAddress(transfer.transfer?.to ?? '—')
+      },
+      {
+        columnName: 'Price',
+        value: (
+          <>
+            <PriceContainer>
+              <Price>
+                {transfer.order?.price !== undefined
+                  ? Number(transfer.order?.price).toFixed(5)
+                  : '—'}
+              </Price>
+              <EthImg src={ethIcon} />
+            </PriceContainer>
+          </>
+        )
+      },
+      {
+        columnName: 'Date',
+        value:
+          transfer.order?.statuses !== undefined
+            ? dayjs(getLatestStatusTimestamp(transfer.order?.statuses)).format(
+              'MMM D[,] YYYY [at] HH[:]mm'
+            )
+            : '—'
+      }
+    ]
+  })
+}
 
 export class TransfersHistoryStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
@@ -140,8 +146,8 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
       return []
     }
 
-    const incomingRows = incoming.map<ITableRow>(convertTransferToTableRows)
-    const outgoingRows = outgoing.map<ITableRow>(convertTransferToTableRows)
+    const incomingRows = incoming.map<ITableRow>(convertTransferToTableRows('incoming'))
+    const outgoingRows = outgoing.map<ITableRow>(convertTransferToTableRows('outgoing'))
 
     return incomingRows.concat(outgoingRows)
   }
