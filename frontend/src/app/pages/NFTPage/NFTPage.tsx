@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { styled } from '../../../styles'
-import { PageLayout, textVariant, Link, Txt, NavLink } from '../../UIkit'
+import { PageLayout, textVariant, Link, Txt, NavLink, Button } from '../../UIkit'
 import Badge from '../../components/Badge/Badge'
 import { Hr } from '../../UIkit/Hr/Hr'
 import { NFTDeal } from '../../components/NFT'
@@ -23,6 +23,8 @@ import gradientBg from '../ProfilePage/img/Gradient.jpg'
 import { useIsOwner } from '../../processing/hooks'
 import { transferPermissions } from '../../utils/transfer/status'
 import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
+import { DecryptResult } from '../../processing/types'
+import { Loading } from '@nextui-org/react'
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',
@@ -87,8 +89,57 @@ const Ul = styled('ul', {
   listStyle: 'inside'
 })
 
-// collection address and token id dev example
-// { collectionAddress: '0xe37382f84dc2c72ef7eaac6e327bba054b30628c', tokenId: '0' }
+interface PreviewNFTFlowProps {
+  getFile?: () => Promise<DecryptResult<File>>
+}
+
+const CenterContainer = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100%'
+})
+const PreviewNFTFlow = ({ getFile }: PreviewNFTFlowProps) => {
+  const [model3D, setModel3D] = useState<File | null>()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoaded, setIsLoaded] = useState<boolean>(false)
+
+  const handleLoadClick = async () => {
+    if (!getFile) return
+
+    setIsLoading(true)
+    setIsLoaded(false)
+
+    const model = await getFile()
+    if (model.ok) {
+      setModel3D(model.result)
+      setIsLoaded(true)
+    }
+    setIsLoading(false)
+  }
+
+  return (
+    <CenterContainer>
+      {isLoaded ? (
+        <model-viewer
+          // TODO which path?
+          src={model3D?.webkitRelativePath}
+          ar
+          shadow-intensity='1'
+          camera-controls
+          touch-action='pan-y'
+          style={{ width: '100%', height: '100%' }}
+        ></model-viewer>
+      ) : isLoading ? (
+        <Loading size='xl' color={'white'}/>
+      ) : (
+        <Button primary onPress={handleLoadClick}>
+          Load NFT
+        </Button>
+      )}
+    </CenterContainer>
+  )
+}
 
 const NFTPage = observer(() => {
   const { collectionAddress, tokenId } = useParams<Params>()
@@ -114,14 +165,7 @@ const NFTPage = observer(() => {
     <>
       <NFTPreviewContainer>
         {(isOwner || canViewHiddenFiles) && (
-          <model-viewer
-            src={getHttpLinkFromIpfsString(token?.hiddenFile ?? '')}
-            ar
-            shadow-intensity='1'
-            camera-controls
-            touch-action='pan-y'
-            style={{ width: '100%', height: '100%' }}
-          ></model-viewer>
+          <PreviewNFTFlow getFile={files[0]?.getFile} />
         )}
       </NFTPreviewContainer>
 
