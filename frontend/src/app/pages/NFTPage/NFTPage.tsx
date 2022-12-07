@@ -25,14 +25,14 @@ import { transferPermissions } from '../../utils/transfer/status'
 import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 
 const NFTPreviewContainer = styled('div', {
-  paddingTop: '$layout$navbarheight',
   width: '100%',
   // TODO height will be set by 3d previewer
   height: 400,
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center',
-  backgroundImage: `url(${gradientBg})`
+  backgroundImage: `url(${gradientBg})`,
+  paddingTop: '$layout$navBarHeight'
 })
 
 const NftName = styled('h1', {
@@ -112,7 +112,19 @@ const NFTPage = observer(() => {
 
   return (
     <>
-      <NFTPreviewContainer></NFTPreviewContainer>
+      <NFTPreviewContainer>
+        {(isOwner || canViewHiddenFiles) && (
+          <model-viewer
+            src={getHttpLinkFromIpfsString(token?.hiddenFile ?? '')}
+            ar
+            shadow-intensity='1'
+            camera-controls
+            touch-action='pan-y'
+            style={{ width: '100%', height: '100%' }}
+          ></model-viewer>
+        )}
+      </NFTPreviewContainer>
+
       <GridLayout>
         <GridBlock>
           <NftName>{token?.name}</NftName>
