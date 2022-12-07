@@ -25,14 +25,14 @@ import { transferPermissions } from '../../utils/transfer/status'
 import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 
 const NFTPreviewContainer = styled('div', {
-  paddingTop: '$layout$navbarheight',
   width: '100%',
   // TODO height will be set by 3d previewer
   height: 400,
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center',
-  backgroundImage: `url(${gradientBg})`
+  backgroundImage: `url(${gradientBg})`,
+  paddingTop: '$layout$navBarHeight'
 })
 
 const NftName = styled('h1', {
@@ -109,13 +109,27 @@ const NFTPage = observer(() => {
   const { errorStore } = useStores()
   const files = useHiddenFileDownload(tokenMetaStore, errorStore, token)
   const { isOwner } = useIsOwner(tokenFullId)
-  const canViewHiddenFiles = transferPermissions.buyer.canViewHiddenFiles(transferStore.data)
+  const canViewHiddenFiles = transferPermissions.buyer.canViewHiddenFiles(
+    transferStore.data
+  )
 
   const { collection } = useCollectionStore(collectionAddress)
 
   return (
     <>
-      <NFTPreviewContainer></NFTPreviewContainer>
+      <NFTPreviewContainer>
+        {(isOwner || canViewHiddenFiles) && (
+          <model-viewer
+            src={getHttpLinkFromIpfsString(token?.hiddenFile ?? '')}
+            ar
+            shadow-intensity='1'
+            camera-controls
+            touch-action='pan-y'
+            style={{ width: '100%', height: '100%' }}
+          ></model-viewer>
+        )}
+      </NFTPreviewContainer>
+
       <GridLayout>
         <GridBlock>
           <NftName>{token?.name}</NftName>
@@ -123,10 +137,17 @@ const NFTPage = observer(() => {
           <BadgesContainer>
             <Badge
               imgUrl={getProfileImageUrl(token?.owner ?? '')}
-              content={{ title: 'Creator', value: reduceAddress(token?.creator ?? '') }}
+              content={{
+                title: 'Creator',
+                value: reduceAddress(token?.creator ?? '')
+              }}
             />
             <Badge
-              imgUrl={collection?.image ? getHttpLinkFromIpfsString(collection.image) : gradientPlaceholderImg}
+              imgUrl={
+                collection?.image
+                  ? getHttpLinkFromIpfsString(collection.image)
+                  : gradientPlaceholderImg
+              }
               content={{ title: 'Collection', value: collection?.name ?? '' }}
             />
           </BadgesContainer>
@@ -163,13 +184,10 @@ const NFTPage = observer(() => {
               }
             }}
           >
-            {isOwner || canViewHiddenFiles
-              ? files.map(({ cid, name, size, download }) =>
+            {isOwner || canViewHiddenFiles ? (
+              files.map(({ cid, name, size, download }) => (
                 <li key={cid}>
-                  <Link
-                    onPress={download}
-                    gray
-                  >
+                  <Link onPress={download} gray>
                     {name}
                   </Link>
                   {size > 0 && (
@@ -178,8 +196,12 @@ const NFTPage = observer(() => {
                     </Txt>
                   )}
                 </li>
-              )
-              : <Txt secondary2 css={{ color: '$gray500' }}>Hidden files are only shown to the owner</Txt>}
+              ))
+            ) : (
+              <Txt secondary2 css={{ color: '$gray500' }}>
+                Hidden files are only shown to the owner
+              </Txt>
+            )}
           </Ul>
         </GridBlock>
       </GridLayout>
