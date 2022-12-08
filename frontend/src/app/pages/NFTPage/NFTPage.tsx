@@ -100,7 +100,7 @@ const CenterContainer = styled('div', {
   height: '100%'
 })
 const PreviewNFTFlow = ({ getFile }: PreviewNFTFlowProps) => {
-  const [model3D, setModel3D] = useState<File | null>()
+  const [modelSrc, setModelSrc] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isLoaded, setIsLoaded] = useState<boolean>(false)
 
@@ -112,7 +112,9 @@ const PreviewNFTFlow = ({ getFile }: PreviewNFTFlowProps) => {
 
     const model = await getFile()
     if (model.ok) {
-      setModel3D(model.result)
+      const fr = new FileReader()
+      fr.onload = (e) => setModelSrc(String(e.target?.result ?? ''))
+      fr.readAsDataURL(model.result)
       setIsLoaded(true)
     }
     setIsLoading(false)
@@ -122,8 +124,7 @@ const PreviewNFTFlow = ({ getFile }: PreviewNFTFlowProps) => {
     <CenterContainer>
       {isLoaded ? (
         <model-viewer
-          // TODO which path?
-          src={model3D?.webkitRelativePath}
+          src={modelSrc}
           ar
           shadow-intensity='1'
           camera-controls
@@ -131,7 +132,7 @@ const PreviewNFTFlow = ({ getFile }: PreviewNFTFlowProps) => {
           style={{ width: '100%', height: '100%' }}
         ></model-viewer>
       ) : isLoading ? (
-        <Loading size='xl' color={'white'}/>
+        <Loading size='xl' color={'white'} />
       ) : (
         <Button primary onPress={handleLoadClick}>
           Load NFT
