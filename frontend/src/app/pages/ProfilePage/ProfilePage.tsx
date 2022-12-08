@@ -7,6 +7,7 @@ import { styled } from '../../../styles'
 import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 import { useCollectionAndTokenListStore } from '../../hooks'
 import { useTransfersHistory } from '../../hooks/useTransfersHistory'
+import { useUserTransferStore } from '../../hooks/useUserTransfers'
 import { textVariant, Container } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
@@ -81,6 +82,8 @@ const ProfilePage = observer(() => {
 
   const { tokens: nfts } = useCollectionAndTokenListStore(profileAddress)
 
+  const { transferCards } = useUserTransferStore()
+
   const tabs = useMemo(() => {
     const tabs = [
       {
@@ -96,13 +99,13 @@ const ProfilePage = observer(() => {
     ]
     if (currentAddress === profileAddress) {
       tabs.push({
-        amount: 0,
+        amount: transferCards.length,
         url: 'transfers',
         name: 'Transfers'
       })
     }
     return tabs
-  }, [nfts, table])
+  }, [nfts, table, transferCards])
 
   return (
     <>
