@@ -2,7 +2,7 @@ import { styled } from '../../../../styles'
 import { TableBody } from '../../ExplorerPage/components/Table/Table'
 import { RowCell } from '../../ExplorerPage/components/TableRow/TableRow'
 import { ITableColumn } from '../../../components/Table/TableBuilder'
-import { Button } from '../../../UIkit'
+import { NavButton } from '../../../UIkit'
 import openLinkIcon from '../img/open-link-icon.svg'
 import { HistoryTableBuilder } from './HistoryTableBuilder'
 import { observer } from 'mobx-react-lite'
@@ -16,7 +16,7 @@ export const Wrapper = styled(TableBody, {
   paddingBottom: '$3'
 })
 
-export const ItemShareButton = styled(Button, {
+export const ItemShareButton = styled(NavButton, {
   background: 'transparent',
   width: 20,
   height: 20,

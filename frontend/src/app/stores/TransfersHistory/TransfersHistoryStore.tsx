@@ -116,7 +116,10 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
             )
             : '—'
       }
-    ]
+    ],
+    additionalData: {
+      linkToPage: `/collection/${transfer.collection?.address}/${transfer.token?.tokenId}`
+    }
   })
 }
 

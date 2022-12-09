@@ -44,7 +44,7 @@ export class HistoryTableBuilder extends TableBuilder implements ITableBuilder {
             )
           })}
         </RowBody>
-        <ItemShareButton></ItemShareButton>
+        <ItemShareButton to={row.additionalData.linkToPage}></ItemShareButton>
       </RowWrapper>
     )
   }

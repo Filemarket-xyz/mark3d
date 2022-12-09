@@ -91,7 +91,6 @@ export default function CreateCollectionPage() {
 
   useEffect(() => {
     if (!result) return
-    console.log(result)
 
     void setModalBody(
       <SuccessNavBody
