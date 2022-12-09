@@ -1,6 +1,7 @@
 import React from 'react'
 import { styled } from '../../../../styles'
 import { Card, Container, textVariant, NavButton } from '../../../UIkit'
+import { LinksBanner } from '../components/LinksBanner'
 import bg from '../img/bg.jpg'
 
 const WelcomeScreenWrapper = styled('section', {
@@ -122,9 +123,18 @@ const ButtonStyled = styled(NavButton, {
   textDecoration: 'none'
 })
 
+const LinksBannerWrapper = styled('div', {
+  position: 'relative',
+  top: '$layout$navBarHeight'
+})
+
 export default function WelcomeBlock() {
   return (
     <WelcomeScreenWrapper>
+      <LinksBannerWrapper>
+        <LinksBanner />
+      </LinksBannerWrapper>
+
       <WelcomeInfo>
         <Title>
           WEB3 TOOLS FOR <br />
