@@ -23,16 +23,17 @@ import gradientBg from '../ProfilePage/img/Gradient.jpg'
 import { useIsOwner } from '../../processing/hooks'
 import { transferPermissions } from '../../utils/transfer/status'
 import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
+import '@google/model-viewer'
+import { PreviewNFTFlow } from './components/PreviewNFTFlow'
 
 const NFTPreviewContainer = styled('div', {
-  paddingTop: '$layout$navbarheight',
   width: '100%',
-  // TODO height will be set by 3d previewer
   height: 400,
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center',
-  backgroundImage: `url(${gradientBg})`
+  backgroundImage: `url(${gradientBg})`,
+  paddingTop: '$layout$navBarHeight'
 })
 
 const NftName = styled('h1', {
@@ -87,9 +88,6 @@ const Ul = styled('ul', {
   listStyle: 'inside'
 })
 
-// collection address and token id dev example
-// { collectionAddress: '0xe37382f84dc2c72ef7eaac6e327bba054b30628c', tokenId: '0' }
-
 const NFTPage = observer(() => {
   const { collectionAddress, tokenId } = useParams<Params>()
   const tokenFullId = useMemo(
@@ -112,7 +110,12 @@ const NFTPage = observer(() => {
 
   return (
     <>
-      <NFTPreviewContainer></NFTPreviewContainer>
+      <NFTPreviewContainer>
+        {(isOwner || canViewHiddenFiles) && (
+          <PreviewNFTFlow getFile={files[0]?.getFile} />
+        )}
+      </NFTPreviewContainer>
+
       <GridLayout>
         <GridBlock>
           <NftName>{token?.name}</NftName>

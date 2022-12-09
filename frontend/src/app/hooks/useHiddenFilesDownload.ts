@@ -1,5 +1,5 @@
 import { Token } from '../../swagger/Api'
-import { TokenFullId } from '../processing/types'
+import { DecryptResult, TokenFullId } from '../processing/types'
 import { useHiddenFileProcessorFactory } from '../processing/hooks'
 import { useMemo } from 'react'
 import { utils } from 'ethers'
@@ -15,6 +15,7 @@ export interface HiddenFileDownload {
   name: string
   size: number
   download: () => void
+  getFile: () => Promise<DecryptResult<File>>
 }
 
 // массив, потому что в будущем предполагается прикрепление нескольких скрытых файлов
@@ -45,6 +46,12 @@ export function useHiddenFileDownload(
           } else {
             errorStore.showError(file.error)
           }
+        },
+        getFile: async () => {
+          const encryptedFile = await ipfsService.fetchBytes(hiddenFileURI)
+          const owner = await factory.getOwner(address, tokenFullId)
+          const file = await owner.decryptFile(encryptedFile, hiddenMeta)
+          return file
         }
       }]
     }
