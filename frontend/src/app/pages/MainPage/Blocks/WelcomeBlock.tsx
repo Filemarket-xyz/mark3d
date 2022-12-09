@@ -1,6 +1,7 @@
 import React from 'react'
 import { styled } from '../../../../styles'
 import { Card, Container, textVariant, NavButton } from '../../../UIkit'
+import { TechnologyStack } from '../components/TechnologyStack'
 import bg from '../img/bg.jpg'
 
 const WelcomeScreenWrapper = styled('section', {
@@ -178,6 +179,7 @@ export default function WelcomeBlock() {
             </ButtonStyled>
           </ToolCard>
         </ToolsContainer>
+        <TechnologyStack />
       </WelcomeInfo>
     </WelcomeScreenWrapper>
   )
