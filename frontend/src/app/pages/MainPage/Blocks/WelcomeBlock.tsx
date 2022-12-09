@@ -170,7 +170,7 @@ export default function WelcomeBlock() {
             <ToolCardInfo>
               <ToolTitle>For virtual worlds</ToolTitle>
               <ToolDescription>
-                SDK, smartontracts, API and oracle for games and virtual worlds
+                SDK, smartcontracts, API and oracle for games and virtual worlds
               </ToolDescription>
             </ToolCardInfo>
 
