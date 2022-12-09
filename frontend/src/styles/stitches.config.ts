@@ -142,7 +142,8 @@ export const {
     },
 
     layout: {
-      navBarHeight: '80px'
+      navBarHeight: '80px',
+      bannerHeight: '36px'
     }
   },
 

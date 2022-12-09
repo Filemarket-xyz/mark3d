@@ -12,7 +12,7 @@ import Youtube from '../img/BannerIcons/Youtube.svg'
 
 const Wrapper = styled('div', {
   background: '$gradients$main',
-  height: 36,
+  height: '$layout$bannerHeight',
   display: 'flex',
   alignItems: 'center',
   gap: 12,
@@ -27,7 +27,10 @@ const Wrapper = styled('div', {
     display: 'none'
   },
   '-ms-overflow-style': 'none',
-  'scrollbar-width': 'none'
+  'scrollbar-width': 'none',
+  position: 'fixed',
+  top: '$layout$navBarHeight',
+  zIndex: 2
 })
 
 const ItemIcon = styled('img', {
