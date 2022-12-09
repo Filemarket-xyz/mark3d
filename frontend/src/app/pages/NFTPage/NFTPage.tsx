@@ -25,6 +25,7 @@ import { transferPermissions } from '../../utils/transfer/status'
 import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 import { DecryptResult } from '../../processing/types'
 import { Loading } from '@nextui-org/react'
+import '@google/model-viewer'
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',
