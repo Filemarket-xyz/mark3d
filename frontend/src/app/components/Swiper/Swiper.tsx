@@ -2,10 +2,10 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 
 import 'swiper/css'
 import 'swiper/css/navigation'
-import * as css from './styles.module.css'
+import css from './styles.module.css'
 
 import { Navigation } from 'swiper'
-import { IRowContent } from '../Table/TableBuilder'
+import { IRowContent } from '../../pages/ExplorerPage/components/TableRow/TableRow'
 import { styled } from '../../../styles'
 
 type Props = Pick<IRowContent, 'imageURLS'>
