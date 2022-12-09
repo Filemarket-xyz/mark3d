@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { styled } from '../../../styles'
-import { PageLayout, textVariant, Link, Txt, NavLink, Button } from '../../UIkit'
+import { PageLayout, textVariant, Link, Txt, NavLink } from '../../UIkit'
 import Badge from '../../components/Badge/Badge'
 import { Hr } from '../../UIkit/Hr/Hr'
 import { NFTDeal } from '../../components/NFT'
@@ -23,13 +23,11 @@ import gradientBg from '../ProfilePage/img/Gradient.jpg'
 import { useIsOwner } from '../../processing/hooks'
 import { transferPermissions } from '../../utils/transfer/status'
 import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
-import { DecryptResult } from '../../processing/types'
-import { Loading } from '@nextui-org/react'
 import '@google/model-viewer'
+import { PreviewNFTFlow } from './components/PreviewNFTFlow'
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',
-  // TODO height will be set by 3d previewer
   height: 400,
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
@@ -89,59 +87,6 @@ const StyledHr = styled(Hr, {
 const Ul = styled('ul', {
   listStyle: 'inside'
 })
-
-interface PreviewNFTFlowProps {
-  getFile?: () => Promise<DecryptResult<File>>
-}
-
-const CenterContainer = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '100%'
-})
-const PreviewNFTFlow = ({ getFile }: PreviewNFTFlowProps) => {
-  const [modelSrc, setModelSrc] = useState<string>('')
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [isLoaded, setIsLoaded] = useState<boolean>(false)
-
-  const handleLoadClick = async () => {
-    if (!getFile) return
-
-    setIsLoading(true)
-    setIsLoaded(false)
-
-    const model = await getFile()
-    if (model.ok) {
-      const fr = new FileReader()
-      fr.onload = (e) => setModelSrc(String(e.target?.result ?? ''))
-      fr.readAsDataURL(model.result)
-      setIsLoaded(true)
-    }
-    setIsLoading(false)
-  }
-
-  return (
-    <CenterContainer>
-      {isLoaded ? (
-        <model-viewer
-          src={modelSrc}
-          ar
-          shadow-intensity='1'
-          camera-controls
-          touch-action='pan-y'
-          style={{ width: '100%', height: '100%' }}
-        ></model-viewer>
-      ) : isLoading ? (
-        <Loading size='xl' color={'white'} />
-      ) : (
-        <Button primary onPress={handleLoadClick}>
-          Load NFT
-        </Button>
-      )}
-    </CenterContainer>
-  )
-}
 
 const NFTPage = observer(() => {
   const { collectionAddress, tokenId } = useParams<Params>()
