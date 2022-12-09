@@ -1,41 +1,18 @@
 import React, { FC, ReactNode, useState } from 'react'
-import { styled } from '../../../../styles'
+import { styled } from '../../../../../styles'
 import cross from './img/cross.svg'
 import check from './img/check.svg'
 import arrow from './img/arrow.svg'
 import RowContent from './RowContent'
-import { IRowContent } from '../utils/tableBuilder'
-import { textVariant } from '../../../UIkit'
+import { textVariant } from '../../../../UIkit'
+import { RowBody, RowWrapper } from '../../../../components/Table'
 
-const ItemWrapper = styled('div', {
-  backgroundColor: '$white',
-  borderRadius: '$3',
-  minHeight: '80px',
-  color: '$gray500',
-  fontSize: '14px',
-  display: 'flex',
-  justifyContent: 'space-between',
-  variants: {
-    open: {
-      true: {
-        borderBottomLeftRadius: '0',
-        borderBottomRightRadius: '0'
-      }
-    }
-  }
-})
-
-const ItemBody = styled('div', {
-  display: 'flex',
-  padding: '$3 $4',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  flex: '1 1 auto',
-  gap: '$3',
-  '@sm': {
-    paddingLR: '$3'
-  }
-})
+/** Defines content when row is expanded */
+export interface IRowContent {
+  description: string
+  imageURLS: string[]
+  link: string
+}
 
 const ArrowImg = styled('img', {
   variants: {
@@ -62,6 +39,7 @@ const ItemArrow = styled('button', {
 })
 
 export const RowCell = styled('div', {
+  position: 'relative',
   height: '100%',
   display: 'flex',
   flexGrow: 1,
@@ -129,12 +107,12 @@ export const TableRow: FC<Props> = ({ children, content, contentTitle }) => {
 
   return (
     <ItemWithContent>
-      <ItemWrapper open={isOpen}>
-        <ItemBody>{children}</ItemBody>
+      <RowWrapper open={isOpen}>
+        <RowBody>{children}</RowBody>
         <ItemArrow onClick={toggleRow}>
           <ArrowImg up={isOpen} src={arrow} alt='' />
         </ItemArrow>
-      </ItemWrapper>
+      </RowWrapper>
       {isOpen && (
         <RowContent
           title={contentTitle}

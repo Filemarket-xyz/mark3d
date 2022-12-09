@@ -1,6 +1,7 @@
 import React, { ComponentProps } from 'react'
 import { styled } from '../../../styles'
 import { textVariant } from '../../UIkit'
+import { gradientPlaceholderImg } from '../Placeholder/GradientPlaceholder'
 
 const Wrapper = styled('div', {
   backgroundColor: '$white',
@@ -31,16 +32,36 @@ const Content = styled('div', {
 const Image = styled('img', {
   width: 48,
   height: 48,
-  borderRadius: '50%',
-  border: '2px solid $blue500'
+  border: '2px solid $blue500',
+  objectFit: 'cover',
+  variants: {
+    roundVariant: {
+      circle: {
+        borderRadius: '50%'
+      },
+      roundedSquare: {
+        borderRadius: '$2'
+      }
+    },
+    small: {
+      true: {
+        width: 40,
+        height: 40
+      }
+    }
+  }
 })
 
 export interface BadgeProps {
-  imgUrl?: string
+  image?: {
+    url: string
+    borderRadius: 'circle' | 'roundedSquare'
+  }
   content: {
     title?: string
     value: string
   }
+  small?: boolean
   wrapperProps?: ComponentProps<typeof Wrapper>
   valueStyles?: ComponentProps<typeof Value>
 }
@@ -48,7 +69,17 @@ export interface BadgeProps {
 export default function Badge(props: BadgeProps) {
   return (
     <Wrapper {...props.wrapperProps}>
-      {props.imgUrl && <Image src={props.imgUrl} />}
+      {props.image && (
+        <Image
+          src={props.image.url}
+          onError={({ currentTarget }) => {
+            currentTarget.onerror = null
+            currentTarget.src = gradientPlaceholderImg
+          }}
+          roundVariant={props.image.borderRadius}
+          small={props.small}
+        />
+      )}
       <Content>
         {props.content.title && <Title>{props.content.title}</Title>}
         <Value css={props.valueStyles?.css}>{props.content.value}</Value>

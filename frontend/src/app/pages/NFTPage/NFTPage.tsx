@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react'
 import { styled } from '../../../styles'
-import { PageLayout, textVariant, Link, Txt } from '../../UIkit'
+import { PageLayout, textVariant, Link, Txt, NavLink } from '../../UIkit'
 import Badge from '../../components/Badge/Badge'
 import { Hr } from '../../UIkit/Hr/Hr'
 import { NFTDeal } from '../../components/NFT'
 import { observer } from 'mobx-react-lite'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { Params } from '../../utils/router/Params'
 import { makeTokenFullId } from '../../processing/utils/id'
 import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
@@ -38,13 +38,7 @@ const NFTPreviewContainer = styled('div', {
 const NftName = styled('h1', {
   ...textVariant('h3').true,
   color: '$blue900',
-  marginBottom: '$1'
-})
-
-const MintTime = styled('p', {
-  ...textVariant('primary1').true,
-  color: '$gray500',
-  marginBottom: '$3'
+  marginBottom: '$4'
 })
 
 const BadgesContainer = styled('div', {
@@ -109,9 +103,12 @@ const NFTPage = observer(() => {
   const { errorStore } = useStores()
   const files = useHiddenFileDownload(tokenMetaStore, errorStore, token)
   const { isOwner } = useIsOwner(tokenFullId)
-  const canViewHiddenFiles = transferPermissions.buyer.canViewHiddenFiles(transferStore.data)
+  const canViewHiddenFiles = transferPermissions.buyer.canViewHiddenFiles(
+    transferStore.data
+  )
 
   const { collection } = useCollectionStore(collectionAddress)
+  const location = useLocation()
 
   return (
     <>
@@ -119,16 +116,39 @@ const NFTPage = observer(() => {
       <GridLayout>
         <GridBlock>
           <NftName>{token?.name}</NftName>
-          <MintTime>Minted on Sep 9, 2022</MintTime>
           <BadgesContainer>
-            <Badge
-              imgUrl={getProfileImageUrl(token?.owner ?? '')}
-              content={{ title: 'Creator', value: reduceAddress(token?.creator ?? '') }}
-            />
-            <Badge
-              imgUrl={collection?.image ? getHttpLinkFromIpfsString(collection.image) : gradientPlaceholderImg}
-              content={{ title: 'Collection', value: collection?.name ?? '' }}
-            />
+            <NavLink
+              to={token?.owner ? `/profile/${token?.owner}` : location.pathname}
+            >
+              <Badge
+                image={{
+                  borderRadius: 'circle',
+                  url: getProfileImageUrl(token?.owner ?? '')
+                }}
+                content={{
+                  title: 'Creator',
+                  value: reduceAddress(token?.creator ?? '')
+                }}
+              />
+            </NavLink>
+
+            <NavLink
+              to={
+                collection?.address
+                  ? `/collection/${collection?.address}`
+                  : location.pathname
+              }
+            >
+              <Badge
+                image={{
+                  url: collection?.image
+                    ? getHttpLinkFromIpfsString(collection.image)
+                    : gradientPlaceholderImg,
+                  borderRadius: 'roundedSquare'
+                }}
+                content={{ title: 'Collection', value: collection?.name ?? '' }}
+              />
+            </NavLink>
           </BadgesContainer>
         </GridBlock>
 
@@ -163,13 +183,10 @@ const NFTPage = observer(() => {
               }
             }}
           >
-            {isOwner || canViewHiddenFiles
-              ? files.map(({ cid, name, size, download }) =>
+            {isOwner || canViewHiddenFiles ? (
+              files.map(({ cid, name, size, download }) => (
                 <li key={cid}>
-                  <Link
-                    onPress={download}
-                    gray
-                  >
+                  <Link onPress={download} gray>
                     {name}
                   </Link>
                   {size > 0 && (
@@ -178,8 +195,12 @@ const NFTPage = observer(() => {
                     </Txt>
                   )}
                 </li>
-              )
-              : <Txt secondary2 css={{ color: '$gray500' }}>Hidden files are only shown to the owner</Txt>}
+              ))
+            ) : (
+              <Txt secondary2 css={{ color: '$gray500' }}>
+                Hidden files are only shown to the owner
+              </Txt>
+            )}
           </Ul>
         </GridBlock>
       </GridLayout>

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { styled } from '../../../styles'
 import { gradientPlaceholderImg } from '../Placeholder/GradientPlaceholder'
 import { NavButton, textVariant, Txt } from '../../UIkit'
@@ -101,7 +101,7 @@ export interface NFTCardProps {
     text: string
     link: string
   }
-  price?: number
+  price?: string
 }
 
 export const Card = styled(BasicCard, {})
@@ -118,10 +118,6 @@ export const BorderLayout = styled('div', {
 })
 
 export default function NFTCard(props: NFTCardProps) {
-  const formatPrice = useCallback((price: number) => {
-    return `${price.toFixed(3)} ETH`
-  }, [])
-
   return (
     <BorderLayout>
       <Card>
@@ -141,7 +137,7 @@ export default function NFTCard(props: NFTCardProps) {
               <UserName>{props.user.username}</UserName>
             </UserContainer>
             {props.price !== undefined && (
-              <Price>{formatPrice(props.price)}</Price>
+              <Price>{props.price}</Price>
             )}
           </PriceInfo>
           <ButtonContainer>

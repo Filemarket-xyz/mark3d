@@ -35,6 +35,7 @@
     "@web3modal/ethereum": "^2.0.0-beta.4",
     "@web3modal/react": "^2.0.0-beta.4",
     "buffer": "^6.0.3",
+    "dayjs": "^1.11.7",
     "ethers": "^5.7.2",
     "file-saver": "^2.0.5",
     "jdenticon": "^3.2.0",

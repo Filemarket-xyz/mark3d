@@ -1,8 +1,13 @@
 import { observer } from 'mobx-react-lite'
+import { useMemo } from 'react'
 import { Outlet } from 'react-router'
 import { useParams } from 'react-router-dom'
+import { useAccount } from 'wagmi'
 import { styled } from '../../../styles'
+import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 import { useCollectionAndTokenListStore } from '../../hooks'
+import { useTransfersHistory } from '../../hooks/useTransfersHistory'
+import { useUserTransferStore } from '../../hooks/useUserTransfers'
 import { textVariant, Container } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
@@ -71,8 +76,38 @@ const TabsContainer = styled('div', {
 
 const ProfilePage = observer(() => {
   const { profileAddress } = useParams<Params>()
+  const { address: currentAddress } = useAccount()
+
+  const { tableRows: table } = useTransfersHistory(profileAddress)
 
   const { tokens: nfts } = useCollectionAndTokenListStore(profileAddress)
+
+  const { transferCards } = useUserTransferStore(profileAddress)
+
+  const tabs = useMemo(() => {
+    const tabs = [
+      {
+        name: 'Owned',
+        url: 'owned',
+        amount: nfts.length
+      },
+      {
+        name: 'History',
+        url: 'history',
+        amount: table.length
+      }
+    ]
+
+    if (currentAddress === profileAddress) {
+      tabs.push({
+        amount: transferCards.length,
+        url: 'transfers',
+        name: 'Transfers'
+      })
+    }
+
+    return tabs
+  }, [nfts, table, transferCards])
 
   return (
     <>
@@ -82,7 +117,13 @@ const ProfilePage = observer(() => {
         <Container>
           <Profile>
             <ProfileHeader>
-              <ProfileImage src={getProfileImageUrl(profileAddress ?? '')} />
+              <ProfileImage
+                src={getProfileImageUrl(profileAddress ?? '')}
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null
+                  currentTarget.src = gradientPlaceholderImg
+                }}
+              />
               <ProfileName>{reduceAddress(profileAddress ?? '')}</ProfileName>
             </ProfileHeader>
           </Profile>
@@ -90,15 +131,7 @@ const ProfilePage = observer(() => {
 
         <Inventory>
           <TabsContainer>
-            <Tabs
-              tabs={[
-                {
-                  name: 'Owned',
-                  url: 'owned',
-                  amount: nfts.length
-                }
-              ]}
-            />
+            <Tabs tabs={tabs} />
           </TabsContainer>
           <Outlet />
         </Inventory>
