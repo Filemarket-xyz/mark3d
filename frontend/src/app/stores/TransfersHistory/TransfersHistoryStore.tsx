@@ -17,7 +17,7 @@ import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { ITableRow } from '../../components/Table/TableBuilder'
 import ethIcon from '../../pages/ProfilePage/img/eth-icon.svg'
 import { styled } from '../../../styles'
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import { formatCurrency } from '../../utils/web3/currency'
 import Badge from '../../components/Badge/Badge'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
@@ -26,7 +26,7 @@ const getLatestStatusTimestamp = (statuses?: OrderStatusInfo[]) => {
   if (!statuses) return 0
 
   return statuses.reduce(
-    (acc, value) => (value > acc ? value.timestamp ?? 0 : acc),
+    (acc, value) => ((value.timestamp ?? 0) > acc ? value.timestamp ?? 0 : acc),
     -Infinity
   )
 }
@@ -49,12 +49,17 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
   const eventOptions =
     target === 'incoming' ? ['Receive', 'Buy'] : ['Send', 'Sale']
 
-  return (transfer: TransferWithData) => ({
+  return (transfer: TransferWithData): ITableRow => ({
     cells: [
       {
         columnName: 'Event',
         value:
-          (transfer.order?.id ?? 0) === 0 ? eventOptions[0] : eventOptions[1]
+          (transfer.order?.id ?? 0) === 0 ? eventOptions[0] : eventOptions[1],
+        cellAttributes: {
+          css: {
+            flexGrow: 0.5
+          }
+        }
       },
       {
         columnName: 'Object',
@@ -71,7 +76,12 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
             small
             wrapperProps={{ css: { padding: 0 } }}
           />
-        )
+        ),
+        cellAttributes: {
+          css: {
+            flexGrow: 1.5
+          }
+        }
       },
       {
         columnName: 'From',
@@ -99,7 +109,8 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
       {
         columnName: 'Date',
         value:
-          transfer.order?.statuses !== undefined
+          transfer.order?.statuses !== undefined &&
+          transfer.order.statuses.length
             ? dayjs(getLatestStatusTimestamp(transfer.order?.statuses)).format(
               'MMM D[,] YYYY [at] HH[:]mm'
             )

@@ -82,7 +82,7 @@ const ProfilePage = observer(() => {
 
   const { tokens: nfts } = useCollectionAndTokenListStore(profileAddress)
 
-  const { transferCards } = useUserTransferStore()
+  const { transferCards } = useUserTransferStore(profileAddress)
 
   const tabs = useMemo(() => {
     const tabs = [
@@ -97,6 +97,7 @@ const ProfilePage = observer(() => {
         amount: table.length
       }
     ]
+
     if (currentAddress === profileAddress) {
       tabs.push({
         amount: transferCards.length,
@@ -104,6 +105,7 @@ const ProfilePage = observer(() => {
         name: 'Transfers'
       })
     }
+
     return tabs
   }, [nfts, table, transferCards])
 
