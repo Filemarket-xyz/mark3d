@@ -52,14 +52,14 @@ export const PreviewNFTFlow = ({ getFile }: PreviewNFTFlowProps) => {
     } catch (error) {
       return setPreviewState({
         state: PreviewState.LOADING_ERROR,
-        data: 'Unable to download, try again later'
+        data: `${error}`
       })
     }
 
     if (!model.ok) {
       return setPreviewState({
         state: PreviewState.LOADING_ERROR,
-        data: 'Unable to download, try again later'
+        data: `Unable to decrypt. ${model.error}`
       })
     }
 
@@ -111,9 +111,6 @@ export const PreviewNFTFlow = ({ getFile }: PreviewNFTFlowProps) => {
       ) : previewState?.state === PreviewState.EXTENSION_ERROR ? (
         <>
           <ErrorMessage>{previewState?.data}</ErrorMessage>
-          <Button primary onPress={handleLoadClick}>
-            Load NFT
-          </Button>
         </>
       ) : (
         <Button primary onPress={handleLoadClick}>
