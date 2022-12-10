@@ -24,7 +24,8 @@ export function useCancelOrder({ collectionAddress, tokenId }: Partial<TokenFull
     console.log('cancel order', 'collectionAddress', collectionAddress, 'tokenId', tokenId)
     const result = await contract.cancelOrder(
       collectionAddress as `0x${string}`,
-      BigNumber.from(tokenId)
+      BigNumber.from(tokenId),
+      { gasPrice: mark3dConfig.gasPrice }
     )
     return await result.wait()
   }), [contract, signer, wrapPromise, collectionAddress, tokenId])

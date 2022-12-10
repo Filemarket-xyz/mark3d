@@ -37,7 +37,8 @@ export function useFulfillOrder({ collectionAddress, tokenId }: Partial<TokenFul
       publicKey as `0x${string}`,
       BigNumber.from(tokenId),
       {
-        value: BigNumber.from(price)
+        value: BigNumber.from(price),
+        gasPrice: mark3dConfig.gasPrice
       }
     )
     return await result.wait()

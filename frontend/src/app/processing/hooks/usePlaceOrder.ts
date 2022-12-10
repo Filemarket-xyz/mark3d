@@ -5,6 +5,7 @@ import { useCallback } from 'react'
 import { assertContract, assertSigner } from '../utils/assert'
 import { mark3dConfig } from '../../config/mark3d'
 import { TokenFullId } from '../types'
+import assert from 'assert'
 
 /**
  * Calls Mark3dExchange contract to place an order
@@ -18,17 +19,15 @@ export function usePlaceOrder({ collectionAddress, tokenId }: Partial<TokenFullI
   const placeOrder = useCallback(wrapPromise(async () => {
     assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
-    if (collectionAddress && tokenId && price) {
-      console.log('place order', 'collectionAddress', collectionAddress, 'tokenId', tokenId, 'price', price)
-      const result = await contract.placeOrder(
-        collectionAddress as `0x${string}`,
-        BigNumber.from(tokenId),
-        BigNumber.from(price)
-      )
-      return await result.wait()
-    } else {
-      throw Error('collectionAddress or tokenId or price is undefined')
-    }
+    assert(collectionAddress && tokenId && price, 'collectionAddress or tokenId or price is undefined')
+    console.log('place order', 'collectionAddress', collectionAddress, 'tokenId', tokenId, 'price', price)
+    const result = await contract.placeOrder(
+      collectionAddress as `0x${string}`,
+      BigNumber.from(tokenId),
+      BigNumber.from(price),
+      { gasPrice: mark3dConfig.gasPrice }
+    )
+    return await result.wait()
   }), [contract, signer, wrapPromise, collectionAddress, tokenId, price])
   return {
     ...statuses,

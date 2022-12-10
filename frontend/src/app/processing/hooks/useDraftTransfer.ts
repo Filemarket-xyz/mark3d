@@ -18,7 +18,11 @@ export function useDraftTransfer({ collectionAddress, tokenId }: Partial<TokenFu
     assert(collectionAddress, 'collection address not provided')
     assert(tokenId, 'tokenId is not provided')
     console.log('draft transfer', 'tokenId', tokenId, 'callbackReceiver', nullAddress)
-    const res = await contract.draftTransfer(BigNumber.from(tokenId), nullAddress)
+    const res = await contract.draftTransfer(
+      BigNumber.from(tokenId),
+      nullAddress,
+      { gasPrice: mark3dConfig.gasPrice }
+    )
     return await res.wait()
   }), [contract, signer, wrapPromise])
 

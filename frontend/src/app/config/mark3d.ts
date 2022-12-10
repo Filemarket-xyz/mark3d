@@ -2,9 +2,14 @@ import accessToken from '../../abi/Mark3dAccessToken'
 import exchangeToken from '../../abi/Mark3dExchange'
 import collectionToken from '../../abi/Mark3dCollection'
 import { chain } from 'wagmi'
+import { BigNumber } from 'ethers'
+
+const mark3dChain = chain.polygonMumbai
 
 export const mark3dConfig = {
-  chain: chain.polygonMumbai,
+  chain: mark3dChain,
+  // Hardcode high gas price in testnet to prevent "transaction underpriced" error
+  gasPrice: mark3dChain.testnet ? BigNumber.from(30) : undefined,
   accessToken: {
     address: '0xdB3A0a1bC30CBdce2DEB9FCc387AD7bb6889f74F',
     abi: accessToken.abi,

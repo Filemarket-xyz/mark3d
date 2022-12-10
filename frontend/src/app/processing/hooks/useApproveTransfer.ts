@@ -29,7 +29,8 @@ export function useApproveTransfer({ collectionAddress, tokenId }: Partial<Token
     console.log('approve transfer', 'tokenId', tokenId, 'encryptedAESPassword', encryptedAESPassword)
     const res = await contract.approveTransfer(
       BigNumber.from(tokenId),
-      utils.hexlify(encryptedAESPassword) as `0x${string}`
+      utils.hexlify(encryptedAESPassword) as `0x${string}`,
+      { gasPrice: mark3dConfig.gasPrice }
     )
     return await res.wait()
   }), [contract, signer, address, wrapPromise, publicKey])

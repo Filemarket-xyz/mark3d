@@ -27,7 +27,8 @@ export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFull
     console.log('report fraud', 'tokenId', tokenId, 'privateKey', privateKey)
     const res = await contract.reportFraud(
       BigNumber.from(tokenId),
-      privateKey as `0x${string}`
+      privateKey as `0x${string}`,
+      { gasPrice: mark3dConfig.gasPrice }
     )
     return await res.wait()
   }), [contract, signer, address, wrapPromise])

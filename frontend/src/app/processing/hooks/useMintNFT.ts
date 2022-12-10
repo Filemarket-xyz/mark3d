@@ -52,7 +52,12 @@ export function useMintNFT(form: MintNFTForm = {}) {
         hidden_file_meta: hiddenFileMeta
       })
       console.log('mint metadata', metadata)
-      const result = await contract.mintWithoutId(address as `0x${string}`, metadata.url, '0x00')
+      const result = await contract.mintWithoutId(
+        address as `0x${string}`,
+        metadata.url,
+        '0x00',
+        { gasPrice: mark3dConfig.gasPrice }
+      )
       const receipt = await result.wait()
       const transferEvent = receipt.events?.find(event => event.event === ERC721TokenEventNames.Transfer)
       if (!transferEvent) {

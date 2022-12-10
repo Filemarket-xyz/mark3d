@@ -32,7 +32,8 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
     console.log('setTransferPublicKey', 'tokenId', tokenId, 'publicKey', publicKey)
     const result = await contract.setTransferPublicKey(
       BigNumber.from(tokenId),
-      publicKey as `0x${string}`
+      publicKey as `0x${string}`,
+      { gasPrice: mark3dConfig.gasPrice }
     )
     return await result.wait()
   }), [contract, signer, address, collectionAddress, tokenId])

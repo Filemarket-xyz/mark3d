@@ -27,19 +27,28 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
   const { contract, signer } = useAccessTokenContract()
   const { wrapPromise, ...statuses } = useStatusState<CreateCollectionResult>()
   const upload = useUploadLighthouse()
+  const { name, symbol, image, description } = form
   const mintCollection = useCallback(wrapPromise(async () => {
     assertContract(contract, mark3dConfig.accessToken.name)
     assertSigner(signer)
-    assert(form.name && form.symbol && form.image, 'CreateCollection form is not filled')
+    assert(name && symbol && image, 'CreateCollection form is not filled')
     const metadata = await upload({
-      name: form.name,
-      description: form.description ?? '',
-      image: form.image,
+      name,
+      description: description ?? '',
+      image,
       external_link: mark3dConfig.externalLink
     })
     console.log('mint metadata', metadata)
     const salt = `0x${Buffer.from(randomBytes(32)).toString('hex')}` as const
-    const result = await contract.createCollection(salt, form.name, form.symbol, metadata.url, metadata.url, '0x00')
+    const result = await contract.createCollection(
+      salt,
+      name,
+      symbol,
+      metadata.url,
+      metadata.url,
+      '0x00',
+      { gasPrice: mark3dConfig.gasPrice }
+    )
     const receipt = await result.wait()
     const createCollectionEvent = receipt.events
       ?.find(event => event.event === Mark3dAccessTokenEventNames.CollectionCreation)
@@ -60,6 +69,6 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       collectionTokenAddress,
       receipt
     }
-  }), [contract, signer, form, wrapPromise, upload])
+  }), [contract, signer, name, symbol, image, description, wrapPromise, upload])
   return { ...statuses, mintCollection }
 }

@@ -17,7 +17,10 @@ export function useCancelTransfer({ collectionAddress, tokenId }: Partial<TokenF
     assert(collectionAddress, 'collection address not provided')
     assert(tokenId, 'tokenId is not provided')
     console.log('cancel transfer', 'tokenId', tokenId)
-    const res = await contract.cancelTransfer(BigNumber.from(tokenId))
+    const res = await contract.cancelTransfer(
+      BigNumber.from(tokenId),
+      { gasPrice: mark3dConfig.gasPrice }
+    )
     return await res.wait()
   }), [contract, signer, wrapPromise])
 

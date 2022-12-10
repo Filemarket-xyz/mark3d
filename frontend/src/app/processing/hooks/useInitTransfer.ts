@@ -20,7 +20,8 @@ export function useInitTransfer({ collectionAddress, tokenId }: Partial<TokenFul
       BigNumber.from(tokenId),
       to as `0x${string}`,
       '0x00',
-      nullAddress
+      nullAddress,
+      { gasPrice: mark3dConfig.gasPrice }
     )
     return await result.wait()
   }), [contract, signer, wrapPromise, collectionAddress, tokenId, to])

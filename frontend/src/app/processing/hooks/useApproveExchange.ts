@@ -21,7 +21,11 @@ export function useApproveExchange({ collectionAddress, tokenId }: Partial<Token
     assertContract(contract, 'Mark3dCollection')
     assertSigner(signer)
     console.log('approve exchange', 'exchange contract address', mark3dConfig.exchangeToken.address, 'tokenId', tokenId)
-    const result = await contract.approve(mark3dConfig.exchangeToken.address, BigNumber.from(tokenId))
+    const result = await contract.approve(
+      mark3dConfig.exchangeToken.address,
+      BigNumber.from(tokenId),
+      { gasPrice: mark3dConfig.gasPrice }
+    )
     return await result.wait()
   }), [wrapPromise, contract, signer, tokenId])
   return {
