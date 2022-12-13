@@ -33,7 +33,7 @@ const NFTPreviewContainer = styled('div', {
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center',
   backgroundImage: `url(${gradientBg})`,
-  paddingTop: '$layout$navBarHeight'
+  paddingTop: 'calc($layout$navBarHeight + $layout$bannerHeight)'
 })
 
 const NftName = styled('h1', {
