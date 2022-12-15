@@ -1,6 +1,7 @@
 import React from 'react'
 import * as Util from '@stitches/react/types/util'
 import { styled } from '../../../styles'
+import { textVariant } from '../Txt'
 
 export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.ComponentType<any> | Util.Function,
   >(type: Type) =>
@@ -35,6 +36,24 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
           true: {
             color: '$gray500',
             fill: '$gray500'
+          }
+        },
+        white: {
+          true: {
+            color: '$white',
+            fill: '$white',
+            opacity: 0.75,
+            '&[data-hovered=true]': {
+              opacity: 1
+            }
+          }
+        },
+        small: {
+          ...textVariant('primary3')
+        },
+        underlined: {
+          true: {
+            textDecoration: 'underline'
           }
         }
       }

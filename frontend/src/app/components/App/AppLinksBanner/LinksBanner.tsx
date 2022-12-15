@@ -1,6 +1,6 @@
 import React from 'react'
 import { styled } from '../../../../styles'
-import { textVariant } from '../../../UIkit'
+import { Link } from '../../../UIkit'
 
 // icons
 import Anchor from '../img/BannerIcons/Anchor.svg'
@@ -33,61 +33,78 @@ const Wrapper = styled('div', {
   zIndex: 2
 })
 
-const ItemIcon = styled('img', {
-  width: 20,
-  height: 20
-})
-
-const Item = styled('a', {
+const LinkStyled = styled(Link, {
   display: 'flex',
-  gap: '$1',
-  alignItems: 'center',
-  textDecoration: 'none',
-  flexShrink: 0
+  alignItems: 'center'
 })
 
-const Itemtext = styled('span', {
-  color: '$whiteOp75',
-  ...textVariant('primary3').true
+const LinkIcon = styled('img', {
+  width: 18,
+  height: 18,
+  marginRight: '$1',
+  display: 'inline-block'
 })
+
+interface LinkData {
+  name: string
+  href: string
+  src: string
+}
+
+const links: LinkData[] = [
+  {
+    name: 'MetaTwitter',
+    href: 'https://twitter.com/mark3d_xyz',
+    src: Twitter
+  },
+  {
+    name: 'Telegram for Metaverse builders',
+    href: 'https://t.me/mark3d_xyz',
+    src: Telegram
+  },
+  {
+    name: 'Metaverse Review',
+    href: 'https://medium.com/@mark3d',
+    src: Medium
+  },
+  {
+    name: 'The Metaversed Podcast',
+    href: 'https://anchor.fm/the-metaversed',
+    src: Anchor
+  },
+  {
+    name: 'The Metaverse TV',
+    href: 'https://youtube.com/@mark3d',
+    src: Youtube
+  },
+  {
+    name: 'Metaverse Radio',
+    href: 'https://t.me/Metaverse_Radio',
+    src: Telegram
+  },
+  {
+    name: 'Linked In Metaverse',
+    href: 'https://linkedin.com/company/mark3dxyz/',
+    src: LinkedIn
+  }
+]
 
 export const LinksBanner = () => {
   return (
     <Wrapper>
-      <Item href='' target='_blank' rel='noopener noreferrer'>
-        <ItemIcon src={Twitter} />
-        <Itemtext>MetaTwitter</Itemtext>
-      </Item>
-
-      <Item href='' target='_blank' rel='noopener noreferrer'>
-        <ItemIcon src={Telegram} />
-        <Itemtext>Telegram for Metaverse builders</Itemtext>
-      </Item>
-
-      <Item href='' target='_blank' rel='noopener noreferrer'>
-        <ItemIcon src={Medium} />
-        <Itemtext>Metaverse Review</Itemtext>
-      </Item>
-
-      <Item href='' target='_blank' rel='noopener noreferrer'>
-        <ItemIcon src={Anchor} />
-        <Itemtext>The Metaversed Podcast</Itemtext>
-      </Item>
-
-      <Item href='' target='_blank' rel='noopener noreferrer'>
-        <ItemIcon src={Youtube} />
-        <Itemtext>The Metaverse TV</Itemtext>
-      </Item>
-
-      <Item href='' target='_blank' rel='noopener noreferrer'>
-        <ItemIcon src={Telegram} />
-        <Itemtext>Metaverse Radio</Itemtext>
-      </Item>
-
-      <Item href='' target='_blank' rel='noopener noreferrer'>
-        <ItemIcon src={LinkedIn} />
-        <Itemtext>Linked In Metaverse</Itemtext>
-      </Item>
+      {links.map(({ name, href, src }) => (
+        <LinkStyled
+          key={href}
+          href={href}
+          target='_blank'
+          small
+          white
+          underlined
+        >
+          <LinkIcon src={src} alt={name}/>
+          {name}
+        </LinkStyled>
+      ))}
     </Wrapper>
   )
 }
