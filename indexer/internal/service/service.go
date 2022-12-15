@@ -150,13 +150,14 @@ func (s *service) loadTokenParams(ctx context.Context, cid string) metaData {
 }
 
 func (s *service) processCollectionCreation(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, ev *access_token.Mark3dAccessTokenCollectionCreation) error {
+	t *types.Transaction, blockNumber uint64, ev *access_token.Mark3dAccessTokenCollectionCreation) error {
 	from, err := types.Sender(types.LatestSignerForChainID(t.ChainId()), t)
 	if err != nil {
 		return err
 	}
 	metaUri, err := s.accessTokenInstance.TokenURI(&bind.CallOpts{
-		Context: ctx,
+		BlockNumber: big.NewInt(0).SetUint64(blockNumber),
+		Context:     ctx,
 	}, ev.TokenId)
 	if err != nil {
 		return err
@@ -228,7 +229,7 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 			}
 			continue
 		}
-		if err := s.processCollectionCreation(ctx, tx, t, creation); err != nil {
+		if err := s.processCollectionCreation(ctx, tx, t, l.BlockNumber, creation); err != nil {
 			return err
 		}
 	}
@@ -304,7 +305,8 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 		return nil
 	}
 	order, err := s.exchangeInstance.Orders(&bind.CallOpts{
-		Context: ctx,
+		Context:     ctx,
+		BlockNumber: big.NewInt(0).SetUint64(l.BlockNumber),
 	}, l.Address, initEv.TokenId)
 	if err != nil {
 		return err

@@ -278,8 +278,10 @@ func (p *postgres) InsertTransfer(ctx context.Context, tx pgx.Tx, transfer *doma
 
 func (p *postgres) UpdateTransfer(ctx context.Context, tx pgx.Tx, transfer *domain.Transfer) error {
 	// language=PostgreSQL
-	if _, err := tx.Exec(ctx, `UPDATE transfers SET fraud_approved=$1,public_key=$2,encrypted_password=$3 WHERE id=$4`,
-		transfer.FraudApproved, transfer.PublicKey, transfer.EncryptedPassword, transfer.Id); err != nil {
+	if _, err := tx.Exec(ctx, `UPDATE transfers SET to_address=$1,fraud_approved=$2,
+                     public_key=$3,encrypted_password=$4 WHERE id=$5`,
+		strings.ToLower(transfer.ToAddress.String()), transfer.FraudApproved,
+		transfer.PublicKey, transfer.EncryptedPassword, transfer.Id); err != nil {
 		return err
 	}
 	return nil
