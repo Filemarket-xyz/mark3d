@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Card } from './Card'
-import { styled } from '../../../styles'
+import { styled } from '../../../../styles'
 
 const story: ComponentMeta<typeof Card> = {
   title: 'UIKit/Card',

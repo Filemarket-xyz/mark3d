@@ -1,4 +1,4 @@
-import { styled } from '../../../styles'
+import { styled } from '../../../../styles'
 
 export const Card = styled('div', {
   borderRadius: '$3',

@@ -1,6 +1,6 @@
 import React from 'react'
 import { styled } from '../../../../styles'
-import { Card, Container, textVariant, NavButton } from '../../../UIkit'
+import { Container, NavButton, textVariant, ToolCard, ToolCardGradientBorder } from '../../../UIkit'
 import { TechnologyStack } from '../components/TechnologyStack'
 import bg from '../img/bg.jpg'
 
@@ -43,20 +43,21 @@ const Description = styled('p', {
   }
 })
 
-const ToolCard = styled(Card, {
-  background: 'rgba(255, 255, 255, 0.15)',
-  borderRadius: '$4',
+const ToolCardNarrow = styled(ToolCard, {
   width: '350px',
-  minHeight: 298,
+  '@sm': {
+    width: '90%'
+  }
+})
+
+const ToolCardContent = styled('div', {
   gap: '$2',
   padding: '$4',
   display: 'flex',
+  width: '100%',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  '@sm': {
-    width: '90%'
-  },
-  backdropFilter: 'blur(45px)'
+  minHeight: 298
 })
 
 const ToolCardInfo = styled('div', {
@@ -140,7 +141,7 @@ export default function WelcomeBlock() {
       <WelcomeInfo>
         <Title>
           PORTAL TO NEW WEB3
-          <br />
+          <br/>
           METAVERSED 3D INTERNET
         </Title>
         <Description>
@@ -149,37 +150,39 @@ export default function WelcomeBlock() {
           the society of the future
         </Description>
         <ToolsContainer>
-          <ToolCard
-            css={{
-              border: '4px solid transparent'
-            }}
-          >
-            <ToolCardInfo>
-              <ToolTitle>For 3D creators</ToolTitle>
-              <ToolDescription>
-                DAO-governed Platform for metaverse builders
-              </ToolDescription>
-            </ToolCardInfo>
+          <ToolCardNarrow>
+            <ToolCardGradientBorder>
+              <ToolCardContent>
+                <ToolCardInfo>
+                  <ToolTitle>For 3D creators</ToolTitle>
+                  <ToolDescription>
+                    DAO-governed Platform for metaverse builders
+                  </ToolDescription>
+                </ToolCardInfo>
 
-            <ButtonStyled primary to={'/create/nft'}>
-              Mint 3D NFT
-            </ButtonStyled>
-          </ToolCard>
+                <ButtonStyled primary to={'/create/nft'}>
+                  Mint 3D NFT
+                </ButtonStyled>
+              </ToolCardContent>
+            </ToolCardGradientBorder>
+          </ToolCardNarrow>
 
-          <ToolCard css={{ border: '4px solid $whiteOp50' }}>
-            <ToolCardInfo>
-              <ToolTitle>For virtual worlds</ToolTitle>
-              <ToolDescription>
-                SDK, smartcontracts, API and oracle for games and virtual worlds
-              </ToolDescription>
-            </ToolCardInfo>
+          <ToolCardNarrow css={{ border: '4px solid $whiteOp50' }}>
+            <ToolCardContent>
+              <ToolCardInfo>
+                <ToolTitle>For virtual worlds</ToolTitle>
+                <ToolDescription>
+                  SDK, smartcontracts, API and oracle for games and virtual worlds
+                </ToolDescription>
+              </ToolCardInfo>
 
-            <ButtonStyled isDisabled css={{ background: '$whiteOp50' }} to={''}>
-              Coming soon
-            </ButtonStyled>
-          </ToolCard>
+              <ButtonStyled isDisabled css={{ background: '$whiteOp50' }} to={''}>
+                Coming soon
+              </ButtonStyled>
+            </ToolCardContent>
+          </ToolCardNarrow>
         </ToolsContainer>
-        <TechnologyStack />
+        <TechnologyStack/>
       </WelcomeInfo>
     </WelcomeScreenWrapper>
   )

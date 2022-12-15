@@ -1,6 +1,6 @@
 import React from 'react'
 import { styled } from '../../../../styles'
-import { textVariant } from '../../../UIkit'
+import { textVariant, ToolCard, ToolCardGradientBorder } from '../../../UIkit'
 
 // technology icons
 import item1 from '../img/TechnologyStack/1.svg'
@@ -13,21 +13,23 @@ import item7 from '../img/TechnologyStack/7.png'
 import item8 from '../img/TechnologyStack/8.png'
 import item9 from '../img/TechnologyStack/9.png'
 
-const Wrapper = styled('div', {
+const ToolCardWide = styled(ToolCard, {
   maxWidth: 730,
-  background: 'rgba(255, 255, 255, 0.15)',
-  border: '4px solid transparent',
-  borderRadius: 24,
-  backdropFilter: 'blur(45px)',
   marginTop: '$4',
-  padding: '$3 $4',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '$3',
   '@lg': {
     marginLeft: 'auto',
     marginRight: 'auto'
+  },
+  '@sm': {
+    width: '90%'
   }
+})
+
+const ToolCardContent = styled('div', {
+  padding: '$3 $4',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$3'
 })
 
 const Title = styled('h4', {
@@ -38,9 +40,10 @@ const Title = styled('h4', {
 
 const ItemsContainer = styled('div', {
   display: 'flex',
-  gap: 20,
+  gap: 18,
   alignItems: 'center',
-  overflowX: 'auto',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
   '&::-webkit-scrollbar': {
     display: 'none'
   },
@@ -50,7 +53,7 @@ const ItemsContainer = styled('div', {
 
 const Item = styled('img', {
   objectFit: 'contain',
-  height: 40,
+  height: 38,
   width: 'min-content',
   transition: 'all 0.2s ease-in-out',
   '&:hover': {
@@ -60,19 +63,23 @@ const Item = styled('img', {
 
 export const TechnologyStack = () => {
   return (
-    <Wrapper>
-      <Title>Technology stack</Title>
-      <ItemsContainer>
-        <Item src={item1} />
-        <Item src={item2} />
-        <Item src={item3} />
-        <Item src={item4} />
-        <Item src={item5} />
-        <Item src={item6} />
-        <Item src={item7} />
-        <Item src={item8} />
-        <Item src={item9} />
-      </ItemsContainer>
-    </Wrapper>
+    <ToolCardWide>
+      <ToolCardGradientBorder>
+        <ToolCardContent>
+          <Title>Technology stack</Title>
+          <ItemsContainer>
+            <Item src={item1}/>
+            <Item src={item2}/>
+            <Item src={item3}/>
+            <Item src={item4}/>
+            <Item src={item5}/>
+            <Item src={item6}/>
+            <Item src={item7}/>
+            <Item src={item8}/>
+            <Item src={item9}/>
+          </ItemsContainer>
+        </ToolCardContent>
+      </ToolCardGradientBorder>
+    </ToolCardWide>
   )
 }
