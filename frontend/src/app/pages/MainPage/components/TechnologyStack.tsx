@@ -51,15 +51,63 @@ const ItemsContainer = styled('div', {
   'scrollbar-width': 'none'
 })
 
-const Item = styled('img', {
-  objectFit: 'contain',
-  height: 38,
-  width: 'min-content',
+const Item = styled('a', {
   transition: 'all 0.2s ease-in-out',
+  cursor: 'pointer',
   '&:hover': {
     transform: 'scale(1.1)'
   }
 })
+
+const ItemImg = styled('img', {
+  objectFit: 'contain',
+  height: 38,
+  width: 'min-content'
+})
+
+interface ItemData {
+  src: string
+  href: string
+}
+
+const items: ItemData[] = [
+  {
+    src: item1,
+    href: 'https://ethereum.org/'
+  },
+  {
+    src: item2,
+    href: 'https://polygon.technology/'
+  },
+  {
+    src: item3,
+    href: 'https://filecoin.io/'
+  },
+  {
+    src: item4,
+    href: 'https://fvm.filecoin.io/'
+  },
+  {
+    src: item5,
+    href: 'https://ipfs.tech/'
+  },
+  {
+    src: item6,
+    href: 'https://ipld.io/'
+  },
+  {
+    src: item7,
+    href: 'https://www.lighthouse.storage/'
+  },
+  {
+    src: item8,
+    href: 'https://w3rlds.com/'
+  },
+  {
+    src: item9,
+    href: 'https://peeranha.io/'
+  }
+]
 
 export const TechnologyStack = () => {
   return (
@@ -68,15 +116,11 @@ export const TechnologyStack = () => {
         <ToolCardContent>
           <Title>Technology stack</Title>
           <ItemsContainer>
-            <Item src={item1}/>
-            <Item src={item2}/>
-            <Item src={item3}/>
-            <Item src={item4}/>
-            <Item src={item5}/>
-            <Item src={item6}/>
-            <Item src={item7}/>
-            <Item src={item8}/>
-            <Item src={item9}/>
+            {items.map(({ src, href }) => (
+              <Item key={src} href={href} target='_blank'>
+                <ItemImg src={src}/>
+              </Item>
+            ))}
           </ItemsContainer>
         </ToolCardContent>
       </ToolCardGradientBorder>

@@ -140,14 +140,13 @@ export default function WelcomeBlock() {
     <WelcomeScreenWrapper>
       <WelcomeInfo>
         <Title>
-          PORTAL TO NEW WEB3
+          3D NFTs for Metaverse
           <br/>
-          METAVERSED 3D INTERNET
+          with encrypted content on Filecoin
         </Title>
         <Description>
-          Building a universal toolkit for decentralized & transparent economic
-          system of the Interoperable Metaverse, which is the key to justice in
-          the society of the future
+          Mint NFTs with hidden 3D models stored on decentralized storage. Explore existing and upcoming engines for
+          the Metaverse and integrate your NFT 3D models inside them. Let's co-create the new 3D Internet!
         </Description>
         <ToolsContainer>
           <ToolCardNarrow>
@@ -156,7 +155,7 @@ export default function WelcomeBlock() {
                 <ToolCardInfo>
                   <ToolTitle>For 3D creators</ToolTitle>
                   <ToolDescription>
-                    DAO-governed Platform for metaverse builders
+                    Info portal about Metaverse engines and NFT marketplace for 3D objects
                   </ToolDescription>
                 </ToolCardInfo>
 
@@ -170,9 +169,9 @@ export default function WelcomeBlock() {
           <ToolCardNarrow css={{ border: '4px solid $whiteOp50' }}>
             <ToolCardContent>
               <ToolCardInfo>
-                <ToolTitle>For virtual worlds</ToolTitle>
+                <ToolTitle>For game developers</ToolTitle>
                 <ToolDescription>
-                  SDK, smartcontracts, API and oracle for games and virtual worlds
+                  Web3 toolkit for an easy peasy integration of a crypto economy into any virtual world
                 </ToolDescription>
               </ToolCardInfo>
 
