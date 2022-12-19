@@ -35,7 +35,8 @@ const Wrapper = styled('div', {
 
 const LinkStyled = styled(Link, {
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
+  flexShrink: 0
 })
 
 const LinkIcon = styled('img', {
