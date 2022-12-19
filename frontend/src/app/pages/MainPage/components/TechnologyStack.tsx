@@ -10,7 +10,7 @@ import item4 from '../img/TechnologyStack/4.png'
 import item5 from '../img/TechnologyStack/5.svg'
 import item6 from '../img/TechnologyStack/6.svg'
 import item7 from '../img/TechnologyStack/7.png'
-import item8 from '../img/TechnologyStack/8.png'
+import worlds from '../img/TechnologyStack/worlds.svg'
 import item9 from '../img/TechnologyStack/9.png'
 
 const ToolCardWide = styled(ToolCard, {
@@ -100,7 +100,7 @@ const items: ItemData[] = [
     href: 'https://www.lighthouse.storage/'
   },
   {
-    src: item8,
+    src: worlds,
     href: 'https://w3rlds.com/'
   },
   {
