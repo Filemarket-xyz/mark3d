@@ -191,7 +191,7 @@ const CreateNftPage = observer(() => {
           </FormControl>
 
           <FormControl>
-            <Label css={{ marginBottom: '$3' }}>Upload a 3D model</Label>
+            <Label css={{ marginBottom: '$3' }}>Upload a 3D model that will be hidden</Label>
             <Description>
               <TextBold>Formats:</TextBold> FBX, 3DS, MAX, BLEND, OBJ, C4D, MB,
               MA, LWO, LXO, SKP, STL, UASSET, DAE, PLY, GLB, GLTF, USDF,
