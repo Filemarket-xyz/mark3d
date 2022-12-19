@@ -196,7 +196,7 @@ const CreateNftPage = observer(() => {
               <TextBold>Formats:</TextBold> FBX, 3DS, MAX, BLEND, OBJ, C4D, MB,
               MA, LWO, LXO, SKP, STL, UASSET, DAE, PLY, GLB, GLTF, USDF,
               UNITYPACKAGE.
-              <TextBold>Max size:</TextBold> 100 MB.
+              <TextBold> Max size:</TextBold> 100 MB.
             </Description>
             <NftLoader
               registerProps={register('hiddenFile', { required: true })}
