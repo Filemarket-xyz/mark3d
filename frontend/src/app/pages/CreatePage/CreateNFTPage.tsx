@@ -137,7 +137,8 @@ const CreateNftPage = observer(() => {
     register,
     handleSubmit,
     control,
-    formState: { isValid }
+    formState: { isValid },
+    resetField
   } = useForm<CreateNFTForm>({
     defaultValues: {
       collection: predefinedCollection
@@ -200,6 +201,7 @@ const CreateNftPage = observer(() => {
             </Description>
             <NftLoader
               registerProps={register('hiddenFile', { required: true })}
+              resetField={resetField}
             />
           </FormControl>
 

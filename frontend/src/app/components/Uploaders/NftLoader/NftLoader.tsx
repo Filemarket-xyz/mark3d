@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { UseFormRegisterReturn } from 'react-hook-form'
+import { UseFormRegisterReturn, UseFormResetField } from 'react-hook-form'
 import { styled } from '../../../../styles'
 import { Button, textVariant } from '../../../UIkit'
 import BoxImage from './img/box.svg'
 import SuccessImage from './img/Success.svg'
 import CrossImage from './img/cross.svg'
 import { getFileExtension } from '../../../pages/NFTPage/components/PreviewNFTFlow'
+import { CreateNFTForm } from '../../../pages/CreatePage/CreateNFTPage'
 
 const Box = styled('img', {
   width: 80,
@@ -114,6 +115,7 @@ const supportedExtensions = new Set([
 
 interface NftLoaderProps {
   registerProps: UseFormRegisterReturn
+  resetField: UseFormResetField<CreateNFTForm>
 }
 
 export default function NftLoader(props: NftLoaderProps) {
@@ -122,7 +124,12 @@ export default function NftLoader(props: NftLoaderProps) {
   return (
     <File htmlFor='nftInput'>
       {fileChosen && (
-        <CloseButton onPress={() => console.log('2+2')}>
+        <CloseButton
+          onPress={() => {
+            props.resetField('hiddenFile')
+            setFileChosen(undefined)
+          }}
+        >
           <CrossIcon src={CrossImage}></CrossIcon>
         </CloseButton>
       )}
