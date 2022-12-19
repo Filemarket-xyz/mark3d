@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
 import { styled } from '../../../../styles'
-import { textVariant } from '../../../UIkit'
+import { Button, textVariant } from '../../../UIkit'
 import BoxImage from './img/box.svg'
 import SuccessImage from './img/Success.svg'
+import CrossImage from './img/cross.svg'
+import { getFileExtension } from '../../../pages/NFTPage/components/PreviewNFTFlow'
 
 const Box = styled('img', {
   width: 80,
@@ -68,32 +70,88 @@ const File = styled('label', {
   ...generateFileHoverStyles()
 })
 
+const CloseButton = styled(Button, {
+  width: 48,
+  height: 48,
+  position: 'absolute',
+  top: '$3',
+  right: '$3',
+  padding: 0,
+  minWidth: 0,
+  borderRadius: '$3',
+  backgroundColor: '$white',
+  zIndex: 2,
+  boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)'
+})
+
+const CrossIcon = styled('img', {
+  width: '$3',
+  height: '$3',
+  objectFit: 'contain'
+})
+
+const supportedExtensions = new Set([
+  '.fbx',
+  '.3ds',
+  '.max',
+  '.blend',
+  '.obj',
+  '.c4d',
+  '.mb',
+  '.ma',
+  '.lwo',
+  '.lxo',
+  '.skp',
+  '.stl',
+  '.uasset',
+  '.dae',
+  '.ply',
+  '.glb',
+  '.gltf',
+  '.usdf',
+  '.unitypackage'
+])
+
 interface NftLoaderProps {
   registerProps: UseFormRegisterReturn
 }
 
 export default function NftLoader(props: NftLoaderProps) {
-  const [fileChosen, setFileChosen] = useState(false)
+  const [fileChosen, setFileChosen] = useState<File>()
 
   return (
     <File htmlFor='nftInput'>
+      {fileChosen && (
+        <CloseButton onPress={() => console.log('2+2')}>
+          <CrossIcon src={CrossImage}></CrossIcon>
+        </CloseButton>
+      )}
       <WhiteShade></WhiteShade>
       <Box src={fileChosen ? SuccessImage : BoxImage} />
       {fileChosen ? (
-        <BoxLabel css={{ color: '$gray500' }}>File uploaded</BoxLabel>
+        <BoxLabel css={{ color: '$gray500' }}>
+          {fileChosen.name} uploaded
+        </BoxLabel>
       ) : (
-        <BoxLabel> Choose file</BoxLabel>
+        <BoxLabel>Choose file</BoxLabel>
       )}
       <FileInput
         id='nftInput'
         type='file'
-        accept={
-          '.png, .jpg, .jpeg, .fbx, .3ds, .max, .blend, .obj, .c4d, .mb, .ma, .lwo, .lxo, .skp, .stl, .uasset, .dae, .ply, .glb, .gltf, .usdf, .unitypackage'
-        }
+        accept={Array.from(supportedExtensions).join(',')}
         {...props.registerProps}
         onChange={async (e) => {
+          const file = e.target.files ? e.target.files[0] : undefined
+          if (!file) {
+            return
+          }
+
+          if (!supportedExtensions.has(`.${getFileExtension(file)}`)) {
+            return
+          }
+
           await props.registerProps.onChange(e)
-          setFileChosen(true)
+          setFileChosen(e.target.files ? e.target.files[0] : undefined)
         }}
       />
     </File>
