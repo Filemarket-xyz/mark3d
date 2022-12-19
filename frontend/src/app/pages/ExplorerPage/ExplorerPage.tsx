@@ -18,7 +18,7 @@ export default function ExplorerPage() {
   )
   return (
     <PageLayout>
-      <Title>Metaverse explorer</Title>
+      <Title>VerseExplorer</Title>
       <Table
         columns={columns}
         rows={rows}
