@@ -114,7 +114,7 @@ export const TechnologyStack = () => {
     <ToolCardWide>
       <ToolCardGradientBorder>
         <ToolCardContent>
-          <Title>Technology stack</Title>
+          <Title>Powered by</Title>
           <ItemsContainer>
             {items.map(({ src, href }) => (
               <Item key={src} href={href} target='_blank'>
