@@ -9,9 +9,9 @@ import item3 from '../img/TechnologyStack/3.svg'
 import item4 from '../img/TechnologyStack/4.png'
 import item5 from '../img/TechnologyStack/5.svg'
 import item6 from '../img/TechnologyStack/6.svg'
-import item7 from '../img/TechnologyStack/7.png'
 import worlds from '../img/TechnologyStack/worlds.svg'
-import item9 from '../img/TechnologyStack/9.png'
+import lighthouse from '../img/TechnologyStack/lighthouse.svg'
+import peeranha from '../img/TechnologyStack/peeranha.svg'
 
 const ToolCardWide = styled(ToolCard, {
   maxWidth: 730,
@@ -96,7 +96,7 @@ const items: ItemData[] = [
     href: 'https://ipld.io/'
   },
   {
-    src: item7,
+    src: lighthouse,
     href: 'https://www.lighthouse.storage/'
   },
   {
@@ -104,7 +104,7 @@ const items: ItemData[] = [
     href: 'https://w3rlds.com/'
   },
   {
-    src: item9,
+    src: peeranha,
     href: 'https://peeranha.io/'
   }
 ]
