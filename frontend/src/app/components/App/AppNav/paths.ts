@@ -3,7 +3,7 @@ import { NavBarItemData } from '../../../UIkit'
 export const paths: NavBarItemData[] = [
   {
     to: '/explorer',
-    label: 'Explorer'
+    label: 'VerseExplorer'
   },
 
   {
@@ -13,6 +13,11 @@ export const paths: NavBarItemData[] = [
   {
     to: 'https://metaeden.mark3d.xyz/',
     label: 'MetaEden',
+    isLink: true
+  },
+  {
+    to: 'https://mark3d.peeranha.io',
+    label: 'Wiki',
     isLink: true
   }
 ]

@@ -137,7 +137,8 @@ const CreateNftPage = observer(() => {
     register,
     handleSubmit,
     control,
-    formState: { isValid }
+    formState: { isValid },
+    resetField
   } = useForm<CreateNFTForm>({
     defaultValues: {
       collection: predefinedCollection
@@ -191,15 +192,16 @@ const CreateNftPage = observer(() => {
           </FormControl>
 
           <FormControl>
-            <Label css={{ marginBottom: '$3' }}>Upload a 3D model</Label>
+            <Label css={{ marginBottom: '$3' }}>Upload a 3D model that will be hidden</Label>
             <Description>
               <TextBold>Formats:</TextBold> FBX, 3DS, MAX, BLEND, OBJ, C4D, MB,
               MA, LWO, LXO, SKP, STL, UASSET, DAE, PLY, GLB, GLTF, USDF,
               UNITYPACKAGE.
-              <TextBold>Max size:</TextBold> 100 MB.
+              <TextBold> Max size:</TextBold> 100 MB.
             </Description>
             <NftLoader
               registerProps={register('hiddenFile', { required: true })}
+              resetField={resetField}
             />
           </FormControl>
 

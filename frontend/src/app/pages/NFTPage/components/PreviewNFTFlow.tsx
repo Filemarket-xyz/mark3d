@@ -19,7 +19,7 @@ const ErrorMessage = styled('p', {
   color: '$black'
 })
 
-const getFileExtension = (file: File) => file.name.split('.')?.pop() ?? ''
+export const getFileExtension = (file: File) => file.name.split('.')?.pop() ?? ''
 
 enum PreviewState {
   LOADED,

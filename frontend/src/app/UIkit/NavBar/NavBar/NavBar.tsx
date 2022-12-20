@@ -24,7 +24,7 @@ const NavBarStyled = styled('nav', {
   width: '100%',
   height: '$layout$navBarHeight',
   position: 'fixed',
-  zIndex: 2,
+  zIndex: 10,
   top: 0,
   left: 0,
   right: 0,

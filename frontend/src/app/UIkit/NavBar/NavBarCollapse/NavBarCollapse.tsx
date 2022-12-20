@@ -11,7 +11,7 @@ const StyledNavBarCollapse = styled('div', {
   background: '$whiteOp75',
   width: '100%',
   height: '0px',
-  zIndex: '1',
+  zIndex: 9,
   overflow: 'hidden',
   variants: {
     isOpen: {

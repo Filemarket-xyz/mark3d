@@ -30,12 +30,13 @@ const Wrapper = styled('div', {
   'scrollbar-width': 'none',
   position: 'fixed',
   top: '$layout$navBarHeight',
-  zIndex: 2
+  zIndex: 10
 })
 
 const LinkStyled = styled(Link, {
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
+  flexShrink: 0
 })
 
 const LinkIcon = styled('img', {

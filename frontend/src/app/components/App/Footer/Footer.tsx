@@ -1,12 +1,12 @@
 import React from 'react'
 import { styled } from '../../../../styles'
 import { Container, textVariant, Txt } from '../../../UIkit'
-import Discord from './img/Discord.svg'
-import Instagram from './img/Instagram.svg'
 import Linkedin from './img/Linkedin.svg'
 import Telegram from './img/Telegram.svg'
 import Twitter from './img/Twitter.svg'
 import Youtube from './img/Youtube.svg'
+import Anchor from './img/Anchor.svg'
+import Medium from './img/Medium.svg'
 
 const FooterWrapper = styled('footer', {
   width: '100%',
@@ -87,23 +87,49 @@ export default function Footer() {
           <Link>Terms of Service</Link>
         </Info>
         <SocialsContainer>
-          <Link>
-            <SocialImage src={Discord} />
-          </Link>
-          <Link>
-            <SocialImage src={Instagram} />
-          </Link>
-          <Link>
-            <SocialImage src={Linkedin} />
-          </Link>
-          <Link>
-            <SocialImage src={Telegram} />
-          </Link>
-          <Link>
+          <Link
+            href='http://twitter.com/mark3d_xyz'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             <SocialImage src={Twitter} />
           </Link>
-          <Link>
+
+          <Link
+            href='http://t.me/mark3d_xyz'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            <SocialImage src={Telegram} />
+          </Link>
+
+          <Link
+            href='https://anchor.fm/the-metaversed'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            <SocialImage src={Anchor} />
+          </Link>
+          <Link
+            href='https://medium.com/@mark3d'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            <SocialImage src={Medium} />
+          </Link>
+          <Link
+            href='http://youtube.com/@mark3d'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             <SocialImage src={Youtube} />
+          </Link>
+          <Link
+            href='http://linkedin.com/company/mark3dxyz/'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            <SocialImage src={Linkedin} />
           </Link>
         </SocialsContainer>
       </FooterContainer>
