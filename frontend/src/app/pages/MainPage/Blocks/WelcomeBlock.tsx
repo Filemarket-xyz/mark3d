@@ -1,6 +1,12 @@
 import React from 'react'
 import { styled } from '../../../../styles'
-import { Container, NavButton, textVariant, ToolCard, ToolCardGradientBorder } from '../../../UIkit'
+import {
+  Container,
+  NavButton,
+  textVariant,
+  ToolCard,
+  ToolCardGradientBorder
+} from '../../../UIkit'
 import { TechnologyStack } from '../components/TechnologyStack'
 import bg from '../img/bg.jpg'
 
@@ -14,16 +20,17 @@ const WelcomeScreenWrapper = styled('section', {
 
 const Title = styled('h1', {
   ...textVariant('h1').true,
-  fontSize: '52px',
+  fontSize: 38,
   color: '$white',
   fontWeight: '600',
   '@lg': {
-    fontSize: 'calc(2vw + 30px)',
+    fontSize: 'calc(1vw + 30px)',
     textAlign: 'center',
     margin: 'auto'
   },
   maxWidth: '730px',
-  marginBottom: 0
+  marginBottom: 0,
+  textTransform: 'uppercase'
 })
 
 const Description = styled('p', {
@@ -140,13 +147,14 @@ export default function WelcomeBlock() {
     <WelcomeScreenWrapper>
       <WelcomeInfo>
         <Title>
-          3D NFTs for Metaverse
-          <br/>
-          with encrypted content on Filecoin
+          3D NFTs for Metaverse with
+          <br />
+          encrypted content on Filecoin
         </Title>
         <Description>
-          Mint NFTs with hidden 3D models stored on decentralized storage. Explore existing and upcoming engines for
-          the Metaverse and integrate your NFT 3D models inside them. Let's co-create the new 3D Internet!
+          Mint NFTs with hidden 3D models stored on decentralized storage.
+          Explore existing and upcoming engines for the Metaverse and integrate
+          your NFT 3D models inside them. Let&apos;s co-create the new 3D Internet!
         </Description>
         <ToolsContainer>
           <ToolCardNarrow>
@@ -155,7 +163,8 @@ export default function WelcomeBlock() {
                 <ToolCardInfo>
                   <ToolTitle>For 3D creators</ToolTitle>
                   <ToolDescription>
-                    Info portal about Metaverse engines and NFT marketplace for 3D objects
+                    Info portal about Metaverse engines and NFT marketplace for
+                    3D objects
                   </ToolDescription>
                 </ToolCardInfo>
 
@@ -171,17 +180,22 @@ export default function WelcomeBlock() {
               <ToolCardInfo>
                 <ToolTitle>For game developers</ToolTitle>
                 <ToolDescription>
-                  Web3 toolkit for an easy peasy integration of a crypto economy into any virtual world
+                  Web3 toolkit for an easy peasy integration of a crypto economy
+                  into any virtual world
                 </ToolDescription>
               </ToolCardInfo>
 
-              <ButtonStyled isDisabled css={{ background: '$whiteOp50' }} to={''}>
+              <ButtonStyled
+                isDisabled
+                css={{ background: '$whiteOp50' }}
+                to={''}
+              >
                 Coming soon
               </ButtonStyled>
             </ToolCardContent>
           </ToolCardNarrow>
         </ToolsContainer>
-        <TechnologyStack/>
+        <TechnologyStack />
       </WelcomeInfo>
     </WelcomeScreenWrapper>
   )
