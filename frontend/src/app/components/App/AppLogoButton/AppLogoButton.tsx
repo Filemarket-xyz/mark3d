@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { AriaButtonProps } from 'react-aria'
 import { BreakpointsOptions, cssShowHideIn, styled } from '../../../../styles'
 import { Drip, useButton } from '../../../UIkit'
-import LogoIcon from '../../../../assets/logo.svg'
+import LogoIcon from '../../../../assets/logo.png'
 import Mark3dBlackIcon from '../../../../assets/Mark3d.svg'
 import Mark3dGradientIcon from '../../../../assets/Mark3dGradient.svg'
 
