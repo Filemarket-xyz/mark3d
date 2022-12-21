@@ -54,15 +54,11 @@ const Image = styled('img', {
   width: 350,
   height: 350,
   borderRadius: '$3',
-  objectFit: 'cover'
-})
-
-const ImageContainer = styled('div', {
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center'
+  objectFit: 'cover',
+  '@sm': {
+    width: 290,
+    height: 290
+  }
 })
 
 /** Component that implement logic for loading and showing 3D models  */
@@ -170,15 +166,13 @@ export const PreviewNFTFlow = ({
           </SwiperSlide>
         )}
         <SwiperSlide>
-          <ImageContainer>
-            <Image
-              src={imageURL}
-              onError={({ currentTarget }) => {
-                currentTarget.onerror = null
-                currentTarget.src = gradientPlaceholderImg
-              }}
-            />
-          </ImageContainer>{' '}
+          <Image
+            src={imageURL}
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null
+              currentTarget.src = gradientPlaceholderImg
+            }}
+          />
         </SwiperSlide>
       </SwiperStyled>
     </CenterContainer>
