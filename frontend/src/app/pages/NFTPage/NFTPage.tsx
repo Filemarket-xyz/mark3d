@@ -33,7 +33,8 @@ const NFTPreviewContainer = styled('div', {
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center',
   backgroundImage: `url(${gradientBg})`,
-  paddingTop: 'calc($layout$navBarHeight + $layout$bannerHeight)'
+  paddingTop: 'calc($layout$navBarHeight + $layout$bannerHeight)',
+  boxSizing: 'content-box'
 })
 
 const NftName = styled('h1', {
@@ -111,9 +112,13 @@ const NFTPage = observer(() => {
   return (
     <>
       <NFTPreviewContainer>
-        {(isOwner || canViewHiddenFiles) && (
-          <PreviewNFTFlow getFile={files[0]?.getFile} />
-        )}
+        {
+          <PreviewNFTFlow
+            getFile={files[0]?.getFile}
+            canViewFile={isOwner || canViewHiddenFiles}
+            imageURL={getHttpLinkFromIpfsString(token?.image ?? '')}
+          />
+        }
       </NFTPreviewContainer>
 
       <GridLayout>

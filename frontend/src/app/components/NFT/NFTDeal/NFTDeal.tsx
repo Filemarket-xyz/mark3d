@@ -38,7 +38,11 @@ const DealContainerInfo = styled('div', {
 const ButtonsContainer = styled('div', {
   display: 'flex',
   justifyContent: 'stretch',
-  gap: '$4'
+  gap: '$4',
+  '@sm': {
+    flexDirection: 'column',
+    gap: '$3'
+  }
 })
 
 export const NFTDeal: FC<NFTDealProps> = observer(({
