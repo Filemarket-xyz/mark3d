@@ -139,7 +139,7 @@ export const PreviewNFTFlow = ({
         }}
       >
         {canViewFile && (
-          <SwiperSlide className='__swiper-slide'>
+          <SwiperSlide>
             {previewState?.state === PreviewState.LOADED ? (
               <model-viewer
                 src={previewState.data}
@@ -169,7 +169,7 @@ export const PreviewNFTFlow = ({
             )}
           </SwiperSlide>
         )}
-        <SwiperSlide className='__swiper-slide'>
+        <SwiperSlide>
           <ImageContainer>
             <Image
               src={imageURL}
