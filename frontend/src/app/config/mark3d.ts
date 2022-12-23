@@ -1,10 +1,10 @@
 import accessToken from '../../abi/Mark3dAccessToken'
 import exchangeToken from '../../abi/Mark3dExchange'
 import collectionToken from '../../abi/Mark3dCollection'
-import { chain } from 'wagmi'
+import { polygonMumbai } from 'wagmi/chains'
 import { utils } from 'ethers'
 
-const mark3dChain = chain.polygonMumbai
+const mark3dChain = polygonMumbai
 
 export const mark3dConfig = {
   chain: mark3dChain,
