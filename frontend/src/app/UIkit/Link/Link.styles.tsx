@@ -48,6 +48,12 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
             }
           }
         },
+        red: {
+          true: {
+            color: '$red',
+            fill: '$red'
+          }
+        },
         small: {
           ...textVariant('primary3')
         },

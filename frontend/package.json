@@ -24,6 +24,7 @@
     "@emotion/styled": "^11.10.5",
     "@google/model-viewer": "^2.1.1",
     "@lighthouse-web3/sdk": "^0.1.9",
+    "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.10.12",
     "@nextui-org/react": "^1.0.0-beta.10",
     "@peculiar/webcrypto": "^1.4.1",
@@ -56,7 +57,7 @@
     "reseter.css": "^2.0.0",
     "swagger-typescript-api": "^12.0.2",
     "swiper": "^8.4.4",
-    "wagmi": "^0.9.5"
+    "wagmi": "0.9.5"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
