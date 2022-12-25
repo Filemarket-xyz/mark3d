@@ -28,8 +28,8 @@ const ethereumClient = new EthereumClient(wagmiClient, chains)
 export const Web3ModalConfigured: FC = () => (
   <Web3Modal
     projectId={projectId}
-    theme="light"
-    accentColor="magenta"
+    themeMode="light"
+    themeColor="magenta"
     ethereumClient={ethereumClient}
   />
 )
