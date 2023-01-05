@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { styled } from '../../../styles'
 import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
@@ -20,7 +20,6 @@ import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { observer } from 'mobx-react-lite'
 import { useCollectionAndTokenListStore } from '../../hooks'
-import { toJS } from 'mobx'
 import { useAccount } from 'wagmi'
 import { useCreateNft } from './hooks/useCreateNft'
 import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
@@ -101,14 +100,9 @@ const CreateNftPage = observer(() => {
   } | undefined = location.state?.collection
 
   const {
-    collections,
-    isLoading: isCollectionLoading,
-    isLoaded: isCollectionLoaded
+    collectionMintOptions,
+    isLoading: isCollectionLoading
   } = useCollectionAndTokenListStore(address)
-
-  const [collectionOptions, setCollectionOptions] = useState<ComboBoxOption[]>(
-    []
-  )
 
   const { modalBody, modalOpen, setModalBody, setModalOpen } =
     useModalProperties()
@@ -121,17 +115,6 @@ const CreateNftPage = observer(() => {
     setError: setNftError,
     setIsLoading: setIsNftLoading
   } = useCreateNft()
-
-  useAfterDidMountEffect(() => {
-    if (!isCollectionLoaded) return
-
-    setCollectionOptions(
-      toJS(collections).map((collection) => ({
-        id: collection.address ?? '',
-        title: collection.name ?? ''
-      }))
-    )
-  }, [isCollectionLoaded])
 
   const {
     register,
@@ -220,7 +203,7 @@ const CreateNftPage = observer(() => {
                 name='collection'
                 control={control}
                 comboboxProps={{
-                  options: collectionOptions,
+                  options: collectionMintOptions,
                   isLoading: isCollectionLoading
                 }}
                 rules={{ required: true }}

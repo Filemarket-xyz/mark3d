@@ -1,4 +1,4 @@
-import { IActivateDeactivate, storeRequest, IStoreRequester, storeReset, RequestContext } from '../../utils/store'
+import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
 import { makeAutoObservable } from 'mobx'
 import { Collection, Token, TokensResponse } from '../../../swagger/Api'
@@ -8,6 +8,8 @@ import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
+import { ComboBoxOption } from '../../UIkit/Form/Combobox'
+import { utils } from 'ethers/lib.esm'
 
 export class CollectionAndTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
@@ -78,5 +80,18 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
         link: `/collection/${token.collection}/${token.tokenId}`
       }
     }))
+  }
+
+  get collectionMintOptions(): ComboBoxOption[] {
+    if (!this.address) {
+      return []
+    }
+    return this.collections
+      // user is only allowed to mint into owned collections
+      .filter(collection => collection.owner && utils.getAddress(collection.owner) === utils.getAddress(this.address))
+      .map(collection => ({
+        title: collection.name ?? '',
+        id: collection.address ?? ''
+      }))
   }
 }
