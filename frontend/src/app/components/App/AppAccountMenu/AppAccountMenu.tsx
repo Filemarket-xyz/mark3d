@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 import { Button, Popover, PopoverContent, PopoverTrigger } from '../../../UIkit'
 import { styled } from '../../../../styles'
 import { AddressIcon, DisconnectButton, SwitchNetworkButton } from '../../Web3'
@@ -25,6 +25,7 @@ export interface AppAccountMenuProps {
 
 export const AppAccountMenu: FC<AppAccountMenuProps> = ({ address }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const close = useCallback(() => setIsOpen(false), [setIsOpen])
   const { chain } = useNetwork()
   const needToSwitchNetwork = chain && chain?.id !== mark3dConfig.chain.id
   return (
@@ -50,10 +51,10 @@ export const AppAccountMenu: FC<AppAccountMenuProps> = ({ address }) => {
       <PopoverContent>
         <Spacer>
           {needToSwitchNetwork && (
-            <SwitchNetworkButton/>
+            <SwitchNetworkButton onPress={close}/>
           )}
-          <AccountButton address={address}/>
-          <DisconnectButton/>
+          <AccountButton address={address} onPress={close}/>
+          <DisconnectButton onPress={close}/>
         </Spacer>
       </PopoverContent>
     </Popover>
