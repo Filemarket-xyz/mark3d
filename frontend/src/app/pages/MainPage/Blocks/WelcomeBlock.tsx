@@ -1,12 +1,6 @@
 import React from 'react'
 import { styled } from '../../../../styles'
-import {
-  Container,
-  NavButton,
-  textVariant,
-  ToolCard,
-  ToolCardGradientBorder
-} from '../../../UIkit'
+import { Container, NavButton, textVariant, ToolCard, ToolCardGradientBorder } from '../../../UIkit'
 import { TechnologyStack } from '../components/TechnologyStack'
 import bg from '../img/bg.jpg'
 
@@ -20,13 +14,19 @@ const WelcomeScreenWrapper = styled('section', {
 
 const Title = styled('h1', {
   ...textVariant('h1').true,
-  fontSize: 38,
+  fontSize: '2.25rem',
   color: '$white',
   fontWeight: '600',
   '@lg': {
-    fontSize: 'calc(1vw + 30px)',
+    fontSize: 'calc(1vw + 20px)',
     textAlign: 'center',
     margin: 'auto'
+  },
+  '@sm': {
+    fontSize: 32,
+    '& > br': {
+      display: 'none'
+    }
   },
   maxWidth: '730px',
   marginBottom: 0,
@@ -76,7 +76,7 @@ const ToolCardInfo = styled('div', {
   }
 })
 
-const ToolTitle = styled('h4', {
+const ToolTitle = styled('h5', {
   color: '$white',
   '@md': {
     fontSize: '$body2'
@@ -84,8 +84,7 @@ const ToolTitle = styled('h4', {
   '@sm': {
     fontSize: '$body3'
   },
-  ...textVariant('h4').true,
-  fontSize: 24
+  ...textVariant('h5').true
 })
 
 const ToolDescription = styled('p', {
@@ -147,24 +146,22 @@ export default function WelcomeBlock() {
     <WelcomeScreenWrapper>
       <WelcomeInfo>
         <Title>
-          3D NFTs for Metaverse with
-          <br />
-          encrypted content on Filecoin
+          Store, sell, buy or gift 3D models
+          <br/> {' '}
+          and Custom Metaverse spaces
         </Title>
         <Description>
-          Mint NFTs with hidden 3D models stored on decentralized storage.
-          Explore existing and upcoming engines for the Metaverse and integrate
-          your NFT 3D models inside them. Let&apos;s co-create the new 3D Internet!
+          New decentralized standard of NFT: Encrypted FileToken (EFT) and Mark3d protocol on FVM allows perpetual
+          storage of files on decentralized network of Filecoin & IPFS
         </Description>
         <ToolsContainer>
           <ToolCardNarrow>
             <ToolCardGradientBorder>
               <ToolCardContent>
                 <ToolCardInfo>
-                  <ToolTitle>For 3D creators</ToolTitle>
+                  <ToolTitle>For Metaverse Agencies</ToolTitle>
                   <ToolDescription>
-                    Info portal about Metaverse engines and NFT marketplace for
-                    3D objects
+                    Platform about Metaverse engines and NFT marketplace for 3D models and spaces
                   </ToolDescription>
                 </ToolCardInfo>
 
@@ -195,7 +192,7 @@ export default function WelcomeBlock() {
             </ToolCardContent>
           </ToolCardNarrow>
         </ToolsContainer>
-        <TechnologyStack />
+        <TechnologyStack/>
       </WelcomeInfo>
     </WelcomeScreenWrapper>
   )

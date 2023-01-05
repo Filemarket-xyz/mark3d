@@ -32,10 +32,9 @@ const ToolCardContent = styled('div', {
   gap: '$3'
 })
 
-const Title = styled('h4', {
+const Title = styled('h5', {
   color: '$white',
-  ...textVariant('h4').true,
-  fontSize: 24
+  ...textVariant('h5').true
 })
 
 const ItemsContainer = styled('div', {
