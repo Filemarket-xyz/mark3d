@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Context.sol";
-import "./IHiddenFilesToken.sol";
-import "./IHiddenFilesTokenCallbackReceiver.sol";
+import "./IEncryptedFileToken.sol";
+import "./IEncryptedFileTokenCallbackReceiver.sol";
 
-contract Mark3dExchange is IHiddenFilesTokenCallbackReceiver, Context {
+contract Mark3dExchange is IEncryptedFileTokenCallbackReceiver, Context {
     struct Order {
-        IHiddenFilesToken token;
+        IEncryptedFileToken token;
         uint256 tokenId;
         uint256 price;
         address payable initiator;
@@ -15,22 +15,22 @@ contract Mark3dExchange is IHiddenFilesTokenCallbackReceiver, Context {
         bool fulfilled;
     }
 
-    mapping(IHiddenFilesToken => mapping(uint256 => Order)) public orders;
+    mapping(IEncryptedFileToken => mapping(uint256 => Order)) public orders;
 
     function placeOrder(
-        IHiddenFilesToken token,
+        IEncryptedFileToken token,
         uint256 tokenId,
         uint256 price
     ) external {
         require(price > 0, "Mark3dExchange: price must be positive");
-        require(token.supportsInterface(type(IHiddenFilesToken).interfaceId));
+        require(token.supportsInterface(type(IEncryptedFileToken).interfaceId));
         require(orders[token][tokenId].price == 0, "Mark3dExchange: order exists");
         orders[token][tokenId] = Order(token, tokenId, price, payable(_msgSender()), payable(0), false);
-        token.draftTransfer(tokenId, IHiddenFilesTokenCallbackReceiver(this));
+        token.draftTransfer(tokenId, IEncryptedFileTokenCallbackReceiver(this));
     }
 
     function fulfillOrder(
-        IHiddenFilesToken token,
+        IEncryptedFileToken token,
         bytes calldata publicKey,
         uint256 tokenId
     ) external payable {
@@ -44,7 +44,7 @@ contract Mark3dExchange is IHiddenFilesTokenCallbackReceiver, Context {
     }
 
     function cancelOrder(
-        IHiddenFilesToken token,
+        IEncryptedFileToken token,
         uint256 tokenId
     ) external {
         Order storage order = orders[token][tokenId];
@@ -54,24 +54,24 @@ contract Mark3dExchange is IHiddenFilesTokenCallbackReceiver, Context {
     }
 
     function transferCancelled(uint256 tokenId) external {
-        Order storage order = orders[IHiddenFilesToken(_msgSender())][tokenId];
+        Order storage order = orders[IEncryptedFileToken(_msgSender())][tokenId];
         require(order.price != 0, "Mark3dExchange: order doesn't exist");
         if (order.fulfilled) {
             order.receiver.transfer(order.price);
         }
-        delete orders[IHiddenFilesToken(_msgSender())][tokenId];
+        delete orders[IEncryptedFileToken(_msgSender())][tokenId];
     }
 
     function transferFinished(uint256 tokenId) external {
-        Order storage order = orders[IHiddenFilesToken(_msgSender())][tokenId];
+        Order storage order = orders[IEncryptedFileToken(_msgSender())][tokenId];
         require(order.price != 0, "Mark3dExchange: order doesn't exist");
         require(order.fulfilled, "Mark3dExchange: order wasn't fulfilled");
         order.initiator.transfer(order.price);
-        delete orders[IHiddenFilesToken(_msgSender())][tokenId];
+        delete orders[IEncryptedFileToken(_msgSender())][tokenId];
     }
 
     function transferFraudDetected(uint256 tokenId, bool approved) external {
-        Order storage order = orders[IHiddenFilesToken(_msgSender())][tokenId];
+        Order storage order = orders[IEncryptedFileToken(_msgSender())][tokenId];
         require(order.price != 0, "Mark3dExchange: order doesn't exist");
         require(order.fulfilled, "Mark3dExchange: order wasn't fulfilled");
         if (approved) {
@@ -79,6 +79,6 @@ contract Mark3dExchange is IHiddenFilesTokenCallbackReceiver, Context {
         } else {
             order.initiator.transfer(order.price);
         }
-        delete orders[IHiddenFilesToken(_msgSender())][tokenId];
+        delete orders[IEncryptedFileToken(_msgSender())][tokenId];
     }
 }

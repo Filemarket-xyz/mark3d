@@ -57,10 +57,14 @@ describe("Trade token", async () => {
   });
 
   it("fulfill order", async () => {
-    await exchangeInstance.connect(accounts[2])
+    const tx = await exchangeInstance.connect(accounts[2])
       .fulfillOrder(collectionInstance.address, "0xa1", BN.from(0), {
         value: BN.from(10000)
-      })
+      });
+    await expect(tx)
+        .to
+        .emit(collectionInstance, "TransferDraftCompletion")
+        .withArgs(BN.from(0), await accounts[2].getAddress())
   });
 
   it("set encrypted password", async () => {
@@ -150,7 +154,7 @@ describe("Trade token with fraud not approved", async () => {
     await expect(tx)
       .to
       .emit(collectionInstance, "TransferFraudReported")
-      .withArgs(BN.from(0), false, false);
+      .withArgs(BN.from(0));
   });
 
   it("fraud approved", async () => {
@@ -158,8 +162,8 @@ describe("Trade token with fraud not approved", async () => {
       .lateDecision(collectionInstance.address, BN.from(0), false);
     await expect(tx)
       .to
-      .emit(collectionInstance, "TransferFraudReported")
-      .withArgs(BN.from(0), true, false);
+      .emit(collectionInstance, "TransferFraudDecided")
+      .withArgs(BN.from(0), false);
     await expect(tx)
       .to
       .emit(collectionInstance, "Transfer")
@@ -231,7 +235,7 @@ describe("Trade token with fraud approved", async () => {
     await expect(tx)
       .to
       .emit(collectionInstance, "TransferFraudReported")
-      .withArgs(BN.from(0), false, false);
+      .withArgs(BN.from(0));
   });
 
   it("fraud approved", async () => {
@@ -239,8 +243,8 @@ describe("Trade token with fraud approved", async () => {
       .lateDecision(collectionInstance.address, BN.from(0), true);
     await expect(tx)
       .to
-      .emit(collectionInstance, "TransferFraudReported")
-      .withArgs(BN.from(0), true, true);
+      .emit(collectionInstance, "TransferFraudDecided")
+      .withArgs(BN.from(0), true);
     await expect(tx)
       .to
       .changeEtherBalance(accounts[2], BN.from(10000));

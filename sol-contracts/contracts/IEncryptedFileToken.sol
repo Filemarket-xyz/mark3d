@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable.sol";
-import "./IHiddenFilesTokenCallbackReceiver.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "./IEncryptedFileTokenCallbackReceiver.sol";
 import "./IFraudDecider.sol";
 
-interface IHiddenFilesTokenUpgradeable is IERC721Upgradeable {
+interface IEncryptedFileToken is IERC721 {
     /// @dev Event emitted after transfer creation
     event TransferInit(uint256 indexed tokenId, address from, address to);
 
@@ -53,7 +53,7 @@ interface IHiddenFilesTokenUpgradeable is IERC721Upgradeable {
         uint256 tokenId,
         address to,
         bytes calldata data,
-        IHiddenFilesTokenCallbackReceiver callbackReceiver
+        IEncryptedFileTokenCallbackReceiver callbackReceiver
     ) external;
 
     /// @dev Draft transfer. This method is useful if some third party need to lock NFT before receiver will be defined
@@ -63,7 +63,7 @@ interface IHiddenFilesTokenUpgradeable is IERC721Upgradeable {
     /// @param callbackReceiver is contract on which callbacks will be called. zero address if not needed
     function draftTransfer(
         uint256 tokenId,
-        IHiddenFilesTokenCallbackReceiver callbackReceiver
+        IEncryptedFileTokenCallbackReceiver callbackReceiver
     ) external;
 
     /// @dev Complete transfer draft
@@ -154,19 +154,19 @@ interface IHiddenFilesTokenUpgradeable is IERC721Upgradeable {
         address to,
         uint256 tokenId,
         bytes memory data
-    ) external override(IERC721Upgradeable);
+    ) external override;
 
     /// @dev MUST revert always
     function safeTransferFrom(
         address from,
         address to,
         uint256 tokenId
-    ) external override(IERC721Upgradeable);
+    ) external override;
 
     /// @dev MUST revert always
     function transferFrom(
         address from,
         address to,
         uint256 tokenId
-    ) external override(IERC721Upgradeable);
+    ) external override;
 }

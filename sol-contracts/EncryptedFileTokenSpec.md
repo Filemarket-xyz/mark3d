@@ -85,8 +85,9 @@ interface IFraudDecider {
     ) external returns (bool, bool);
 }
 
+
 /// @dev Interface for third party to receive transfer updates from token contract instances
-interface IHiddenFilesTokenCallbackReceiver {
+interface IEncryptedFileTokenCallbackReceiver {
     /// @dev This function MUST be called if transfer is cancelled
     /// @param tokenId Id of token for which transfer was cancelled
     function transferCancelled(uint256 tokenId) external;
@@ -101,7 +102,8 @@ interface IHiddenFilesTokenCallbackReceiver {
     function transferFraudDetected(uint256 tokenId, bool approved) external;
 }
 
-interface IHiddenFilesToken is IERC721 {
+
+interface IEncryptedFileToken is IERC721 {
     /// @dev Event emitted after transfer creation
     event TransferInit(uint256 indexed tokenId, address from, address to);
 
@@ -148,7 +150,7 @@ interface IHiddenFilesToken is IERC721 {
         uint256 tokenId,
         address to,
         bytes calldata data,
-        IHiddenFilesTokenCallbackReceiver callbackReceiver
+        IEncryptedFileTokenCallbackReceiver callbackReceiver
     ) external;
 
     /// @dev Draft transfer. This method is useful if some third party need to lock NFT before receiver will be defined
@@ -158,7 +160,7 @@ interface IHiddenFilesToken is IERC721 {
     /// @param callbackReceiver is contract on which callbacks will be called. zero address if not needed
     function draftTransfer(
         uint256 tokenId,
-        IHiddenFilesTokenCallbackReceiver callbackReceiver
+        IEncryptedFileTokenCallbackReceiver callbackReceiver
     ) external;
 
     /// @dev Complete transfer draft
@@ -267,9 +269,9 @@ interface IHiddenFilesToken is IERC721 {
 }
 ```
 ## Implementations
-* [Reference implementation of IHiddenFilesToken](./contracts/Mark3dCollection.sol)
+* [Reference implementation of IEncryptedFileToken](./contracts/Mark3dCollection.sol)
 * [Reference implementation of IFraudDecider](./contracts/FraudDeciderWeb2.sol)
-* [Reference implementation of IHiddenFilesTokenCallbackReceiver - Simple exchange contract, which also shows draft methods usage](./contracts/Mark3dExchange.sol)
+* [Reference implementation of IEncryptedFileTokenCallbackReceiver - Simple exchange contract, which also shows draft methods usage](./contracts/Mark3dExchange.sol)
 ## References
 ### Standards
 1. [ERC-721](https://eips.ethereum.org/EIPS/eip-721) Non-Fungible Token Standard.

@@ -6,11 +6,11 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import "./Mark3dAccessToken.sol";
 import "./IFraudDecider.sol";
-import "./IHiddenFilesToken.sol";
-import "./IHiddenFilesTokenUpgradeable.sol";
-import "./IHiddenFilesTokenCallbackReceiver.sol";
+import "./IEncryptedFileToken.sol";
+import "./IEncryptedFileTokenUpgradeable.sol";
+import "./IEncryptedFileTokenCallbackReceiver.sol";
 
-contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgradeable, OwnableUpgradeable {
+contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpgradeable, OwnableUpgradeable {
     /// @dev TokenData - struct with basic token data
     struct TokenData {
         uint256 id;             // token id
@@ -24,7 +24,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
         address initiator;                                      // transfer initiator
         address from;                                           // transfer sender
         address to;                                             // transfer target
-        IHiddenFilesTokenCallbackReceiver callbackReceiver;     // callback receiver
+        IEncryptedFileTokenCallbackReceiver callbackReceiver;  // callback receiver
         bytes data;                                             // transfer data
         bytes publicKey;                                        // public key of receiver
         bytes encryptedPassword;                                // encrypted password
@@ -90,8 +90,8 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
      */
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721EnumerableUpgradeable, IERC165Upgradeable) returns (bool) {
         return
-        interfaceId == type(IHiddenFilesTokenUpgradeable).interfaceId ||
-        interfaceId == type(IHiddenFilesToken).interfaceId ||
+        interfaceId == type(IEncryptedFileTokenUpgradeable).interfaceId ||
+        interfaceId == type(IEncryptedFileToken).interfaceId ||
         super.supportsInterface(interfaceId);
     }
 
@@ -173,13 +173,13 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
     }
 
     /**
-     * @dev See {IHiddenFilesToken-initTransfer}.
+     * @dev See {IEncryptedFileToken-initTransfer}.
      */
     function initTransfer(
         uint256 tokenId,
         address to,
         bytes calldata data,
-        IHiddenFilesTokenCallbackReceiver callbackReceiver
+        IEncryptedFileTokenCallbackReceiver callbackReceiver
     ) external {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "Mark3dCollection: caller is not token owner or approved");
         require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
@@ -189,11 +189,11 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
     }
 
     /**
-     * @dev See {IHiddenFilesToken-draftTransfer}.
+     * @dev See {IEncryptedFileToken-draftTransfer}.
      */
     function draftTransfer(
         uint256 tokenId,
-        IHiddenFilesTokenCallbackReceiver callbackReceiver
+        IEncryptedFileTokenCallbackReceiver callbackReceiver
     ) external {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "Mark3dCollection: caller is not token owner or approved");
         require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
@@ -203,7 +203,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
     }
 
     /**
-     * @dev See {IHiddenFilesToken-completeTransferDraft}.
+     * @dev See {IEncryptedFileToken-completeTransferDraft}.
      */
     function completeTransferDraft(
         uint256 tokenId,
@@ -225,7 +225,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
     }
 
     /**
-     * @dev See {IHiddenFilesToken-setTransferPublicKey}.
+     * @dev See {IEncryptedFileToken-setTransferPublicKey}.
      */
     function setTransferPublicKey(uint256 tokenId, bytes calldata publicKey) external {
         require(publicKey.length > 0, "Mark3dCollection: empty public key");
@@ -239,7 +239,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
     }
 
     /**
-     * @dev See {IHiddenFilesToken-approveTransfer}.
+     * @dev See {IEncryptedFileToken-approveTransfer}.
      */
     function approveTransfer(uint256 tokenId, bytes calldata encryptedPassword) external {
         require(encryptedPassword.length > 0, "Mark3dCollection: empty password");
@@ -254,7 +254,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
     }
 
     /**
-     * @dev See {IHiddenFilesToken-finalizeTransfer}.
+     * @dev See {IEncryptedFileToken-finalizeTransfer}.
      */
     function finalizeTransfer(uint256 tokenId) external {
         TransferInfo storage info = transfers[tokenId];
@@ -272,7 +272,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
     }
 
     /**
-     * @dev See {IHiddenFilesToken-reportFraud}.
+     * @dev See {IEncryptedFileToken-reportFraud}.
      */
     function reportFraud(
         uint256 tokenId,
@@ -304,7 +304,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
     }
 
     /**
-     * @dev See {IHiddenFilesToken-applyFraudDecision}.
+     * @dev See {IEncryptedFileToken-applyFraudDecision}.
      */
     function applyFraudDecision(
         uint256 tokenId,
@@ -329,7 +329,7 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
     }
 
     /**
-     * @dev See {IHiddenFilesToken-cancelTransfer}.
+     * @dev See {IEncryptedFileToken-cancelTransfer}.
      */
     function cancelTransfer(
         uint256 tokenId
@@ -353,17 +353,17 @@ contract Mark3dCollection is IHiddenFilesTokenUpgradeable, ERC721EnumerableUpgra
     }
 
     function safeTransferFrom(address, address, uint256,
-        bytes memory) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IHiddenFilesTokenUpgradeable) {
+        bytes memory) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IEncryptedFileTokenUpgradeable) {
         revert("common transfer disabled");
     }
 
     function safeTransferFrom(address, address,
-        uint256) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IHiddenFilesTokenUpgradeable) {
+        uint256) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IEncryptedFileTokenUpgradeable) {
         revert("common transfer disabled");
     }
 
     function transferFrom(address, address,
-        uint256) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IHiddenFilesTokenUpgradeable) {
+        uint256) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IEncryptedFileTokenUpgradeable) {
         revert("common transfer disabled");
     }
 

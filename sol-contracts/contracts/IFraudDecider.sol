@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-/// @notice Probably, this will be renamed to FRC...FraudDecider in the future
 interface IFraudDecider {
     /// @dev Decide if there was a fact of fraud
     /// @param tokenId Id of token to check

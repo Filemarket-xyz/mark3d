@@ -175,7 +175,7 @@ describe("Transfer with fraud", async () => {
     await expect(tx)
       .to
       .emit(collectionInstance, "TransferFraudReported")
-      .withArgs(BN.from(0), false, false);
+      .withArgs(BN.from(0));
   });
 
   it("fraud approved", async () => {
@@ -183,8 +183,8 @@ describe("Transfer with fraud", async () => {
       .lateDecision(collectionInstance.address, BN.from(0), false);
     await expect(tx)
       .to
-      .emit(collectionInstance, "TransferFraudReported")
-      .withArgs(BN.from(0), true, false);
+      .emit(collectionInstance, "TransferFraudDecided")
+      .withArgs(BN.from(0), false);
     await expect(tx)
       .to
       .emit(collectionInstance, "Transfer")
