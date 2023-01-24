@@ -2,8 +2,8 @@ mod helpers;
 mod structs;
 
 use helpers::{
-    add_in_set, call_late_decision, decrypt_file, decrypt_password, fetch_file, get_block,
-    get_collection_creation_event, get_contract, get_events, get_latest_block_num,
+    add_in_set, call_late_decision, decrypt_file, decrypt_password, fetch_file, get_block_no_extra,
+    get_collection_creation_event, get_contract, get_events, get_latest_block_num_no_extra
 };
 use openssl::rsa::Rsa;
 use redis::{aio::Connection, AsyncCommands, Client};
@@ -12,9 +12,11 @@ use std::{collections::HashSet, env, error::Error, str::FromStr};
 use structs::OraculConf;
 use web3::types::H160;
 use std::{thread, time::Duration};
+use env_logger;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+    env_logger::init();
     dotenvy::dotenv().expect("Failed to read .env file");
 
     let mut con: Connection = Client::open(env::var("REDIS_CON").expect("redis env err"))?
@@ -52,8 +54,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .expect("secret key create err"),
     };
 
-    let web3 = web3::Web3::new(web3::transports::Http::new(&conf.eth_api_url).unwrap());
-    let mut old_block_num: u64 = match get_latest_block_num(&web3).await {
+    let transport = web3::transports::Http::new(&conf.eth_api_url).unwrap();
+    let transport2 = transport.clone();
+    let web3 = web3::Web3::new(transport);
+    let mut old_block_num: u64 = match get_latest_block_num_no_extra(&transport2).await {
         Ok(n) => n,
         Err(e) => panic!("{}", e),
     };
@@ -68,7 +72,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     loop {
         thread::sleep(Duration::from_millis(200));
         // get latest block
-        let new_block_num: u64 = match get_latest_block_num(&web3).await {
+        let new_block_num: u64 = match get_latest_block_num_no_extra(&transport2).await {
             Ok(n) => {
                 if n == old_block_num {
                     continue;
@@ -83,7 +87,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
         // blocks enumeration (from old to latest)
         for i in old_block_num + 1..=new_block_num {
-            let block = match get_block(i, &web3).await {
+            let block = match get_block_no_extra(i, &transport2).await {
                 Ok(b) => b,
                 Err(e) => {
                     println!("get block error: {e}");

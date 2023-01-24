@@ -13,14 +13,17 @@ use openssl::{
 use redis::{aio::Connection, AsyncCommands};
 use secp256k1::SecretKey;
 use sha2::{Digest, Sha256};
-use std::{collections::HashSet, env, error::Error};
+use std::{collections::HashSet, env, error::Error, str::FromStr};
 use web3::{
     ethabi::{Contract, Log, RawLog},
     transports::Http,
-    types::{Block, BlockId, BlockNumber, Transaction, TransactionReceipt, H160, H256},
+    types::{Block, BlockId, BlockNumber, Transaction, TransactionReceipt, H160, H256, Address, Index},
     Web3,
-    signing::Key, contract::Options
+    signing::Key, contract::Options,
+    Transport
 };
+use serde_json::Value;
+use serde::{Deserialize, Serialize};
 
 pub async fn add_in_set(
     con: &mut Connection,
@@ -240,6 +243,33 @@ pub fn decrypt_file(file: &[u8], key_bytes: &[u8]) -> Result<bool, web3::Error> 
     Ok(result == hash)
 }
 
+/// Description of a Transaction, pending or in the chain.
+#[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
+pub struct TransactionNoExtraData {
+    /// Hash
+    pub hash: H256,
+    /// Transaction Index. None when pending.
+    #[serde(rename = "transactionIndex")]
+    pub transaction_index: Option<Index>,
+    /// Sender
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub from: Option<Address>,
+    /// Recipient (None when contract creation)
+    pub to: Option<Address>,
+}
+
+/// The block type returned from RPC calls.
+/// This is generic over a `TX` type.
+#[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
+pub struct BlockNoExtraData<TX> {
+    /// Hash of the block
+    pub hash: Option<web3::types::H256>,
+    /// Block number. None if pending.
+    pub number: Option<web3::types::U64>,
+    /// Transactions
+    pub transactions: Vec<TX>,
+}
+
 pub async fn get_latest_block_num(web3: &Web3<Http>) -> Result<u64, web3::Error> {
     let block = web3
         .eth()
@@ -249,6 +279,31 @@ pub async fn get_latest_block_num(web3: &Web3<Http>) -> Result<u64, web3::Error>
         Some(b) => b,
         None => return Err(web3::Error::Internal),
     };
+    match block.number {
+        Some(n) => Ok(n.as_u64()),
+        None => Err(web3::Error::Internal),
+    }
+}
+
+
+pub async fn get_latest_block_num_no_extra(transport: &web3::transports::Http) -> Result<u64, web3::Error> {
+    let result = transport.execute("eth_getBlockByNumber",
+     vec![Value::String(String::from_str("latest").unwrap()), Value::Bool(false)]).await?;
+    match result.get("error") {
+        Some(value) => {
+            log::error!("failed to get latest block number: {}", value.to_string());
+            return Err(web3::Error::Internal)
+        },
+        None => (),
+    }
+    let block: BlockNoExtraData<web3::types::H256> = match serde_json::from_value(result) {
+        Ok(b) => b,
+        Err(e) => {
+            log::error!("failed to get latest block number: {}", e);
+            return Err(web3::Error::Internal);
+        },
+    };
+
     match block.number {
         Some(n) => Ok(n.as_u64()),
         None => Err(web3::Error::Internal),
@@ -275,6 +330,33 @@ pub async fn get_block(
         Some(b) => Ok(b),
         None => Err(web3::Error::Internal),
     }
+}
+
+pub async fn get_block_no_extra(
+    block_num: u64,
+    transport: &web3::transports::Http
+) -> Result<BlockNoExtraData<TransactionNoExtraData>, web3::Error> {
+    let block_num: [u64; 1] = [block_num];
+    let result = transport.execute("eth_getBlockByNumber",
+    vec![serde_json::to_value(
+        BlockId::Number(
+            BlockNumber::Number(web3::types::U64(block_num)),
+        )).unwrap(), Value::Bool(true)]).await?;
+    match result.get("error") {
+        Some(value) => {
+            log::error!("failed to get block: {}", value.to_string());
+            return Err(web3::Error::Internal)
+        },
+        None => (),
+    }
+    let block: BlockNoExtraData<TransactionNoExtraData> = match serde_json::from_value(result) {
+        Ok(b) => b,
+        Err(e) => {
+            log::error!("failed to get latest block number: {}", e);
+            return Err(web3::Error::Internal);
+        },
+    };
+    Ok(block)
 }
 
 pub async fn call_late_decision(
