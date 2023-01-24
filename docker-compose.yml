@@ -1,20 +1,20 @@
 version: "3.8"
 services:
   indexer-service:
-    image: mark3d-indexer-service:latest
+    image: file-market-indexer-service:latest
     ports:
       - "9202:9202"
     depends_on:
       - indexer-postgres
     volumes:
-      - ~/mark3d-logs:/logs
+      - ~/logs:/logs
     restart: unless-stopped
   oracle-service:
-    image: mark3d-oracle-service:latest
+    image: file-market-oracle-service:latest
     depends_on:
       - oracle-redis
     volumes:
-      - ~/mark3d-logs:/logs
+      - ~/logs:/logs
     restart: unless-stopped
   indexer-swagger:
     image: swaggerapi/swagger-ui:latest

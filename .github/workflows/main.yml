@@ -39,7 +39,7 @@ jobs:
         run: make build-contracts
         working-directory: backend/
       - name: Build oracle container
-        run: docker build -t mark3d-oracle-service:latest -f backend/Dockerfile .
+        run: docker build -t file-market-oracle-service:latest -f backend/Dockerfile .
   build-indexer:
     runs-on: [self-hosted, main]
     steps:
@@ -53,7 +53,7 @@ jobs:
         run: make build-models
         working-directory: indexer/
       - name: Build indexer container
-        run: docker build --build-arg env=main -t mark3d-indexer-service:latest .
+        run: docker build --build-arg env=main -t file-market-indexer-service:latest .
         working-directory: indexer/
   update:
     runs-on: [self-hosted, main]
@@ -67,8 +67,8 @@ jobs:
       - name: Update frontend
         run: |
           unzip frontend.zip
-          sudo rm -r /usr/share/nginx/mark3d.xyz/*
-          sudo mv dist/* /usr/share/nginx/mark3d.xyz/
+          sudo rm -r /usr/share/nginx/filemarket.xyz/*
+          sudo mv dist/* /usr/share/nginx/filemarket.xyz/
       - name: Update swagger
         run: cp indexer/swagger.yaml ~/indexer-swagger/
       - name: Up migration
@@ -79,5 +79,5 @@ jobs:
         run: docker-compose -f docker-compose.yml up -d indexer-swagger indexer-postgres oracle-redis indexer-service oracle-service
       - name: update nginx
         run: |
-          sudo mv nginx.conf /etc/nginx/conf.d/mark3d.conf
+          sudo mv nginx.conf /etc/nginx/conf.d/filemarket.conf
           sudo nginx -s reload
