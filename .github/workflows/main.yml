@@ -79,5 +79,5 @@ jobs:
         run: docker-compose -f docker-compose.yml up -d indexer-swagger indexer-postgres oracle-redis indexer-service oracle-service
       - name: update nginx
         run: |
-          sudo mv nginx.conf /etc/nginx/conf.d/filemarket.conf
+          sudo mv filemarket.conf /etc/nginx/conf.d/filemarket.conf
           sudo nginx -s reload
