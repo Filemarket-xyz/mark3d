@@ -653,11 +653,11 @@ func (s *service) processBlock(block *types.Block) error {
 }
 
 func (s *service) ListenBlockchain() error {
-	header, err := s.ethClient.HeaderByNumber(context.Background(), nil)
+	block, err := s.ethClient.BlockByNumber(context.Background(), nil)
 	if err != nil {
 		return err
 	}
-	latest := header.Number
+	latest := block.Number()
 	for {
 		select {
 		case <-time.After(100 * time.Millisecond):
@@ -675,13 +675,13 @@ func (s *service) ListenBlockchain() error {
 func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	header, err := s.ethClient.HeaderByNumber(ctx, nil)
+	block, err := s.ethClient.BlockByNumber(ctx, nil)
 	if err != nil {
 		return latest, err
 	}
-	for header.Number.Cmp(latest) != 0 {
+	for block.Number().Cmp(latest) != 0 {
 		pending := latest.Add(latest, big.NewInt(1))
-		block, err := s.ethClient.BlockByNumber(ctx, pending)
+		block, err = s.ethClient.BlockByNumber(ctx, pending)
 		if err != nil {
 			return latest, err
 		}
