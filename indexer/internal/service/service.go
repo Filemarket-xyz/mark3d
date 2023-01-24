@@ -9,7 +9,10 @@ import (
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/access_token"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/collection"
@@ -87,13 +90,15 @@ type Orders interface {
 type service struct {
 	postgres            postgres.Postgres
 	cfg                 *config.ServiceConfig
+	rpcClient           *rpc.Client
 	ethClient           EthClient
 	accessTokenInstance *access_token.Mark3dAccessToken
 	exchangeInstance    *exchange.Mark3dExchange
 	closeCh             chan struct{}
 }
 
-func NewService(postgres postgres.Postgres, ethClient EthClient, cfg *config.ServiceConfig) (Service, error) {
+func NewService(postgres postgres.Postgres, rpcClient *rpc.Client, cfg *config.ServiceConfig) (Service, error) {
+	ethClient := ethclient.NewClient(rpcClient)
 	accessTokenInstance, err := access_token.NewMark3dAccessToken(cfg.AccessTokenAddress, ethClient)
 	if err != nil {
 		return nil, err
@@ -103,6 +108,7 @@ func NewService(postgres postgres.Postgres, ethClient EthClient, cfg *config.Ser
 		return nil, err
 	}
 	return &service{
+		rpcClient:           rpcClient,
 		ethClient:           ethClient,
 		postgres:            postgres,
 		cfg:                 cfg,
@@ -110,6 +116,50 @@ func NewService(postgres postgres.Postgres, ethClient EthClient, cfg *config.Ser
 		exchangeInstance:    exchangeInstance,
 		closeCh:             make(chan struct{}),
 	}, nil
+}
+
+type rpcTransaction struct {
+	tx *types.Transaction
+	txExtraInfo
+}
+
+type txExtraInfo struct {
+	BlockNumber *string         `json:"blockNumber,omitempty"`
+	BlockHash   *common.Hash    `json:"blockHash,omitempty"`
+	From        *common.Address `json:"from,omitempty"`
+}
+
+type rpcBlock struct {
+	Hash         common.Hash      `json:"hash"`
+	Transactions []rpcTransaction `json:"transactions"`
+	UncleHashes  []common.Hash    `json:"uncles"`
+}
+
+func (s *service) getBlock(ctx context.Context, args ...interface{}) (*types.Block, error) {
+	var raw json.RawMessage
+	err := s.rpcClient.CallContext(ctx, &raw, "eth_getBlockByNumber", args...)
+	if err != nil {
+		return nil, err
+	} else if len(raw) == 0 {
+		return nil, ethereum.NotFound
+	}
+	// Decode header and transactions.
+	var head *types.Header
+	var body rpcBlock
+	if err := json.Unmarshal(raw, &head); err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(raw, &body); err != nil {
+		return nil, err
+	}
+	// Load uncles because they are not included in the block response.
+	var uncles []*types.Header
+	// Fill the sender cache of transactions in the block.
+	txs := make([]*types.Transaction, len(body.Transactions))
+	for i, tx := range body.Transactions {
+		txs[i] = tx.tx
+	}
+	return types.NewBlockWithHeader(head).WithBody(txs, uncles), nil
 }
 
 func (s *service) isCollection(ctx context.Context, tx pgx.Tx, address common.Address) (bool, error) {
@@ -653,7 +703,7 @@ func (s *service) processBlock(block *types.Block) error {
 }
 
 func (s *service) ListenBlockchain() error {
-	block, err := s.ethClient.BlockByNumber(context.Background(), nil)
+	block, err := s.getBlock(context.Background(), "latest", true)
 	if err != nil {
 		return err
 	}
@@ -675,13 +725,13 @@ func (s *service) ListenBlockchain() error {
 func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	block, err := s.ethClient.BlockByNumber(ctx, nil)
+	block, err := s.getBlock(ctx, "latest", true)
 	if err != nil {
 		return latest, err
 	}
 	for block.Number().Cmp(latest) != 0 {
 		pending := latest.Add(latest, big.NewInt(1))
-		block, err = s.ethClient.BlockByNumber(ctx, pending)
+		block, err = s.getBlock(ctx, hexutil.EncodeBig(pending), true)
 		if err != nil {
 			return latest, err
 		}

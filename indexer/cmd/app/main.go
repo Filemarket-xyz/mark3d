@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/config"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/handler"
@@ -40,11 +40,11 @@ func main() {
 	}
 
 	pg := postgres.NewPostgres(pool)
-	ethClient, err := ethclient.Dial(cfg.Service.RpcUrl)
+	rpcClient, err := rpc.Dial(cfg.Service.RpcUrl)
 	if err != nil {
 		log.Panicln(err)
 	}
-	indexService, err := service.NewService(pg, ethClient, cfg.Service) // service who interact with main dependencies
+	indexService, err := service.NewService(pg, rpcClient, cfg.Service) // service who interact with main dependencies
 	if err != nil {
 		log.Panicln(err)
 	}
