@@ -19,6 +19,7 @@
     "@types/mocha": "^9.1.0",
     "@types/node": ">=12.0.0",
     "@types/node-rsa": "^1.1.1",
+    "aes-js": "^3.1.2",
     "chai": "^4.2.0",
     "commander": "^9.4.1",
     "ethers": "^5.4.7",
@@ -27,11 +28,13 @@
     "js-sha256": "^0.9.0",
     "node-rsa": "^1.1.1",
     "openpgp": "^5.5.0",
+    "pbkdf2": "^3.1.2",
     "solidity-coverage": "^0.8.0",
     "ts-node": ">=8.0.0",
     "typechain": "^8.1.0",
-    "typescript": ">=4.5.0",
-    "aes-js": "^3.1.2",
-    "pbkdf2": "^3.1.2"
+    "typescript": ">=4.5.0"
+  },
+  "dependencies": {
+    "request": "^2.88.2"
   }
 }

@@ -90,7 +90,7 @@ type service struct {
 	ethClient           EthClient
 	accessTokenInstance *access_token.Mark3dAccessToken
 	exchangeInstance    *exchange.Mark3dExchange
-	sub                 ethereum.Subscription
+	closeCh             chan struct{}
 }
 
 func NewService(postgres postgres.Postgres, ethClient EthClient, cfg *config.ServiceConfig) (Service, error) {
@@ -108,6 +108,7 @@ func NewService(postgres postgres.Postgres, ethClient EthClient, cfg *config.Ser
 		cfg:                 cfg,
 		accessTokenInstance: accessTokenInstance,
 		exchangeInstance:    exchangeInstance,
+		closeCh:             make(chan struct{}),
 	}, nil
 }
 
@@ -616,13 +617,9 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 	return nil
 }
 
-func (s *service) processBlock(hash common.Hash) error {
+func (s *service) processBlock(block *types.Block) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
-	block, err := s.ethClient.BlockByHash(ctx, hash)
-	if err != nil {
-		return err
-	}
 	tx, err := s.postgres.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		return err
@@ -656,29 +653,47 @@ func (s *service) processBlock(hash common.Hash) error {
 }
 
 func (s *service) ListenBlockchain() error {
-	ch := make(chan *types.Header, 5)
-	sub, err := s.ethClient.SubscribeNewHead(context.Background(), ch)
+	header, err := s.ethClient.HeaderByNumber(context.Background(), nil)
 	if err != nil {
 		return err
 	}
-	s.sub = sub
+	latest := header.Number
 	for {
 		select {
-		case head := <-ch:
-			time.Sleep(100 * time.Millisecond)
-			if err := s.processBlock(head.Hash()); err != nil {
+		case <-time.After(100 * time.Millisecond):
+			current, err := s.checkBlock(latest)
+			if err != nil {
 				log.Println("process block failed", err)
 			}
-		case err := <-sub.Err():
-			log.Println("listen blockchain: ", err)
-			s.sub = nil
-			return ErrSubFailed
+			latest = current
+		case <-s.closeCh:
+			return nil
 		}
 	}
 }
 
-func (s *service) Shutdown() {
-	if s.sub != nil {
-		s.sub.Unsubscribe()
+func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	header, err := s.ethClient.HeaderByNumber(ctx, nil)
+	if err != nil {
+		return latest, err
 	}
+	for header.Number.Cmp(latest) != 0 {
+		pending := latest.Add(latest, big.NewInt(1))
+		block, err := s.ethClient.BlockByNumber(ctx, pending)
+		if err != nil {
+			return latest, err
+		}
+		if err := s.processBlock(block); err != nil {
+			return latest, err
+		}
+		latest = pending
+	}
+	return latest, nil
+}
+
+func (s *service) Shutdown() {
+	s.closeCh <- struct{}{}
+	close(s.closeCh)
 }

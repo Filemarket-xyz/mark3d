@@ -10,8 +10,8 @@
     "swaggerHost": "https://indexer-swagger.mark3d.xyz"
   },
   "service": {
-    "accessTokenAddress": "0xdB3A0a1bC30CBdce2DEB9FCc387AD7bb6889f74F",
-    "exchangeAddress": "0x6977F3aDa02857c1Bc2632a38158257D8BE672bb",
-    "fraudDeciderWeb2Address": "0x2aE9a075849d5261237A8D4D585Ce25aCe7aa1cB"
+    "accessTokenAddress": "0xDF5a6aBa1D6a68c4e933127829dddBF106f45075",
+    "exchangeAddress": "0x1358f538b52D60c8012091adA98c8604F81e5556",
+    "fraudDeciderWeb2Address": "0x039d246110F50afb4aC8d3a025e6aA11C732578A"
   }
 }
