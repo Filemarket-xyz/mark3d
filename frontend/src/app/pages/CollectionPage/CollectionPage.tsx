@@ -103,63 +103,64 @@ const CollectionPage = observer(() => {
     <>
       <GrayOverlay>
         <Background src={bg} />
-
-        <StyledContainer>
-          <Profile>
-            <ProfileHeader>
-              <ProfileImage
-                src={
-                  collectionAndNfts.collection?.image
-                    ? getHttpLinkFromIpfsString(
-                      collectionAndNfts.collection?.image ?? ''
-                    )
-                    : gradientPlaceholderImg
-                }
-              />
-              <ProfileName>{collectionAndNfts.collection?.name}</ProfileName>
-            </ProfileHeader>
-
-            <Badges>
-              <NavLink
-                to={
-                  collectionAndNfts.collection?.owner
-                    ? `/profile/${collectionAndNfts.collection.owner}`
-                    : currentPath
-                }
-              >
-                <Badge
-                  content={{
-                    title: 'Creator',
-                    value: reduceAddress(
-                      collectionAndNfts.collection?.owner ?? ''
-                    )
-                  }}
-                  image={{
-                    url: getProfileImageUrl(
-                      collectionAndNfts.collection?.owner ?? ''
-                    ),
-                    borderRadius: 'circle'
-                  }}
+        {collectionAndNfts && (
+          <StyledContainer>
+            <Profile>
+              <ProfileHeader>
+                <ProfileImage
+                  src={
+                    collectionAndNfts.collection?.image
+                      ? getHttpLinkFromIpfsString(
+                        collectionAndNfts.collection?.image ?? ''
+                      )
+                      : gradientPlaceholderImg
+                  }
                 />
-              </NavLink>
+                <ProfileName>{collectionAndNfts.collection?.name}</ProfileName>
+              </ProfileHeader>
 
-              {collectionAndNfts.collection?.address && (
-                <Link
-                  href={`https://mumbai.polygonscan.com/token/${collectionAndNfts.collection?.address}`}
-                  target='_blank'
-                  rel='noopener noreferrer'
+              <Badges>
+                <NavLink
+                  to={
+                    collectionAndNfts.collection?.owner
+                      ? `/profile/${collectionAndNfts.collection.owner}`
+                      : currentPath
+                  }
                 >
-                  <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
-                </Link>
-              )}
-            </Badges>
+                  <Badge
+                    content={{
+                      title: 'Creator',
+                      value: reduceAddress(
+                        collectionAndNfts.collection?.owner ?? ''
+                      )
+                    }}
+                    image={{
+                      url: getProfileImageUrl(
+                        collectionAndNfts.collection?.owner ?? ''
+                      ),
+                      borderRadius: 'circle'
+                    }}
+                  />
+                </NavLink>
 
-            <ProfileDescription>
-              {collectionAndNfts.collection?.description}
-            </ProfileDescription>
-          </Profile>
-        </StyledContainer>
+                {collectionAndNfts.collection?.address && (
+                  <Link
+                    href={`https://mumbai.polygonscan.com/token/${collectionAndNfts.collection?.address}`}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
+                  </Link>
+                )}
+              </Badges>
 
+              <ProfileDescription>
+                {collectionAndNfts.collection?.description}
+              </ProfileDescription>
+            </Profile>
+          </StyledContainer>
+
+        )}
         <Inventory>
           <TabsContainer>
             <Tabs

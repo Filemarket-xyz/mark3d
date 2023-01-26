@@ -40,7 +40,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
       this,
       api.collections.fullDetail(collectionAddress),
       (resp) => {
-        this.data = resp
+        this.data = resp || {}
       }
     )
   }
