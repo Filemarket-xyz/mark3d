@@ -21,6 +21,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
       cursor: 'pointer',
       transition: 'transform 0.25s ease 0s, opacity 0.25s ease 0s',
       ...textVariant('button1').true,
+      textDecoration: 'none',
       '&[data-pressed=true]': {
         transform: 'scale(0.97)'
       },

@@ -1,6 +1,6 @@
 import React from 'react'
 import { styled } from '../../../../styles'
-import { textVariant, ToolCard, ToolCardGradientBorder } from '../../../UIkit'
+import { textVariant, ToolCard } from '../../../UIkit'
 
 // technology icons
 import item1 from '../img/TechnologyStack/1.svg'
@@ -111,18 +111,16 @@ const items: ItemData[] = [
 export const TechnologyStack = () => {
   return (
     <ToolCardWide>
-      <ToolCardGradientBorder>
-        <ToolCardContent>
-          <Title>Powered by</Title>
-          <ItemsContainer>
-            {items.map(({ src, href }) => (
-              <Item key={src} href={href} target='_blank'>
-                <ItemImg src={src}/>
-              </Item>
-            ))}
-          </ItemsContainer>
-        </ToolCardContent>
-      </ToolCardGradientBorder>
+      <ToolCardContent>
+        <Title>Powered by</Title>
+        <ItemsContainer>
+          {items.map(({ src, href }) => (
+            <Item key={src} href={href} target='_blank'>
+              <ItemImg src={src}/>
+            </Item>
+          ))}
+        </ItemsContainer>
+      </ToolCardContent>
     </ToolCardWide>
   )
 }
