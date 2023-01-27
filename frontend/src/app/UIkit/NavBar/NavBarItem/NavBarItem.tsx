@@ -9,6 +9,7 @@ const navBarItemStyles = {
   outline: 'none',
   textDecoration: 'none',
   cursor: 'pointer',
+  position: 'relative',
   transition: 'color 0.25s ease 0s, transform 0.25s ease 0s',
 
   '&[data-hovered=true]': {
@@ -41,6 +42,24 @@ const navBarItemStyles = {
   },
   '&.active::after': {
     opacity: 1
+  },
+  variants: {
+    mock: {
+      true: {
+        pointerEvents: 'none',
+        cursor: 'default',
+        '&[data-hovered=true]': {
+          color: '$gray100',
+          transform: 'none'
+        },
+        '&[data-focus=true]': {
+          focusRing: 'none'
+        },
+        '&[data-pressed=true]': {
+          opacity: 1
+        }
+      }
+    }
   }
 }
 

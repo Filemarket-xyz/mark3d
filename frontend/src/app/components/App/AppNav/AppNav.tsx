@@ -5,7 +5,7 @@ import { AppLogoButton } from '../AppLogoButton'
 import { BreakpointsOptions } from '../../../../styles'
 import { AppConnectWidget } from '../AppConnectWidget'
 
-const mobileBp: BreakpointsOptions = 'md'
+const mobileBp: BreakpointsOptions = 'lg'
 
 export const AppNav: FC = () => (
   <>

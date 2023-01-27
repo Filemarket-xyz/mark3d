@@ -1,12 +1,8 @@
 import React from 'react'
 import { styled } from '../../../../styles'
 import { Container, Link, Txt } from '../../../UIkit'
-import Linkedin from './img/Linkedin.svg'
 import Telegram from './img/Telegram.svg'
 import Twitter from './img/Twitter.svg'
-import Youtube from './img/Youtube.svg'
-import Anchor from './img/Anchor.svg'
-import Medium from './img/Medium.svg'
 
 const FooterWrapper = styled('footer', {
   width: '100%',
@@ -82,7 +78,7 @@ export default function Footer() {
         </Info>
         <SocialsContainer>
           <Link
-            href='http://twitter.com/mark3d_xyz'
+            href='https://twitter.com/filemarket_xyz'
             target='_blank'
             rel='noopener noreferrer'
           >
@@ -90,7 +86,7 @@ export default function Footer() {
           </Link>
 
           <Link
-            href='http://t.me/mark3d_xyz'
+            href='https://t.me/filemarketchat'
             target='_blank'
             rel='noopener noreferrer'
           >
@@ -98,32 +94,11 @@ export default function Footer() {
           </Link>
 
           <Link
-            href='https://anchor.fm/the-metaversed'
+            href='https://t.me/filemarketofficial'
             target='_blank'
             rel='noopener noreferrer'
           >
-            <SocialImage src={Anchor} />
-          </Link>
-          <Link
-            href='https://medium.com/@mark3d'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <SocialImage src={Medium} />
-          </Link>
-          <Link
-            href='http://youtube.com/@mark3d'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <SocialImage src={Youtube} />
-          </Link>
-          <Link
-            href='http://linkedin.com/company/mark3dxyz/'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <SocialImage src={Linkedin} />
+            <SocialImage src={Telegram} />
           </Link>
         </SocialsContainer>
       </FooterContainer>
