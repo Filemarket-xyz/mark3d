@@ -1,11 +1,31 @@
 import { cssShowHideIn, styled } from '../../../../styles'
-import { ComponentProps, FC, PropsWithChildren } from 'react'
+import { ComponentProps, forwardRef, PropsWithChildren } from 'react'
 import { Txt } from '../../Txt'
-import { Link, NavLink } from '../../Link'
+import { NavLink as RouterNavLink } from 'react-router-dom'
+import { LinkProps, NavLinkProps, useLink } from '../../Link'
 
 const navBarItemStyles = {
-  color: '$blue900',
-  position: 'relative',
+  color: '$gray100',
+  outline: 'none',
+  textDecoration: 'none',
+  cursor: 'pointer',
+  transition: 'color 0.25s ease 0s, transform 0.25s ease 0s',
+
+  '&[data-hovered=true]': {
+    color: '$white',
+    transform: 'scale(1.03)'
+  },
+  '&[data-focus=true]': {
+    focusRing: '$gray100'
+  },
+  '&[data-pressed=true]': {
+    opacity: 0.9
+  },
+  '&[data-disabled=true]': {
+    color: '$gray400',
+    fill: '$gray400',
+    cursor: 'not-allowed'
+  },
   '&::after': {
     transition: 'opacity 0.25s ease 0s',
     opacity: 0,
@@ -16,7 +36,7 @@ const navBarItemStyles = {
     left: 0,
     right: 0,
     height: '2px',
-    background: '$gradients$main',
+    background: '$gray100',
     filter: 'blur(0.5px)'
   },
   '&.active::after': {
@@ -24,34 +44,40 @@ const navBarItemStyles = {
   }
 }
 
-export const NavLinkStyled = styled(NavLink, cssShowHideIn, navBarItemStyles)
+export const NavLinkStyled = styled(RouterNavLink, cssShowHideIn, navBarItemStyles)
 
-export const LinkStyled = styled(Link, cssShowHideIn, navBarItemStyles)
+export const LinkStyled = styled('a', cssShowHideIn, navBarItemStyles)
 
-export type NavBarItemProps = PropsWithChildren<ComponentProps<typeof NavLinkStyled>>
+export type NavBarItemProps = PropsWithChildren<NavLinkProps & ComponentProps<typeof NavLinkStyled>>
 
-export const NavBarItem: FC<NavBarItemProps> = ({ children, ...navLinkProps }) => {
-  return (
-    <NavLinkStyled
-      {...navLinkProps}
-    >
-      <Txt button1>
-        {children}
-      </Txt>
-    </NavLinkStyled>
-  )
-}
+export const NavBarItem = forwardRef<HTMLAnchorElement, NavBarItemProps>(
+  ({ children, ...navLinkProps }, ref) => {
+    const { linkRef, linkProps } = useLink(navLinkProps, ref)
+    return (
+      <NavLinkStyled
+        {...linkProps}
+        ref={linkRef}
+      >
+        <Txt button1>
+          {children}
+        </Txt>
+      </NavLinkStyled>
+    )
+  })
 
-export type NavBarItemLinkProps = PropsWithChildren<ComponentProps<typeof LinkStyled>>
+export type NavBarItemLinkProps = PropsWithChildren<LinkProps & ComponentProps<typeof LinkStyled>>
 
-export const NavBarItemLink: FC<NavBarItemLinkProps> = ({ children, ...navLinkProps }) => {
-  return (
-    <LinkStyled
-      {...navLinkProps}
-    >
-      <Txt button1>
-        {children}
-      </Txt>
-    </LinkStyled>
-  )
-}
+export const NavBarItemLink = forwardRef<HTMLAnchorElement, NavBarItemLinkProps>(
+  ({ children, ...navLinkProps }, ref) => {
+    const { linkRef, linkProps } = useLink(navLinkProps, ref)
+    return (
+      <LinkStyled
+        {...linkProps}
+        ref={linkRef}
+      >
+        <Txt button1>
+          {children}
+        </Txt>
+      </LinkStyled>
+    )
+  })

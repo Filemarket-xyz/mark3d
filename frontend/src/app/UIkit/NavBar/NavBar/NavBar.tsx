@@ -28,8 +28,7 @@ const NavBarStyled = styled('nav', {
   top: 0,
   left: 0,
   right: 0,
-  background: '$colors$whiteOp50',
-  borderBottom: '2px solid $colors$whiteOp50',
+  background: '$colors$blue500',
   backdropFilter: 'blur(12.5px)',
   boxShadow: '$header',
   color: '$blue900'

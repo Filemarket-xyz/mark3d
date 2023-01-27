@@ -144,6 +144,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           primary: true,
           css: {
             color: '$white',
+            fill: '$white',
             background: '$gradients$main'
           }
         },
@@ -151,14 +152,13 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           icon: true,
           secondary: true,
           css: {
-            true: {
-              color: '$blue500',
-              backgroundColor: '$gray100',
-              '&[data-disabled=true]': {
-                background: '$gray200',
-                color: '$gray600',
-                fill: '$gray600'
-              }
+            color: '$blue500',
+            fill: '$blue500',
+            backgroundColor: '$gray100',
+            '&[data-disabled=true]': {
+              background: '$gray200',
+              color: '$gray600',
+              fill: '$gray600'
             }
           }
         }
