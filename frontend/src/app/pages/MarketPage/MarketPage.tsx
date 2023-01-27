@@ -1,5 +1,5 @@
 import { styled } from '../../../styles'
-import { PageLayout } from '../../UIkit/PageLayout'
+import { PageLayout } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
 import { Outlet } from 'react-router'
 import { observer } from 'mobx-react-lite'
@@ -25,18 +25,15 @@ export const MarketPage = observer(() => {
             },
             {
               name: 'Collections',
-              url: '/market/collections',
-              amount: 1234
+              url: '/market/collections'
             },
             {
               name: 'Creators',
-              url: '/market/creators',
-              amount: 123
+              url: '/market/creators'
             },
             {
               name: 'Namespaces',
-              url: '/market/namespaces',
-              amount: 123
+              url: '/market/namespaces'
             }
           ]}
         />
