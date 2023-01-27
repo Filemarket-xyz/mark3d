@@ -9,7 +9,14 @@ const WelcomeScreenWrapper = styled('section', {
   width: '100%',
   backgroundSize: 'auto 80%',
   backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'top 50% right -5%'
+  $$topPad: '128px',
+  backgroundPosition: 'top $$topPad right -5%',
+  '@xl': {
+    backgroundPosition: 'top $$topPad right -10%'
+  },
+  '@lg': {
+    background: 'none'
+  }
 })
 
 const Title = styled('h1', {
@@ -18,12 +25,12 @@ const Title = styled('h1', {
   color: '$gray800',
   fontWeight: '700',
   '@lg': {
-    fontSize: 'calc(1vw + 20px)',
+    fontSize: 'calc(1.5vw + 30px)',
     textAlign: 'center',
     margin: 'auto'
   },
   '@sm': {
-    fontSize: 32,
+    fontSize: 30,
     '& > br': {
       display: 'none'
     }

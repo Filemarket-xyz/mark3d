@@ -4,12 +4,15 @@ import { Txt } from '../../Txt'
 import { NavLink as RouterNavLink } from 'react-router-dom'
 import { LinkProps, NavLinkProps, useLink } from '../../Link'
 
+const itemHeight = 30
+
 const navBarItemStyles = {
   color: '$gray100',
   outline: 'none',
   textDecoration: 'none',
   cursor: 'pointer',
   position: 'relative',
+  height: itemHeight,
   transition: 'color 0.25s ease 0s, transform 0.25s ease 0s',
 
   '&[data-hovered=true]': {
