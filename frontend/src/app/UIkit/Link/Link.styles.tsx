@@ -44,6 +44,13 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
             fill: '$red'
           }
         },
+        footer: {
+          true: {
+            color: '$white',
+            fill: '$white',
+            ...textVariant('primary2').true
+          }
+        },
         small: {
           ...textVariant('primary3')
         },
