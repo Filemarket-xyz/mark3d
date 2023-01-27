@@ -12,9 +12,8 @@ export const {
 } = createStitches({
   theme: {
     colors: {
-      blue300: '#00DCFF', // Color: Sky Blue Crayola
-      blue400: '#94bde6', // 70% blue500 30% white
-      blue500: '#66A0DB', // Color: Little Boy Blue
+      blue300: '#4DB1FF',
+      blue500: '#0090FF',
       blue600: '#655BE5', // Color: Slate Blue
       blue700: '#4160ED', // Color: Ultramarine Blue
       blue900: '#13132D', // Color: Space Cadet
@@ -23,23 +22,25 @@ export const {
       magenta: '#E14BEC', // Color: Magenta
       pink: '#F4CFF3', // Color: Pink Lace
 
-      black: '#1A1A1A', // Color: Eerie Black
+      black: '#000000', // Color: Eerie Black
       white: '#ffffff',
       whiteOp50: 'rgba(255, 255, 255, 0.5)',
       whiteOp75: 'rgba(255, 255, 255, 0.75)',
 
       gray100: '#F9F9F9',
-      gray200: '#F3F3F4',
-      gray300: '#d0d0d5',
-      gray400: '#a1a1ab',
+      gray200: '#E5E5E5',
+      gray300: '#E9E9EA', // raisin + 90%
+      gray400: '#A7A8A9', // raisin + 60%
       gray500: '#59596C',
+      gray600: '#656669', // raisin + 30%
+      gray800: '#232528', // raisin
 
       green: '#00FF0A',
 
       red: '#D81B60',
 
-      gradient0: '$blue300',
-      gradient1: '$magenta'
+      gradient0: '#38BCC9',
+      gradient1: '#088DFA'
     },
 
     space: {
@@ -51,7 +52,7 @@ export const {
     },
 
     fonts: {
-      h: 'Sora, sans-serif',
+      h: 'Montserrat, sans-serif',
       body: 'Montserrat, sans-serif',
       button: 'Montserrat, sans-serif',
       primary: 'Montserrat, sans-serif',
@@ -138,7 +139,7 @@ export const {
     },
 
     gradients: {
-      main: 'linear-gradient(270deg, $colors$gradient0 0%, $colors$gradient1 85.65%)'
+      main: 'linear-gradient(90deg, $colors$gradient0 0%, $colors$gradient1 100%)'
     },
 
     layout: {

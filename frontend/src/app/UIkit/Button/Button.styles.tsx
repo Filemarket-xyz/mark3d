@@ -10,7 +10,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
       minWidth: '160px',
       outline: 'none',
       border: 'none',
-      borderRadius: '$4',
+      borderRadius: '$1',
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -36,27 +36,27 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             color: '$white',
             background: '$gradients$main',
             '&[data-focus-ring=true]': {
-              focusRing: '$blue300'
+              focusRing: '$blue500'
             },
             '&[data-disabled=true]': {
-              background: '$gray100',
-              color: '$gray400',
-              fill: '$gray400',
+              background: '$gray400',
+              color: '$white',
+              fill: '$white',
               cursor: 'not-allowed'
             }
           }
         },
         secondary: {
           true: {
-            color: '$white',
-            backgroundColor: '$blue500',
+            color: '$blue500',
+            backgroundColor: '$gray100',
             '&[data-focus-ring=true]': {
               focusRing: '$blue500'
             },
             '&[data-disabled=true]': {
-              background: '$gray100',
-              color: '$gray400',
-              fill: '$gray400',
+              background: '$gray200',
+              color: '$gray600',
+              fill: '$gray600',
               cursor: 'not-allowed',
               border: '2px solid $gray300'
             }
@@ -70,7 +70,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
               focusRing: '$blue500'
             },
             '&[data-disabled=true]': {
-              color: '$gray400',
+              color: '$gray600',
               cursor: 'not-allowed'
             }
           }
@@ -89,7 +89,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
         },
         icon: {
           true: {
-            color: '$gray500',
+            color: '$white',
             minWidth: 0,
             padding: 0,
             size: '48px',
@@ -99,10 +99,11 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
               height: '26px'
             },
             '&[data-focus-ring=true]': {
-              focusRing: '$gray500'
+              focusRing: '$white'
             },
             '&[data-disabled=true]': {
-              color: '$gray400',
+              color: '$gray600',
+              fill: '$gray600',
               cursor: 'not-allowed'
             }
           }
@@ -144,6 +145,21 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           css: {
             color: '$white',
             background: '$gradients$main'
+          }
+        },
+        {
+          icon: true,
+          secondary: true,
+          css: {
+            true: {
+              color: '$blue500',
+              backgroundColor: '$gray100',
+              '&[data-disabled=true]': {
+                background: '$gray200',
+                color: '$gray600',
+                fill: '$gray600'
+              }
+            }
           }
         }
       ]

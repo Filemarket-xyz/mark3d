@@ -1,33 +1,15 @@
 import { ComponentProps, forwardRef } from 'react'
 import { Link } from 'react-router-dom'
 import { AriaButtonProps } from 'react-aria'
-import { BreakpointsOptions, cssShowHideIn, styled } from '../../../../styles'
+import { BreakpointsOptions, styled } from '../../../../styles'
 import { Drip, useButton } from '../../../UIkit'
-import LogoIcon from '../../../../assets/logo.png'
-import Mark3dBlackIcon from '../../../../assets/Mark3d.svg'
-import Mark3dGradientIcon from '../../../../assets/Mark3dGradient.svg'
+import LogoIcon from '../../../../assets/FileMarket.svg'
 
-const height = 36
+const height = 30
 
 const Logo = styled('img', {
   height,
   objectFit: 'contain'
-})
-
-const NameContainer = styled('div', cssShowHideIn, {
-  width: '92px',
-  height,
-  position: 'relative'
-})
-
-const Name = styled('img', {
-  width: '100%',
-  height: '100%',
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  objectFit: 'contain',
-  objectPosition: '50% 50%' // center an image
 })
 
 const LinkStyled = styled(Link, {
@@ -100,20 +82,6 @@ export const AppLogoButton = forwardRef<HTMLAnchorElement, AppLogoButtonProps>((
         src={LogoIcon}
         alt="Mark3d logo"
       />
-      <NameContainer
-        hideIn={hideNameIn}
-      >
-        <Name
-          src={Mark3dBlackIcon}
-          className="black"
-          alt="Mark3d"
-        />
-        <Name
-          src={Mark3dGradientIcon}
-          className="gradient"
-          alt="Mark3d"
-        />
-      </NameContainer>
       <Drip {...dripProps}/>
     </LinkStyled>
   )
