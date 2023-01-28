@@ -31,7 +31,7 @@ const NFTPreviewContainer = styled('div', {
   '@md': {
     height: 500
   },
-  background: '$gradients$main',
+  background: '$gradients$background',
   paddingTop: 'calc($layout$navBarHeight)',
   paddingBottom: '$6',
   boxSizing: 'content-box'

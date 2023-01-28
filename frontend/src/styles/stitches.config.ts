@@ -143,7 +143,8 @@ export const {
     },
 
     gradients: {
-      main: 'linear-gradient(90deg, $colors$gradient0 0%, $colors$gradient1 100%)'
+      main: 'linear-gradient(90deg, $colors$gradient0 0%, $colors$gradient1 100%)',
+      background: 'linear-gradient(291.31deg, #0291FC 0%, #4AC6D1 100%)'
     },
 
     layout: {
