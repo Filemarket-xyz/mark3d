@@ -2,14 +2,13 @@ import { Loading } from '@nextui-org/react'
 import { useState } from 'react'
 import { styled } from '../../../../styles'
 import { DecryptResult } from '../../../processing/types'
-import { Button, textVariant } from '../../../UIkit'
+import { Button, textVariant, gradientPlaceholderImg } from '../../../UIkit'
 import { Swiper, SwiperSlide as SwiperSlideUnstyled } from 'swiper/react'
 import css from './styles.module.css'
 import { Navigation, Pagination } from 'swiper'
 
 import 'swiper/css'
 import 'swiper/css/navigation'
-import { gradientPlaceholderImg } from '../../../components/Placeholder/GradientPlaceholder'
 
 const CenterContainer = styled('div', {
   display: 'flex',
@@ -150,7 +149,7 @@ export const PreviewNFTFlow = ({
             ) : previewState?.state === PreviewState.LOADING_ERROR ? (
               <>
                 <ErrorMessage>{previewState?.data}</ErrorMessage>
-                <Button primary onPress={handleLoadClick}>
+                <Button secondary onPress={handleLoadClick}>
                   Load NFT
                 </Button>
               </>
@@ -159,7 +158,7 @@ export const PreviewNFTFlow = ({
                 <ErrorMessage>{previewState?.data}</ErrorMessage>
               </>
             ) : (
-              <Button primary onPress={handleLoadClick}>
+              <Button secondary onPress={handleLoadClick}>
                 Load NFT
               </Button>
             )}

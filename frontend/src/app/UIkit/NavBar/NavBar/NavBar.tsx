@@ -35,6 +35,8 @@ const NavBarStyled = styled('nav', {
   color: '$blue900'
 })
 
+const horizontalGap = 30
+
 const NavBarHorizontalSpacer = styled('div', {
   height: '100%',
   display: 'flex',
@@ -42,8 +44,15 @@ const NavBarHorizontalSpacer = styled('div', {
   alignItems: 'center',
   flexDirection: 'row',
   flexWrap: 'nowrap',
-  gap: '30px'
+  gap: horizontalGap
 }, cssShowHideIn)
+
+const ActionsContainer = styled('div', {
+  display: 'flex',
+  justifyContent: 'end',
+  gap: horizontalGap,
+  flexGrow: 1
+})
 
 const NavBarVerticalSpacer = styled('div', {
   dflex: 'start',
@@ -78,7 +87,7 @@ export const NavBar: FC<NavBarProps> = ({
             />
             {brand}
             {items && (
-              <NavBarHorizontalSpacer hideIn={mobileBp} css={{ flexGrow: 1 }}>
+              <NavBarHorizontalSpacer hideIn={mobileBp}>
                 {items.map((item, index) => item.isLink ? (
                     <NavBarItemLink
                       key={index}
@@ -101,7 +110,9 @@ export const NavBar: FC<NavBarProps> = ({
                 ))}
               </NavBarHorizontalSpacer>
             )}
-            {actions}
+            <ActionsContainer>
+              {actions}
+            </ActionsContainer>
           </NavBarHorizontalSpacer>
         </Container>
       </NavBarStyled>

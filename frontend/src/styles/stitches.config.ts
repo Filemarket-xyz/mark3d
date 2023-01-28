@@ -49,7 +49,8 @@ export const {
       2: '8px',
       3: '16px', // самый ходовой
       4: '32px',
-      5: '40px'
+      5: '40px',
+      6: '80px'
     },
 
     fonts: {
@@ -121,12 +122,14 @@ export const {
       1: '8px',
       2: '12px',
       3: '16px',
-      4: '32px'
+      4: '32px',
+      6: '80px'
     },
 
     shadows: {
       // names of shadows are from the figma
       form: '0px 0px 15px rgba(19, 19, 45, 0.05)',
+      hover: '0px 2px 15px rgba(19, 19, 45, 0.2)',
       header: '0px 4px 15px rgba(19, 19, 45, 0.05)',
       footer: '0px -4px 15px rgba(19, 19, 45, 0.05)',
       low: '0px 4px 15px rgba(19, 19, 45, 0.1)'

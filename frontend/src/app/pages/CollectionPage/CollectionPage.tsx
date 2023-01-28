@@ -1,7 +1,6 @@
 import { Outlet, useLocation, useParams } from 'react-router'
 import { styled } from '../../../styles'
-import Badge from '../../components/Badge/Badge'
-import { textVariant, Container, NavLink, Link } from '../../UIkit'
+import { textVariant, Container, NavLink, Link, gradientPlaceholderImg, Badge } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
 import bg from './img/Gradient.jpg'
 import { observer } from 'mobx-react-lite'
@@ -10,7 +9,6 @@ import { Params } from '../../utils/router/Params'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
-import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 
 const Background = styled('img', {
   width: '100%',

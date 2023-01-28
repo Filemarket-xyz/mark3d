@@ -42,7 +42,7 @@ export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callb
       </Modal>
       <MintModal {...modalProps}/>
       <Button
-        secondary
+        primary
         fullWidth
         onPress={openModal}
         isDisabled={isLoading}

@@ -22,7 +22,7 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, cal
     <>
       <MintModal {...modalProps}/>
       <Button
-        secondary
+        primary
         fullWidth
         onPress={async () => {
           await cancelOrder()

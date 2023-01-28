@@ -12,7 +12,7 @@ const WelcomeScreenWrapper = styled('section', {
   $$topPad: '128px',
   backgroundPosition: 'top $$topPad right -5%',
   '@xl': {
-    backgroundPosition: 'top $$topPad right -10%'
+    backgroundPosition: 'top $$topPad right -15%'
   },
   '@lg': {
     background: 'none'
@@ -59,7 +59,7 @@ const Description = styled('p', {
 const ToolCardNarrow = styled(ToolCard, {
   width: '350px',
   '@sm': {
-    width: '90%'
+    width: '100%'
   }
 })
 

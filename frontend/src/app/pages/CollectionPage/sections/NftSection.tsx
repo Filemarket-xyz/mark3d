@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useAccount } from 'wagmi'
 import { styled } from '../../../../styles'
-import { CardsPlaceholder } from '../../../components/CardsPlaceholder/CardsPlaceholder'
+import { CardsPlaceholder } from '../../../UIkit/CardsPlaceholder/CardsPlaceholder'
 import NFTCard from '../../../components/MarketCard/NFTCard'
 import { useCollectionTokenListStore } from '../../../hooks/useCollectionTokenListStore'
 import { textVariant } from '../../../UIkit'

@@ -13,7 +13,7 @@ import { NFTCardProps } from '../../components/MarketCard/NFTCard'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
-import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
+import { gradientPlaceholderImg } from '../../UIkit'
 
 /**
  * Stores only ACTIVE order state.

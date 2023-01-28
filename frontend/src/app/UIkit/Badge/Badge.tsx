@@ -1,7 +1,7 @@
-import React, { ComponentProps } from 'react'
+import React, { ComponentProps, FC } from 'react'
 import { styled } from '../../../styles'
-import { textVariant } from '../../UIkit'
-import { gradientPlaceholderImg } from '../Placeholder/GradientPlaceholder'
+import { gradientPlaceholderImg } from '../Placeholder'
+import { textVariant } from '../Txt'
 
 const Wrapper = styled('div', {
   backgroundColor: '$white',
@@ -10,7 +10,8 @@ const Wrapper = styled('div', {
   padding: '$2 $3',
   alignItems: 'center',
   borderRadius: '$3',
-  width: 'max-content'
+  width: 'max-content',
+  boxShadow: '$form'
 })
 
 const Title = styled('p', {
@@ -66,7 +67,7 @@ export interface BadgeProps {
   valueStyles?: ComponentProps<typeof Value>
 }
 
-export default function Badge(props: BadgeProps) {
+export const Badge: FC<BadgeProps> = (props: BadgeProps) => {
   return (
     <Wrapper {...props.wrapperProps}>
       {props.image && (
