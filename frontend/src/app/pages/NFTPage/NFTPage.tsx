@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { styled } from '../../../styles'
-import { PageLayout, textVariant, Link, Txt, NavLink, Badge, gradientPlaceholderImg } from '../../UIkit'
+import { PageLayout, textVariant, NavLink, Badge, gradientPlaceholderImg } from '../../UIkit'
 import { Hr } from '../../UIkit/Hr/Hr'
 import { NFTDeal } from '../../components/NFT'
 import { observer } from 'mobx-react-lite'
@@ -64,6 +64,16 @@ const GridLayout = styled(PageLayout, {
   borderRadius: '$6 $6 0 0',
   position: 'relative',
   top: '-$6',
+  '&:after': {
+    display: 'block',
+    content: '',
+    position: 'absolute',
+    bottom: '-$6',
+    left: 0,
+    right: 0,
+    height: '$space$6',
+    backgroundColor: '$gray100'
+  },
   boxShadow: '$footer',
   '@md': {
     borderRadius: '$4 $4',
