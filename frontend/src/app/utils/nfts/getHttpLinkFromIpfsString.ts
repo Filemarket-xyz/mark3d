@@ -7,5 +7,5 @@ export const getHttpLinkFromIpfsString = (ipfs: string) => {
   if (!ipfs) return ''
   const cidWithFilePath = getIpfsCidWithFilePath(ipfs)
 
-  return `https://filemarket.xyz/ipfs/${cidWithFilePath}`
+  return `https://gateway.lighthouse.storage/ipfs/${cidWithFilePath}`
 }
