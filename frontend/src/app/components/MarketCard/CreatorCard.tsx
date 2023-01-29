@@ -47,7 +47,7 @@ const UserName = styled('p', {
   ...textVariant('primary1'),
   fontWeight: 600,
   lineHeight: '125%',
-  background: 'linear-gradient(225deg, #00DCFF 0%, #E14BEC 100%)',
+  background: '$gradients$main',
   backgroundClip: 'text',
   color: 'transparent',
   marginBottom: '$1',

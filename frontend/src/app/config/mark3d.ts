@@ -21,7 +21,7 @@ const filecoinHyperspace: Chain = {
   blockExplorers: {
     default: {
       name: 'Hyperspace explorer',
-      url: 'https://explorer.glif.io/message/?network=hyperspace'
+      url: 'https://hyperspace.filfox.info/en'
     }
   }
 

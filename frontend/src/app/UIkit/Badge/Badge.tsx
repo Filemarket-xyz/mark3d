@@ -27,7 +27,9 @@ const Value = styled('p', {
 const Content = styled('div', {
   display: 'flex',
   flexDirection: 'column',
-  gap: '$1'
+  justifyContent: 'center',
+  gap: '$1',
+  minHeight: 48
 })
 
 const Image = styled('img', {

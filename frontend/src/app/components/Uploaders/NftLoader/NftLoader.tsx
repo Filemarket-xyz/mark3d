@@ -86,8 +86,8 @@ const CloseButton = styled(Button, {
 })
 
 const CrossIcon = styled('img', {
-  width: '$3',
-  height: '$3',
+  width: 16,
+  height: 16,
   objectFit: 'contain'
 })
 
@@ -137,7 +137,7 @@ export default function NftLoader(props: NftLoaderProps) {
       <Box src={fileChosen ? SuccessImage : BoxImage} />
       {fileChosen ? (
         <BoxLabel css={{ color: '$gray500' }}>
-          {fileChosen.name} uploaded
+          {fileChosen.name} selected
         </BoxLabel>
       ) : (
         <BoxLabel>Choose file</BoxLabel>

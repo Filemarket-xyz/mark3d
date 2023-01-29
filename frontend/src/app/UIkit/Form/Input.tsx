@@ -16,7 +16,7 @@ export const inputStyles = {
   },
   '&:focus': {
     background:
-      'linear-gradient($white 0 0) padding-box, linear-gradient(to right, #00DCFF80, #E14BEC80) border-box',
+      'linear-gradient($white 0 0) padding-box, $gradients$main border-box',
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)'
   },
   width: '100%'
