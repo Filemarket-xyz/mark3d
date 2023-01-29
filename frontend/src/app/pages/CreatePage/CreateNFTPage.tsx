@@ -2,19 +2,11 @@ import React from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { styled } from '../../../styles'
 import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
-import { Button, PageLayout } from '../../UIkit'
-import { ControlledComboBox, ComboBoxOption } from '../../UIkit/Form/Combobox'
+import { Button, PageLayout, Txt } from '../../UIkit'
+import { ComboBoxOption, ControlledComboBox } from '../../UIkit/Form/Combobox'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
-import {
-  Form,
-  Label,
-  LabelWithCounter,
-  LetterCounter,
-  TextBold,
-  TextGray,
-  Title
-} from './CreateCollectionPage'
+import { Form, Label, LabelWithCounter, LetterCounter, TextBold, TextGray } from './CreateCollectionPage'
 import PlusIcon from './img/plus-icon.svg'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -31,10 +23,11 @@ import MintModal, {
 } from '../../components/Modal/Modal'
 import { FormControl } from '../../UIkit/Form/FormControl'
 import { useModalProperties } from './hooks/useModalProperties'
+import { Tooltip } from '@nextui-org/react'
 
 const Description = styled('p', {
   fontSize: '12px',
-  color: '$gray500',
+  color: '$gray600',
   marginBottom: '$2'
 })
 
@@ -81,6 +74,14 @@ const CollectionPickerContainer = styled('div', {
       width: 'calc(100% - 2 * $space$2)'
     }
   }
+})
+
+const TitleGroup = styled('div', {
+  marginBottom: '$4'
+})
+
+const SubTitle = styled('div', {
+  color: '$gray600'
 })
 
 export interface CreateNFTForm {
@@ -137,10 +138,10 @@ const CreateNftPage = observer(() => {
   useAfterDidMountEffect(() => {
     if (isNftLoading) {
       setModalOpen(true)
-      setModalBody(<InProgressBody text='NFT is being minted' />)
+      setModalBody(<InProgressBody text='NFT is being minted'/>)
     } else if (nftError) {
       setModalOpen(true)
-      setModalBody(<ErrorBody message={extractMessageFromError(nftError)} />)
+      setModalBody(<ErrorBody message={extractMessageFromError(nftError)}/>)
     } else if (nftResult) {
       setModalOpen(true)
       setModalBody(
@@ -165,21 +166,30 @@ const CreateNftPage = observer(() => {
       />
       <PageLayout css={{ paddingBottom: '$4' }}>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Title>Create New NFT</Title>
+          <TitleGroup>
+            <h3><Txt h3>Create New NFT</Txt></h3>
+            <SubTitle>
+              <Txt primary1>With Encrypted
+                <Tooltip
+                  content={<Txt>Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin,
+                    which can only be accessed exclusively by the owner of the NFT.</Txt>}>
+                  {' '}<Txt css={{ fontWeight: 700 }}>FileToken&#169;</Txt>{' '}
+                </Tooltip>
+                Technology on Filecoin storage.</Txt>
+            </SubTitle>
+          </TitleGroup>
 
           <FormControl>
-            <Label css={{ marginBottom: '$3' }}>Upload a preview</Label>
+            <Label css={{ marginBottom: '$3' }}>Upload a preview picture</Label>
             <ImageLoader
               registerProps={register('image', { required: true })}
             />
           </FormControl>
 
           <FormControl>
-            <Label css={{ marginBottom: '$3' }}>Upload a 3D model that will be hidden</Label>
+            <Label css={{ marginBottom: '$3' }}>Upload any file that will be encrypted and hidden by EFT&#169;</Label>
             <Description>
-              <TextBold>Formats:</TextBold> FBX, 3DS, MAX, BLEND, OBJ, C4D, MB,
-              MA, LWO, LXO, SKP, STL, UASSET, DAE, PLY, GLB, GLTF, USDF,
-              UNITYPACKAGE.
+              <TextBold>Formats:</TextBold> Any
               <TextBold> Max size:</TextBold> 100 MB.
             </Description>
             <NftLoader
@@ -210,7 +220,7 @@ const CreateNftPage = observer(() => {
               />
               <NavLink to={'../collection'}>
                 <AddCollectionButton>
-                  <Icon src={PlusIcon} />
+                  <Icon src={PlusIcon}/>
                 </AddCollectionButton>
               </NavLink>
             </CollectionPickerContainer>

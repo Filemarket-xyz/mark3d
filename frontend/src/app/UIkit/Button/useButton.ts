@@ -1,9 +1,9 @@
 import { AriaButtonProps, useFocusRing, useHover, useButton as useButtonAria, mergeProps } from 'react-aria'
-import { MouseEventHandler, Ref, RefObject, useCallback } from 'react'
+import { HTMLAttributes, MouseEventHandler, Ref, RefObject, useCallback } from 'react'
 import { useDOMRef } from '../../hooks'
 import { useDrip } from '../Drip/Drip.hooks'
 
-export function useButton<Props extends AriaButtonProps, Elem extends HTMLElement>(
+export function useButton<Props extends AriaButtonProps & HTMLAttributes<HTMLSpanElement>, Elem extends HTMLElement>(
   props: Props,
   ref?: RefObject<Elem | null> | Ref<Elem | null>
 ) {
@@ -14,6 +14,7 @@ export function useButton<Props extends AriaButtonProps, Elem extends HTMLElemen
     onPressEnd,
     onPressChange,
     onPressUp,
+    onClick: deprecatedOnClick,
     ...otherProps
   } = props
   const buttonRef = useDOMRef(ref)
@@ -22,7 +23,7 @@ export function useButton<Props extends AriaButtonProps, Elem extends HTMLElemen
     false
   )
 
-  const { isPressed, buttonProps: ariaButtonProps } = useButtonAria(
+  const { isPressed, buttonProps: ariaButtonPropsFull } = useButtonAria(
     {
       isDisabled,
       onPress,
@@ -33,11 +34,12 @@ export function useButton<Props extends AriaButtonProps, Elem extends HTMLElemen
     },
     buttonRef
   )
-  const { onClick } = ariaButtonProps
+  const { onClick, ...ariaButtonProps } = ariaButtonPropsFull
 
   const clickHandler = useCallback<MouseEventHandler<HTMLButtonElement>>(
     (event) => {
       onClick?.(event)
+      deprecatedOnClick?.(event)
       onDripClickHandler(event)
     },
     [onClick, onDripClickHandler]
