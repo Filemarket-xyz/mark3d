@@ -360,12 +360,12 @@ pub async fn get_block_no_extra(
 }
 
 pub async fn call_late_decision(
+    transport: &web3::transports::Http,
     contract: &web3::contract::Contract<Http>,
     approved: bool,
     report: &FraudReported,
     key: &SecretKey,
 ) -> Result<web3::types::H256, web3::Error> {
-    
     let params = (
         web3::ethabi::Token::Address(report.collection),
         web3::ethabi::Token::Uint(report.token_id),
@@ -380,16 +380,28 @@ pub async fn call_late_decision(
             Ok(g) => g,
             Err(_) => return Err(web3::Error::Internal),
         };
+    let max_fee_per_gas_result = transport.execute("eth_maxPriorityFeePerGas", vec![]).await?;
+    match max_fee_per_gas_result.get("error") {
+        Some(value) => {
+            log::error!("failed to get max priority fee per gas: {}", value.to_string());
+            return Err(web3::Error::Internal)
+        },
+        None => (),
+    };
+    let max_priority_fee_per_gas: web3::types::U256 = match serde_json::from_value(max_fee_per_gas_result) {
+        Ok(b) => b,
+        Err(e) => {
+            log::error!("failed to parse max priority fee per gas: {}", e);
+            return Err(web3::Error::Internal);
+        },
+    };
+    
+    
     let opts  = Options { 
         gas: Some(gas),
-        gas_price: None,
-        value: None,
-        nonce: None,
-        condition: None,
-        transaction_type: None, 
-        access_list: None, 
-        max_fee_per_gas: None, 
-        max_priority_fee_per_gas: None,
+        transaction_type: Some(2.into()),
+        max_priority_fee_per_gas: Some(max_priority_fee_per_gas),
+        ..Default::default()
      };
     contract
         .signed_call(

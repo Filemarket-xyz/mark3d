@@ -149,6 +149,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     Err(_) => {
                         println!("not approved, because invalid private key");
                         match call_late_decision(
+                            &transport2,
                             &upgraded_fraud_decider_web2_contract,
                             false,
                             &report,
@@ -178,6 +179,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 if report_public_key_s != public_key_s {
                     println!("not approved, because of unmatching keys");
                     match call_late_decision(
+                        &transport2,
                         &upgraded_fraud_decider_web2_contract,
                         false,
                         &report,
@@ -203,6 +205,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     Err(_) => {
                         println!("approved, because passwor decryption failed");
                         match call_late_decision(
+                            &transport2,
                             &upgraded_fraud_decider_web2_contract,
                             true,
                             &report,
@@ -228,6 +231,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     Err(_) => {
                         println!("approved, because of invalid hidden file");
                         match call_late_decision(
+                            &transport2,
                             &upgraded_fraud_decider_web2_contract,
                             true,
                             &report,
@@ -254,6 +258,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     Err(_) => {
                         println!("approved, because file decryption failed");
                         match call_late_decision(
+                            &transport2,
                             &upgraded_fraud_decider_web2_contract,
                             true,
                             &report,
@@ -274,6 +279,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 };
                 println!("hash matched: {:?}", hash_matched);
                 match call_late_decision(
+                    &transport2,
                     &upgraded_fraud_decider_web2_contract,
                     !hash_matched,
                     &report,

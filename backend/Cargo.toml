@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-web3 = "0.18.0"
+web3 = { git = "https://github.com/tomusdrw/rust-web3", features = ["default"] }
 tokio = "1.21.2"
 redis = { version = "0.22.1", features = ["tokio-comp"] }
 dotenvy = "0.15.6"
