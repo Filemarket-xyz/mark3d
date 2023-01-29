@@ -10,9 +10,9 @@ import { useButton } from '../useButton'
 import { buttonStyled } from '../Button.styles'
 
 const LinkButtonStyled = buttonStyled('a')
-export type NavButtonProps = AriaButtonProps & ComponentProps<typeof LinkButtonStyled>
+export type NavLinkProps = AriaButtonProps & ComponentProps<typeof LinkButtonStyled>
 
-export const LinkButton = forwardRef<HTMLAnchorElement, NavButtonProps>(
+export const LinkButton = forwardRef<HTMLAnchorElement, NavLinkProps>(
   (
     {
       children,
