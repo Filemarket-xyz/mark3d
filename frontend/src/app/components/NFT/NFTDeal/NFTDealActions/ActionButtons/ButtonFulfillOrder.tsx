@@ -26,7 +26,7 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({ token
     <>
       <MintModal {...modalProps}/>
       <Button
-        secondary
+        primary
         fullWidth
         onPress={async () => {
           await fulfillOrder()

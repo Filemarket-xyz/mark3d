@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
 import { styled } from '../../../styles'
-import { PageLayout, textVariant, Link, Txt, NavLink } from '../../UIkit'
-import Badge from '../../components/Badge/Badge'
+import { PageLayout, textVariant, NavLink, Badge, gradientPlaceholderImg } from '../../UIkit'
 import { Hr } from '../../UIkit/Hr/Hr'
 import { NFTDeal } from '../../components/NFT'
 import { observer } from 'mobx-react-lite'
@@ -19,27 +18,29 @@ import { useStores } from '../../hooks'
 import { useTokenStore } from '../../hooks/useTokenStore'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 import { formatFileSize } from '../../utils/nfts/formatFileSize'
-import gradientBg from '../ProfilePage/img/Gradient.jpg'
 import { useIsOwner } from '../../processing/hooks'
 import { transferPermissions } from '../../utils/transfer/status'
-import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 import '@google/model-viewer'
 import { PreviewNFTFlow } from './components/PreviewNFTFlow'
+import { FileButton } from '../../components/NFT/FileButton'
+import { ProtectedStamp } from '../../components/NFT/FileButton/ProtectedStamp'
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',
-  height: 400,
-  backgroundSize: 'cover',
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'center',
-  backgroundImage: `url(${gradientBg})`,
-  paddingTop: 'calc($layout$navBarHeight + $layout$bannerHeight)',
+  height: 700,
+  '@md': {
+    height: 500
+  },
+  background: '$gradients$background',
+  paddingTop: 'calc($layout$navBarHeight)',
+  paddingBottom: '$6',
   boxSizing: 'content-box'
 })
 
 const NftName = styled('h1', {
   ...textVariant('h3').true,
-  color: '$blue900',
+  fontWeight: '600',
+  color: '$gray800',
   marginBottom: '$4'
 })
 
@@ -60,7 +61,22 @@ const GridLayout = styled(PageLayout, {
   columnGap: '$4',
   minHeight: '100%',
   gap: '48px',
+  borderRadius: '$6 $6 0 0',
+  position: 'relative',
+  top: '-$6',
+  '&:after': {
+    display: 'block',
+    content: '',
+    position: 'absolute',
+    bottom: '-$6',
+    left: 0,
+    right: 0,
+    height: '$space$6',
+    backgroundColor: '$gray100'
+  },
+  boxShadow: '$footer',
   '@md': {
+    borderRadius: '$4 $4',
     gridTemplateRows: 'max-content',
     gap: '$5',
     gridTemplateColumns: '1fr'
@@ -71,13 +87,13 @@ const GridBlock = styled('div')
 
 const PropertyTitle = styled('h2', {
   ...textVariant('h5').true,
-  color: '$gray500',
+  color: '$gray800',
   marginBottom: '$3'
 })
 
 const P = styled('p', {
-  ...textVariant('primary1').true,
-  color: '$gray500',
+  ...textVariant('body4').true,
+  color: '$gray800',
   fontWeight: 400
 })
 
@@ -85,8 +101,10 @@ const StyledHr = styled(Hr, {
   marginBottom: '$3'
 })
 
-const Ul = styled('ul', {
-  listStyle: 'inside'
+const FileList = styled('div', {
+  '& li:not(:last-child)': {
+    marginBottom: '$2'
+  }
 })
 
 const NFTPage = observer(() => {
@@ -126,16 +144,16 @@ const NFTPage = observer(() => {
           <NftName>{token?.name}</NftName>
           <BadgesContainer>
             <NavLink
-              to={token?.owner ? `/profile/${token?.owner}` : location.pathname}
+              to={collection?.creator ? `/profile/${collection?.creator}` : location.pathname}
             >
               <Badge
                 image={{
                   borderRadius: 'circle',
-                  url: getProfileImageUrl(token?.owner ?? '')
+                  url: getProfileImageUrl(collection?.creator ?? '')
                 }}
                 content={{
                   title: 'Creator',
-                  value: reduceAddress(token?.creator ?? '')
+                  value: reduceAddress(collection?.creator ?? '')
                 }}
               />
             </NavLink>
@@ -170,7 +188,22 @@ const NFTPage = observer(() => {
                 orderStore.reload()
                 transferStore.reload()
               }}
-            />
+            >
+              <NavLink
+                to={token?.owner ? `/profile/${token?.owner}` : location.pathname}
+              >
+                <Badge
+                  image={{
+                    borderRadius: 'circle',
+                    url: getProfileImageUrl(token?.owner ?? '')
+                  }}
+                  content={{
+                    title: 'Owner',
+                    value: reduceAddress(token?.owner ?? '')
+                  }}
+                />
+              </NavLink>
+            </NFTDeal>
           )}
         </GridBlock>
 
@@ -183,33 +216,27 @@ const NFTPage = observer(() => {
         <GridBlock>
           <PropertyTitle>Hidden files</PropertyTitle>
           <StyledHr />
-          <Ul
-            css={{
-              listStyle: 'none',
-              '& li:not(:last-child)': {
-                marginBottom: '$2'
-              }
-            }}
-          >
+          <FileList>
             {isOwner || canViewHiddenFiles ? (
               files.map(({ cid, name, size, download }) => (
-                <li key={cid}>
-                  <Link onPress={download} gray>
-                    {name}
-                  </Link>
-                  {size > 0 && (
-                    <Txt secondary2 css={{ color: '$gray500' }}>
-                      {` (${formatFileSize(size)})`}
-                    </Txt>
-                  )}
-                </li>
+                <ProtectedStamp key={cid}>
+                  <FileButton
+                    name={name}
+                    caption={`download (${formatFileSize(size)})`}
+                    onPress={download}
+                  />
+                </ProtectedStamp>
               ))
             ) : (
-              <Txt secondary2 css={{ color: '$gray500' }}>
-                Hidden files are only shown to the owner
-              </Txt>
+              <ProtectedStamp>
+                <FileButton
+                  name="Available only"
+                  caption="to the owner"
+                  isDisabled={true}
+                />
+              </ProtectedStamp>
             )}
-          </Ul>
+          </FileList>
         </GridBlock>
       </GridLayout>
     </>

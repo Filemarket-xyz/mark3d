@@ -24,7 +24,7 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
     <>
       <MintModal {...modalProps}/>
       <Button
-        secondary
+        primary
         fullWidth
         onPress={async () => {
           await approveTransfer()

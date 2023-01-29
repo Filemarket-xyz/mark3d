@@ -3,10 +3,9 @@ import { NavBar } from '../../../UIkit'
 import { paths } from './paths'
 import { AppLogoButton } from '../AppLogoButton'
 import { BreakpointsOptions } from '../../../../styles'
-import { LinksBanner } from '../AppLinksBanner/LinksBanner'
 import { AppConnectWidget } from '../AppConnectWidget'
 
-const mobileBp: BreakpointsOptions = 'md'
+const mobileBp: BreakpointsOptions = 'lg'
 
 export const AppNav: FC = () => (
   <>
@@ -16,6 +15,5 @@ export const AppNav: FC = () => (
       items={paths}
       actions={<AppConnectWidget/>}
     />
-    <LinksBanner />
   </>
 )

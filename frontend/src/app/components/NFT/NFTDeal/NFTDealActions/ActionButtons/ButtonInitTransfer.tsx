@@ -42,7 +42,7 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, c
       </Modal>
       <MintModal {...modalProps} ></MintModal>
       <Button
-        secondary
+        primary
         fullWidth
         onPress={openModal}
         isDisabled={isLoading}

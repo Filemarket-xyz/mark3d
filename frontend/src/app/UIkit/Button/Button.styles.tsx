@@ -10,7 +10,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
       minWidth: '160px',
       outline: 'none',
       border: 'none',
-      borderRadius: '$4',
+      borderRadius: '$1',
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -21,6 +21,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
       cursor: 'pointer',
       transition: 'transform 0.25s ease 0s, opacity 0.25s ease 0s',
       ...textVariant('button1').true,
+      textDecoration: 'none',
       '&[data-pressed=true]': {
         transform: 'scale(0.97)'
       },
@@ -34,29 +35,31 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
         primary: {
           true: {
             color: '$white',
+            fill: '$white',
             background: '$gradients$main',
             '&[data-focus-ring=true]': {
-              focusRing: '$blue300'
+              focusRing: '$blue500'
             },
             '&[data-disabled=true]': {
-              background: '$gray100',
-              color: '$gray400',
-              fill: '$gray400',
+              background: '$gray400',
+              color: '$white',
+              fill: '$white',
               cursor: 'not-allowed'
             }
           }
         },
         secondary: {
           true: {
-            color: '$white',
-            backgroundColor: '$blue500',
+            color: '$blue500',
+            fill: '$blue500',
+            backgroundColor: '$gray100',
             '&[data-focus-ring=true]': {
               focusRing: '$blue500'
             },
             '&[data-disabled=true]': {
-              background: '$gray100',
-              color: '$gray400',
-              fill: '$gray400',
+              background: '$gray200',
+              color: '$gray600',
+              fill: '$gray600',
               cursor: 'not-allowed',
               border: '2px solid $gray300'
             }
@@ -65,12 +68,14 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
         tertiary: {
           true: {
             color: '$blue500',
+            fill: '$blue500',
             background: 'transparent',
             '&[data-focus-ring=true]': {
               focusRing: '$blue500'
             },
             '&[data-disabled=true]': {
-              color: '$gray400',
+              color: '$gray600',
+              fill: '$gray600',
               cursor: 'not-allowed'
             }
           }
@@ -89,7 +94,8 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
         },
         icon: {
           true: {
-            color: '$gray500',
+            color: '$white',
+            fill: '$white',
             minWidth: 0,
             padding: 0,
             size: '48px',
@@ -99,10 +105,11 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
               height: '26px'
             },
             '&[data-focus-ring=true]': {
-              focusRing: '$gray500'
+              focusRing: '$blue500'
             },
             '&[data-disabled=true]': {
-              color: '$gray400',
+              color: '$gray600',
+              fill: '$gray600',
               cursor: 'not-allowed'
             }
           }
@@ -143,7 +150,35 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           primary: true,
           css: {
             color: '$white',
+            fill: '$white',
             background: '$gradients$main'
+          }
+        },
+        {
+          icon: true,
+          secondary: true,
+          css: {
+            color: '$blue500',
+            fill: '$blue500',
+            backgroundColor: '$gray100',
+            '&[data-disabled=true]': {
+              background: '$gray200',
+              color: '$gray600',
+              fill: '$gray600'
+            }
+          }
+        },
+        {
+          icon: true,
+          tertiary: true,
+          css: {
+            color: '$blue500',
+            fill: '$blue500',
+            background: 'transparent',
+            '&[data-disabled=true]': {
+              color: '$gray600',
+              fill: '$gray600'
+            }
           }
         }
       ]

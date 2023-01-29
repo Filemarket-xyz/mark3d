@@ -7,9 +7,9 @@ export const StyledNavBarToggleIconContainer = styled('div', {
   pointerEvents: 'none',
   size: '22px',
   '& .line': {
-    height: '1px',
+    height: '2px',
     width: '100%',
-    backgroundColor: '$blue900',
+    backgroundColor: '$white',
     transition: 'transform 0.3s ease',
     '&.top': {
       transform: 'translateY(-4px) rotate(0deg)'
@@ -23,7 +23,7 @@ export const StyledNavBarToggleIconContainer = styled('div', {
       true: {
         '& .line': {
           '&.top': {
-            transform: 'translateY(1px) rotate(45deg)'
+            transform: 'translateY(2px) rotate(45deg)'
           },
           '&.bottom': {
             transform: 'translateY(0px) rotate(-45deg)'

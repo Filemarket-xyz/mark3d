@@ -1,6 +1,6 @@
 import React from 'react'
 import { styled } from '../../../../styles'
-import { textVariant, ToolCard, ToolCardGradientBorder } from '../../../UIkit'
+import { textVariant } from '../../../UIkit'
 
 // technology icons
 import item1 from '../img/TechnologyStack/1.svg'
@@ -9,13 +9,12 @@ import item3 from '../img/TechnologyStack/3.svg'
 import item4 from '../img/TechnologyStack/4.png'
 import item5 from '../img/TechnologyStack/5.svg'
 import item6 from '../img/TechnologyStack/6.svg'
-import worlds from '../img/TechnologyStack/worlds.svg'
-import lighthouse from '../img/TechnologyStack/lighthouse.svg'
-import peeranha from '../img/TechnologyStack/peeranha.svg'
+import item7 from '../img/TechnologyStack/7.svg'
+import item8 from '../img/TechnologyStack/8.svg'
 
-const ToolCardWide = styled(ToolCard, {
+const ToolCardWide = styled('div', {
   maxWidth: 730,
-  marginTop: '$4',
+  marginTop: 48,
   '@lg': {
     marginLeft: 'auto',
     marginRight: 'auto'
@@ -26,14 +25,13 @@ const ToolCardWide = styled(ToolCard, {
 })
 
 const ToolCardContent = styled('div', {
-  padding: '$3 $4',
   display: 'flex',
   flexDirection: 'column',
   gap: '$3'
 })
 
 const Title = styled('h5', {
-  color: '$white',
+  color: '$gray800',
   ...textVariant('h5').true
 })
 
@@ -43,6 +41,7 @@ const ItemsContainer = styled('div', {
   alignItems: 'center',
   flexDirection: 'row',
   flexWrap: 'wrap',
+  justifyContent: 'space-between',
   '&::-webkit-scrollbar': {
     display: 'none'
   },
@@ -60,7 +59,7 @@ const Item = styled('a', {
 
 const ItemImg = styled('img', {
   objectFit: 'contain',
-  height: 38,
+  height: 40,
   width: 'min-content'
 })
 
@@ -95,15 +94,11 @@ const items: ItemData[] = [
     href: 'https://ipld.io/'
   },
   {
-    src: lighthouse,
+    src: item7,
     href: 'https://www.lighthouse.storage/'
   },
   {
-    src: worlds,
-    href: 'https://w3rlds.com/'
-  },
-  {
-    src: peeranha,
+    src: item8,
     href: 'https://peeranha.io/'
   }
 ]
@@ -111,18 +106,16 @@ const items: ItemData[] = [
 export const TechnologyStack = () => {
   return (
     <ToolCardWide>
-      <ToolCardGradientBorder>
-        <ToolCardContent>
-          <Title>Powered by</Title>
-          <ItemsContainer>
-            {items.map(({ src, href }) => (
-              <Item key={src} href={href} target='_blank'>
-                <ItemImg src={src}/>
-              </Item>
-            ))}
-          </ItemsContainer>
-        </ToolCardContent>
-      </ToolCardGradientBorder>
+      <ToolCardContent>
+        <Title>Powered by</Title>
+        <ItemsContainer>
+          {items.map(({ src, href }) => (
+            <Item key={src} href={href} target='_blank'>
+              <ItemImg src={src}/>
+            </Item>
+          ))}
+        </ItemsContainer>
+      </ToolCardContent>
     </ToolCardWide>
   )
 }

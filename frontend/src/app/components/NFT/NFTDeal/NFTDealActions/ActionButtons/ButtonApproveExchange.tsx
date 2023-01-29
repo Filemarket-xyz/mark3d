@@ -22,7 +22,7 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
     <>
       <MintModal {...modalProps}/>
       <Button
-        secondary
+        primary
         fullWidth
         onPress={async () => {
           await approveExchange()

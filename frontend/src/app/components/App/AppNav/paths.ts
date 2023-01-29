@@ -2,22 +2,37 @@ import { NavBarItemData } from '../../../UIkit'
 
 export const paths: NavBarItemData[] = [
   {
-    to: '/explorer',
-    label: 'VerseExplorer'
-  },
-
-  {
     to: '/market',
-    label: '3D Market'
+    label: 'All files'
   },
   {
-    to: 'https://metaeden.mark3d.xyz/',
-    label: 'MetaEden',
-    isLink: true
+    to: '',
+    label: 'Graphics',
+    isMock: true
   },
   {
-    to: 'https://mark3d.peeranha.io',
-    label: 'Wiki',
-    isLink: true
+    to: '',
+    label: 'Photos',
+    isMock: true
+  },
+  {
+    to: '',
+    label: 'Videos',
+    isMock: true
+  },
+  {
+    to: '',
+    label: 'Music',
+    isMock: true
+  },
+  {
+    to: '',
+    label: 'Sounds',
+    isMock: true
+  },
+  {
+    to: '',
+    label: 'Docs',
+    isMock: true
   }
 ]

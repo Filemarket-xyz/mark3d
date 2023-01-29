@@ -8,7 +8,7 @@ const StyledNavBarCollapse = styled('div', {
   left: 0,
   right: 0,
   backdropFilter: 'blur(12.5px)',
-  background: '$whiteOp75',
+  background: '$blue500Op75',
   width: '100%',
   height: '0px',
   zIndex: 9,
@@ -16,7 +16,7 @@ const StyledNavBarCollapse = styled('div', {
   variants: {
     isOpen: {
       true: {
-        top: 'calc($layout$navBarHeight + $layout$bannerHeight)',
+        top: '$layout$navBarHeight',
         height: '100%'
       }
     }

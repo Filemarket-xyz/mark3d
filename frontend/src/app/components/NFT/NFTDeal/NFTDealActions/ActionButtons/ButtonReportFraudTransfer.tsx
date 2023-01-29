@@ -22,7 +22,7 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ 
     <>
       <MintModal {...modalProps}/>
       <Button
-        secondary
+        primary
         fullWidth
         onPress={async () => {
           await reportFraud()

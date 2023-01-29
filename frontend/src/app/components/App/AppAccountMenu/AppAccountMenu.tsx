@@ -31,7 +31,7 @@ export const AppAccountMenu: FC<AppAccountMenuProps> = ({ address }) => {
   return (
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger>
-        <Button icon primary small iconCover>
+        <Button icon secondary small iconCover>
           <IconWrapper>
             {needToSwitchNetwork ? (
               <Warning

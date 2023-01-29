@@ -7,7 +7,7 @@ import { NFTCardProps } from '../../components/MarketCard/NFTCard'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
-import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
+import { gradientPlaceholderImg } from '../../UIkit'
 import { ComboBoxOption } from '../../UIkit/Form/Combobox'
 import { utils } from 'ethers/lib.esm'
 

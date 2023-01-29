@@ -14,9 +14,9 @@ import { Card } from '../Card'
  */
 
 export const ToolCard = styled(Card, {
-  background: 'rgba(255, 255, 255, 0.15)',
-  backdropFilter: 'blur(45px)',
-  borderRadius: '$4',
+  background: '$blue300',
+  backdropFilter: 'blur(4px)',
+  borderRadius: '$2',
   position: 'relative',
   overflow: 'hidden'
 })

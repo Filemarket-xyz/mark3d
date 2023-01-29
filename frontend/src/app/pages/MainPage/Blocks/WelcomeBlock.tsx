@@ -1,42 +1,48 @@
 import React from 'react'
 import { styled } from '../../../../styles'
-import { Container, NavButton, textVariant, ToolCard, ToolCardGradientBorder } from '../../../UIkit'
+import { Container, LinkButton, NavButton, textVariant, ToolCard } from '../../../UIkit'
 import { TechnologyStack } from '../components/TechnologyStack'
-import bg from '../img/bg.jpg'
+import bgStorage from '../img/bgStorage.svg'
 
 const WelcomeScreenWrapper = styled('section', {
-  background: `url(${bg})`,
+  background: `url(${bgStorage})`,
   width: '100%',
-  backgroundSize: 'cover',
+  backgroundSize: 'auto 80%',
   backgroundRepeat: 'no-repeat',
-  backgroundPositionX: '85%'
+  $$topPad: '128px',
+  backgroundPosition: 'top $$topPad right -5%',
+  '@xl': {
+    backgroundPosition: 'top $$topPad right -15%'
+  },
+  '@lg': {
+    background: 'none'
+  }
 })
 
 const Title = styled('h1', {
   ...textVariant('h1').true,
-  fontSize: '2.25rem',
-  color: '$white',
-  fontWeight: '600',
+  fontSize: '3.6rem',
+  color: '$gray800',
+  fontWeight: '700',
   '@lg': {
-    fontSize: 'calc(1vw + 20px)',
+    fontSize: 'calc(1.5vw + 30px)',
     textAlign: 'center',
     margin: 'auto'
   },
   '@sm': {
-    fontSize: 32,
+    fontSize: 30,
     '& > br': {
       display: 'none'
     }
   },
   maxWidth: '730px',
-  marginBottom: 0,
-  textTransform: 'uppercase'
+  marginBottom: 0
 })
 
 const Description = styled('p', {
   ...textVariant('body1').true,
   fontWeight: 500,
-  color: '$white',
+  color: '$gray800',
   maxWidth: 730,
   marginTop: '$3',
   '@lg': {
@@ -53,7 +59,7 @@ const Description = styled('p', {
 const ToolCardNarrow = styled(ToolCard, {
   width: '350px',
   '@sm': {
-    width: '90%'
+    width: '100%'
   }
 })
 
@@ -64,7 +70,7 @@ const ToolCardContent = styled('div', {
   width: '100%',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  minHeight: 298
+  minHeight: 350
 })
 
 const ToolCardInfo = styled('div', {
@@ -88,8 +94,8 @@ const ToolTitle = styled('h5', {
 })
 
 const ToolDescription = styled('p', {
-  fontSize: 22,
-  fontWeight: '400',
+  fontSize: '1.25rem',
+  fontWeight: '500',
   color: '$white',
   '@md': {
     fontSize: '$body2'
@@ -100,7 +106,7 @@ const ToolDescription = styled('p', {
 })
 
 const WelcomeInfo = styled(Container, {
-  paddingTop: 'calc($layout$navBarHeight + $layout$bannerHeight + 44px)',
+  paddingTop: 'calc($layout$navBarHeight + 44px)',
   paddingBottom: '140px',
   '@sm': {
     paddingBottom: '$5'
@@ -120,75 +126,46 @@ const ToolsContainer = styled('div', {
   }
 })
 
-const ButtonStyled = styled(NavButton, {
-  color: '$blue900',
-  variants: {
-    magenta: {
-      true: {
-        background: '$gradient1'
-      }
-    },
-    blue: {
-      true: {
-        background: '$gradient0'
-      }
-    }
-  },
-  '@sm': {
-    fontSize: '$primary2'
-  },
-  textDecoration: 'none',
-  flexShrink: 0
-})
-
 export default function WelcomeBlock() {
   return (
     <WelcomeScreenWrapper>
       <WelcomeInfo>
         <Title>
-          Store, sell, buy or gift 3D models
-          <br/> {' '}
-          and Custom Metaverse spaces
+          Store, sell, buy or send any files as NFTs
         </Title>
         <Description>
-          New decentralized standard of NFT: Encrypted FileToken (EFT) and Mark3d protocol on FVM allows perpetual
-          storage of files on decentralized network of Filecoin & IPFS
+          Our new standard of NFT: Encrypted FileToken (EFT) using FVM allows perpetual storage of encrypted files on
+          decentralized network of Filecoin & IPFS
         </Description>
         <ToolsContainer>
           <ToolCardNarrow>
-            <ToolCardGradientBorder>
-              <ToolCardContent>
-                <ToolCardInfo>
-                  <ToolTitle>For Metaverse Agencies</ToolTitle>
-                  <ToolDescription>
-                    Platform about Metaverse engines and NFT marketplace for 3D models and spaces
-                  </ToolDescription>
-                </ToolCardInfo>
-
-                <ButtonStyled primary to={'/create/nft'}>
-                  Mint 3D NFT
-                </ButtonStyled>
-              </ToolCardContent>
-            </ToolCardGradientBorder>
-          </ToolCardNarrow>
-
-          <ToolCardNarrow css={{ border: '4px solid $whiteOp50' }}>
             <ToolCardContent>
               <ToolCardInfo>
-                <ToolTitle>For game developers</ToolTitle>
+                <ToolTitle>For Digital Content Creators</ToolTitle>
                 <ToolDescription>
-                  Web3 toolkit for an easy peasy integration of a crypto economy
-                  into any virtual world
+                  Secure tokenization of any files, decentralized notary and storage, new monetization with access to
+                  DeFi, DAO, Metaverse
                 </ToolDescription>
               </ToolCardInfo>
 
-              <ButtonStyled
-                isDisabled
-                css={{ background: '$whiteOp50' }}
-                to={''}
-              >
-                Coming soon
-              </ButtonStyled>
+              <NavButton secondary to={'/create/nft'}>
+                Mint NFT File
+              </NavButton>
+            </ToolCardContent>
+          </ToolCardNarrow>
+
+          <ToolCardNarrow>
+            <ToolCardContent>
+              <ToolCardInfo>
+                <ToolTitle>Create your own files online shop</ToolTitle>
+                <ToolDescription>
+                  Create and customize your own unique storefront on your domain with only your digital content
+                </ToolDescription>
+              </ToolCardInfo>
+
+              <LinkButton secondary href="#">
+                Make order
+              </LinkButton>
             </ToolCardContent>
           </ToolCardNarrow>
         </ToolsContainer>

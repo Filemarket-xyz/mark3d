@@ -4,18 +4,17 @@ import { Outlet } from 'react-router'
 import { useParams } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 import { styled } from '../../../styles'
-import { gradientPlaceholderImg } from '../../components/Placeholder/GradientPlaceholder'
 import { useCollectionAndTokenListStore } from '../../hooks'
 import { useTransfersHistory } from '../../hooks/useTransfersHistory'
 import { useUserTransferStore } from '../../hooks/useUserTransfers'
-import { textVariant, Container } from '../../UIkit'
+import { textVariant, Container, gradientPlaceholderImg } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { Params } from '../../utils/router/Params'
-import bg from './img/Gradient.jpg'
 
-const Background = styled('img', {
+const Background = styled('div', {
+  background: '$gradients$background',
   width: '100%',
   height: 352
 })
@@ -62,12 +61,12 @@ const GrayOverlay = styled('div', {
 const Inventory = styled(Container, {
   paddingTop: '$4',
   backgroundColor: '$white',
-  borderTopLeftRadius: 64,
-  borderTopRightRadius: 64,
+  borderRadius: '$6 $6 0 0',
   '@md': {
-    borderTopLeftRadius: '$4',
-    borderTopRightRadius: '$4'
-  }
+    borderRadius: '$4 $4 0 0'
+  },
+  boxShadow: '$footer',
+  minHeight: 460 // prevent floating footer
 })
 
 const TabsContainer = styled('div', {
@@ -112,7 +111,7 @@ const ProfilePage = observer(() => {
   return (
     <>
       <GrayOverlay>
-        <Background src={bg} />
+        <Background/>
 
         <Container>
           <Profile>

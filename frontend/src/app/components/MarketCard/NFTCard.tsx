@@ -1,7 +1,6 @@
 import React from 'react'
 import { styled } from '../../../styles'
-import { gradientPlaceholderImg } from '../Placeholder/GradientPlaceholder'
-import { NavButton, textVariant, Txt } from '../../UIkit'
+import { gradientPlaceholderImg, NavButton, textVariant, Txt } from '../../UIkit'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
 
 export const CardControls = styled(BasicCardControls, {

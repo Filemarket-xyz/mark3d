@@ -12,9 +12,8 @@ export const {
 } = createStitches({
   theme: {
     colors: {
-      blue300: '#00DCFF', // Color: Sky Blue Crayola
-      blue400: '#94bde6', // 70% blue500 30% white
-      blue500: '#66A0DB', // Color: Little Boy Blue
+      blue300: '#4DB1FF',
+      blue500: '#0090FF',
       blue600: '#655BE5', // Color: Slate Blue
       blue700: '#4160ED', // Color: Ultramarine Blue
       blue900: '#13132D', // Color: Space Cadet
@@ -23,23 +22,26 @@ export const {
       magenta: '#E14BEC', // Color: Magenta
       pink: '#F4CFF3', // Color: Pink Lace
 
-      black: '#1A1A1A', // Color: Eerie Black
+      black: '#000000', // Color: Eerie Black
       white: '#ffffff',
       whiteOp50: 'rgba(255, 255, 255, 0.5)',
       whiteOp75: 'rgba(255, 255, 255, 0.75)',
+      blue500Op75: 'rgba(0, 144, 255, 0.75)',
 
       gray100: '#F9F9F9',
-      gray200: '#F3F3F4',
-      gray300: '#d0d0d5',
-      gray400: '#a1a1ab',
+      gray200: '#E5E5E5',
+      gray300: '#E9E9EA', // raisin + 90%
+      gray400: '#A7A8A9', // raisin + 60%
       gray500: '#59596C',
+      gray600: '#656669', // raisin + 30%
+      gray800: '#232528', // raisin
 
       green: '#00FF0A',
 
       red: '#D81B60',
 
-      gradient0: '$blue300',
-      gradient1: '$magenta'
+      gradient0: '#38BCC9',
+      gradient1: '#088DFA'
     },
 
     space: {
@@ -47,11 +49,12 @@ export const {
       2: '8px',
       3: '16px', // самый ходовой
       4: '32px',
-      5: '40px'
+      5: '40px',
+      6: '80px'
     },
 
     fonts: {
-      h: 'Sora, sans-serif',
+      h: 'Montserrat, sans-serif',
       body: 'Montserrat, sans-serif',
       button: 'Montserrat, sans-serif',
       primary: 'Montserrat, sans-serif',
@@ -119,12 +122,14 @@ export const {
       1: '8px',
       2: '12px',
       3: '16px',
-      4: '32px'
+      4: '32px',
+      6: '80px'
     },
 
     shadows: {
       // names of shadows are from the figma
       form: '0px 0px 15px rgba(19, 19, 45, 0.05)',
+      hover: '0px 2px 15px rgba(19, 19, 45, 0.2)',
       header: '0px 4px 15px rgba(19, 19, 45, 0.05)',
       footer: '0px -4px 15px rgba(19, 19, 45, 0.05)',
       low: '0px 4px 15px rgba(19, 19, 45, 0.1)'
@@ -138,7 +143,8 @@ export const {
     },
 
     gradients: {
-      main: 'linear-gradient(270deg, $colors$gradient0 0%, $colors$gradient1 85.65%)'
+      main: 'linear-gradient(90deg, $colors$gradient0 0%, $colors$gradient1 100%)',
+      background: 'linear-gradient(291.31deg, #0291FC 0%, #4AC6D1 100%)'
     },
 
     layout: {

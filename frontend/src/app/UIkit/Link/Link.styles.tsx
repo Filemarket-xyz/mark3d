@@ -38,20 +38,17 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
             fill: '$gray500'
           }
         },
-        white: {
-          true: {
-            color: '$white',
-            fill: '$white',
-            opacity: 0.75,
-            '&[data-hovered=true]': {
-              opacity: 1
-            }
-          }
-        },
         red: {
           true: {
             color: '$red',
             fill: '$red'
+          }
+        },
+        footer: {
+          true: {
+            color: '$white',
+            fill: '$white',
+            ...textVariant('primary2').true
           }
         },
         small: {

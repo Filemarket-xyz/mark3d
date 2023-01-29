@@ -3,8 +3,7 @@ import { styled } from '../../../styles'
 
 const GradientWrapper = styled('div', {
   width: '100%',
-  backgroundSize: 'cover',
-  backgroundRepeat: 'repeat-y'
+  backgroundColor: '$gray100'
 })
 
 export default function MainPage() {

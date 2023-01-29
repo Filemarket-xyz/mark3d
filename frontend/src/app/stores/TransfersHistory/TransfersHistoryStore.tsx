@@ -19,8 +19,8 @@ import ethIcon from '../../pages/ProfilePage/img/eth-icon.svg'
 import { styled } from '../../../styles'
 import dayjs from 'dayjs'
 import { formatCurrency } from '../../utils/web3/currency'
-import Badge from '../../components/Badge/Badge'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
+import { Badge } from '../../UIkit'
 
 const getLatestStatusTimestamp = (statuses?: OrderStatusInfo[]) => {
   if (!statuses) return 0

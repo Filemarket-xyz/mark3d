@@ -7,5 +7,5 @@ export const getHttpLinkFromIpfsString = (ipfs: string) => {
   if (!ipfs) return ''
   const cidWithFilePath = getIpfsCidWithFilePath(ipfs)
 
-  return `https://mark3d.xyz/ipfs/${cidWithFilePath}`
+  return `https://filemarket.xyz/ipfs/${cidWithFilePath}`
 }

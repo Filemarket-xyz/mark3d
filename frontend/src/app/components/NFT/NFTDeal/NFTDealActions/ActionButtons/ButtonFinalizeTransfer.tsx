@@ -22,7 +22,7 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
     <>
       <MintModal {...modalProps}/>
       <Button
-        secondary
+        primary
         fullWidth
         onPress={async () => {
           await finalizeTransfer()

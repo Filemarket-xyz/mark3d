@@ -11,7 +11,7 @@ export default function TabsBones(props: ComponentProps<typeof MUITabs>) {
       sx={{
         'span.MuiTabs-indicator': {
           height: '4px !important',
-          background: 'linear-gradient(270deg, #00DCFF 0%, #E14BEC 85.65%)'
+          background: 'linear-gradient(90deg, #38BCC9 0%, #088DFA 100%)'
         },
         'button.MuiTab-root': {
           fontFamily: 'Sora',

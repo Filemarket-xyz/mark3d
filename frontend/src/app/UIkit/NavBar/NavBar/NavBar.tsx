@@ -1,5 +1,5 @@
 import { FC, ReactNode, useEffect, useState } from 'react'
-import { BreakpointsOptions, styled } from '../../../../styles'
+import { BreakpointsOptions, cssShowHideIn, styled } from '../../../../styles'
 import { Container } from '../../Container'
 import { NavBarCollapse } from '../NavBarCollapse'
 import { NavBarToggle } from '../NavBarToggle'
@@ -11,6 +11,7 @@ export interface NavBarItemData {
   to: string
   label?: ReactNode
   isLink?: boolean
+  isMock?: boolean
 }
 
 export interface NavBarProps {
@@ -28,12 +29,13 @@ const NavBarStyled = styled('nav', {
   top: 0,
   left: 0,
   right: 0,
-  background: '$colors$whiteOp50',
-  borderBottom: '2px solid $colors$whiteOp50',
+  background: '$colors$blue500',
   backdropFilter: 'blur(12.5px)',
   boxShadow: '$header',
   color: '$blue900'
 })
+
+const horizontalGap = 30
 
 const NavBarHorizontalSpacer = styled('div', {
   height: '100%',
@@ -42,7 +44,14 @@ const NavBarHorizontalSpacer = styled('div', {
   alignItems: 'center',
   flexDirection: 'row',
   flexWrap: 'nowrap',
-  gap: '30px'
+  gap: horizontalGap
+}, cssShowHideIn)
+
+const ActionsContainer = styled('div', {
+  display: 'flex',
+  justifyContent: 'end',
+  gap: horizontalGap,
+  flexGrow: 1
 })
 
 const NavBarVerticalSpacer = styled('div', {
@@ -51,6 +60,9 @@ const NavBarVerticalSpacer = styled('div', {
   flexWrap: 'nowrap',
   gap: '$3'
 })
+
+const itemTo = (item: NavBarItemData) =>
+  item.isMock ? '/abracadabra1337' : item.to
 
 export const NavBar: FC<NavBarProps> = ({
   brand,
@@ -75,28 +87,32 @@ export const NavBar: FC<NavBarProps> = ({
             />
             {brand}
             {items && (
-              <NavBarHorizontalSpacer css={{ flexGrow: 1 }}>
-                {items.map(item => item.isLink ? (
+              <NavBarHorizontalSpacer hideIn={mobileBp}>
+                {items.map((item, index) => item.isLink ? (
                     <NavBarItemLink
-                      key={item.to}
-                      href={item.to}
+                      key={index}
+                      href={itemTo(item)}
                       target="_blank"
                       hideIn={mobileBp}
+                      mock={item.isMock}
                     >
                       {item.label}
                     </NavBarItemLink>
                 ) : (
                   <NavBarItem
-                    key={item.to}
-                    to={item.to}
+                    key={index}
+                    to={itemTo(item)}
                     hideIn={mobileBp}
+                    mock={item.isMock}
                   >
                     {item.label}
                   </NavBarItem>
                 ))}
               </NavBarHorizontalSpacer>
             )}
-            {actions}
+            <ActionsContainer>
+              {actions}
+            </ActionsContainer>
           </NavBarHorizontalSpacer>
         </Container>
       </NavBarStyled>
@@ -110,8 +126,9 @@ export const NavBar: FC<NavBarProps> = ({
                 isVisible={isExpanded}
                 index={index}
                 length={items?.length}
-                key={item.to}
-                to={item.to}
+                key={index}
+                mock={item.isMock}
+                to={itemTo(item)}
               >
                 {item.label}
               </NavBarCollapseItem>
