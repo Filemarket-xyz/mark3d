@@ -50,8 +50,9 @@ interface PreviewNFTFlowProps {
 const SwiperStyled = styled(Swiper)
 
 const Image = styled('img', {
-  width: 350,
-  height: 350,
+  width: 'auto',
+  maxWidth: '80%',
+  height: '90%',
   borderRadius: '$3',
   objectFit: 'cover',
   '@sm': {
