@@ -91,27 +91,7 @@ const CrossIcon = styled('img', {
   objectFit: 'contain'
 })
 
-const supportedExtensions = new Set([
-  '.fbx',
-  '.3ds',
-  '.max',
-  '.blend',
-  '.obj',
-  '.c4d',
-  '.mb',
-  '.ma',
-  '.lwo',
-  '.lxo',
-  '.skp',
-  '.stl',
-  '.uasset',
-  '.dae',
-  '.ply',
-  '.glb',
-  '.gltf',
-  '.usdf',
-  '.unitypackage'
-])
+const supportedExtensions = new Set(['*'])
 
 interface NftLoaderProps {
   registerProps: UseFormRegisterReturn
