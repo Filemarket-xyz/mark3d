@@ -5,7 +5,6 @@ import { Button, textVariant } from '../../../UIkit'
 import BoxImage from './img/box.svg'
 import SuccessImage from './img/Success.svg'
 import CrossImage from './img/cross.svg'
-import { getFileExtension } from '../../../pages/NFTPage/components/PreviewNFTFlow'
 import { CreateNFTForm } from '../../../pages/CreatePage/CreateNFTPage'
 
 const Box = styled('img', {
@@ -130,10 +129,6 @@ export default function NftLoader(props: NftLoaderProps) {
         onChange={async (e) => {
           const file = e.target.files ? e.target.files[0] : undefined
           if (!file) {
-            return
-          }
-
-          if (!supportedExtensions.has(`.${getFileExtension(file)}`)) {
             return
           }
 
