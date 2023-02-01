@@ -163,7 +163,7 @@ export default function WelcomeBlock() {
                 </ToolDescription>
               </ToolCardInfo>
 
-              <LinkButton secondary href="#">
+              <LinkButton target="_blank" secondary href="https://form.typeform.com/to/gulmhUKG">
                 Make order
               </LinkButton>
             </ToolCardContent>
