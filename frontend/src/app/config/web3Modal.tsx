@@ -18,7 +18,7 @@ const { provider, webSocketProvider } = configureChains(chains, [
 
 export const wagmiClient = createClient({
   autoConnect: true,
-  connectors: modalConnectors({ appName: 'Mark3d', chains }),
+  connectors: modalConnectors({ appName: 'FileMarket', chains }),
   provider,
   webSocketProvider
 })

@@ -70,7 +70,7 @@ export default function Footer() {
       <FooterContainer>
         <Info>
           <Txt secondary1 css={{ fontSize: 14 }}>
-            Copyright © {date.getFullYear()} Mark3d
+            Copyright © {date.getFullYear()} FileMarket
           </Txt>
           <Divider />
           <Link footer>Privacy policy</Link>

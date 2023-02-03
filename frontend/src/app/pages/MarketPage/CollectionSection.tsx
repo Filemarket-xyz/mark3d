@@ -6,7 +6,7 @@ import icon from './img/icon.jpg'
 
 const card: CollectionCardProps = {
   imageUrl: collectionImg,
-  description: `Mark3d NFT collection for
+  description: `FileMarket NFT collection for
   3D Internet and virtual worlds`,
   iconURL: icon
 }

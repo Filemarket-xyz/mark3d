@@ -80,7 +80,7 @@ export const AppLogoButton = forwardRef<HTMLAnchorElement, AppLogoButtonProps>((
     >
       <Logo
         src={LogoIcon}
-        alt="Mark3d logo"
+        alt="FileMarket logo"
       />
       <Drip {...dripProps}/>
     </LinkStyled>
