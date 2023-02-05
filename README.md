@@ -1,4 +1,4 @@
-###Online shop and storefronts constructor with focusing on store, sell, buy or send any files as NFT 2.0 with new Encrypted FileToken standart on FVM
+#Online shop and storefronts constructor with focusing on store, sell, buy or send any files as NFT 2.0 with new Encrypted FileToken standart on FVM
 
 Here is our tech article about EFT on Medium and we need your claps (may the force be with you): 
 https://medium.com/mark3d-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34
