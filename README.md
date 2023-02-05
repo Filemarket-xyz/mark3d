@@ -1,6 +1,7 @@
 #Mark3d
 
 #Project Description
+
 We are building a network of online shops of NFT files stored and encrypted on Filecoin using Lighthouse storage to upload content to storage providers, with accumulation of all files on a common large FileMarket Hub.
 
 To store encrypted and protected from unauthorized copying files within NFT, we have developed our Encrypted FileToken standard. It is designed to solve NFT's "right-click-save" problem.
@@ -26,6 +27,7 @@ Inner catalog, ads and promotion for online shops
 Primary audience: Individual creators and creative studios
 
 #How it's Made
+
 We use symmetric encryption of the file uploaded to Filecoin at the time of mint NFT. We use Lighthouse storage service to upload files. For minting and other functions we developed smart contracts on FEVM.
 
 When someone buys an NFT, he freezes the amount in tokens for payment on the smart contract and sends a Public Key to the seller. The seller in a separate transaction using asymmetric encryption sends the encrypted file decryption key to the buyer.
