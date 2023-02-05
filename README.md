@@ -1,7 +1,9 @@
-> Project Description
 Online shop and storefronts constructor with focusing on store, sell, buy or send any files as NFT 2.0 with new Encrypted FileToken standart on FVM
 
-Here is our tech article about EFT on Medium and we need your claps: https://medium.com/mark3d-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34
+Here is our tech article about EFT on Medium and we need your claps (may the force be with you): 
+https://medium.com/mark3d-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34
+
+> Project Description
 
 We are building a network of online shops of NFT files stored and encrypted on Filecoin using Lighthouse storage to upload content to storage providers, with accumulation of all files on a common large FileMarket Hub.
 
