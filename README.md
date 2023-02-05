@@ -1,4 +1,4 @@
-> #Project Description
+> Project Description
 
 We are building a network of online shops of NFT files stored and encrypted on Filecoin using Lighthouse storage to upload content to storage providers, with accumulation of all files on a common large FileMarket Hub.
 
