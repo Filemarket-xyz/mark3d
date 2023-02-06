@@ -183,6 +183,7 @@ func (s *service) getBlock(ctx context.Context, args ...interface{}) (*types.Blo
 	var raw json.RawMessage
 	err := s.rpcClient.CallContext(ctx, &raw, "eth_getBlockByNumber", args...)
 	if err != nil {
+		log.Println("get block error", err)
 		return nil, err
 	} else if len(raw) == 0 {
 		return nil, ethereum.NotFound
@@ -774,15 +775,18 @@ func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 	defer cancel()
 	block, err := s.getBlock(ctx, "latest", true)
 	if err != nil {
+		log.Println("get latest block failed", err)
 		return latest, err
 	}
 	for block.Number().Cmp(latest) != 0 {
 		pending := latest.Add(latest, big.NewInt(1))
 		block, err = s.getBlock(ctx, hexutil.EncodeBig(pending), true)
 		if err != nil {
+			log.Println("get pending block failed", err)
 			return latest, err
 		}
 		if err := s.processBlock(block); err != nil {
+			log.Println("process block failed", err)
 			return latest, err
 		}
 		latest = pending
