@@ -9,7 +9,6 @@ import (
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
@@ -751,7 +750,7 @@ func (s *service) processBlock(block *types.Block) error {
 }
 
 func (s *service) ListenBlockchain() error {
-	block, err := s.getBlock(context.Background(), "latest", true)
+	block, err := s.ethClient.BlockByNumber(context.Background(), nil)
 	if err != nil {
 		return err
 	}
@@ -773,14 +772,14 @@ func (s *service) ListenBlockchain() error {
 func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	block, err := s.getBlock(ctx, "latest", true)
+	block, err := s.ethClient.BlockByNumber(ctx, nil)
 	if err != nil {
 		log.Println("get latest block failed", err)
 		return latest, err
 	}
 	for block.Number().Cmp(latest) != 0 {
 		pending := latest.Add(latest, big.NewInt(1))
-		block, err = s.getBlock(ctx, hexutil.EncodeBig(pending), true)
+		block, err = s.ethClient.BlockByNumber(ctx, pending)
 		if err != nil {
 			log.Println("get pending block failed", err)
 			return latest, err
