@@ -778,7 +778,7 @@ func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 		return latest, err
 	}
 	for block.Number().Cmp(latest) != 0 {
-		pending := latest.Add(latest, big.NewInt(1))
+		pending := big.NewInt(0).Add(latest, big.NewInt(1))
 		block, err = s.ethClient.BlockByNumber(ctx, pending)
 		if err != nil {
 			log.Println("get pending block failed", err)
