@@ -94,7 +94,7 @@ export default function Footer() {
           </Link>
 
           <Link
-            href='https://t.me/filemarketofficial'
+            href='https://t.me/FileMarket_xyz'
             target='_blank'
             rel='noopener noreferrer'
           >
