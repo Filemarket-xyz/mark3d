@@ -8,6 +8,6 @@ export const paths: NavBarItemData[] = [
   {
     to: 'https://form.typeform.com/to/HD7PbrwW',
     label: 'Alpha testers form',
-    isMock: true
+    isLink: true
   }
 ]
