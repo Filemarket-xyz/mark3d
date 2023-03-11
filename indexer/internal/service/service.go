@@ -824,23 +824,31 @@ func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 		log.Println("processing block difference", latest, blockNum)
 	}
 	for blockNum.Cmp(latest) != 0 {
-		pending := big.NewInt(0).Add(latest, big.NewInt(1))
-		block, err := s.getBlock(ctx, hexutil.EncodeBig(pending), true)
+		latest, err = s.checkSingleBlock(latest)
 		if err != nil {
-			log.Println("get pending block failed", pending.String(), err)
-		} else {
-			if err := s.processBlock(block); err != nil {
-				log.Println("process block failed", err)
-				return latest, err
-			}
-		}
-		latest = pending
-		if err := s.repository.SetLastBlock(context.Background(), latest); err != nil {
-			log.Println("set last block failed")
-			break
+			return nil, err
 		}
 	}
 	return latest, nil
+}
+
+func (s *service) checkSingleBlock(latest *big.Int) (*big.Int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	pending := big.NewInt(0).Add(latest, big.NewInt(1))
+	block, err := s.getBlock(ctx, hexutil.EncodeBig(pending), true)
+	if err != nil {
+		log.Println("get pending block failed", pending.String(), err)
+	} else {
+		if err := s.processBlock(block); err != nil {
+			log.Println("process block failed", err)
+			return latest, err
+		}
+	}
+	if err := s.repository.SetLastBlock(context.Background(), latest); err != nil {
+		log.Println("set last block failed")
+	}
+	return pending, err
 }
 
 func (s *service) Shutdown() {
