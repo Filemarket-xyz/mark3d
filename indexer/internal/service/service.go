@@ -403,6 +403,13 @@ func (s *service) tryProcessTransferInit(ctx context.Context, tx pgx.Tx,
 	if err != nil {
 		return nil
 	}
+	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusCreated))
+	if err != nil {
+		return err
+	}
+	if exists {
+		return nil
+	}
 	transfer := &domain.Transfer{
 		CollectionAddress: *t.To(),
 		TokenId:           initEv.TokenId,
@@ -428,6 +435,13 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
 	initEv, err := instance.ParseTransferDraft(*l)
 	if err != nil {
+		return nil
+	}
+	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusDrafted))
+	if err != nil {
+		return err
+	}
+	if exists {
 		return nil
 	}
 	order, err := s.exchangeInstance.Orders(&bind.CallOpts{
@@ -479,6 +493,13 @@ func (s *service) tryProcessTransferDraftCompletion(ctx context.Context, tx pgx.
 	if err != nil {
 		return nil
 	}
+	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusCreated))
+	if err != nil {
+		return err
+	}
+	if exists {
+		return nil
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -515,6 +536,13 @@ func (s *service) tryProcessPublicKeySet(ctx context.Context, tx pgx.Tx,
 	if err != nil {
 		return nil
 	}
+	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusPublicKeySet))
+	if err != nil {
+		return err
+	}
+	if exists {
+		return nil
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -539,6 +567,13 @@ func (s *service) tryProcessPasswordSet(ctx context.Context, tx pgx.Tx,
 	if err != nil {
 		return nil
 	}
+	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusPasswordSet))
+	if err != nil {
+		return err
+	}
+	if exists {
+		return nil
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -561,6 +596,13 @@ func (s *service) tryProcessTransferFinish(ctx context.Context, tx pgx.Tx,
 	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
 	ev, err := instance.ParseTransferFinished(*l)
 	if err != nil {
+		return nil
+	}
+	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusFinished))
+	if err != nil {
+		return err
+	}
+	if exists {
 		return nil
 	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
@@ -601,6 +643,13 @@ func (s *service) tryProcessTransferFraudReported(ctx context.Context, tx pgx.Tx
 	if err != nil {
 		return nil
 	}
+	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusFraudReported))
+	if err != nil {
+		return err
+	}
+	if exists {
+		return nil
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -620,6 +669,13 @@ func (s *service) tryProcessTransferFraudDecided(ctx context.Context, tx pgx.Tx,
 	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
 	ev, err := instance.ParseTransferFraudDecided(*l)
 	if err != nil {
+		return nil
+	}
+	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusFinished))
+	if err != nil {
+		return err
+	}
+	if exists {
 		return nil
 	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
@@ -673,6 +729,13 @@ func (s *service) tryProcessTransferCancel(ctx context.Context, tx pgx.Tx,
 	if err != nil {
 		return nil
 	}
+	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusCancelled))
+	if err != nil {
+		return err
+	}
+	if exists {
+		return nil
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -710,13 +773,6 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 		}
 		if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l); err != nil {
 			return err
-		}
-		exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash())
-		if err != nil {
-			return err
-		}
-		if exists {
-			continue
 		}
 		if err := s.tryProcessTransferInit(ctx, tx, instance, t, l); err != nil {
 			return err

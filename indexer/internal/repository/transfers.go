@@ -297,9 +297,10 @@ func (p *postgres) InsertTransferStatus(ctx context.Context, tx pgx.Tx, transfer
 	return nil
 }
 
-func (p *postgres) TransferTxExists(ctx context.Context, tx pgx.Tx, txId common.Hash) (bool, error) {
+func (p *postgres) TransferTxExists(ctx context.Context, tx pgx.Tx, txId common.Hash, status string) (bool, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `SELECT COUNT(*) FROM transfer_statuses WHERE lower(tx_id)=$1`, strings.ToLower(txId.Hex()))
+	row := tx.QueryRow(ctx, `SELECT COUNT(*) FROM transfer_statuses WHERE lower(tx_id)=$1 AND status=$2`,
+		strings.ToLower(txId.Hex()), status)
 	var count int64
 	if err := row.Scan(&count); err != nil {
 		return false, err
