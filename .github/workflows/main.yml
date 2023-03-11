@@ -87,7 +87,7 @@ jobs:
         working-directory: indexer/
   update:
     runs-on: [self-hosted, main]
-    needs: [ build-frontend, build-oracle, build-indexer ]
+    needs: [ check-changes, build-frontend, build-oracle, build-indexer ]
     steps:
       - uses: actions/checkout@v3
       - name: Load frontend artifacts

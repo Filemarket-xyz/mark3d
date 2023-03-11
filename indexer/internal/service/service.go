@@ -839,6 +839,7 @@ func (s *service) checkSingleBlock(latest *big.Int) (*big.Int, error) {
 	block, err := s.getBlock(ctx, hexutil.EncodeBig(pending), true)
 	if err != nil {
 		log.Println("get pending block failed", pending.String(), err)
+		return pending, nil
 	} else {
 		if err := s.processBlock(block); err != nil {
 			log.Println("process block failed", err)
