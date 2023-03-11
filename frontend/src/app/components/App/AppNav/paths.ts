@@ -6,33 +6,8 @@ export const paths: NavBarItemData[] = [
     label: 'All files'
   },
   {
-    to: '',
-    label: 'Graphics',
-    isMock: true
-  },
-  {
-    to: '',
-    label: 'Photos',
-    isMock: true
-  },
-  {
-    to: '',
-    label: 'Videos',
-    isMock: true
-  },
-  {
-    to: '',
-    label: 'Music',
-    isMock: true
-  },
-  {
-    to: '',
-    label: 'Sounds',
-    isMock: true
-  },
-  {
-    to: '',
-    label: 'Docs',
-    isMock: true
+    to: 'https://form.typeform.com/to/HD7PbrwW',
+    label: 'Alpha testers form',
+    isLink: true
   }
 ]
