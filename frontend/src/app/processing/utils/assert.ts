@@ -6,6 +6,6 @@ export function assertContract<Contract>(contract: Contract, contractName: strin
 
 export function assertSigner<Signer>(signer: Signer): asserts signer {
   if (!signer) {
-    throw Error('User must have connected wallet to create collection')
+    throw Error('User must have connected wallet to call contracts')
   }
 }
