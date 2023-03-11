@@ -2,67 +2,70 @@ import { useContractEvent } from 'wagmi'
 import { mark3dConfig } from '../../config/mark3d'
 import { HiddenFilesTokenEventNames } from '../types'
 import { IHiddenFilesTokenEventsListener } from '../HiddenFilesTokenEventsListener'
+import { ensureAddress } from '../utils/address'
 
 /**
  * Hook called to listen for transfer updates and pass them into TransferStore.
- * @param address
+ * @param contractAddress
  * @param listener
  */
-export function useWatchHiddenFileTokenEvents(listener: IHiddenFilesTokenEventsListener, address?: string) {
+export function useWatchHiddenFileTokenEvents(listener: IHiddenFilesTokenEventsListener, contractAddress?: string) {
   // TODO: refactor to use ethers.Provider to also receive tx that caused event emission
   const abi = mark3dConfig.collectionToken.abi
+  const address = ensureAddress(contractAddress)
+  // Sorry for any type. During one of wagmi updates typing was broken
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferInit,
-    listener: (tokenId, from, to) => listener.onTransferInit(tokenId, from, to)
+    listener: (tokenId: any, from: any, to: any) => listener.onTransferInit(tokenId, from, to)
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferDraft,
-    listener: (tokenId, from) => listener.onTransferDraft(tokenId, from)
+    listener: (tokenId: any, from: any) => listener.onTransferDraft(tokenId, from)
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferDraftCompletion,
-    listener: (tokenId, to) => listener.onTransferDraftCompletion(tokenId, to)
+    listener: (tokenId: any, to: any) => listener.onTransferDraftCompletion(tokenId, to)
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferPublicKeySet,
-    listener: (tokenId, publicKeyHex) => listener.onTransferPublicKeySet(tokenId, publicKeyHex)
+    listener: (tokenId: any, publicKeyHex: any) => listener.onTransferPublicKeySet(tokenId, publicKeyHex)
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferPasswordSet,
-    listener: (tokenId, encryptedPasswordHex) => listener.onTransferPasswordSet(tokenId, encryptedPasswordHex)
+    listener: (tokenId: any, encryptedPasswordHex: any) => listener.onTransferPasswordSet(tokenId, encryptedPasswordHex)
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferFinished,
-    listener: (tokenId) => listener.onTransferFinished(tokenId)
+    listener: (tokenId: any) => listener.onTransferFinished(tokenId)
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferFraudReported,
-    listener: (tokenId) => listener.onTransferFraudReported(tokenId)
+    listener: (tokenId: any) => listener.onTransferFraudReported(tokenId)
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferFraudDecided,
-    listener: (tokenId, approved) => listener.onTransferFraudDecided(tokenId, approved)
+    listener: (tokenId: any, approved: any) => listener.onTransferFraudDecided(tokenId, approved)
   })
   useContractEvent({
     address,
     abi,
     eventName: HiddenFilesTokenEventNames.TransferCancellation,
-    listener: (tokenId) => listener.onTransferCancellation(tokenId)
+    listener: (tokenId: any) => listener.onTransferCancellation(tokenId)
   })
 }
