@@ -6,6 +6,7 @@ services:
       - "9202:9202"
     depends_on:
       - indexer-postgres
+      - indexer-redis
     volumes:
       - ~/logs:/logs
     restart: unless-stopped
