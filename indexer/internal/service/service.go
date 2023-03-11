@@ -775,7 +775,7 @@ func (s *service) ListenBlockchain() error {
 	lastBlock, err := s.repository.GetLastBlock(context.Background())
 	if err != nil {
 		if err == redis.Nil {
-			block, err := s.ethClient.BlockByNumber(context.Background(), nil)
+			block, err := s.getBlock(context.Background(), nil)
 			if err != nil {
 				return err
 			}
@@ -802,7 +802,7 @@ func (s *service) ListenBlockchain() error {
 func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	block, err := s.ethClient.BlockByNumber(ctx, nil)
+	block, err := s.getBlock(ctx, nil)
 	if err != nil {
 		log.Println("get latest block failed", err)
 		return latest, err
@@ -812,7 +812,7 @@ func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 	}
 	for block.Number().Cmp(latest) != 0 {
 		pending := big.NewInt(0).Add(latest, big.NewInt(1))
-		block, err = s.ethClient.BlockByNumber(ctx, pending)
+		block, err = s.getBlock(ctx, pending)
 		if err != nil {
 			log.Println("get pending block failed", err)
 			return latest, err
