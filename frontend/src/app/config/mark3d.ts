@@ -15,7 +15,10 @@ const filecoinHyperspace: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ['https://api.hyperspace.node.glif.io/rpc/v1', 'https://api.hyperspace.node.glif.io/rpc/v1']
+      http: ['https://rpc.ankr.com/filecoin_testnet', 'https://api.hyperspace.node.glif.io/rpc/v1', 'https://filecoin-hyperspace.chainstacklabs.com/rpc/v1']
+    },
+    public: {
+      http: ['https://rpc.ankr.com/filecoin_testnet', 'https://api.hyperspace.node.glif.io/rpc/v1', 'https://filecoin-hyperspace.chainstacklabs.com/rpc/v1']
     }
   },
   blockExplorers: {
