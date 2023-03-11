@@ -836,7 +836,7 @@ func (s *service) checkSingleBlock(latest *big.Int) (*big.Int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	pending := big.NewInt(0).Add(latest, big.NewInt(1))
-	block, err := s.getBlock(ctx, hexutil.EncodeBig(pending), true)
+	block, err := s.ethClient.BlockByNumber(ctx, pending)
 	if err != nil {
 		log.Println("get pending block failed", pending.String(), err)
 		return pending, nil
