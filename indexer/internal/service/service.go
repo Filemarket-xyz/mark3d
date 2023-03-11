@@ -792,10 +792,6 @@ func (s *service) ListenBlockchain() error {
 				log.Println("process block failed", err)
 				break
 			}
-			if err := s.repository.SetLastBlock(context.Background(), current); err != nil {
-				log.Println("set last block failed")
-				break
-			}
 			lastBlock = current
 		case <-s.closeCh:
 			return nil
@@ -826,6 +822,10 @@ func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 			return latest, err
 		}
 		latest = pending
+		if err := s.repository.SetLastBlock(context.Background(), latest); err != nil {
+			log.Println("set last block failed")
+			break
+		}
 	}
 	return latest, nil
 }
