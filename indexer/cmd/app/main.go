@@ -4,10 +4,11 @@ import (
 	"context"
 	"flag"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/config"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/handler"
-	"github.com/mark3d-xyz/mark3d/indexer/internal/postgres"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/repository"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/server"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/service"
 	"log"
@@ -38,13 +39,20 @@ func main() {
 	if err := pool.Ping(ctx); err != nil {
 		log.Panicln(err)
 	}
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     cfg.Redis.Addr,
+		Password: cfg.Redis.Password,
+	})
 
-	pg := postgres.NewPostgres(pool)
 	rpcClient, err := rpc.Dial(cfg.Service.RpcUrl)
 	if err != nil {
 		log.Panicln(err)
 	}
-	indexService, err := service.NewService(pg, rpcClient, cfg.Service) // service who interact with main dependencies
+	indexService, err := service.NewService(
+		repository.NewRepository(pool, rdb),
+		rpcClient,
+		cfg.Service,
+	) // service who interact with main dependencies
 	if err != nil {
 		log.Panicln(err)
 	}

@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -30,6 +30,7 @@ type Collections interface {
 	InsertCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
 	UpdateCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
 	InsertCollectionTransfer(ctx context.Context, tx pgx.Tx, collectionAddress common.Address, transfer *domain.CollectionTransfer) error
+	CollectionTransferExists(ctx context.Context, tx pgx.Tx, txId string) (bool, error)
 }
 
 type Tokens interface {
@@ -50,6 +51,7 @@ type Transfers interface {
 	InsertTransfer(ctx context.Context, tx pgx.Tx, transfer *domain.Transfer) (int64, error)
 	UpdateTransfer(ctx context.Context, tx pgx.Tx, transfer *domain.Transfer) error
 	InsertTransferStatus(ctx context.Context, tx pgx.Tx, transferId int64, status *domain.TransferStatus) error
+	TransferTxExists(ctx context.Context, tx pgx.Tx, txId common.Hash) (bool, error)
 }
 
 type Orders interface {
@@ -62,6 +64,7 @@ type Orders interface {
 	GetActiveOrder(ctx context.Context, tx pgx.Tx, contractAddress common.Address, tokenId *big.Int) (*domain.Order, error)
 	InsertOrder(ctx context.Context, tx pgx.Tx, order *domain.Order) (int64, error)
 	InsertOrderStatus(ctx context.Context, tx pgx.Tx, orderId int64, status *domain.OrderStatus) error
+	OrderTxExists(ctx context.Context, tx pgx.Tx, txId common.Hash) (bool, error)
 }
 
 type postgres struct {

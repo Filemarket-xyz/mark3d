@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -291,8 +291,18 @@ func (p *postgres) InsertTransferStatus(ctx context.Context, tx pgx.Tx, transfer
 	status *domain.TransferStatus) error {
 	// language=PostgreSQL
 	if _, err := tx.Exec(ctx, `INSERT INTO transfer_statuses VALUES ($1,$2,$3,$4)`,
-		transferId, status.Timestamp, status.Status, status.TxId.String()); err != nil {
+		transferId, status.Timestamp, status.Status, strings.ToLower(status.TxId.String())); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (p *postgres) TransferTxExists(ctx context.Context, tx pgx.Tx, txId common.Hash) (bool, error) {
+	// language=PostgreSQL
+	row := tx.QueryRow(ctx, `SELECT COUNT(*) FROM transfer_statuses WHERE lower(tx_id)=$1`, strings.ToLower(txId.Hex()))
+	var count int64
+	if err := row.Scan(&count); err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }

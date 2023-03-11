@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -111,4 +111,14 @@ func (p *postgres) UpdateCollection(ctx context.Context, tx pgx.Tx,
 		return err
 	}
 	return nil
+}
+
+func (p *postgres) CollectionTransferExists(ctx context.Context, tx pgx.Tx, txId string) (bool, error) {
+	// language=PostgreSQL
+	row := tx.QueryRow(ctx, `SELECT COUNT(*) FROM collection_transfers WHERE tx_id=$1`, txId)
+	var res int64
+	if err := row.Scan(&res); err != nil {
+		return false, err
+	}
+	return res > 0, nil
 }

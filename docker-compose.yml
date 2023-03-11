@@ -35,6 +35,11 @@ services:
       - indexer-postgres-data:/var/lib/postgresql/data
     env_file: ~/.indexer_pg_env
     restart: unless-stopped
+  indexer-redis:
+    image: redis:7
+    volumes:
+      - indexer-redis-data:/data
+    command: redis-server --save 60 1
   indexer-postgres-migration:
     build:
       context: .
@@ -46,3 +51,4 @@ services:
 volumes:
   indexer-postgres-data:
   cache-redis-data:
+  indexer-redis-data:

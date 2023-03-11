@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -89,7 +89,7 @@ func (p *postgres) GetToken(ctx context.Context, tx pgx.Tx,
 
 func (p *postgres) InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error {
 	// language=PostgreSQL
-	if _, err := tx.Exec(ctx, `INSERT INTO tokens VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+	if _, err := tx.Exec(ctx, `INSERT INTO tokens VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT ON CONSTRAINT tokens_pkey DO NOTHING `,
 		strings.ToLower(token.CollectionAddress.String()), token.TokenId.String(),
 		strings.ToLower(token.Owner.String()), token.MetaUri, token.Name,
 		token.Description, token.Image, token.HiddenFile,

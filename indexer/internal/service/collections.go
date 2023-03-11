@@ -11,13 +11,13 @@ import (
 
 func (s *service) GetCollection(ctx context.Context,
 	address common.Address) (*models.Collection, *models.ErrorResponse) {
-	tx, err := s.postgres.BeginTransaction(ctx, pgx.TxOptions{})
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
 		return nil, internalError
 	}
-	defer s.postgres.RollbackTransaction(ctx, tx)
-	collection, err := s.postgres.GetCollection(ctx, tx, address)
+	defer s.repository.RollbackTransaction(ctx, tx)
+	collection, err := s.repository.GetCollection(ctx, tx, address)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, nil
@@ -30,13 +30,13 @@ func (s *service) GetCollection(ctx context.Context,
 
 func (s *service) GetCollectionWithTokens(ctx context.Context,
 	address common.Address) (*models.CollectionData, *models.ErrorResponse) {
-	tx, err := s.postgres.BeginTransaction(ctx, pgx.TxOptions{})
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
 		return nil, internalError
 	}
-	defer s.postgres.RollbackTransaction(ctx, tx)
-	collection, err := s.postgres.GetCollection(ctx, tx, address)
+	defer s.repository.RollbackTransaction(ctx, tx)
+	collection, err := s.repository.GetCollection(ctx, tx, address)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, nil
@@ -44,7 +44,7 @@ func (s *service) GetCollectionWithTokens(ctx context.Context,
 		log.Println("get collection failed: ", err)
 		return nil, internalError
 	}
-	tokens, err := s.postgres.GetCollectionTokens(ctx, tx, address)
+	tokens, err := s.repository.GetCollectionTokens(ctx, tx, address)
 	if err != nil {
 		log.Println("get collection token failed: ", err)
 		return nil, internalError

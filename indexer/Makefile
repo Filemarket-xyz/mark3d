@@ -27,6 +27,18 @@ build-models:
 	docker run --rm --user $(shell id -u):$(shell id -g) -e GOPATH=$(go env GOPATH):/go -v ${HOME}:${HOME} -w $(shell pwd) quay.io/goswagger/swagger generate model --spec=./swagger.yaml
 	go mod tidy
 
+postgres.start:
+	if [ ! "$(shell docker ps -q -f name=test-postgres)" ]; then \
+        if [ "$(shell docker ps -aq -f status=exited -f name=test-postgres)" ]; then \
+            docker rm test-postgres; \
+        fi; \
+		docker run --restart unless-stopped -d -p 1338:5432 -e POSTGRES_PASSWORD=1337 --name test-postgres postgres:13 ;\
+        sleep 5s; \
+    fi;
+	-docker exec test-postgres psql -U postgres -c "create user indexer password '1337'"
+	-docker exec test-postgres psql -U postgres -c "create database mark3d_indexer"
+	-docker exec test-postgres psql -U postgres -c "grant all privileges on database mark3d_indexer to indexer"
+
 migrate.up:
 	goose -dir migrations postgres "host=localhost port=1338 user=indexer password=1337 dbname=mark3d_indexer sslmode=disable" up
 

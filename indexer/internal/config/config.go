@@ -14,6 +14,7 @@ type (
 		Server   *ServerConfig
 		Handler  *HandlerConfig
 		Service  *ServiceConfig
+		Redis    *RedisConfig
 	}
 
 	PostgresConfig struct {
@@ -41,6 +42,11 @@ type (
 		AccessTokenAddress      common.Address
 		ExchangeAddress         common.Address
 		FraudDeciderWeb2Address common.Address
+	}
+
+	RedisConfig struct {
+		Addr     string
+		Password string
 	}
 )
 
@@ -83,6 +89,10 @@ func Init(configPath string) (*Config, error) {
 			AccessTokenAddress:      common.HexToAddress(jsonCfg.GetString("service.accessTokenAddress")),
 			FraudDeciderWeb2Address: common.HexToAddress(jsonCfg.GetString("service.fraudDeciderWeb2Address")),
 			ExchangeAddress:         common.HexToAddress(jsonCfg.GetString("service.exchangeAddress")),
+		},
+		Redis: &RedisConfig{
+			Addr:     envCfg.GetString("REDIS_ADDRESS"),
+			Password: envCfg.GetString("REDIS_PASSWORD"),
 		},
 	}, nil
 }

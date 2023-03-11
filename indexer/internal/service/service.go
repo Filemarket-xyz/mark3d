@@ -12,13 +12,14 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/access_token"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/collection"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/exchange"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/config"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
-	"github.com/mark3d-xyz/mark3d/indexer/internal/postgres"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/repository"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/now"
 	"io"
@@ -87,7 +88,7 @@ type Orders interface {
 }
 
 type service struct {
-	postgres            postgres.Postgres
+	repository          repository.Repository
 	cfg                 *config.ServiceConfig
 	rpcClient           *rpc.Client
 	ethClient           EthClient
@@ -96,7 +97,7 @@ type service struct {
 	closeCh             chan struct{}
 }
 
-func NewService(postgres postgres.Postgres, rpcClient *rpc.Client, cfg *config.ServiceConfig) (Service, error) {
+func NewService(repo repository.Repository, rpcClient *rpc.Client, cfg *config.ServiceConfig) (Service, error) {
 	ethClient := ethclient.NewClient(rpcClient)
 	accessTokenInstance, err := access_token.NewMark3dAccessToken(cfg.AccessTokenAddress, ethClient)
 	if err != nil {
@@ -109,7 +110,7 @@ func NewService(postgres postgres.Postgres, rpcClient *rpc.Client, cfg *config.S
 	return &service{
 		rpcClient:           rpcClient,
 		ethClient:           ethClient,
-		postgres:            postgres,
+		repository:          repo,
 		cfg:                 cfg,
 		accessTokenInstance: accessTokenInstance,
 		exchangeInstance:    exchangeInstance,
@@ -210,7 +211,7 @@ func (s *service) getBlock(ctx context.Context, args ...interface{}) (*types.Blo
 }
 
 func (s *service) isCollection(ctx context.Context, tx pgx.Tx, address common.Address) (bool, error) {
-	_, err := s.postgres.GetCollection(ctx, tx, address)
+	_, err := s.repository.GetCollection(ctx, tx, address)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return false, nil
@@ -261,7 +262,7 @@ func (s *service) processCollectionCreation(ctx context.Context, tx pgx.Tx,
 		return err
 	}
 	meta := s.loadTokenParams(ctx, metaUri)
-	if err := s.postgres.InsertCollection(ctx, tx, &domain.Collection{
+	if err := s.repository.InsertCollection(ctx, tx, &domain.Collection{
 		Address:     ev.Instance,
 		Creator:     from,
 		Owner:       from,
@@ -273,7 +274,7 @@ func (s *service) processCollectionCreation(ctx context.Context, tx pgx.Tx,
 	}); err != nil {
 		return err
 	}
-	if err := s.postgres.InsertCollectionTransfer(ctx, tx, ev.Instance, &domain.CollectionTransfer{
+	if err := s.repository.InsertCollectionTransfer(ctx, tx, ev.Instance, &domain.CollectionTransfer{
 		Timestamp: now.Now().UnixMilli(),
 		From:      common.HexToAddress(zeroAddress),
 		To:        from,
@@ -287,15 +288,22 @@ func (s *service) processCollectionCreation(ctx context.Context, tx pgx.Tx,
 
 func (s *service) processCollectionTransfer(ctx context.Context, tx pgx.Tx,
 	t *types.Transaction, ev *access_token.Mark3dAccessTokenTransfer) error {
-	c, err := s.postgres.GetCollectionsByTokenId(ctx, tx, ev.TokenId)
+	c, err := s.repository.GetCollectionsByTokenId(ctx, tx, ev.TokenId)
 	if err != nil {
 		return err
 	}
-	c.Owner = ev.To
-	if err := s.postgres.UpdateCollection(ctx, tx, c); err != nil {
+	exists, err := s.repository.CollectionTransferExists(ctx, tx, strings.ToLower(t.Hash().String()))
+	if err != nil {
 		return err
 	}
-	if err := s.postgres.InsertCollectionTransfer(ctx, tx, c.Address, &domain.CollectionTransfer{
+	if exists {
+		return nil
+	}
+	c.Owner = ev.To
+	if err := s.repository.UpdateCollection(ctx, tx, c); err != nil {
+		return err
+	}
+	if err := s.repository.InsertCollectionTransfer(ctx, tx, c.Address, &domain.CollectionTransfer{
 		Timestamp: now.Now().UnixMilli(),
 		From:      ev.From,
 		To:        ev.To,
@@ -326,6 +334,13 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 				return err
 			}
 			continue
+		}
+		_, err = s.repository.GetCollectionsByAddress(ctx, tx, common.HexToAddress(creation.Instance.Hex()))
+		if err == nil {
+			continue
+		}
+		if err != nil && err != pgx.ErrNoRows {
+			return err
 		}
 		if err := s.processCollectionCreation(ctx, tx, t, l.BlockNumber, creation); err != nil {
 			return err
@@ -361,7 +376,7 @@ func (s *service) tryProcessCollectionTransferEvent(ctx context.Context, tx pgx.
 		HiddenFile:        meta.HiddenFile,
 		Creator:           transfer.To,
 	}
-	if err := s.postgres.InsertToken(ctx, tx, token); err != nil {
+	if err := s.repository.InsertToken(ctx, tx, token); err != nil {
 		return err
 	}
 	log.Println("token inserted", token.CollectionAddress.String(), token.TokenId.String(), token.Owner.String(),
@@ -381,12 +396,12 @@ func (s *service) tryProcessTransferInit(ctx context.Context, tx pgx.Tx,
 		FromAddress:       initEv.From,
 		ToAddress:         initEv.To,
 	}
-	id, err := s.postgres.InsertTransfer(ctx, tx, transfer)
+	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
 	if err != nil {
 		return err
 	}
 	transfer.Id = id
-	if err := s.postgres.InsertTransferStatus(ctx, tx, id, &domain.TransferStatus{
+	if err := s.repository.InsertTransferStatus(ctx, tx, id, &domain.TransferStatus{
 		Timestamp: now.Now().UnixMilli(),
 		Status:    string(models.TransferStatusCreated),
 		TxId:      t.Hash(),
@@ -414,13 +429,13 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 		TokenId:           initEv.TokenId,
 		FromAddress:       initEv.From,
 	}
-	id, err := s.postgres.InsertTransfer(ctx, tx, transfer)
+	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
 	if err != nil {
 		return err
 	}
 	transfer.Id = id
 	timestamp := now.Now().UnixMilli()
-	if err := s.postgres.InsertTransferStatus(ctx, tx, id, &domain.TransferStatus{
+	if err := s.repository.InsertTransferStatus(ctx, tx, id, &domain.TransferStatus{
 		Timestamp: now.Now().UnixMilli(),
 		Status:    string(models.TransferStatusDrafted),
 		TxId:      t.Hash(),
@@ -431,11 +446,11 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 		TransferId: id,
 		Price:      order.Price,
 	}
-	orderId, err := s.postgres.InsertOrder(ctx, tx, o)
+	orderId, err := s.repository.InsertOrder(ctx, tx, o)
 	if err != nil {
 		return err
 	}
-	if err := s.postgres.InsertOrderStatus(ctx, tx, orderId, &domain.OrderStatus{
+	if err := s.repository.InsertOrderStatus(ctx, tx, orderId, &domain.OrderStatus{
 		Timestamp: timestamp,
 		Status:    string(models.OrderStatusCreated),
 		TxId:      t.Hash(),
@@ -451,27 +466,27 @@ func (s *service) tryProcessTransferDraftCompletion(ctx context.Context, tx pgx.
 	if err != nil {
 		return nil
 	}
-	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
+	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
 	}
-	order, err := s.postgres.GetOrder(ctx, tx, transfer.OrderId)
+	order, err := s.repository.GetOrder(ctx, tx, transfer.OrderId)
 	if err != nil {
 		return err
 	}
 	timestamp := now.Now().UnixMilli()
 	transfer.ToAddress = ev.To
-	if err := s.postgres.UpdateTransfer(ctx, tx, transfer); err != nil {
+	if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
 		return err
 	}
-	if err := s.postgres.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
+	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
 		Timestamp: timestamp,
 		Status:    string(models.TransferStatusCreated),
 		TxId:      t.Hash(),
 	}); err != nil {
 		return err
 	}
-	if err := s.postgres.InsertOrderStatus(ctx, tx, order.Id, &domain.OrderStatus{
+	if err := s.repository.InsertOrderStatus(ctx, tx, order.Id, &domain.OrderStatus{
 		Timestamp: timestamp,
 		Status:    string(models.OrderStatusFulfilled),
 		TxId:      t.Hash(),
@@ -487,11 +502,11 @@ func (s *service) tryProcessPublicKeySet(ctx context.Context, tx pgx.Tx,
 	if err != nil {
 		return nil
 	}
-	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
+	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
 	}
-	if err := s.postgres.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
+	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
 		Timestamp: now.Now().UnixMilli(),
 		Status:    string(models.TransferStatusPublicKeySet),
 		TxId:      t.Hash(),
@@ -499,7 +514,7 @@ func (s *service) tryProcessPublicKeySet(ctx context.Context, tx pgx.Tx,
 		return err
 	}
 	transfer.PublicKey = hex.EncodeToString(ev.PublicKey)
-	if err := s.postgres.UpdateTransfer(ctx, tx, transfer); err != nil {
+	if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
 		return err
 	}
 	return nil
@@ -511,11 +526,11 @@ func (s *service) tryProcessPasswordSet(ctx context.Context, tx pgx.Tx,
 	if err != nil {
 		return nil
 	}
-	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
+	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
 	}
-	if err := s.postgres.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
+	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
 		Timestamp: now.Now().UnixMilli(),
 		Status:    string(models.TransferStatusPasswordSet),
 		TxId:      t.Hash(),
@@ -523,7 +538,7 @@ func (s *service) tryProcessPasswordSet(ctx context.Context, tx pgx.Tx,
 		return err
 	}
 	transfer.EncryptedPassword = hex.EncodeToString(ev.EncryptedPassword)
-	if err := s.postgres.UpdateTransfer(ctx, tx, transfer); err != nil {
+	if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
 		return err
 	}
 	return nil
@@ -535,12 +550,12 @@ func (s *service) tryProcessTransferFinish(ctx context.Context, tx pgx.Tx,
 	if err != nil {
 		return nil
 	}
-	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
+	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
 	}
 	timestamp := now.Now().UnixMilli()
-	if err := s.postgres.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
+	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
 		Timestamp: timestamp,
 		Status:    string(models.TransferStatusFinished),
 		TxId:      t.Hash(),
@@ -548,7 +563,7 @@ func (s *service) tryProcessTransferFinish(ctx context.Context, tx pgx.Tx,
 		return err
 	}
 	if transfer.OrderId != 0 {
-		if err := s.postgres.InsertOrderStatus(ctx, tx, transfer.OrderId, &domain.OrderStatus{
+		if err := s.repository.InsertOrderStatus(ctx, tx, transfer.OrderId, &domain.OrderStatus{
 			Timestamp: timestamp,
 			Status:    string(models.OrderStatusFinished),
 			TxId:      t.Hash(),
@@ -556,12 +571,12 @@ func (s *service) tryProcessTransferFinish(ctx context.Context, tx pgx.Tx,
 			return err
 		}
 	}
-	token, err := s.postgres.GetToken(ctx, tx, l.Address, ev.TokenId)
+	token, err := s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
 	}
 	token.Owner = transfer.ToAddress
-	if err := s.postgres.UpdateToken(ctx, tx, token); err != nil {
+	if err := s.repository.UpdateToken(ctx, tx, token); err != nil {
 		return err
 	}
 	return nil
@@ -573,12 +588,12 @@ func (s *service) tryProcessTransferFraudReported(ctx context.Context, tx pgx.Tx
 	if err != nil {
 		return nil
 	}
-	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
+	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
 	}
 	timestamp := now.Now().UnixMilli()
-	if err := s.postgres.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
+	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
 		Timestamp: timestamp,
 		Status:    string(models.TransferStatusFraudReported),
 		TxId:      t.Hash(),
@@ -594,12 +609,12 @@ func (s *service) tryProcessTransferFraudDecided(ctx context.Context, tx pgx.Tx,
 	if err != nil {
 		return nil
 	}
-	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
+	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
 	}
 	timestamp := now.Now().UnixMilli()
-	if err := s.postgres.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
+	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
 		Timestamp: timestamp,
 		Status:    string(models.TransferStatusFinished),
 		TxId:      t.Hash(),
@@ -613,7 +628,7 @@ func (s *service) tryProcessTransferFraudDecided(ctx context.Context, tx pgx.Tx,
 		} else {
 			orderStatus = string(models.OrderStatusFinished)
 		}
-		if err := s.postgres.InsertOrderStatus(ctx, tx, transfer.OrderId, &domain.OrderStatus{
+		if err := s.repository.InsertOrderStatus(ctx, tx, transfer.OrderId, &domain.OrderStatus{
 			Timestamp: timestamp,
 			Status:    orderStatus,
 			TxId:      t.Hash(),
@@ -623,16 +638,16 @@ func (s *service) tryProcessTransferFraudDecided(ctx context.Context, tx pgx.Tx,
 	}
 	if ev.Approved {
 		transfer.FraudApproved = true
-		if err := s.postgres.UpdateTransfer(ctx, tx, transfer); err != nil {
+		if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
 			return err
 		}
 	} else {
-		token, err := s.postgres.GetToken(ctx, tx, l.Address, ev.TokenId)
+		token, err := s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
 		if err != nil {
 			return err
 		}
 		token.Owner = transfer.ToAddress
-		if err := s.postgres.UpdateToken(ctx, tx, token); err != nil {
+		if err := s.repository.UpdateToken(ctx, tx, token); err != nil {
 			return err
 		}
 	}
@@ -645,12 +660,12 @@ func (s *service) tryProcessTransferCancel(ctx context.Context, tx pgx.Tx,
 	if err != nil {
 		return nil
 	}
-	transfer, err := s.postgres.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
+	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
 	}
 	timestamp := now.Now().UnixMilli()
-	if err := s.postgres.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
+	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
 		Timestamp: timestamp,
 		Status:    string(models.TransferStatusCancelled),
 		TxId:      t.Hash(),
@@ -658,7 +673,7 @@ func (s *service) tryProcessTransferCancel(ctx context.Context, tx pgx.Tx,
 		return err
 	}
 	if transfer.OrderId != 0 {
-		if err := s.postgres.InsertOrderStatus(ctx, tx, transfer.OrderId, &domain.OrderStatus{
+		if err := s.repository.InsertOrderStatus(ctx, tx, transfer.OrderId, &domain.OrderStatus{
 			Timestamp: timestamp,
 			Status:    string(models.OrderStatusCancelled),
 			TxId:      t.Hash(),
@@ -682,6 +697,13 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 		}
 		if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l); err != nil {
 			return err
+		}
+		exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash())
+		if err != nil {
+			return err
+		}
+		if exists {
+			continue
 		}
 		if err := s.tryProcessTransferInit(ctx, tx, instance, t, l); err != nil {
 			return err
@@ -717,7 +739,7 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 func (s *service) processBlock(block *types.Block) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
-	tx, err := s.postgres.BeginTransaction(ctx, pgx.TxOptions{})
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		return err
 	}
@@ -750,19 +772,31 @@ func (s *service) processBlock(block *types.Block) error {
 }
 
 func (s *service) ListenBlockchain() error {
-	block, err := s.ethClient.BlockByNumber(context.Background(), nil)
+	lastBlock, err := s.repository.GetLastBlock(context.Background())
 	if err != nil {
-		return err
+		if err == redis.ErrClosed {
+			block, err := s.ethClient.BlockByNumber(context.Background(), nil)
+			if err != nil {
+				return err
+			}
+			lastBlock = block.Number()
+		} else {
+			return err
+		}
 	}
-	latest := block.Number()
 	for {
 		select {
 		case <-time.After(100 * time.Millisecond):
-			current, err := s.checkBlock(latest)
+			current, err := s.checkBlock(lastBlock)
 			if err != nil {
 				log.Println("process block failed", err)
+				break
 			}
-			latest = current
+			if err := s.repository.SetLastBlock(context.Background(), current); err != nil {
+				log.Println("set last block failed")
+				break
+			}
+			lastBlock = current
 		case <-s.closeCh:
 			return nil
 		}
@@ -776,6 +810,9 @@ func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 	if err != nil {
 		log.Println("get latest block failed", err)
 		return latest, err
+	}
+	if block.Number().Cmp(latest) != 0 {
+		log.Println("processing block difference", latest, block.Number())
 	}
 	for block.Number().Cmp(latest) != 0 {
 		pending := big.NewInt(0).Add(latest, big.NewInt(1))

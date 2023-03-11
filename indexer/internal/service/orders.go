@@ -12,18 +12,18 @@ import (
 
 func (s *service) GetOrders(ctx context.Context,
 	address common.Address) (*models.OrdersResponse, *models.ErrorResponse) {
-	tx, err := s.postgres.BeginTransaction(ctx, pgx.TxOptions{})
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
 		return nil, internalError
 	}
-	defer s.postgres.RollbackTransaction(ctx, tx)
-	incomingOrders, err := s.postgres.GetActiveIncomingOrdersByAddress(ctx, tx, address)
+	defer s.repository.RollbackTransaction(ctx, tx)
+	incomingOrders, err := s.repository.GetActiveIncomingOrdersByAddress(ctx, tx, address)
 	if err != nil {
 		log.Println("get active incoming orders failed: ", err)
 		return nil, internalError
 	}
-	outgoingOrders, err := s.postgres.GetActiveOutgoingOrdersByAddress(ctx, tx, address)
+	outgoingOrders, err := s.repository.GetActiveOutgoingOrdersByAddress(ctx, tx, address)
 	if err != nil {
 		log.Println("get active outgoing orders failed: ", err)
 		return nil, internalError
@@ -36,18 +36,18 @@ func (s *service) GetOrders(ctx context.Context,
 
 func (s *service) GetOrdersHistory(ctx context.Context,
 	address common.Address) (*models.OrdersResponse, *models.ErrorResponse) {
-	tx, err := s.postgres.BeginTransaction(ctx, pgx.TxOptions{})
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
 		return nil, internalError
 	}
-	defer s.postgres.RollbackTransaction(ctx, tx)
-	incomingOrders, err := s.postgres.GetIncomingOrdersByAddress(ctx, tx, address)
+	defer s.repository.RollbackTransaction(ctx, tx)
+	incomingOrders, err := s.repository.GetIncomingOrdersByAddress(ctx, tx, address)
 	if err != nil {
 		log.Println("get incoming orders failed: ", err)
 		return nil, internalError
 	}
-	outgoingOrders, err := s.postgres.GetOutgoingOrdersByAddress(ctx, tx, address)
+	outgoingOrders, err := s.repository.GetOutgoingOrdersByAddress(ctx, tx, address)
 	if err != nil {
 		log.Println("get outgoing orders failed: ", err)
 		return nil, internalError
@@ -60,13 +60,13 @@ func (s *service) GetOrdersHistory(ctx context.Context,
 
 func (s *service) GetOrder(ctx context.Context, address common.Address,
 	tokenId *big.Int) (*models.Order, *models.ErrorResponse) {
-	tx, err := s.postgres.BeginTransaction(ctx, pgx.TxOptions{})
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
 		return nil, internalError
 	}
-	defer s.postgres.RollbackTransaction(ctx, tx)
-	res, err := s.postgres.GetActiveOrder(ctx, tx, address, tokenId)
+	defer s.repository.RollbackTransaction(ctx, tx)
+	res, err := s.repository.GetActiveOrder(ctx, tx, address, tokenId)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, nil
@@ -77,25 +77,25 @@ func (s *service) GetOrder(ctx context.Context, address common.Address,
 }
 
 func (s *service) GetAllActiveOrders(ctx context.Context) ([]*models.OrderWithToken, *models.ErrorResponse) {
-	tx, err := s.postgres.BeginTransaction(ctx, pgx.TxOptions{})
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
 		return nil, internalError
 	}
-	defer s.postgres.RollbackTransaction(ctx, tx)
-	orders, err := s.postgres.GetAllActiveOrders(ctx, tx)
+	defer s.repository.RollbackTransaction(ctx, tx)
+	orders, err := s.repository.GetAllActiveOrders(ctx, tx)
 	if err != nil {
 		log.Println("get all active orders failed", err)
 		return nil, internalError
 	}
 	res := make([]*models.OrderWithToken, len(orders))
 	for i, o := range orders {
-		transfer, err := s.postgres.GetTransfer(ctx, tx, o.TransferId)
+		transfer, err := s.repository.GetTransfer(ctx, tx, o.TransferId)
 		if err != nil {
 			log.Println("get transfer for order failed", err)
 			return nil, internalError
 		}
-		token, err := s.postgres.GetToken(ctx, tx, transfer.CollectionAddress, transfer.TokenId)
+		token, err := s.repository.GetToken(ctx, tx, transfer.CollectionAddress, transfer.TokenId)
 		if err != nil {
 			log.Println("get token for order failed", err)
 			return nil, internalError

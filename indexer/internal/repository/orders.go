@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -293,8 +293,18 @@ func (p *postgres) InsertOrder(ctx context.Context, tx pgx.Tx, order *domain.Ord
 func (p *postgres) InsertOrderStatus(ctx context.Context, tx pgx.Tx, orderId int64, status *domain.OrderStatus) error {
 	// language=PostgreSQL
 	if _, err := tx.Exec(ctx, `INSERT INTO order_statuses VALUES ($1,$2,$3,$4)`,
-		orderId, status.Timestamp, status.Status, status.TxId.String()); err != nil {
+		orderId, status.Timestamp, status.Status, strings.ToLower(status.TxId.String())); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (p *postgres) OrderTxExists(ctx context.Context, tx pgx.Tx, txId common.Hash) (bool, error) {
+	// language=PostgreSQL
+	row := tx.QueryRow(ctx, `SELECT COUNT(*) FROM order_statuses WHERE lower(tx_id)=$1`, strings.ToLower(txId.Hex()))
+	var count int64
+	if err := row.Scan(&count); err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }
