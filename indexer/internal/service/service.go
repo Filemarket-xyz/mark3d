@@ -774,7 +774,7 @@ func (s *service) processBlock(block *types.Block) error {
 func (s *service) ListenBlockchain() error {
 	lastBlock, err := s.repository.GetLastBlock(context.Background())
 	if err != nil {
-		if err == redis.ErrClosed {
+		if err == redis.Nil {
 			block, err := s.ethClient.BlockByNumber(context.Background(), nil)
 			if err != nil {
 				return err
