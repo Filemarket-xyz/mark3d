@@ -63,7 +63,7 @@ export default function Tabs(props: TabsProps) {
   const [tab, setTab] = useState<false | number>(false)
   const location = useLocation()
   useEffect(() => {
-    const currentTabUrl = location.pathname.split('/').at(-1) ?? ''
+    const currentTabUrl = location?.pathname?.split('/')?.at(-1) ?? ''
     let tabIndex = props.tabs.findIndex((t) =>
       t.url.match(new RegExp(currentTabUrl, 'i'))
     )
