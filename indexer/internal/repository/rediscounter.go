@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-redis/redis/v8"
 	"log"
 	"math/big"
@@ -26,7 +27,10 @@ func (b *blockCounter) GetLastBlock(ctx context.Context) (*big.Int, error) {
 		log.Printf("key error. Key: %s, err: %s", lastBlockKey, num.Err())
 		return nil, num.Err()
 	}
-	res, _ := big.NewInt(0).SetString(num.String(), 10)
+	res, ok := big.NewInt(0).SetString(num.String(), 10)
+	if !ok {
+		return nil, fmt.Errorf("parse block num: %s failed", num.String())
+	}
 	return res, nil
 }
 
