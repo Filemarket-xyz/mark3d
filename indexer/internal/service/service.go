@@ -348,7 +348,7 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 			}
 			continue
 		}
-		_, err = s.repository.GetCollectionsByAddress(ctx, tx, common.HexToAddress(creation.Instance.Hex()))
+		_, err = s.repository.GetCollection(ctx, tx, common.HexToAddress(creation.Instance.Hex()))
 		if err == nil {
 			continue
 		}
