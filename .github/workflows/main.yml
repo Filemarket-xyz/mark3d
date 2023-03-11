@@ -76,7 +76,7 @@ jobs:
       - name: Check migration status
         run: ./check_migration.sh
       - name: Update compose
-        run: docker-compose -f docker-compose.yml up -d indexer-swagger indexer-repository oracle-redis indexer-service oracle-service
+        run: docker-compose -f docker-compose.yml up -d indexer-swagger indexer-postgres indexer-redis oracle-redis indexer-service oracle-service
       - name: update nginx
         run: |
           sudo mv filemarket.conf /etc/nginx/conf.d/filemarket.conf
