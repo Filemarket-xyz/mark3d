@@ -220,7 +220,7 @@ func (s *service) getLatestBlockNumber(ctx context.Context) (*big.Int, error) {
 	} else if len(raw) == 0 {
 		return nil, ethereum.NotFound
 	}
-	return hexutil.DecodeBig(string(raw))
+	return hexutil.DecodeBig(strings.Trim(string(raw), "\""))
 }
 
 func (s *service) isCollection(ctx context.Context, tx pgx.Tx, address common.Address) (bool, error) {
