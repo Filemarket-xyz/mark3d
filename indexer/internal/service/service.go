@@ -9,6 +9,7 @@ import (
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
@@ -812,7 +813,7 @@ func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 	}
 	for block.Number().Cmp(latest) != 0 {
 		pending := big.NewInt(0).Add(latest, big.NewInt(1))
-		block, err = s.getBlock(ctx, pending)
+		block, err = s.getBlock(ctx, hexutil.EncodeBig(pending))
 		if err != nil {
 			log.Println("get pending block failed", err)
 			return latest, err
