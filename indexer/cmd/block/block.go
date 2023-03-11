@@ -114,7 +114,7 @@ func main() {
 	if err != nil {
 		log.Panicln(err)
 	}
-	b, err := getBlock(context.Background(), c, "0x7d0d", true)
+	b, err := getBlock(context.Background(), c, "0x24C30", true)
 	if err != nil {
 		log.Panicln(err)
 	}
