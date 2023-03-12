@@ -6,7 +6,7 @@ export const ConnectButton: FC = () => {
   const { open } = useWeb3Modal()
   // onClick instead of onPress, cos web3modal closes when using onPress
   return (
-    <Button onClick={() => open()} small secondary>
+    <Button onClick={async () => open()} small secondary>
       Connect
     </Button>
   )

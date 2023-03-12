@@ -53,7 +53,7 @@ export const importRSAPrivateKey = async (keyHex: RSAPrivateKey) => {
     keyBytes,
     {
       name: 'RSA-OAEP',
-      hash: 'SHA-1',
+      hash: 'SHA-1'
     },
     true,
     ['decrypt']
@@ -78,7 +78,7 @@ export const genRSAKeyPair = async (): Promise<RSAKeyPair> => {
 
 export const encryptRSA = async (message: CryptoMessage, key: RSAPublicKey): Promise<Uint8Array> => {
   const publicKey = await importRSAPublicKey(key)
-  const ecnData = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, publicKey, message);
+  const ecnData = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, publicKey, message)
   return new Uint8Array(ecnData)
 }
 
