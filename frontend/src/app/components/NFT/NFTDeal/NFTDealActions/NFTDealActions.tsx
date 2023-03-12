@@ -4,9 +4,10 @@ import { FC } from 'react'
 import { TokenFullId } from '../../../../processing/types'
 import { NFTDealActionOwner } from './NFTDealActionsOwner'
 import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
-import { Txt } from '../../../../UIkit'
+import { Button, Txt } from '../../../../UIkit'
 import { stringifyError } from '../../../../utils/error'
 import { useIsOwner } from '../../../../processing/hooks'
+import { useIsBuyer } from '../../../../processing/hooks/useIsBuyer'
 
 export interface NFTDealActionsProps {
   tokenFullId: TokenFullId
