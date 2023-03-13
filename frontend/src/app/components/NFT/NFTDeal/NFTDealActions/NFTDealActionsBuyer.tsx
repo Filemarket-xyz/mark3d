@@ -10,6 +10,7 @@ import { ButtonReportFraudTransfer } from './ActionButtons/ButtonReportFraudTran
 import { ButtonCancelTransfer } from './ActionButtons/ButtonCancelTransfer'
 import { Button } from '../../../../UIkit'
 import { HideAction } from './HideAction'
+import { useIsBuyer } from '../../../../processing/hooks/useIsBuyer'
 
 export interface NFTDealActionsBuyerProps {
   tokenFullId: TokenFullId
@@ -28,24 +29,25 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
   ownerStatusChanged,
   reFetchOrder
 }) => {
+  const isBuyer = useIsBuyer(transfer)
   return (
       <>
         <HideAction hide={!transfer || !permissions.canFulfillOrder(transfer)}>
           <ButtonFulfillOrder tokenFullId={tokenFullId} order={order}/>
         </HideAction>
-        <HideAction hide={!transfer || !permissions.canSetPublicKey(transfer)}>
+        <HideAction hide={!isBuyer || !transfer || !permissions.canSetPublicKey(transfer)}>
           <ButtonSetPublicKeyTransfer tokenFullId={tokenFullId}/>
         </HideAction>
-        <HideAction hide={!transfer || !permissions.canFinalize(transfer)}>
+        <HideAction hide={!isBuyer || !transfer || !permissions.canFinalize(transfer)}>
           <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={() => {
             ownerStatusChanged?.()
             reFetchOrder?.()
           }}/>
         </HideAction>
-        <HideAction hide={!transfer || !permissions.canReportFraud(transfer)}>
+        <HideAction hide={!isBuyer || !transfer || !permissions.canReportFraud(transfer)}>
           <ButtonReportFraudTransfer tokenFullId={tokenFullId}/>
         </HideAction>
-        <HideAction hide={!transfer || !permissions.canCancel(transfer)}>
+        <HideAction hide={!isBuyer || !transfer || !permissions.canCancel(transfer)}>
           <ButtonCancelTransfer tokenFullId={tokenFullId} callback={reFetchOrder}/>
         </HideAction>
         <HideAction hide={!!transfer}>
