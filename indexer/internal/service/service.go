@@ -840,7 +840,6 @@ func (s *service) ListenBlockchain() error {
 			current, err := s.checkBlock(lastBlock)
 			if err != nil {
 				log.Println("process block failed", err)
-				break
 			}
 			lastBlock = current
 		case <-s.closeCh:
