@@ -863,7 +863,7 @@ func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 	for blockNum.Cmp(latest) != 0 {
 		latest, err = s.checkSingleBlock(latest)
 		if err != nil {
-			return nil, err
+			return latest, err
 		}
 	}
 	return latest, nil
@@ -879,7 +879,7 @@ func (s *service) checkSingleBlock(latest *big.Int) (*big.Int, error) {
 		if strings.Contains(err.Error(), "want 512 for Bloom") {
 			return pending, nil
 		}
-		return nil, err
+		return latest, err
 	} else {
 		if err := s.processBlock(block); err != nil {
 			log.Println("process block failed", err)
