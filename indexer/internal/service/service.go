@@ -886,7 +886,7 @@ func (s *service) checkSingleBlock(latest *big.Int) (*big.Int, error) {
 			return latest, err
 		}
 	}
-	if err := s.repository.SetLastBlock(context.Background(), latest); err != nil {
+	if err := s.repository.SetLastBlock(context.Background(), pending); err != nil {
 		log.Println("set last block failed")
 	}
 	return pending, err
