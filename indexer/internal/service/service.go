@@ -876,10 +876,9 @@ func (s *service) checkSingleBlock(latest *big.Int) (*big.Int, error) {
 	block, err := s.ethClient.BlockByNumber(ctx, pending)
 	if err != nil {
 		log.Println("get pending block failed", pending.String(), err)
-		if strings.Contains(err.Error(), "want 512 for Bloom") {
-			return pending, nil
+		if !strings.Contains(err.Error(), "want 512 for Bloom") {
+			return latest, err
 		}
-		return latest, err
 	} else {
 		if err := s.processBlock(block); err != nil {
 			log.Println("process block failed", err)
