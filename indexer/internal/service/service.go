@@ -121,6 +121,10 @@ func NewService(repo repository.Repository, ethClient ethclient2.EthClient,
 
 func (s *service) tokenURI(ctx context.Context,
 	blockNum, tokenId *big.Int) (string, error) {
+	start := now.Now()
+	defer func() {
+		log.Println("token uri time", now.Now().Sub(start).Milliseconds())
+	}()
 	var err error
 	for _, cli := range s.ethClient.Clients() {
 		instance, err := access_token.NewMark3dAccessToken(s.accessTokenAddress, cli)
@@ -315,10 +319,12 @@ func (s *service) processCollectionTransfer(ctx context.Context, tx pgx.Tx,
 }
 
 func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.Transaction) error {
+	start := now.Now()
 	receipt, err := s.ethClient.TransactionReceipt(ctx, t.Hash())
 	if err != nil {
 		return err
 	}
+	log.Println("receipt time", now.Now().Sub(start).Milliseconds())
 	for _, l := range receipt.Logs {
 		creation, err := s.accessTokenInstance.ParseCollectionCreation(*l)
 		if err != nil {
