@@ -351,6 +351,7 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 			return err
 		}
 	}
+	log.Println("access token process time", now.Now().Sub(start).Milliseconds())
 	return nil
 }
 
