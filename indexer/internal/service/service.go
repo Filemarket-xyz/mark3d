@@ -394,6 +394,13 @@ func (s *service) tryProcessTransferInit(ctx context.Context, tx pgx.Tx,
 	if exists {
 		return nil
 	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, initEv.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
+	}
 	transfer := &domain.Transfer{
 		CollectionAddress: *t.To(),
 		TokenId:           initEv.TokenId,
@@ -427,6 +434,13 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 	}
 	if exists {
 		return nil
+	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, initEv.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
 	}
 	order, err := s.getExchangeOrder(ctx, big.NewInt(0).SetUint64(l.BlockNumber), l.Address, initEv.TokenId)
 	if err != nil {
@@ -481,6 +495,13 @@ func (s *service) tryProcessTransferDraftCompletion(ctx context.Context, tx pgx.
 	if exists {
 		return nil
 	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -524,6 +545,13 @@ func (s *service) tryProcessPublicKeySet(ctx context.Context, tx pgx.Tx,
 	if exists {
 		return nil
 	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -555,6 +583,13 @@ func (s *service) tryProcessPasswordSet(ctx context.Context, tx pgx.Tx,
 	if exists {
 		return nil
 	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -585,6 +620,13 @@ func (s *service) tryProcessTransferFinish(ctx context.Context, tx pgx.Tx,
 	}
 	if exists {
 		return nil
+	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
 	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
@@ -631,6 +673,13 @@ func (s *service) tryProcessTransferFraudReported(ctx context.Context, tx pgx.Tx
 	if exists {
 		return nil
 	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -658,6 +707,13 @@ func (s *service) tryProcessTransferFraudDecided(ctx context.Context, tx pgx.Tx,
 	}
 	if exists {
 		return nil
+	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
 	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
@@ -716,6 +772,13 @@ func (s *service) tryProcessTransferCancel(ctx context.Context, tx pgx.Tx,
 	}
 	if exists {
 		return nil
+	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
 	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
