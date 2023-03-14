@@ -38,7 +38,7 @@ type (
 	}
 
 	ServiceConfig struct {
-		RpcUrl                  string
+		RpcUrls                 []string
 		AccessTokenAddress      common.Address
 		ExchangeAddress         common.Address
 		FraudDeciderWeb2Address common.Address
@@ -85,7 +85,7 @@ func Init(configPath string) (*Config, error) {
 			SwaggerHost:    jsonCfg.GetString("handler.swaggerHost"),
 		},
 		Service: &ServiceConfig{
-			RpcUrl:                  envCfg.GetString("RPC_URL"),
+			RpcUrls:                 envCfg.GetStringSlice("RPC_URLS"),
 			AccessTokenAddress:      common.HexToAddress(jsonCfg.GetString("service.accessTokenAddress")),
 			FraudDeciderWeb2Address: common.HexToAddress(jsonCfg.GetString("service.fraudDeciderWeb2Address")),
 			ExchangeAddress:         common.HexToAddress(jsonCfg.GetString("service.exchangeAddress")),

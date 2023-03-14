@@ -9,10 +9,7 @@ import (
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/access_token"
@@ -22,6 +19,7 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/repository"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
+	ethclient2 "github.com/mark3d-xyz/mark3d/indexer/pkg/ethclient"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/now"
 	"io"
 	"log"
@@ -91,136 +89,131 @@ type Orders interface {
 type service struct {
 	repository          repository.Repository
 	cfg                 *config.ServiceConfig
-	rpcClient           *rpc.Client
-	ethClient           EthClient
+	ethClient           ethclient2.EthClient
+	accessTokenAddress  common.Address
 	accessTokenInstance *access_token.Mark3dAccessToken
+	exchangeAddress     common.Address
 	exchangeInstance    *exchange.Mark3dExchange
 	closeCh             chan struct{}
 }
 
-func NewService(repo repository.Repository, rpcClient *rpc.Client, cfg *config.ServiceConfig) (Service, error) {
-	ethClient := ethclient.NewClient(rpcClient)
-	accessTokenInstance, err := access_token.NewMark3dAccessToken(cfg.AccessTokenAddress, ethClient)
+func NewService(repo repository.Repository, ethClient ethclient2.EthClient,
+	cfg *config.ServiceConfig) (Service, error) {
+	accessTokenInstance, err := access_token.NewMark3dAccessToken(cfg.AccessTokenAddress, nil)
 	if err != nil {
 		return nil, err
 	}
-	exchangeInstance, err := exchange.NewMark3dExchange(cfg.ExchangeAddress, ethClient)
+	exchangeInstance, err := exchange.NewMark3dExchange(cfg.ExchangeAddress, nil)
 	if err != nil {
 		return nil, err
 	}
 	return &service{
-		rpcClient:           rpcClient,
 		ethClient:           ethClient,
 		repository:          repo,
 		cfg:                 cfg,
+		accessTokenAddress:  cfg.AccessTokenAddress,
 		accessTokenInstance: accessTokenInstance,
+		exchangeAddress:     cfg.ExchangeAddress,
 		exchangeInstance:    exchangeInstance,
 		closeCh:             make(chan struct{}),
 	}, nil
 }
 
-type rpcTransaction struct {
-	tx *types.Transaction
-	txExtraInfo
-}
-
-func (tx *rpcTransaction) UnmarshalJSON(msg []byte) error {
-	if err := json.Unmarshal(msg, &tx.tx); err != nil {
-		return err
-	}
-	return json.Unmarshal(msg, &tx.txExtraInfo)
-}
-
-type txExtraInfo struct {
-	BlockNumber *string         `json:"blockNumber,omitempty"`
-	BlockHash   *common.Hash    `json:"blockHash,omitempty"`
-	From        *common.Address `json:"from,omitempty"`
-}
-
-type rpcBlock struct {
-	Hash         common.Hash      `json:"hash"`
-	Transactions []rpcTransaction `json:"transactions"`
-	UncleHashes  []common.Hash    `json:"uncles"`
-}
-
-// senderFromServer is a types.Signer that remembers the sender address returned by the RPC
-// server. It is stored in the transaction's sender address cache to avoid an additional
-// request in TransactionSender.
-type senderFromServer struct {
-	addr      common.Address
-	blockhash common.Hash
-}
-
-var errNotCached = errors.New("sender not cached")
-
-func setSenderFromServer(tx *types.Transaction, addr common.Address, block common.Hash) {
-	// Use types.Sender for side-effect to store our signer into the cache.
-	types.Sender(&senderFromServer{addr, block}, tx)
-}
-
-func (s *senderFromServer) Equal(other types.Signer) bool {
-	os, ok := other.(*senderFromServer)
-	return ok && os.blockhash == s.blockhash
-}
-
-func (s *senderFromServer) Sender(tx *types.Transaction) (common.Address, error) {
-	if s.addr == (common.Address{}) {
-		return common.Address{}, errNotCached
-	}
-	return s.addr, nil
-}
-
-func (s *senderFromServer) ChainID() *big.Int {
-	panic("can't sign with senderFromServer")
-}
-func (s *senderFromServer) Hash(tx *types.Transaction) common.Hash {
-	panic("can't sign with senderFromServer")
-}
-func (s *senderFromServer) SignatureValues(tx *types.Transaction, sig []byte) (R, S, V *big.Int, err error) {
-	panic("can't sign with senderFromServer")
-}
-
-func (s *service) getBlock(ctx context.Context, args ...interface{}) (*types.Block, error) {
-	var raw json.RawMessage
-	err := s.rpcClient.CallContext(ctx, &raw, "eth_getBlockByNumber", args...)
-	if err != nil {
-		log.Println("get block error", err)
-		return nil, err
-	} else if len(raw) == 0 {
-		return nil, ethereum.NotFound
-	}
-	// Decode header and transactions.
-	var head *types.Header
-	var body rpcBlock
-	if err := json.Unmarshal(raw, &head); err != nil {
-		return nil, err
-	}
-	if err := json.Unmarshal(raw, &body); err != nil {
-		return nil, err
-	}
-	// Load uncles because they are not included in the block response.
-	var uncles []*types.Header
-	// Fill the sender cache of transactions in the block.
-	txs := make([]*types.Transaction, len(body.Transactions))
-	for i, tx := range body.Transactions {
-		if tx.From != nil {
-			setSenderFromServer(tx.tx, *tx.From, body.Hash)
+func (s *service) tokenURI(ctx context.Context,
+	blockNum, tokenId *big.Int) (string, error) {
+	start := now.Now()
+	defer func() {
+		log.Println("token uri time", now.Now().Sub(start).Milliseconds())
+	}()
+	var err error
+	for _, cli := range s.ethClient.Clients() {
+		instance, err := access_token.NewMark3dAccessToken(s.accessTokenAddress, cli)
+		if err != nil {
+			return "", err
 		}
-		txs[i] = tx.tx
+		var metaUri string
+		metaUri, err = instance.TokenURI(&bind.CallOpts{
+			BlockNumber: blockNum,
+			Context:     ctx,
+		}, tokenId)
+		if err != nil {
+			log.Println("token uri access token failed", tokenId, err)
+		} else {
+			return metaUri, nil
+		}
 	}
-	return types.NewBlockWithHeader(head).WithBody(txs, uncles), nil
+	return "", err
 }
 
-func (s *service) getLatestBlockNumber(ctx context.Context) (*big.Int, error) {
-	var raw json.RawMessage
-	err := s.rpcClient.CallContext(ctx, &raw, "eth_blockNumber")
-	if err != nil {
-		log.Println("get block error", err)
-		return nil, err
-	} else if len(raw) == 0 {
-		return nil, ethereum.NotFound
+func (s *service) collectionTokenURI(ctx context.Context,
+	address common.Address, tokenId *big.Int) (string, error) {
+	var err error
+	for _, cli := range s.ethClient.Clients() {
+		instance, err := collection.NewMark3dCollection(address, cli)
+		if err != nil {
+			return "", err
+		}
+		var metaUri string
+		metaUri, err = instance.TokenURI(&bind.CallOpts{
+			Context: ctx,
+		}, tokenId)
+		if err != nil {
+			log.Println("token uri collection failed", address, tokenId, err)
+		} else {
+			return metaUri, nil
+		}
 	}
-	return hexutil.DecodeBig(strings.Trim(string(raw), "\""))
+	return "", err
+}
+
+func (s *service) getExchangeOrder(ctx context.Context, blockNum *big.Int,
+	address common.Address, tokenId *big.Int) (struct {
+	Token     common.Address
+	TokenId   *big.Int
+	Price     *big.Int
+	Initiator common.Address
+	Receiver  common.Address
+	Fulfilled bool
+}, error) {
+	var err error
+	for _, cli := range s.ethClient.Clients() {
+		exchangeInstance, err := exchange.NewMark3dExchange(s.exchangeAddress, cli)
+		if err != nil {
+			return struct {
+				Token     common.Address
+				TokenId   *big.Int
+				Price     *big.Int
+				Initiator common.Address
+				Receiver  common.Address
+				Fulfilled bool
+			}{}, err
+		}
+		var order struct {
+			Token     common.Address
+			TokenId   *big.Int
+			Price     *big.Int
+			Initiator common.Address
+			Receiver  common.Address
+			Fulfilled bool
+		}
+		order, err = exchangeInstance.Orders(&bind.CallOpts{
+			Context:     ctx,
+			BlockNumber: blockNum,
+		}, address, tokenId)
+		if err != nil {
+			log.Println("get exchange order failed", address, tokenId, err)
+		} else {
+			return order, nil
+		}
+	}
+	return struct {
+		Token     common.Address
+		TokenId   *big.Int
+		Price     *big.Int
+		Initiator common.Address
+		Receiver  common.Address
+		Fulfilled bool
+	}{}, err
 }
 
 func (s *service) isCollection(ctx context.Context, tx pgx.Tx, address common.Address) (bool, error) {
@@ -267,10 +260,7 @@ func (s *service) processCollectionCreation(ctx context.Context, tx pgx.Tx,
 	if err != nil {
 		return err
 	}
-	metaUri, err := s.accessTokenInstance.TokenURI(&bind.CallOpts{
-		BlockNumber: big.NewInt(0).SetUint64(blockNumber),
-		Context:     ctx,
-	}, ev.TokenId)
+	metaUri, err := s.tokenURI(ctx, big.NewInt(0).SetUint64(blockNumber), ev.TokenId)
 	if err != nil {
 		return err
 	}
@@ -329,10 +319,12 @@ func (s *service) processCollectionTransfer(ctx context.Context, tx pgx.Tx,
 }
 
 func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.Transaction) error {
+	start := now.Now()
 	receipt, err := s.ethClient.TransactionReceipt(ctx, t.Hash())
 	if err != nil {
 		return err
 	}
+	log.Println("receipt time", now.Now().Sub(start).Milliseconds())
 	for _, l := range receipt.Logs {
 		creation, err := s.accessTokenInstance.ParseCollectionCreation(*l)
 		if err != nil {
@@ -359,6 +351,7 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 			return err
 		}
 	}
+	log.Println("access token process time", now.Now().Sub(start).Milliseconds())
 	return nil
 }
 
@@ -371,9 +364,7 @@ func (s *service) tryProcessCollectionTransferEvent(ctx context.Context, tx pgx.
 	if transfer.From != common.HexToAddress(zeroAddress) {
 		return nil
 	}
-	metaUri, err := instance.TokenURI(&bind.CallOpts{
-		Context: ctx,
-	}, transfer.TokenId)
+	metaUri, err := s.collectionTokenURI(ctx, l.Address, transfer.TokenId)
 	if err != nil {
 		return err
 	}
@@ -410,6 +401,13 @@ func (s *service) tryProcessTransferInit(ctx context.Context, tx pgx.Tx,
 	if exists {
 		return nil
 	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, initEv.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
+	}
 	transfer := &domain.Transfer{
 		CollectionAddress: *t.To(),
 		TokenId:           initEv.TokenId,
@@ -444,10 +442,14 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 	if exists {
 		return nil
 	}
-	order, err := s.exchangeInstance.Orders(&bind.CallOpts{
-		Context:     ctx,
-		BlockNumber: big.NewInt(0).SetUint64(l.BlockNumber),
-	}, l.Address, initEv.TokenId)
+	_, err = s.repository.GetToken(ctx, tx, l.Address, initEv.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
+	}
+	order, err := s.getExchangeOrder(ctx, big.NewInt(0).SetUint64(l.BlockNumber), l.Address, initEv.TokenId)
 	if err != nil {
 		return err
 	}
@@ -500,6 +502,13 @@ func (s *service) tryProcessTransferDraftCompletion(ctx context.Context, tx pgx.
 	if exists {
 		return nil
 	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -543,6 +552,13 @@ func (s *service) tryProcessPublicKeySet(ctx context.Context, tx pgx.Tx,
 	if exists {
 		return nil
 	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -574,6 +590,13 @@ func (s *service) tryProcessPasswordSet(ctx context.Context, tx pgx.Tx,
 	if exists {
 		return nil
 	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -604,6 +627,13 @@ func (s *service) tryProcessTransferFinish(ctx context.Context, tx pgx.Tx,
 	}
 	if exists {
 		return nil
+	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
 	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
@@ -650,6 +680,13 @@ func (s *service) tryProcessTransferFraudReported(ctx context.Context, tx pgx.Tx
 	if exists {
 		return nil
 	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -677,6 +714,13 @@ func (s *service) tryProcessTransferFraudDecided(ctx context.Context, tx pgx.Tx,
 	}
 	if exists {
 		return nil
+	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
 	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
@@ -736,6 +780,13 @@ func (s *service) tryProcessTransferCancel(ctx context.Context, tx pgx.Tx,
 	if exists {
 		return nil
 	}
+	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil
+		}
+		return err
+	}
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
 	if err != nil {
 		return err
@@ -767,7 +818,7 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 		return err
 	}
 	for _, l := range receipt.Logs {
-		instance, err := collection.NewMark3dCollection(l.Address, s.ethClient)
+		instance, err := collection.NewMark3dCollection(l.Address, nil)
 		if err != nil {
 			return err
 		}
@@ -806,7 +857,7 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 }
 
 func (s *service) processBlock(block *types.Block) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 600*time.Second)
 	defer cancel()
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
@@ -844,7 +895,7 @@ func (s *service) ListenBlockchain() error {
 	lastBlock, err := s.repository.GetLastBlock(context.Background())
 	if err != nil {
 		if err == redis.Nil {
-			blockNum, err := s.getLatestBlockNumber(context.Background())
+			blockNum, err := s.ethClient.GetLatestBlockNumber(context.Background())
 			if err != nil {
 				return err
 			}
@@ -859,7 +910,6 @@ func (s *service) ListenBlockchain() error {
 			current, err := s.checkBlock(lastBlock)
 			if err != nil {
 				log.Println("process block failed", err)
-				break
 			}
 			lastBlock = current
 		case <-s.closeCh:
@@ -871,7 +921,7 @@ func (s *service) ListenBlockchain() error {
 func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	blockNum, err := s.getLatestBlockNumber(ctx)
+	blockNum, err := s.ethClient.GetLatestBlockNumber(ctx)
 	if err != nil {
 		log.Println("get latest block failed", err)
 		return latest, err
@@ -882,7 +932,7 @@ func (s *service) checkBlock(latest *big.Int) (*big.Int, error) {
 	for blockNum.Cmp(latest) != 0 {
 		latest, err = s.checkSingleBlock(latest)
 		if err != nil {
-			return nil, err
+			return latest, err
 		}
 	}
 	return latest, nil
@@ -895,14 +945,16 @@ func (s *service) checkSingleBlock(latest *big.Int) (*big.Int, error) {
 	block, err := s.ethClient.BlockByNumber(ctx, pending)
 	if err != nil {
 		log.Println("get pending block failed", pending.String(), err)
-		return pending, nil
+		if !strings.Contains(err.Error(), "want 512 for Bloom") {
+			return latest, err
+		}
 	} else {
 		if err := s.processBlock(block); err != nil {
 			log.Println("process block failed", err)
 			return latest, err
 		}
 	}
-	if err := s.repository.SetLastBlock(context.Background(), latest); err != nil {
+	if err := s.repository.SetLastBlock(context.Background(), pending); err != nil {
 		log.Println("set last block failed")
 	}
 	return pending, err
