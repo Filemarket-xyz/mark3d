@@ -6,7 +6,7 @@ import {
   storeReset
 } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
-import { OrderWithToken } from '../../../swagger/Api'
+import { OrderStatus, OrderWithToken } from '../../../swagger/Api'
 import { makeAutoObservable } from 'mobx'
 import { api } from '../../config/api'
 import { NFTCardProps } from '../../components/MarketCard/NFTCard'
@@ -64,20 +64,22 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
   }
 
   get nftCards() {
-    return this.data.map(
-      ({ token }): NFTCardProps => ({
-        collection: reduceAddress(token?.collection ?? ''),
-        imageURL: token?.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
-        title: token?.name ?? '—',
-        user: {
-          img: getProfileImageUrl(token?.owner ?? ''),
-          username: reduceAddress(token?.owner ?? '')
-        },
-        button: {
-          link: `/collection/${token?.collection}/${token?.tokenId}`,
-          text: 'Go to page'
-        }
-      })
-    )
+    return this.data
+      .filter(({ order }) => order?.statuses?.[0]?.status === OrderStatus.Created)
+      .map(
+        ({ token }): NFTCardProps => ({
+          collection: reduceAddress(token?.collection ?? ''),
+          imageURL: token?.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
+          title: token?.name ?? '—',
+          user: {
+            img: getProfileImageUrl(token?.owner ?? ''),
+            username: reduceAddress(token?.owner ?? '')
+          },
+          button: {
+            link: `/collection/${token?.collection}/${token?.tokenId}`,
+            text: 'Go to page'
+          }
+        })
+      )
   }
 }

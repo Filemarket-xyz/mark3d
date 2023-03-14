@@ -4,14 +4,13 @@ import Tabs from '../../UIkit/Tabs/Tabs'
 import { Outlet } from 'react-router'
 import { observer } from 'mobx-react-lite'
 import { useOpenOrderListStore } from '../../hooks/useOrdersListStore'
-import { toJS } from 'mobx'
 
 const TabsContainer = styled('div', {
   marginBottom: '$4'
 })
 
 export const MarketPage = observer(() => {
-  const { data: nfts } = useOpenOrderListStore()
+  const { nftCards } = useOpenOrderListStore()
 
   return (
     <PageLayout>
@@ -21,7 +20,7 @@ export const MarketPage = observer(() => {
             {
               name: 'NFTs',
               url: '/market/nfts',
-              amount: toJS(nfts).length
+              amount: nftCards?.length
             },
             {
               name: 'Collections',
