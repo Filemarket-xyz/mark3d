@@ -24,6 +24,7 @@ import '@google/model-viewer'
 import { PreviewNFTFlow } from './components/PreviewNFTFlow'
 import { FileButton } from '../../components/NFT/FileButton'
 import { ProtectedStamp } from '../../components/NFT/FileButton/ProtectedStamp'
+import { useIsBuyer } from '../../processing/hooks/useIsBuyer'
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',
@@ -120,7 +121,8 @@ const NFTPage = observer(() => {
   const { errorStore } = useStores()
   const files = useHiddenFileDownload(tokenMetaStore, errorStore, token)
   const { isOwner } = useIsOwner(tokenFullId)
-  const canViewHiddenFiles = transferPermissions.buyer.canViewHiddenFiles(
+  const isBuyer = useIsBuyer(transferStore.data)
+  const canViewHiddenFiles = isBuyer && transferPermissions.buyer.canViewHiddenFiles(
     transferStore.data
   )
 
