@@ -8,8 +8,11 @@ const GradientWrapper = styled('div', {
 
 export default function MainPage() {
   return (
-    <GradientWrapper>
-      <WelcomeBlock />
-    </GradientWrapper>
+    <>
+      <GradientWrapper>
+        <WelcomeBlock />
+      </GradientWrapper>
+      <script async src="https://app.chatpoint.ai/chatpoint.js" data-id="chatpoint-connector" data-website-id="94c2f83d-b71f-4d31-a25b-092514fb967a"></script>
+    </>
   )
 }
