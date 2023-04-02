@@ -1,0 +1,16 @@
+{
+  "name": "file-market",
+  "version": "1.0.0",
+  "description": "Protocol for perpetual storage of encrypted files on decentralized network",
+  "repository": "https://github.com/mark3d-xyz/file-market.git",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "npm": "please-use-yarn",
+    "yarn": ">= 3.5.0",
+    "node": ">= 18.12.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}

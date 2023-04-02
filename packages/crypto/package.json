@@ -1,0 +1,37 @@
+{
+  "name": "file-market-crypto",
+  "private": true,
+  "packageManager": "yarn@3.5.0",
+  "description": "A crypto library for a FileMarket ecosystem",
+  "scripts": {
+    "build": "rimraf ./dist && tsc --project tsconfig.prod.json",
+    "prepare": "yarn build",
+    "watch": "tsc --project tsconfig.dev.json --watch",
+    "test": "karma start karma.conf.js"
+  },
+  "engines": {
+    "npm": "please-use-yarn",
+    "yarn": ">= 3.5.0",
+    "node": ">= 18.12.0"
+  },
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "repository": "https://github.com/mark3d-xyz/file-market.git",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jasmine": "^4.3.1",
+    "jasmine-core": "^4.6.0",
+    "karma": "^6.4.1",
+    "karma-chrome-launcher": "^3.1.1",
+    "karma-jasmine": "^5.1.0",
+    "karma-sourcemap-loader": "^0.4.0",
+    "karma-webpack": "^5.0.0",
+    "rimraf": "^4.4.1",
+    "ts-loader": "^9.4.2",
+    "typescript": "^5.0.3",
+    "webpack": "^5.77.0"
+  }
+}
