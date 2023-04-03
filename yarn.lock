@@ -7358,6 +7358,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node-forge@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "@types/node-forge@npm:1.3.2"
+  dependencies:
+    "@types/node": "*"
+  checksum: f532326a616e946e5f6733d1461e7b8d31911bbdfbc480a6337c422053d79c1e22a0776d114a325439e26ae382a640f939d0abf156e24a3c3ca5079d04aa73f6
+  languageName: node
+  linkType: hard
+
 "@types/node-rsa@npm:^1.1.1":
   version: 1.1.1
   resolution: "@types/node-rsa@npm:1.1.1"
@@ -13404,12 +13413,15 @@ __metadata:
   resolution: "file-market-crypto@workspace:packages/crypto"
   dependencies:
     "@types/jasmine": ^4.3.1
+    "@types/node-forge": ^1.3.2
+    buffer: ^6.0.3
     jasmine-core: ^4.6.0
     karma: ^6.4.1
     karma-chrome-launcher: ^3.1.1
     karma-jasmine: ^5.1.0
     karma-sourcemap-loader: ^0.4.0
     karma-webpack: ^5.0.0
+    node-forge: "npm:filemarket-node-forge@1.3.2-0"
     rimraf: ^4.4.1
     ts-loader: ^9.4.2
     typescript: ^5.0.3
@@ -18116,6 +18128,13 @@ __metadata:
     fetch-blob: ^3.1.4
     formdata-polyfill: ^4.0.10
   checksum: 62145fd3ba4770a76110bc31fdc0054ab2f5442b5ce96e9c4b39fc9e94a3d305560eec76e1165d9259eab866e02a8eecf9301062bb5dfc9f08a4d08b69d223dd
+  languageName: node
+  linkType: hard
+
+"node-forge@npm:filemarket-node-forge@1.3.2-0":
+  version: 1.3.2-0
+  resolution: "filemarket-node-forge@npm:1.3.2-0"
+  checksum: d7753a12602b157d175775b83ffcc053f02afb272c9ff5772c6ad160e5b7e6a6de50e448f6eef61379cc4cc7345aaee7c98c87913735988ccc066960f7edb269
   languageName: node
   linkType: hard
 
