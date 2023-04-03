@@ -28,3 +28,12 @@ src/artifacts
 src/typechain-types
 src/swagger
 src/abi
+
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
