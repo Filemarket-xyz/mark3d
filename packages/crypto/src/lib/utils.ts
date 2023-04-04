@@ -15,3 +15,12 @@ export function str2ab(str: string): ArrayBuffer {
 export function removeSpaces(str: string): string {
   return str.replace(/\s/g, '')
 }
+
+export function num2Buf(num: number): Buffer {
+  const numHex = num.toString(16)
+  return Buffer.from(numHex.length % 2 ? '0' + numHex : numHex, 'hex')
+}
+
+export function buf2Hex(buffer: ArrayBuffer | Buffer): string {
+  return Buffer.from(buffer).toString('hex')
+}

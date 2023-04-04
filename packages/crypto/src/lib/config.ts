@@ -1,7 +1,7 @@
-export const rsaModulusLength = 4096;
+export const rsaModulusLength = 4096
 
-export const aesKeyLength = 256;
-
+export const aesKeyLength = 256
+export const aesIVLength = 16 * 8
 
 // Constants used in key derivation
 export const aesKeyType = Buffer.from([1])

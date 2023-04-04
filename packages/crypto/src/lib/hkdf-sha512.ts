@@ -6,28 +6,29 @@ export const hkdfSha512: HkdfFunction = async (salt: ArrayBuffer, IKM: ArrayBuff
   return await hkdfAux(hmacSha512, 512, salt, IKM, info, L)
 }
 
-export const hkdfSha512Native: HkdfFunction =  async (salt: ArrayBuffer, IKM: ArrayBuffer, info: ArrayBuffer, L: number): Promise<ArrayBuffer> => {
-  const nativeIkm = await window
-    .crypto
-    .subtle
-    .importKey('raw', IKM, 'HKDF',
-      false,
-      ['deriveBits']
+export const hkdfSha512Native = (crypto: Crypto): HkdfFunction =>
+  async (salt: ArrayBuffer, IKM: ArrayBuffer, info: ArrayBuffer, L: number): Promise<ArrayBuffer> => {
+    const nativeIkm = await crypto
+      .subtle
+      .importKey('raw', IKM, 'HKDF',
+        false,
+        ['deriveBits']
+      )
+    return await window.crypto.subtle.deriveBits({
+        name: 'HKDF',
+        hash: 'SHA-512',
+        salt,
+        info,
+      },
+      nativeIkm,
+      L
     )
-  return await window.crypto.subtle.deriveBits({
-      name: 'HKDF',
-      hash: 'SHA-512',
-      salt,
-      info,
-    },
-    nativeIkm,
-    L
-  )
-}
+  }
 
-export const hkdfSha512NativeHash: HkdfFunction = async (salt: ArrayBuffer, IKM: ArrayBuffer, info: ArrayBuffer, L: number): Promise<ArrayBuffer> => {
-  return await hkdfAux(hmacSha512Native, 512, salt, IKM, info, L)
-}
+export const hkdfSha512NativeHash = (crypto: Crypto): HkdfFunction =>
+  async (salt: ArrayBuffer, IKM: ArrayBuffer, info: ArrayBuffer, L: number): Promise<ArrayBuffer> => {
+    return await hkdfAux(hmacSha512Native(crypto), 512, salt, IKM, info, L)
+  }
 
 const hkdfAux = async (hmacF: HmacFunction, hashLen: number, salt: ArrayBuffer, IKM: ArrayBuffer, info: ArrayBuffer, L: number): Promise<ArrayBuffer> => {
   const PRK = await hkdfExtract(hmacF, salt, IKM)

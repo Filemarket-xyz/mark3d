@@ -6,20 +6,20 @@ describe('sha512', () => {
   it('should equal crypto.subtle SHA512 on small data', async () => {
     const data = Buffer.from([1, 2, 3])
     const hashForgeHex = Buffer.from(await sha512(data)).toString('hex')
-    const hashWebNative = await sha512Native(data)
+    const hashWebNative = await sha512Native(window.crypto)(data)
     const hashWebNativeHex = Buffer.from(hashWebNative).toString('hex')
     expect(hashForgeHex).toEqual(hashWebNativeHex)
   })
   it('should equal crypto.subtle SHA512 on big data', async () => {
     const hashForgeHex = Buffer.from(await sha512(data)).toString('hex')
-    const hashWebNative = await sha512Native(data)
+    const hashWebNative = await sha512Native(window.crypto)(data)
     const hashWebNativeHex = Buffer.from(hashWebNative).toString('hex')
     expect(hashForgeHex).toEqual(hashWebNativeHex)
   })
   it('should equal crypto.subtle SHA512 on bigger data', async () => {
     const biggerData = Buffer.concat([data, data, data])
     const hashForgeHex = Buffer.from(await sha512(biggerData)).toString('hex')
-    const hashWebNative = await sha512Native(biggerData)
+    const hashWebNative = await sha512Native(window.crypto)(biggerData)
     const hashWebNativeHex = Buffer.from(hashWebNative).toString('hex')
     expect(hashForgeHex).toEqual(hashWebNativeHex)
   })

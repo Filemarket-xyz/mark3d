@@ -57,11 +57,11 @@ temv4uO2+BTt0Ohm2bIpGuCOcA8vSEZuZxXC4YRFlQfQBV0aMhGknb7Xei4nuw6d
 a2oh8DyhcY8/X7Vkb87OdIjD2RsJxKeuHizoYwLEQRtGTPmVH+imfMnwAYN2`)
 
 describe('rsa', () => {
-  xit('should generate key', async () => {
+  it('should generate key', async () => {
     const key = await rsaGenerateKeyPair(SEED)
     expect(Buffer.from(key.priv).toString('base64')).toEqual(preGeneratedKey)
   })
-  xit('should use all randomness', async () => {
+  it('should use all randomness', async () => {
     const key = await rsaGenerateKeyPair(SEED.subarray(0, SEED.length / 2))
     expect(Buffer.from(key.priv).toString('hex')).not.toEqual(preGeneratedKey)
   })

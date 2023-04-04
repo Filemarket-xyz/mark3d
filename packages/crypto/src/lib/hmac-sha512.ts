@@ -8,9 +8,8 @@ export const hmacSha512: HmacFunction = async (key: ArrayBuffer, payload: ArrayB
   return Buffer.from(hash.digest().toHex(), 'hex')
 }
 
-export const hmacSha512Native: HmacFunction = async (key: ArrayBuffer, payload: ArrayBuffer): Promise<ArrayBuffer> => {
-  const nativeKey = await window
-    .crypto
+export const hmacSha512Native = (crypto: Crypto): HmacFunction => async (key: ArrayBuffer, payload: ArrayBuffer): Promise<ArrayBuffer> => {
+  const nativeKey = await crypto
     .subtle
     .importKey('raw', key, {
         name: 'HMAC',
