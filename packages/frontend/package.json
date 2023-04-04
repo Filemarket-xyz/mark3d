@@ -9,8 +9,8 @@
     "node": ">= 18.12.0"
   },
   "scripts": {
-    "swagger": "yarn swagger-typescript-api -p ../indexer/swagger.yaml -o ./src/swagger",
-    "abi": "cd ../sol-contracts && yarn && yarn hardhat compile && cd ../frontend && node prepare-abi.mjs",
+    "swagger": "yarn swagger-typescript-api -p ../../indexer/swagger.yaml -o ./src/swagger",
+    "abi": "cd ../../sol-contracts && yarn && yarn hardhat compile && cd ../packages/frontend && node prepare-abi.mjs",
     "prepare": "yarn swagger && yarn abi",
     "start": "vite",
     "build": "tsc && vite build",

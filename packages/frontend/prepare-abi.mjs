@@ -1,7 +1,7 @@
 import * as fs from 'node:fs/promises'
 import {exec} from 'node:child_process'
 
-const inputDir = '../sol-contracts/artifacts/contracts'
+const inputDir = '../../sol-contracts/artifacts/contracts'
 const outputDir = './src/abi'
 
 // makes abi look like:
