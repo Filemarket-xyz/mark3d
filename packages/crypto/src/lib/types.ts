@@ -2,9 +2,9 @@ export type HashFunction = (data: ArrayBuffer) => Promise<ArrayBuffer>
 
 export type HmacFunction = (key: ArrayBuffer, payload: ArrayBuffer) => Promise<ArrayBuffer>
 
-export type HkdfFunction = (salt: ArrayBuffer, IKM: ArrayBuffer, info: ArrayBuffer, L: number) => Promise<ArrayBuffer>
+export type HkdfFunction = (salt: ArrayBuffer, IKM: ArrayBuffer, info: ArrayBuffer, bitsLength: number) => Promise<ArrayBuffer>
 
-export type EftAesDerivationFunction = (seed: ArrayBuffer, globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, tokenId: number) => Promise<AesKey>
+export type EftAesDerivationFunction = (seed: ArrayBuffer, globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, tokenId: number) => Promise<AesKeyAndIv>
 
 export type EftRsaDerivationFunction = (seed: ArrayBuffer, globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, dealNumber: number) => Promise<RsaKeyPair>
 
@@ -23,9 +23,10 @@ export interface RsaKeyPair {
   priv: RsaPrivateKey // private is reserved keyword
 }
 
+export type AesKey = ArrayBuffer
 
 // First 256 are bytes, next 16 bytes are initial vector
-export interface AesKey {
-  key: ArrayBuffer,
+export interface AesKeyAndIv {
+  key: AesKey,
   iv: ArrayBuffer
 }
