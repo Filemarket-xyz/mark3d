@@ -17,7 +17,7 @@ jobs:
         id: check_changes
         run: |
           echo "swagger_changed=$(./is_changed.sh fm_swagger indexer/swagger.yaml)" >> $GITHUB_OUTPUT
-          echo "frontend_changed=$(./is_changed.sh fm_frontend frontend)" >> $GITHUB_OUTPUT
+          echo "frontend_changed=$(./is_changed.sh fm_frontend packages)" >> $GITHUB_OUTPUT
           echo "backend_changed=$(./is_changed.sh fm_backend backend)" >> $GITHUB_OUTPUT
           echo "indexer_changed=$(./is_changed.sh fm_indexer indexer)" >> $GITHUB_OUTPUT
   build-frontend:
@@ -31,25 +31,32 @@ jobs:
         uses: actions/cache@v2
         with:
           path: frontend/node_modules
-          key: ${{ runner.os }}-main-node-${{ hashFiles('frontend/yarn.lock') }}
+          key: ${{ runner.os }}-main-node-${{ hashFiles('yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-main-node
       - name: Install dependencies
         if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
-        run: yarn install --frozen-lockfile
-        working-directory: frontend/
+        run: yarn --immutable
+      - name: Build crypto
+        if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
+        run: |
+          yarn --immutable
+          yarn build
+        working-directory: packages/crypto
       - name: Build frontend
         if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
         run: |
+          yarn --immutable
+          yarn prepare
           yarn build
           zip -r frontend.zip dist
-        working-directory: frontend/
+        working-directory: packages/frontend
       - name: Save artifacts
         if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
         uses: actions/upload-artifact@v3
         with:
           name: main-frontend
-          path: frontend/frontend.zip
+          path: packages/frontend/frontend.zip
   build-oracle:
     runs-on: [self-hosted, main]
     needs: [ check-changes ]
@@ -123,4 +130,4 @@ jobs:
           redis-cli set fm_swagger_hash "$(find indexer/swagger.yaml -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"
           redis-cli set fm_backend_hash "$(find backend -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"
           redis-cli set fm_indexer_hash "$(find indexer -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"
-          redis-cli set fm_frontend_hash "$(find frontend -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"
+          redis-cli set fm_frontend_hash "$(find packages -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"

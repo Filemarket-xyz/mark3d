@@ -945,7 +945,7 @@ func (s *service) checkSingleBlock(latest *big.Int) (*big.Int, error) {
 	block, err := s.ethClient.BlockByNumber(ctx, pending)
 	if err != nil {
 		log.Println("get pending block failed", pending.String(), err)
-		if !strings.Contains(err.Error(), "want 512 for Bloom") {
+		if !strings.Contains(err.Error(), "want 512 for Bloom") && !strings.Contains(err.Error(), "requested epoch was a null round") {
 			return latest, err
 		}
 	} else {
