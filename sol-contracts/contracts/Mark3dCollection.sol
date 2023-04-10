@@ -42,6 +42,7 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
     uint256 public tokensCount;                                // count of minted tokens
     uint256 public tokensLimit;                                // mint limit
     mapping(uint256 => TransferInfo) private transfers;        // transfer details
+    mapping(uint256 => uint256) public transferCounts;          // count of transfers per transfer
     bool private fraudLateDecisionEnabled;                     // false if fraud decision is instant
     IFraudDecider private fraudDecider_;                       // fraud decider
 
@@ -185,7 +186,7 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
         require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
         transfers[tokenId] = TransferInfo(tokenId, _msgSender(), _msgSender(), to,
             callbackReceiver, data, bytes(""), bytes(""), false, 0, 0);
-        emit TransferInit(tokenId, ownerOf(tokenId), to);
+        emit TransferInit(tokenId, ownerOf(tokenId), to, transferCounts[tokenId]);
     }
 
     /**
@@ -199,7 +200,7 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
         require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
         transfers[tokenId] = TransferInfo(tokenId, _msgSender(), ownerOf(tokenId), address(0),
             callbackReceiver, bytes(""), bytes(""), bytes(""), false, 0, 0);
-        emit TransferDraft(tokenId, ownerOf(tokenId));
+        emit TransferDraft(tokenId, ownerOf(tokenId), transferCounts[tokenId]);
     }
 
     /**
@@ -267,6 +268,7 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
         if (address(info.callbackReceiver) != address(0)) {
             info.callbackReceiver.transferFinished(tokenId);
         }
+        transferCounts[tokenId]++;
         delete transfers[tokenId];
         emit TransferFinished(tokenId);
     }
