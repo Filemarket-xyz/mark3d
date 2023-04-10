@@ -31,6 +31,7 @@ contract Mark3dAccessToken is ERC721Enumerable, AccessControl, Ownable {
     mapping(address => EnumerableSet.Bytes32Set) private ownedCollections;        // sets of owned collections or collections in which at least one token owned
     bool public fraudLateDecisionEnabled;
     IFraudDecider public fraudDecider;
+    bytes public globalSalt;
 
     /// @dev check if call was made from private collection
     modifier onlyPrivateCollection(uint256 tokenId) {
@@ -49,13 +50,15 @@ contract Mark3dAccessToken is ERC721Enumerable, AccessControl, Ownable {
         string memory _contractMetaUri,
         Mark3dCollection _implementation,
         bool _fraudLateDecisionEnabled,
-        IFraudDecider _fraudDecider
+        IFraudDecider _fraudDecider,
+        bytes _globalSalt
     ) ERC721(name, symbol) {
         contractMetaUri = _contractMetaUri;
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
         implementation = _implementation;
         fraudLateDecisionEnabled = _fraudLateDecisionEnabled;
         fraudDecider = _fraudDecider;
+        globalSalt = _globalSalt;
     }
 
     /// @dev function for collection creating and cloning
@@ -81,7 +84,7 @@ contract Mark3dAccessToken is ERC721Enumerable, AccessControl, Ownable {
         Mark3dCollection(instance).initialize(name, symbol, _contractMetaUri,
             this, tokenId, _msgSender(), data, fraudDecider, fraudLateDecisionEnabled);
         tokensCount++;
-        
+
         emit CollectionCreation(tokenId, instance);
     }
 
