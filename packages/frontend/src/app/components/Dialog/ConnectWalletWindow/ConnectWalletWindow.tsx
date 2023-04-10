@@ -9,7 +9,7 @@ import {Button, ToolCard, Txt} from "../../../UIkit";
 import React from "react";
 import {ToolCardContent, ToolCardInfo, ToolTitle, ToolDescription} from "../../../pages/MainPage/Blocks/WelcomeBlock";
 import {rootStore} from "../../../stores/RootStore";
-import {InputWindow} from "../InputWindow/InputWindow";
+import {EnterSeedPhraseWindow} from "../EnterSeedPhraseWindow/EnterSeedPhraseWindow";
 import {useDisconnect} from "wagmi";
 import {onCreateAccountButtonHandle, onImportAccountButtonHandle} from "./utils/functions";
 import {validateImportMnemonic} from "./utils/validate";
@@ -64,23 +64,12 @@ const ToolCardContentWallet = styled(ToolCardContent, {
     }
 })
 
-type ConnectWalletWindowProps = AppDialogProps<{
-    callback?: () => void
-}>
-
-export const ConnectWalletWindow = ({ callback, open, onClose }: ConnectWalletWindowProps) => {
-    const { placeOrder, ...statuses } = useHookToCallback(usePlaceOrder, 'placeOrder', { callbackOk: callback })
+export const ConnectWalletWindow = ({ open, onClose }: AppDialogProps<{}>) => {
     const { disconnect } = useDisconnect()
-    const { isLoading } = statuses
-    const { modalProps } = useStatusModal({
-        statuses,
-        okMsg: 'Order placed! Now be ready to transfer hidden files, if someone fulfills the order.',
-        loadingMsg: 'Placing order'
-    })
 
     const openImportAccountDialog = () => {
         rootStore.dialogStore.openDialog({
-            component: InputWindow,
+            component: EnterSeedPhraseWindow,
             props: {
                 onCloseCallback: () => {disconnect()},
                 textContent: <Txt h4>Input Seed Phrase</Txt>,
@@ -108,7 +97,7 @@ export const ConnectWalletWindow = ({ callback, open, onClose }: ConnectWalletWi
                     margin: '0 auto'
                 }}
             >
-                <ModalTitle>Подключение аккаунта</ModalTitle>
+                <ModalTitle>Sign in</ModalTitle>
                 <Modal.Body>
                     <ConnectWalletWindowContentStyle>
                         <div className="headText">
@@ -121,7 +110,7 @@ export const ConnectWalletWindow = ({ callback, open, onClose }: ConnectWalletWi
                                         <ToolCardInfo>
                                             <ToolTitle style={{textAlign: 'center'}}>Create Account</ToolTitle>
                                             <ToolDescription style={{textAlign: 'center'}}>
-                                                Создайте новый аккаунт
+                                                Create a new account
                                             </ToolDescription>
                                         </ToolCardInfo>
                                         <Button onClick={() => {

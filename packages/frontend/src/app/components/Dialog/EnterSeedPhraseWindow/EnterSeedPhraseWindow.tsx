@@ -4,7 +4,8 @@ import {AppDialogProps} from "../../../utils/dialog";
 import { styled } from '../../../../styles'
 import {ModalTitle} from "../../Modal/Modal";
 import {Button, Txt} from "../../../UIkit";
-import {Input} from "../../../UIkit/Input";
+import {Input} from "../../../UIkit/Form/Input";
+import {EnterSeedPhraseForm} from "./EnterSeedPhraseForm/EnterSeedPhraseForm";
 
 const InputWindowStyle = styled('div', {
   width: '100%',
@@ -20,14 +21,6 @@ const InputWindowStyle = styled('div', {
     '& .contentModalWindow': {
       width: '100%'
     },
-  '& input': {
-    padding: '2px',
-    marginTop: '8px',
-      height: '50px !important',
-      width: '82% !important',
-      background: 'none !important',
-      border: '2px solid $blue300'
-  },
 
   '& .closeButton': {
     top: '-35px !important'
@@ -43,7 +36,7 @@ type InputWindowProps = AppDialogProps<{
     onCloseCallback?: () => void
 }>
 
-export function InputWindow({ open, onClose, onPressButton, textContent, validateFunc, onCloseCallback, buttonText }: InputWindowProps): JSX.Element {
+export function EnterSeedPhraseWindow({ open, onClose, onPressButton, textContent, validateFunc, onCloseCallback, buttonText }: InputWindowProps): JSX.Element {
   const [valueInput, setValueInput] = useState<string>('')
   const [isSuccess, setSuccess] = useState<boolean>(false)
   return (
@@ -56,17 +49,17 @@ export function InputWindow({ open, onClose, onPressButton, textContent, validat
           }}
           width={'inherit'}
       >
-          <ModalTitle>Введите seed-фразу</ModalTitle>
-          <Modal.Body>
-
-          </Modal.Body>
+          <ModalTitle>Enter a seed-фразу</ModalTitle>
                             <InputWindowStyle>
                                 <div className="contentModalWindow">
                                     {!isSuccess
-                                      ? <>
-                                            {textContent}
-                                    <Input onChange={(value: string) => { setValueInput(value) }} validationState={validateFunc?.(valueInput)} errorMessage={<Txt h5>{validateFunc?.(valueInput)}</Txt>}/>
-                                            <Button input={'true'} isDisabled={validateFunc?.(valueInput) !== 'valid'} onClick={() => { onPressButton(valueInput).then(() => setSuccess(true)).catch((e) => console.log(e)) }}><Txt h3>{buttonText}</Txt></Button></>
+                                      ? <EnterSeedPhraseForm
+                                            onSubmit={() => {
+                                                onPressButton(valueInput)
+                                                    .then(() => setSuccess(true))
+                                                    .catch((e) => console.log(e))
+                                            }
+                                      }/>
                                       : <Txt h2>{'SUCCESS!'}</Txt>
                                     }
                                 </div>

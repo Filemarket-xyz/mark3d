@@ -27,6 +27,9 @@ export default function PrefixedInput(props: PrefixedInputProps) {
     <InputWithPrefix>
       <InputPrefix>{props.prefix}</InputPrefix>
       <Input
+          onChange={(event) => {
+              console.log(event)
+          }}
         css={{
           paddingLR: 0,
           borderRadius: 0,
