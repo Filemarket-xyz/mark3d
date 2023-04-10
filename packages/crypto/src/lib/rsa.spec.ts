@@ -66,7 +66,6 @@ const data = Buffer.from('34753d35a15d668891889027e835b382cb938b33f6af1974480670
 describe('rsa', () => {
   it('should generate key', async () => {
     const key = await rsaGenerateKeyPair(SEED)
-    console.log('key 12', buf2Hex(key.priv))
     expect(buf2Hex(key.priv)).toEqual(preGeneratedPrivHex)
     expect(buf2Hex(key.pub)).toEqual(preGeneratedPubHex)
   })
