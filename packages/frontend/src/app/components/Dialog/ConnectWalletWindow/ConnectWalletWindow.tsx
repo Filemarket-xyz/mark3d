@@ -72,12 +72,7 @@ export const ConnectWalletWindow = ({ open, onClose }: AppDialogProps<{}>) => {
             component: EnterSeedPhraseWindow,
             props: {
                 onCloseCallback: () => {disconnect()},
-                textContent: <Txt h4>Input Seed Phrase</Txt>,
                 onPressButton: async (value) => {onImportAccountButtonHandle(value)},
-                validateFunc: (value: string): 'valid' | 'invalid' => {
-                    return validateImportMnemonic(value) === 'valid' ? 'valid' : 'invalid'
-                },
-                buttonText: <Txt h4>Import</Txt>
             }
         })
     }
@@ -93,8 +88,13 @@ export const ConnectWalletWindow = ({ open, onClose }: AppDialogProps<{}>) => {
                 }}
                 width={'inherit'}
                 css={{
-                    width: '900px',
-                    margin: '0 auto'
+                    margin: '0 auto',
+                    xs: {
+                        width: '900px',
+                    },
+                    md: {
+                        width: '650px',
+                    }
                 }}
             >
                 <ModalTitle>Sign in</ModalTitle>

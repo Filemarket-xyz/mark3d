@@ -5,7 +5,7 @@ import { styled } from '../../../../styles'
 import {ModalTitle} from "../../Modal/Modal";
 import {Button, Txt} from "../../../UIkit";
 import {Input} from "../../../UIkit/Form/Input";
-import {EnterSeedPhraseForm} from "./EnterSeedPhraseForm/EnterSeedPhraseForm";
+import {EnterSeedPhraseForm, EnterSeedPhraseValue} from "./EnterSeedPhraseForm/EnterSeedPhraseForm";
 
 const InputWindowStyle = styled('div', {
   width: '100%',
@@ -29,15 +29,11 @@ const InputWindowStyle = styled('div', {
 })
 
 type InputWindowProps = AppDialogProps<{
-  onPressButton: (value: string) => Promise<any>
-  textContent: ReactNode
-  validateFunc?: (value: string) => 'valid' | 'invalid'
-    buttonText: ReactNode
+  onPressButton: (value: EnterSeedPhraseValue) => Promise<any>
     onCloseCallback?: () => void
 }>
 
-export function EnterSeedPhraseWindow({ open, onClose, onPressButton, textContent, validateFunc, onCloseCallback, buttonText }: InputWindowProps): JSX.Element {
-  const [valueInput, setValueInput] = useState<string>('')
+export function EnterSeedPhraseWindow({ open, onClose, onPressButton, onCloseCallback }: InputWindowProps): JSX.Element {
   const [isSuccess, setSuccess] = useState<boolean>(false)
   return (
       <Modal
@@ -54,8 +50,8 @@ export function EnterSeedPhraseWindow({ open, onClose, onPressButton, textConten
                                 <div className="contentModalWindow">
                                     {!isSuccess
                                       ? <EnterSeedPhraseForm
-                                            onSubmit={() => {
-                                                onPressButton(valueInput)
+                                            onSubmit={(value) => {
+                                                onPressButton(value)
                                                     .then(() => setSuccess(true))
                                                     .catch((e) => console.log(e))
                                             }

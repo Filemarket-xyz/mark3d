@@ -28,24 +28,22 @@ export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit }) => {
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl>
-                <Label>Enter a seed phrase</Label>
                 <Input
                     type="string"
                     placeholder='Enter seed phrase'
                     {...register("seedPhrase", { validate: validateImportMnemonic })}
                     isError={!!errors?.seedPhrase}
                 />
-                {errors?.seedPhrase && <ErrorMessage><Txt h4>{errors.seedPhrase?.message}</Txt></ErrorMessage>}
+                {errors?.seedPhrase && <ErrorMessage><Txt h5>{errors.seedPhrase?.message}</Txt></ErrorMessage>}
             </FormControl>
             <FormControl>
-                <Label>Enter a password</Label>
                 <Input
-                    type="string"
+                    type="password"
                     placeholder='Enter your password'
                     {...register("password", { validate: validatePassword })}
                     isError={!!errors?.password}
                 />
-                {errors?.password && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
+                {errors?.password && <ErrorMessage><Txt h5>{errors.password?.message}</Txt></ErrorMessage>}
             </FormControl>
             <ButtonContainer>
                 <Button
