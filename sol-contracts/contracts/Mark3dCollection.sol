@@ -229,12 +229,13 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
     /**
      * @dev See {IEncryptedFileToken-setTransferPublicKey}.
      */
-    function setTransferPublicKey(uint256 tokenId, bytes calldata publicKey) external {
+    function setTransferPublicKey(uint256 tokenId, bytes calldata publicKey, uint256 transferCount) external {
         require(publicKey.length > 0, "Mark3dCollection: empty public key");
         TransferInfo storage info = transfers[tokenId];
         require(info.initiator != address(0), "Mark3dCollection: transfer for this token wasn't created");
         require(info.to == _msgSender(), "Mark3dCollection: permission denied");
         require(info.publicKey.length == 0, "Mark3dCollection: public key was already set");
+        require(transferCount == transferCounts[tokenId], "Mark3dCollection: transfer count doesn't match");
         info.publicKey = publicKey;
         info.publicKeySetAt = block.timestamp;
         emit TransferPublicKeySet(tokenId, publicKey);

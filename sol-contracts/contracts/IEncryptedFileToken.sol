@@ -86,9 +86,11 @@ interface IEncryptedFileToken is IERC721 {
     /// @notice publicKey here doesn't relate to account private/public. It is some external key from asymmetric encryption key-pair
     /// @param tokenId is id for token to transfer
     /// @param publicKey is receiver public key
+    /// @param transferCount is the number of token transfers
     function setTransferPublicKey(
         uint256 tokenId,
-        bytes calldata publicKey
+        bytes calldata publicKey,
+        uint256 transferCount
     ) external;
 
     /// @dev Approve transfer and save encrypted password
