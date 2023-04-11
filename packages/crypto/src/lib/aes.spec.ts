@@ -11,11 +11,8 @@ describe('aes', () => {
   it('should encrypt and decrypt data', async () => {
     const collectionAddress = Buffer.from(address.slice(2))
     const keyAndIv = await eftAesDerivationNative(window.crypto)(seed, globalSalt, collectionAddress, 0)
-    console.log('key', buf2Hex(keyAndIv.key))
-    console.log('iv', buf2Hex(keyAndIv.iv))
     const encryptedData = await aesEncryptNative(window.crypto)(data, keyAndIv)
     const decryptedData = await aesDecryptNative(window.crypto)(encryptedData, keyAndIv.key)
-    console.log('encrypted data', buf2Hex(encryptedData))
     expect(buf2Hex(decryptedData)).toEqual(buf2Hex(data))
     expect(buf2Hex(encryptedData)).not.toEqual(buf2Hex(data))
   })

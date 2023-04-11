@@ -15,8 +15,25 @@ export const rsaGenerateKeyPair = async (seed: ArrayBuffer): Promise<RsaKeyPair>
   }
 }
 
+interface KeyWrap {
+  begin: string,
+  end: string
+}
+
+const publicKeyWrap: KeyWrap =
+  {
+    begin: '-----BEGIN RSA PUBLIC KEY-----',
+    end: '-----END RSA PUBLIC KEY-----'
+  }
+
+const privateKeyWrap: KeyWrap = {
+  begin: '-----BEGIN RSA PRIVATE KEY-----',
+  end: '-----END RSA PRIVATE KEY-----'
+}
+
+
 // It's just a shit. No one has a standard.
-const keyWraps: { begin: string, end: string }[] = [
+const keyWraps: KeyWrap[] = [
   {
     begin: '-----BEGIN PUBLIC KEY-----',
     end: '-----END PUBLIC KEY-----'
@@ -25,14 +42,8 @@ const keyWraps: { begin: string, end: string }[] = [
     begin: '-----BEGIN PRIVATE KEY-----',
     end: '-----END PRIVATE KEY-----'
   },
-  {
-    begin: '-----BEGIN RSA PUBLIC KEY-----',
-    end: '-----END RSA PUBLIC KEY-----'
-  },
-  {
-    begin: '-----BEGIN RSA PRIVATE KEY-----',
-    end: '-----END RSA PRIVATE KEY-----'
-  }
+  publicKeyWrap,
+  privateKeyWrap,
 ]
 
 function unwrapKey(key: string): string {
@@ -101,3 +112,9 @@ export const rsaDecryptNative = (crypto: Crypto) =>
     const key = await importPrivateKey(crypto)(privateKey)
     return await crypto.subtle.decrypt({name: 'RSA-OAEP'}, key, message)
   }
+
+
+export const exportPrivateKeyToPem = async (keyDer: ArrayBuffer): Promise<string> => {
+  const b64String = Buffer.from(keyDer).toString('base64')
+  return `${privateKeyWrap.begin}\n${b64String}\n${privateKeyWrap.end}`
+}
