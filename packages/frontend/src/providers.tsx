@@ -10,14 +10,14 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
   return (
     <>
       <WagmiConfig client={wagmiClient}>
-        <NextUIProvider disableBaseline>
           <StitchesProvider>
-            <StoreProvider>
-              {children}
-              <DialogManager/>
-            </StoreProvider>
+              <NextUIProvider disableBaseline>
+                      <StoreProvider>
+                          {children}
+                          <DialogManager/>
+                      </StoreProvider>
+              </NextUIProvider>
           </StitchesProvider>
-        </NextUIProvider>
       </WagmiConfig>
       <Web3ModalConfigured/>
     </>

@@ -1,10 +1,9 @@
 import { styled } from '../../../styles'
-import { textVariant } from '../Txt'
 
 export const errorMessageStyle = {
-    color: '$red'
+  color: '$red'
 }
 
 export const ErrorMessage = styled('div', {
-    ...errorMessageStyle
+  ...errorMessageStyle
 })

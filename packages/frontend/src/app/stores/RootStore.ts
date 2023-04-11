@@ -11,8 +11,10 @@ import { OpenOrderListStore } from './OrderList/OrderListStore'
 import { CollectionStore } from './Collection/CollectionStore'
 import { TransfersHistoryStore } from './TransfersHistory/TransfersHistoryStore'
 import { UserTransferStore } from './UserTransfers/UserTransfersStore'
+import { AuthStore } from './Auth/AuthStore'
 
 export class RootStore {
+  authStore: AuthStore
   dialogStore: DialogStore
   errorStore: ErrorStore
   collectionAndTokenList: CollectionAndTokenListStore
@@ -30,6 +32,7 @@ export class RootStore {
   constructor() {
     this.dialogStore = new DialogStore()
     this.errorStore = new ErrorStore(this)
+    this.authStore = new AuthStore(this)
     this.collectionAndTokenList = new CollectionAndTokenListStore(this)
     this.transferListStore = new TransferListStore(this)
     this.transferStore = new TransferStore(this)

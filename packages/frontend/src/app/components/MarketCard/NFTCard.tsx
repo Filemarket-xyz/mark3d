@@ -2,9 +2,9 @@ import React from 'react'
 import { styled } from '../../../styles'
 import { gradientPlaceholderImg, NavButton, textVariant, Txt } from '../../UIkit'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
-import {useNavigate} from "react-router-dom";
-import {BigNumber, utils} from "ethers";
-import {mark3dConfig} from "../../config/mark3d";
+import { useNavigate } from 'react-router-dom'
+import { BigNumber, utils } from 'ethers'
+import { mark3dConfig } from '../../config/mark3d'
 
 export const CardControls = styled(BasicCardControls, {
   height: '144px',
@@ -125,7 +125,7 @@ export default function NFTCard(props: NFTCardProps) {
   const navigate = useNavigate()
   return (
     <BorderLayout>
-      <Card onClick={() => {navigate(props.button.link)}}>
+      <Card onClick={() => { navigate(props.button.link) }}>
         <BasicCardSquareImg
           src={props.imageURL}
           onError={({ currentTarget }) => {
