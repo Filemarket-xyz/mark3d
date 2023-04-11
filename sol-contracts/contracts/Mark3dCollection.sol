@@ -186,6 +186,7 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
         require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
         transfers[tokenId] = TransferInfo(tokenId, _msgSender(), _msgSender(), to,
             callbackReceiver, data, bytes(""), bytes(""), false, 0, 0);
+        transferCounts[tokenId]++;
         emit TransferInit(tokenId, ownerOf(tokenId), to, transferCounts[tokenId]);
     }
 
@@ -268,7 +269,6 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
         if (address(info.callbackReceiver) != address(0)) {
             info.callbackReceiver.transferFinished(tokenId);
         }
-        transferCounts[tokenId]++;
         delete transfers[tokenId];
         emit TransferFinished(tokenId);
     }
