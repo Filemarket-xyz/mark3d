@@ -105,10 +105,10 @@ interface IEncryptedFileTokenCallbackReceiver {
 
 interface IEncryptedFileToken is IERC721 {
     /// @dev Event emitted after transfer creation
-    event TransferInit(uint256 indexed tokenId, address from, address to, uint256 transfersCount);
+    event TransferInit(uint256 indexed tokenId, address from, address to, uint256 transferNumber);
 
     /// @dev Event emitted after transfer draft creation
-    event TransferDraft(uint256 indexed tokenId, address from, uint256 transfersCount);
+    event TransferDraft(uint256 indexed tokenId, address from, uint256 transferNumber);
 
     /// @dev Event emitted after transfer draft completion
     event TransferDraftCompletion(uint256 indexed tokenId, address to);
@@ -183,11 +183,11 @@ interface IEncryptedFileToken is IERC721 {
     /// @notice publicKey here doesn't relate to account private/public. It is some external key from asymmetric encryption key-pair
     /// @param tokenId is id for token to transfer
     /// @param publicKey is receiver public key
-    /// @param transferCount is the number of token transfers
+    /// @param transferNumber is token's transfer number 
     function setTransferPublicKey(
         uint256 tokenId,
         bytes calldata publicKey,
-        uint256 transferCount
+        uint256 transferNumber
     ) external;
 
     /// @dev Approve transfer and save encrypted password

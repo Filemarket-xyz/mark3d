@@ -187,6 +187,7 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
         transfers[tokenId] = TransferInfo(tokenId, _msgSender(), _msgSender(), to,
             callbackReceiver, data, bytes(""), bytes(""), false, 0, 0);
         transferCounts[tokenId]++;
+        
         emit TransferInit(tokenId, ownerOf(tokenId), to, transferCounts[tokenId]);
     }
 
@@ -201,6 +202,8 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
         require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
         transfers[tokenId] = TransferInfo(tokenId, _msgSender(), ownerOf(tokenId), address(0),
             callbackReceiver, bytes(""), bytes(""), bytes(""), false, 0, 0);
+        transferCounts[tokenId]++;
+        
         emit TransferDraft(tokenId, ownerOf(tokenId), transferCounts[tokenId]);
     }
 
@@ -229,13 +232,13 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
     /**
      * @dev See {IEncryptedFileToken-setTransferPublicKey}.
      */
-    function setTransferPublicKey(uint256 tokenId, bytes calldata publicKey, uint256 transferCount) external {
+    function setTransferPublicKey(uint256 tokenId, bytes calldata publicKey, uint256 transferNumber) external {
         require(publicKey.length > 0, "Mark3dCollection: empty public key");
         TransferInfo storage info = transfers[tokenId];
         require(info.initiator != address(0), "Mark3dCollection: transfer for this token wasn't created");
         require(info.to == _msgSender(), "Mark3dCollection: permission denied");
         require(info.publicKey.length == 0, "Mark3dCollection: public key was already set");
-        require(transferCount == transferCounts[tokenId], "Mark3dCollection: transfer count doesn't match");
+        require(transferNumber == transferCounts[tokenId], "Mark3dCollection: the transfer is not the latest transfer of this token");
         info.publicKey = publicKey;
         info.publicKeySetAt = block.timestamp;
         emit TransferPublicKeySet(tokenId, publicKey);
