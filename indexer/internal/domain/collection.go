@@ -1,9 +1,10 @@
 package domain
 
 import (
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
-	"math/big"
 )
 
 type Collection struct {

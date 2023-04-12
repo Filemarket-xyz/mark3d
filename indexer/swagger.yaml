@@ -17,14 +17,14 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Коллекция
           schema:
             $ref: "#/definitions/Collection"
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
           in: path
@@ -39,14 +39,14 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Коллекция
           schema:
             $ref: "#/definitions/CollectionData"
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
           in: path
@@ -61,14 +61,14 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Токены
           schema:
-            $ref: '#/definitions/TokensResponse'
+            $ref: "#/definitions/TokensResponse"
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
           in: path
@@ -84,14 +84,41 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Токен
           schema:
             $ref: "#/definitions/Token"
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: collection
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
+  /tokens/{collection}/{id}/encrypted_password:
+    get:
+      tags:
+        - tokens
+      description: Получение зашифрованного пароля из последней передачи токена по адресу коллекции и id
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Зашифрованный пароль
+          schema:
+            $ref: "#/definitions/EncryptedPasswordResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: collection
           in: path
@@ -111,7 +138,7 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Токены
           schema:
             type: array
@@ -120,7 +147,7 @@ paths:
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
           in: path
@@ -135,14 +162,14 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Трансферы
           schema:
-            $ref: '#/definitions/TransfersResponse'
+            $ref: "#/definitions/TransfersResponse"
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
           in: path
@@ -158,14 +185,14 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Трансфер
           schema:
             $ref: "#/definitions/Transfer"
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
           in: path
@@ -186,14 +213,14 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Трансферы
           schema:
-            $ref: '#/definitions/TransfersResponse'
+            $ref: "#/definitions/TransfersResponse"
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
           in: path
@@ -209,14 +236,14 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Трансферы
           schema:
-            $ref: '#/definitions/TransfersResponseV2'
+            $ref: "#/definitions/TransfersResponseV2"
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
           in: path
@@ -232,14 +259,14 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Трансфер
           schema:
             $ref: "#/definitions/TransferWithData"
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
           in: path
@@ -260,14 +287,14 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Трансферы
           schema:
-            $ref: '#/definitions/TransfersResponseV2'
+            $ref: "#/definitions/TransfersResponseV2"
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
           in: path
@@ -292,7 +319,7 @@ paths:
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
   /orders/{address}:
     get:
       tags:
@@ -301,14 +328,14 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Ордера
           schema:
-            $ref: '#/definitions/OrdersResponse'
+            $ref: "#/definitions/OrdersResponse"
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
           in: path
@@ -324,14 +351,14 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Ордер
           schema:
             $ref: "#/definitions/Order"
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
           in: path
@@ -352,14 +379,14 @@ paths:
       produces:
         - application/json
       responses:
-        '200':
+        "200":
           description: Ордера
           schema:
-            $ref: '#/definitions/OrdersResponse'
+            $ref: "#/definitions/OrdersResponse"
         default:
           description: Ошибка
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
           in: path
@@ -381,6 +408,13 @@ definitions:
       detail:
         type: string
         description: Дополнительные детали
+  EncryptedPasswordResponse:
+    type: object
+    description: Ответ на запрос зашифрованного пароля из последней передачи токена
+    properties:
+      encryptedPassword:
+        type: string
+        description: Зашифрованный пароль из последней передачи токена
   TokensResponse:
     type: object
     description: Ответ на запрос токенов пользователя
@@ -493,10 +527,13 @@ definitions:
     type: object
     description: Токен
     properties:
-      collection:
+      collectionAddress:
         type: string
         description: Адрес коллекции
         pattern: "0x[0-9a-f-A-F]{40}"
+      collectionName:
+        type: string
+        description: Имя коллекции
       tokenId:
         type: string
         description: Id токена
@@ -574,7 +611,8 @@ definitions:
         format: int64
       fraudApproved:
         type: boolean
-        description: true - если факт мошенничества подтвержден (репорт подает всегда только получатель).
+        description:
+          true - если факт мошенничества подтвержден (репорт подает всегда только получатель).
           был ли подан репорт, можно выяснить по статусам
       publicKey:
         type: string
@@ -613,7 +651,7 @@ definitions:
     description: Изменение статуса трансфера
     properties:
       status:
-        $ref: '#/definitions/TransferStatus'
+        $ref: "#/definitions/TransferStatus"
       timestamp:
         type: number
         description: Время установки статуса
@@ -645,7 +683,7 @@ definitions:
     description: Изменение статуса ордера
     properties:
       status:
-        $ref: '#/definitions/OrderStatus'
+        $ref: "#/definitions/OrderStatus"
       timestamp:
         type: number
         description: Время установки статуса

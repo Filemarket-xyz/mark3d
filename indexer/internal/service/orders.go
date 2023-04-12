@@ -2,12 +2,13 @@ package service
 
 import (
 	"context"
+	"log"
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
-	"log"
-	"math/big"
 )
 
 func (s *service) GetOrders(ctx context.Context,
@@ -83,11 +84,13 @@ func (s *service) GetAllActiveOrders(ctx context.Context) ([]*models.OrderWithTo
 		return nil, internalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
+
 	orders, err := s.repository.GetAllActiveOrders(ctx, tx)
 	if err != nil {
 		log.Println("get all active orders failed", err)
 		return nil, internalError
 	}
+
 	res := make([]*models.OrderWithToken, len(orders))
 	for i, o := range orders {
 		transfer, err := s.repository.GetTransfer(ctx, tx, o.TransferId)
@@ -100,6 +103,7 @@ func (s *service) GetAllActiveOrders(ctx context.Context) ([]*models.OrderWithTo
 			log.Println("get token for order failed", err)
 			return nil, internalError
 		}
+
 		res[i] = &models.OrderWithToken{
 			Order:    domain.OrderToModel(o),
 			Token:    domain.TokenToModel(token),

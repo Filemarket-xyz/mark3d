@@ -3,11 +3,12 @@ package repository
 import (
 	"context"
 	"fmt"
+	"math/big"
+	"strings"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
-	"math/big"
-	"strings"
 )
 
 func (p *postgres) GetIncomingTransfersByAddress(ctx context.Context, tx pgx.Tx,
@@ -306,4 +307,36 @@ func (p *postgres) TransferTxExists(ctx context.Context, tx pgx.Tx, txId common.
 		return false, err
 	}
 	return count > 0, nil
+}
+
+func (p *postgres) GetTokenEncryptedPassword(
+	ctx context.Context,
+	tx pgx.Tx,
+	contractAddress common.Address,
+	tokenId *big.Int,
+) (string, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT encrypted_password
+		FROM transfers
+		WHERE id = (
+				SELECT MAX(id) FROM transfers
+				WHERE collection_address=$1 AND token_id=$2
+			)
+		`
+
+	row := tx.QueryRow(
+		ctx,
+		query,
+		strings.ToLower(contractAddress.String()),
+		tokenId.String(),
+	)
+
+	var pwd string
+	err := row.Scan(&pwd)
+	if err != nil {
+		return "", err
+	}
+
+	return pwd, nil
 }

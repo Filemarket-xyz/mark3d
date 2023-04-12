@@ -2,12 +2,13 @@ package service
 
 import (
 	"context"
+	"log"
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
-	"log"
-	"math/big"
 )
 
 func (s *service) GetToken(ctx context.Context, address common.Address,
@@ -27,6 +28,34 @@ func (s *service) GetToken(ctx context.Context, address common.Address,
 		return nil, internalError
 	}
 	return domain.TokenToModel(token), nil
+}
+
+func (s *service) GetTokenEncryptedPassword(
+	ctx context.Context,
+	address common.Address,
+	tokenId *big.Int,
+) (*models.EncryptedPasswordResponse, *models.ErrorResponse) {
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		log.Println("begin tx failed: ", err)
+		return nil, internalError
+	}
+	defer s.repository.RollbackTransaction(ctx, tx)
+
+	pwd, err := s.repository.GetTokenEncryptedPassword(ctx, tx, address, tokenId)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, nil
+		}
+		log.Println("get token password failed: ", err)
+		return nil, internalError
+	}
+
+	res := models.EncryptedPasswordResponse{
+		EncryptedPassword: pwd,
+	}
+
+	return &res, nil
 }
 
 func (s *service) GetCollectionTokens(ctx context.Context,

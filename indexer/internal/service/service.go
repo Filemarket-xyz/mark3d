@@ -6,6 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"log"
+	"math/big"
+	"net/http"
+	"strings"
+	"time"
+
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -21,12 +28,6 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 	ethclient2 "github.com/mark3d-xyz/mark3d/indexer/pkg/ethclient"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/now"
-	"io"
-	"log"
-	"math/big"
-	"net/http"
-	"strings"
-	"time"
 )
 
 var (
@@ -66,6 +67,7 @@ type Collections interface {
 
 type Tokens interface {
 	GetToken(ctx context.Context, address common.Address, tokenId *big.Int) (*models.Token, *models.ErrorResponse)
+	GetTokenEncryptedPassword(ctx context.Context, address common.Address, tokenId *big.Int) (*models.EncryptedPasswordResponse, *models.ErrorResponse)
 	GetCollectionTokens(ctx context.Context, address common.Address) ([]*models.Token, *models.ErrorResponse)
 	GetTokensByAddress(ctx context.Context, address common.Address) (*models.TokensResponse, *models.ErrorResponse)
 }
