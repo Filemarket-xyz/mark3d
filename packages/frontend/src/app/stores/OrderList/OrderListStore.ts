@@ -67,8 +67,8 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
     return this.data
       .filter(({ order }) => order?.statuses?.[0]?.status === OrderStatus.Created)
       .map(
-        ({ token }): NFTCardProps => ({
-          collection: reduceAddress(token?.collection ?? ''),
+        ({ token, order }): NFTCardProps => ({
+          collection: token?.name ?? '',
           imageURL: token?.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
           title: token?.name ?? '—',
           user: {
@@ -77,8 +77,9 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
           },
           button: {
             link: `/collection/${token?.collection}/${token?.tokenId}`,
-            text: 'Go to page'
-          }
+            text: 'View & Buy'
+          },
+          price: order?.price
         })
       )
   }
