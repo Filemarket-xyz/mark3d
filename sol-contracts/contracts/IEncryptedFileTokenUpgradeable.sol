@@ -8,10 +8,10 @@ import "./IFraudDecider.sol";
 
 interface IEncryptedFileTokenUpgradeable is IERC721Upgradeable {
     /// @dev Event emitted after transfer creation
-    event TransferInit(uint256 indexed tokenId, address from, address to, uint256 transfersCount);
+    event TransferInit(uint256 indexed tokenId, address from, address to, uint256 transferNumber);
 
     /// @dev Event emitted after transfer draft creation
-    event TransferDraft(uint256 indexed tokenId, address from, uint256 transfersCount);
+    event TransferDraft(uint256 indexed tokenId, address from, uint256 transferNumber);
 
     /// @dev Event emitted after transfer draft completion
     event TransferDraftCompletion(uint256 indexed tokenId, address to);

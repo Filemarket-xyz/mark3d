@@ -42,7 +42,7 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
     uint256 public tokensCount;                                // count of minted tokens
     uint256 public tokensLimit;                                // mint limit
     mapping(uint256 => TransferInfo) private transfers;        // transfer details
-    mapping(uint256 => uint256) public transferCounts;          // count of transfers per transfer
+    mapping(uint256 => uint256) public transferCounts;         // count of transfers per transfer
     bool private fraudLateDecisionEnabled;                     // false if fraud decision is instant
     IFraudDecider private fraudDecider_;                       // fraud decider
 
