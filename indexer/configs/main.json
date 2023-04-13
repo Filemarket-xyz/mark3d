@@ -12,6 +12,8 @@
   "service": {
     "accessTokenAddress": "0xDF5a6aBa1D6a68c4e933127829dddBF106f45075",
     "exchangeAddress": "0x1358f538b52D60c8012091adA98c8604F81e5556",
-    "fraudDeciderWeb2Address": "0x039d246110F50afb4aC8d3a025e6aA11C732578A"
+    "fraudDeciderWeb2Address": "0x039d246110F50afb4aC8d3a025e6aA11C732578A",
+    "allowedBlockNumberDifference": 20,
+    "healthCheckInterval": 60
   }
 }
