@@ -72,13 +72,6 @@ func listenToHealthReports(bot *tgapi.BotAPI, cfg *Config) *http.Server {
 			return
 		}
 
-		// chatIDStr := r.URL.Query().Get("chat_id")
-		// chatID, err := strconv.ParseInt(chatIDStr, 10, 64)
-		// if err != nil {
-		// 	http.Error(w, "Invalid `chat_id`", http.StatusBadRequest)
-		// 	return
-		// }
-
 		logMessage, err := ioutil.ReadAll(r.Body)
 		if r != nil {
 			defer r.Body.Close()
