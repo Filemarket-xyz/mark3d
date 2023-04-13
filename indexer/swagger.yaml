@@ -625,6 +625,9 @@ definitions:
         description: Статусы трансфера
         items:
           $ref: "#/definitions/TransferStatusInfo"
+      number:
+        type: string
+        description: Порядковый номер трансфера
   Order:
     type: object
     description: Ордер

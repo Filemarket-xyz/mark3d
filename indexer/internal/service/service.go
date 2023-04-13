@@ -415,6 +415,7 @@ func (s *service) tryProcessTransferInit(ctx context.Context, tx pgx.Tx,
 		TokenId:           initEv.TokenId,
 		FromAddress:       initEv.From,
 		ToAddress:         initEv.To,
+		Number:            initEv.TransferNumber,
 	}
 	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
 	if err != nil {
@@ -459,6 +460,7 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 		CollectionAddress: l.Address,
 		TokenId:           initEv.TokenId,
 		FromAddress:       initEv.From,
+		Number:            initEv.TransferNumber,
 	}
 	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
 	if err != nil {
