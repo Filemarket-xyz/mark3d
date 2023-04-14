@@ -11,7 +11,7 @@ export type FileButtonProps = AriaButtonProps & {
 }
 
 const CardStyled = styled(Card, {
-  width: 300,
+  width: 368,
   '@md': {
     width: '100%'
   },

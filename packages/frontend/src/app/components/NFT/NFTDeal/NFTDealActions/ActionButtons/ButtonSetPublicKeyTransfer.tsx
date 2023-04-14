@@ -24,6 +24,7 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
       <Button
         primary
         fullWidth
+        borderRadiusSecond
         onPress={async () => {
           await setPublicKey()
           callback?.()

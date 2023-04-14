@@ -14,6 +14,17 @@ export type NFTDealProps = PropsWithChildren<{
   reFetchOrder?: () => void // currently order is refreshed only when it's created and cancelled
 }>
 
+const NFTDealStyle = styled('div', {
+  width: '400px',
+  height: '160px',
+  background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), #232528',
+  borderRadius: '20px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column'
+})
+
 const DealContainerInfo = styled('div', {
   display: 'flex',
   justifyContent: 'space-between',
@@ -29,6 +40,8 @@ const ButtonsContainer = styled('div', {
   display: 'flex',
   justifyContent: 'stretch',
   gap: '$4',
+  width: '100%',
+  padding: '0 16px',
   '@sm': {
     flexDirection: 'column',
     gap: '$3'
@@ -44,7 +57,7 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
 }) => {
   useSyncAESFileKey(tokenFullId, transfer)
   return (
-    <>
+    <NFTDealStyle>
       <DealContainerInfo>
         {children}
         {order && (
@@ -59,6 +72,6 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
           reFetchOrder={reFetchOrder}
         />
       </ButtonsContainer>
-    </>
+    </NFTDealStyle>
   )
 })
