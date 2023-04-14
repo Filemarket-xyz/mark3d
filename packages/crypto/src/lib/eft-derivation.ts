@@ -1,6 +1,6 @@
 // See https://outline.customapp.tech/doc/shifrovanie-i-derivaciya-fYE6XPQHkq#h-derivaciya-klyuchej
 
-import {AesKey, EftAesDerivationFunction, EftRsaDerivationFunction, HkdfFunction, RsaKeyPair} from './types';
+import {AesKeyAndIv, EftAesDerivationFunction, EftRsaDerivationFunction, HkdfFunction, RsaKeyPair} from './types';
 import {aesIVLength, aesKeyLength, aesKeyType, rsaKeyType, rsaModulusLength} from './config';
 import {num2Buf} from './utils';
 import {hkdfSha512, hkdfSha512Native} from './hkdf-sha512';
@@ -24,7 +24,7 @@ export const eftRsaDerivation: EftRsaDerivationFunction =
 
 const eftAesDerivationAux = async (
   hkdf: HkdfFunction, seed: ArrayBuffer, globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, tokenId: number
-): Promise<AesKey> => {
+): Promise<AesKeyAndIv> => {
   const OKM = await hkdf(
     globalSalt,
     seed,
