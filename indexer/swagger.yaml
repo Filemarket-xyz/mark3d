@@ -103,6 +103,33 @@ paths:
           required: true
           type: string
           pattern: "^[0-9]+$"
+  /tokens/{collection}/{id}/encrypted_password:
+    get:
+      tags:
+        - tokens
+      description: Получение зашифрованного пароля из последней передачи токена по адресу коллекции и id
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Зашифрованный пароль
+          schema:
+            $ref: "#/definitions/EncryptedPasswordResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: collection
+          in: path
+          required: true
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: id
+          in: path
+          required: true
+          type: string
+          pattern: "^[0-9]+$"
   /tokens/by_collection/{address}:
     get:
       tags:
@@ -395,6 +422,13 @@ definitions:
       detail:
         type: string
         description: Дополнительные детали
+  EncryptedPasswordResponse:
+    type: object
+    description: Ответ на запрос зашифрованного пароля из последней передачи токена
+    properties:
+      encryptedPassword:
+        type: string
+        description: Зашифрованный пароль из последней передачи токена
   TokensResponse:
     type: object
     description: Ответ на запрос токенов пользователя
@@ -507,10 +541,13 @@ definitions:
     type: object
     description: Токен
     properties:
-      collection:
+      collectionAddress:
         type: string
         description: Адрес коллекции
         pattern: "0x[0-9a-f-A-F]{40}"
+      collectionName:
+        type: string
+        description: Имя коллекции
       tokenId:
         type: string
         description: Id токена
@@ -602,6 +639,9 @@ definitions:
         description: Статусы трансфера
         items:
           $ref: "#/definitions/TransferStatusInfo"
+      number:
+        type: string
+        description: Порядковый номер трансфера
   Order:
     type: object
     description: Ордер

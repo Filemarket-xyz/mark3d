@@ -70,6 +70,7 @@ type Collections interface {
 
 type Tokens interface {
 	GetToken(ctx context.Context, address common.Address, tokenId *big.Int) (*models.Token, *models.ErrorResponse)
+	GetTokenEncryptedPassword(ctx context.Context, address common.Address, tokenId *big.Int) (*models.EncryptedPasswordResponse, *models.ErrorResponse)
 	GetCollectionTokens(ctx context.Context, address common.Address) ([]*models.Token, *models.ErrorResponse)
 	GetTokensByAddress(ctx context.Context, address common.Address) (*models.TokensResponse, *models.ErrorResponse)
 }
@@ -462,6 +463,7 @@ func (s *service) tryProcessTransferInit(ctx context.Context, tx pgx.Tx,
 		TokenId:           initEv.TokenId,
 		FromAddress:       initEv.From,
 		ToAddress:         initEv.To,
+		Number:            initEv.TransferNumber,
 	}
 	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
 	if err != nil {
@@ -506,6 +508,7 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 		CollectionAddress: l.Address,
 		TokenId:           initEv.TokenId,
 		FromAddress:       initEv.From,
+		Number:            initEv.TransferNumber,
 	}
 	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
 	if err != nil {

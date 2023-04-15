@@ -48,10 +48,10 @@ contract Mark3dAccessToken is ERC721Enumerable, AccessControl, Ownable {
         string memory name,
         string memory symbol,
         string memory _contractMetaUri,
+        bytes memory _globalSalt,
         Mark3dCollection _implementation,
         bool _fraudLateDecisionEnabled,
-        IFraudDecider _fraudDecider,
-        bytes _globalSalt
+        IFraudDecider _fraudDecider
     ) ERC721(name, symbol) {
         contractMetaUri = _contractMetaUri;
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
