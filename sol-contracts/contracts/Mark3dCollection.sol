@@ -45,6 +45,7 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
     mapping(uint256 => uint256) public transferCounts;         // count of transfers per transfer
     bool private fraudLateDecisionEnabled;                     // false if fraud decision is instant
     IFraudDecider private fraudDecider_;                       // fraud decider
+    uint public finalizeTransferTimeout;                       // Time before transfer finalizes automatically 
 
     /// @dev modifier for checking if call is from the access token contract
     modifier onlyAccessToken() {
@@ -83,6 +84,7 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
         tokensLimit = 10000;
         fraudDecider_ = _fraudDecider;
         fraudLateDecisionEnabled = _fraudLateDecisionEnabled;
+        finalizeTransferTimeout = 24 hours;
         _transferOwnership(_owner);
     }
 
@@ -371,6 +373,10 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
     function transferFrom(address, address,
         uint256) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IEncryptedFileTokenUpgradeable) {
         revert("common transfer disabled");
+    }
+
+    function setFinalizeTransferTimeout(uint newTimeout) external onlyOwner {
+        finalizeTransferTimeout = newTimeout;
     }
 
     /// @dev mint function for using in inherited contracts
