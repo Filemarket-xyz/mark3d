@@ -1,16 +1,13 @@
 import { IHiddenFileOwner } from '../HiddenFileOwner'
-import { ISecureStorage } from '../SecureStorage'
 import { TokenFullId } from '../types'
 import { IHiddenFileBuyer } from '../HiddenFileBuyer'
-import { TokenIdStorage } from '../TokenIdStorage'
 import { IHiddenFileBase } from '../HiddenFileBase'
 
 /**
- * Is responsible for creation and registration of HiddenFileProcessor instances.
+ * Is responsible for creation and registration of HiddenFileProcessor instances
+ * for every account
  */
 export interface IHiddenFileProcessorFactory {
-  readonly storages: Record<string, ISecureStorage>
-  readonly tokenIdStorages: Record<string, TokenIdStorage>
 
   /**
    * Create or uses existing IHiddenFileOwner to access a hidden file and sell the NFT.

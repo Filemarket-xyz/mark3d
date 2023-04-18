@@ -1,6 +1,6 @@
 import { TokenFullId } from '../../../../../processing/types'
 import { FC } from 'react'
-import { useCancelTransfer } from '../../../../../processing/hooks'
+import { useCancelTransfer } from '../../../../../processing'
 import { Button } from '../../../../../UIkit'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import MintModal from '../../../../Modal/Modal'

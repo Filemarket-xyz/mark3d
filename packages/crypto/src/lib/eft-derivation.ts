@@ -14,6 +14,7 @@ export const eftAesDerivation: EftAesDerivationFunction =
   async (seed, globalSalt, collectionAddress, tokenId) =>
     await eftAesDerivationAux(hkdfSha512, seed, globalSalt, collectionAddress, tokenId)
 
+// TODO: add tokenId
 export const eftRsaDerivationNative = (crypto: Crypto): EftRsaDerivationFunction =>
   async (seed, globalSalt, collectionAddress, dealNumber) =>
     await eftRsaDerivationAux(hkdfSha512Native(crypto), seed, globalSalt, collectionAddress, dealNumber)
