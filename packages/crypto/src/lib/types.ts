@@ -6,7 +6,7 @@ export type HkdfFunction = (salt: ArrayBuffer, IKM: ArrayBuffer, info: ArrayBuff
 
 export type EftAesDerivationFunction = (seed: ArrayBuffer, globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, tokenId: number) => Promise<AesKeyAndIv>
 
-export type EftRsaDerivationFunction = (seed: ArrayBuffer, globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, dealNumber: number) => Promise<RsaKeyPair>
+export type EftRsaDerivationFunction = (seed: ArrayBuffer, globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, tokenId: number , dealNumber: number) => Promise<RsaKeyPair>
 
 // Coded as PKCS8 DER bytes (raw bytes).
 // These are bytes between "BEGIN PRIVATE KEY" and "END PRIVATE KEY"
