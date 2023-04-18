@@ -47,4 +47,11 @@ export interface ISeedProvider {
    */
   addOnSeedChangeListener: (callback: (seed: ArrayBuffer | undefined) => void) => void
   removeOnSeedChangeListener: (callback: (seed: ArrayBuffer | undefined) => void) => void
+
+  /**
+   * Used to react on initialization
+   * @param callback
+   */
+  addOnInitListener: (callback: () => void) => void
+  removeOnInitListener: (callback: () => void) => void
 }

@@ -5,13 +5,14 @@ import { utils } from 'ethers'
 
 const seedStorageKey = 'seed'
 
-const seedByteLength = 16
+const seedByteLength = 64
 
 export class SeedProvider implements ISeedProvider {
   seed: ArrayBuffer | undefined
   private seedEncrypted: string | undefined
 
   private onChangeListeners: Array<(seed: ArrayBuffer | undefined) => void> = []
+  private onInitListeners: Array<() => void> = []
 
   constructor(
     private readonly storage: IStorageProvider,
@@ -20,11 +21,13 @@ export class SeedProvider implements ISeedProvider {
   }
 
   canUnlock(): boolean {
+    console.log('can unlock check', this.seedEncrypted)
     return !!this.seedEncrypted
   }
 
   async init(): Promise<void> {
     this.seedEncrypted = await this.storage.get(seedStorageKey)
+    console.log('init finished', this.seedEncrypted)
   }
 
   private setSeed(seed: ArrayBuffer | undefined) {
@@ -73,5 +76,13 @@ export class SeedProvider implements ISeedProvider {
 
   removeOnSeedChangeListener(callback: (seed: ArrayBuffer | undefined) => void) {
     this.onChangeListeners = this.onChangeListeners.filter(fn => fn !== callback)
+  }
+
+  addOnInitListener(callback: () => void) {
+    this.onInitListeners.push(callback)
+  }
+
+  removeOnInitListener(callback: () => void) {
+    this.onInitListeners = this.onInitListeners.filter(fn => fn !== callback)
   }
 }

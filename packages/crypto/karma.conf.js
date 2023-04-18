@@ -45,6 +45,6 @@ module.exports = function (config) {
     browsers: ['Chrome'],
     singleRun: false,
     concurrency: Infinity,
-    browserDisconnectTimeout: 12000,
+    browserDisconnectTimeout: 15000,
   })
 }
