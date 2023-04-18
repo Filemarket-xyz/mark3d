@@ -1,48 +1,29 @@
 import { IHiddenFileProcessorFactory } from './IHiddenFileProcessorFactory'
 import { HiddenFileBuyer, IHiddenFileBuyer } from '../HiddenFileBuyer'
-import { HiddenFileOwner, IHiddenFileOwner } from '../HiddenFileOwner'
+import { HiddenFileOwner } from '../HiddenFileOwner'
 import { TokenFullId } from '../types'
 import { IHiddenFileBase } from '../HiddenFileBase'
-import { ISecureStorage, SecureStorage } from '../SecureStorage'
-import { TokenIdStorage } from '../TokenIdStorage'
-import { LocalStorageProvider } from '../StorageProvider'
 import { StatefulCryptoProvider } from '../StatefulCryptoProvider'
-import { NoopStorageSecurityProvider } from '../StorageSecurityProvider'
 import { utils } from 'ethers/lib.esm'
+import { IStorageFactory, storageFactory } from '../StorageFactory'
 
 export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
-  readonly storages: Record<string, ISecureStorage> = Object.create(null)
-  readonly tokenIdStorages: Record<string, TokenIdStorage> = Object.create(null)
+  private readonly owners: Record<string, Record<string, HiddenFileOwner>> = Object.create(null)
+  private readonly buyers: Record<string, Record<string, HiddenFileBuyer>> = Object.create(null)
 
-  private readonly owners: Record<string, Record<string, IHiddenFileOwner>> = Object.create(null)
-  private readonly buyers: Record<string, Record<string, IHiddenFileBuyer>> = Object.create(null)
-
-  private async getStorages(account: string) {
-    account = utils.getAddress(account)
-    let storage = this.storages[account]
-    let tokenIdStorage = this.tokenIdStorages[account]
-    if (!storage || !tokenIdStorage) {
-      const storageProvider = new LocalStorageProvider(`mark3d/${utils.getAddress(account)}`)
-      storage = new SecureStorage(storageProvider)
-      tokenIdStorage = new TokenIdStorage(storage)
-      const securityProvider = new NoopStorageSecurityProvider()
-      await storage.setSecurityProvider(securityProvider)
-      this.storages[account] = storage
-      this.tokenIdStorages[account] = tokenIdStorage
-    }
-    return { storage, tokenIdStorage }
+  constructor(private readonly storageFactory: IStorageFactory) {
   }
 
-  async buyerToOwner(buyer: IHiddenFileBuyer): Promise<IHiddenFileOwner> {
+  async buyerToOwner(buyer: IHiddenFileBuyer): Promise<HiddenFileOwner> {
     return new HiddenFileOwner(
       buyer.cryptoProvider,
       buyer.surrogateId
     )
   }
 
-  async getBuyer(account: string, tokenFullId: TokenFullId): Promise<IHiddenFileBuyer> {
+  async getBuyer(account: string, tokenFullId: TokenFullId): Promise<HiddenFileBuyer> {
     account = utils.getAddress(account)
-    const { tokenIdStorage, storage } = await this.getStorages(account)
+    const { tokenIdStorage, secureStorage } = await this.storageFactory.getStorages(account)
     const surrogateId = await tokenIdStorage.getSurrogateIdOrCreate(tokenFullId)
     const accountBuyers = this.buyers[account]
     const existing = accountBuyers?.[surrogateId]
@@ -50,7 +31,7 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
       return existing
     } else {
       const buyer = new HiddenFileBuyer(
-        new StatefulCryptoProvider(surrogateId, storage),
+        new StatefulCryptoProvider(surrogateId, secureStorage),
         surrogateId
       )
       this.buyers[account] = {
@@ -61,9 +42,9 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
     }
   }
 
-  async getOwner(account: string, tokenFullId: TokenFullId | undefined): Promise<IHiddenFileOwner> {
+  async getOwner(account: string, tokenFullId: TokenFullId | undefined): Promise<HiddenFileOwner> {
     account = utils.getAddress(account)
-    const { tokenIdStorage, storage } = await this.getStorages(account)
+    const { tokenIdStorage, secureStorage } = await this.storageFactory.getStorages(account)
     const surrogateId = await tokenIdStorage.getSurrogateIdOrCreate(tokenFullId)
     const accountOwners = this.owners[account]
     const existing = accountOwners?.[surrogateId]
@@ -71,7 +52,7 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
       return existing
     } else {
       const owner = new HiddenFileOwner(
-        new StatefulCryptoProvider(surrogateId, storage),
+        new StatefulCryptoProvider(surrogateId, secureStorage),
         surrogateId
       )
       this.owners[account] = {
@@ -85,7 +66,12 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
   async registerTokenFullId(
     account: string, hiddenFileProcessor: IHiddenFileBase, tokenFullId: TokenFullId
   ): Promise<void> {
-    const { tokenIdStorage } = await this.getStorages(account)
+    const { tokenIdStorage } = await this.storageFactory.getStorages(account)
     await tokenIdStorage.setTokenFullId(hiddenFileProcessor.surrogateId, tokenFullId)
   }
 }
+
+/**
+ * Exists as singleton
+ */
+export const hiddenFileProcessorFactory = new HiddenFileProcessorFactory(storageFactory)

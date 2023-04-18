@@ -3,7 +3,7 @@ import { useAfterDidMountEffect } from '../../../hooks/useDidMountEffect'
 import {
   useMintNFT,
   MintNFTForm as FormToTransfer
-} from '../../../processing/hooks'
+} from '../../../processing/nft-interaction'
 import { CreateNFTForm } from '../CreateNFTPage'
 
 const convertFormDataToNftDTO = (form: CreateNFTForm): FormToTransfer => {

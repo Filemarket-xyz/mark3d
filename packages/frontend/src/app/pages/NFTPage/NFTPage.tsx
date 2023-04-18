@@ -18,13 +18,12 @@ import { useStores } from '../../hooks'
 import { useTokenStore } from '../../hooks/useTokenStore'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 import { formatFileSize } from '../../utils/nfts/formatFileSize'
-import { useIsOwner } from '../../processing/hooks'
+import { useIsOwner, useIsBuyer } from '../../processing'
 import { transferPermissions } from '../../utils/transfer/status'
 import '@google/model-viewer'
 import { PreviewNFTFlow } from './components/PreviewNFTFlow'
 import { FileButton } from '../../components/NFT/FileButton'
 import { ProtectedStamp } from '../../components/NFT/FileButton/ProtectedStamp'
-import { useIsBuyer } from '../../processing/hooks/useIsBuyer'
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',

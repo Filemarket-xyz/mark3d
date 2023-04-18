@@ -5,6 +5,7 @@ import { NextUIProvider } from '@nextui-org/react'
 import { WagmiConfig } from 'wagmi'
 import { StoreProvider } from './app/hooks'
 import { DialogManager } from './app/components/DialogManager/DialogManager'
+import { FileWalletConnectWatcher } from './app/components/Web3/FileWalletConnectWatcher'
 
 export const Providers: FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -18,6 +19,7 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
                       </StoreProvider>
               </NextUIProvider>
           </StitchesProvider>
+        <FileWalletConnectWatcher/>
       </WagmiConfig>
       <Web3ModalConfigured/>
     </>
