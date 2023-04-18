@@ -29,14 +29,14 @@ contract Mark3dExchange is IEncryptedFileTokenCallbackReceiver, Context {
         token.draftTransfer(tokenId, IEncryptedFileTokenCallbackReceiver(this));
     }
 
-    function placeBatchOrder(
+    function placeOrderBatch(
         IEncryptedFileToken token,
         uint256[] calldata tokenIds,
         uint256 price
     ) external {
         require(price > 0, "Mark3dExchange: price must be positive");
         require(token.supportsInterface(type(IEncryptedFileToken).interfaceId));
-        for (uint i = 0; i < tokenIds.length; i++) {
+        for (uint256 i = 0; i < tokenIds.length; i++) {
             require(orders[token][tokenIds[i]].price == 0, "Mark3dExchange: order exists");
             orders[token][tokenIds[i]] = Order(token, tokenIds[i], price, payable(_msgSender()), payable(0), false);
             token.draftTransfer(tokenIds[i], IEncryptedFileTokenCallbackReceiver(this));

@@ -45,7 +45,8 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
     mapping(uint256 => uint256) public transferCounts;         // count of transfers per transfer
     bool private fraudLateDecisionEnabled;                     // false if fraud decision is instant
     IFraudDecider private fraudDecider_;                       // fraud decider
-    uint public finalizeTransferTimeout;                       // Time before transfer finalizes automatically 
+    uint256 public finalizeTransferTimeout;                    // Time before transfer finalizes automatically 
+    uint256 private salesStartTimestamp;                       // Time when users can start transfer tokens 
 
     /// @dev modifier for checking if call is from the access token contract
     modifier onlyAccessToken() {
@@ -85,6 +86,7 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
         fraudDecider_ = _fraudDecider;
         fraudLateDecisionEnabled = _fraudLateDecisionEnabled;
         finalizeTransferTimeout = 24 hours;
+        salesStartTimestamp = block.timestamp - 1 minutes;
         _transferOwnership(_owner);
     }
 
@@ -186,6 +188,7 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
     ) external {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "Mark3dCollection: caller is not token owner or approved");
         require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
+        require(owner() != _msgSender() || block.timestamp > salesStartTimestamp, "Mark3dCollection: transfer can't be done before sales start day");
         transfers[tokenId] = TransferInfo(tokenId, _msgSender(), _msgSender(), to,
             callbackReceiver, data, bytes(""), bytes(""), false, 0, 0);
         transferCounts[tokenId]++;
@@ -202,6 +205,7 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
     ) external {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "Mark3dCollection: caller is not token owner or approved");
         require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
+        require(owner() != _msgSender() || block.timestamp > salesStartTimestamp, "Mark3dCollection: transfer can't be done before sales start day");
         transfers[tokenId] = TransferInfo(tokenId, _msgSender(), ownerOf(tokenId), address(0),
             callbackReceiver, bytes(""), bytes(""), bytes(""), false, 0, 0);
         transferCounts[tokenId]++;
@@ -375,8 +379,12 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
         revert("common transfer disabled");
     }
 
-    function setFinalizeTransferTimeout(uint newTimeout) external onlyOwner {
+    function setFinalizeTransferTimeout(uint256 newTimeout) external onlyOwner {
         finalizeTransferTimeout = newTimeout;
+    }
+
+    function setSalesStartTimestamp(uint256 newTimestamp) external onlyOwner {
+        salesStartTimestamp = newTimestamp;
     }
 
     /// @dev mint function for using in inherited contracts
