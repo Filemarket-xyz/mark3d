@@ -13,6 +13,7 @@ export class SeedProviderFactory implements ISeedProviderFactory {
   private async createSeedProvider(account: string): Promise<SeedProvider> {
     const { storageProvider } = await this.storageFactory.getStorages(account)
     const seedProvider = new SeedProvider(storageProvider, account)
+    await seedProvider.init()
     this.seedProviders[account] = seedProvider
     return seedProvider
   }

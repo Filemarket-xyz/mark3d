@@ -9,6 +9,7 @@ const seedByteLength = 16
 
 export class SeedProvider implements ISeedProvider {
   seed: ArrayBuffer | undefined
+  private seedEncrypted: string | undefined
 
   private onChangeListeners: Array<(seed: ArrayBuffer | undefined) => void> = []
 
@@ -18,17 +19,24 @@ export class SeedProvider implements ISeedProvider {
   ) {
   }
 
+  canUnlock(): boolean {
+    return !!this.seedEncrypted
+  }
+
+  async init(): Promise<void> {
+    this.seedEncrypted = await this.storage.get(seedStorageKey)
+  }
+
   private setSeed(seed: ArrayBuffer | undefined) {
     this.seed = seed
     this.onChangeListeners.forEach(fn => fn(seed))
   }
 
   async unlock(password: string): Promise<void> {
-    const seedEncrypted = await this.storage.get(seedStorageKey)
-    if (!seedEncrypted) {
+    if (!this.seedEncrypted) {
       throw new Error('Unable to unlock seed: no seed found')
     }
-    const seed = await passworder.decrypt(password, seedEncrypted)
+    const seed = await passworder.decrypt(password, this.seedEncrypted)
     if (!seed || typeof seed !== 'string') {
       throw new Error('Unable to unlock seed: cannot decrypt seed')
     }
@@ -47,6 +55,7 @@ export class SeedProvider implements ISeedProvider {
       throw new Error('Unable to encrypt seed')
     }
     await this.storage.set(seedStorageKey, seedEncrypted)
+    this.seedEncrypted = seedEncrypted
     this.setSeed(newSeed)
   }
 
