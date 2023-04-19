@@ -11,6 +11,18 @@ import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
 import { useStores } from '../../hooks'
 import { useTokenStore } from '../../hooks/useTokenStore'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
+import {GridBlock} from "./helper/styles/style";
+import {useIsBuyer, useIsOwner} from "../../processing";
+import {transferPermissions} from "../../utils/transfer/status";
+import {PropertiesCardProps} from "./section/Properties/PropertiesCard/PropertiesCard";
+import {PreviewNFTFlow} from "./components/PreviewNFTFlow";
+import BaseInfoSection from "./section/BaseInfo/BaseInfoSection";
+import ControlSection from "./section/Contol/ControlSection";
+import FileInfoSection from "./section/FileInfo/FileInfoSection";
+import HomeLandSection from "./section/HomeLand/HomeLandSection";
+import TagsSection from "./section/Tags/TagsSection";
+import DescriptionSection from "./section/Description/DescriptionSection";
+import PropertiesSection from "./section/Properties/PropertiesSection";
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',

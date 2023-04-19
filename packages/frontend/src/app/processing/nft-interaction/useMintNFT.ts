@@ -36,7 +36,7 @@ export function useMintNFT(form: MintNFTForm = {}) {
     assert(address, 'need to connect wallet')
     const { name, description, image, hiddenFile, collectionAddress } = form
     if (name && collectionAddress && image && hiddenFile) {
-      const owner = await factory.getOwner(address)
+      const owner = await factory.getOwner(address, undefined)
       const hiddenFileEncrypted = new Blob([await owner.encryptFile(hiddenFile)])
       const hiddenFileMeta: FileMeta = {
         name: hiddenFile.name,
