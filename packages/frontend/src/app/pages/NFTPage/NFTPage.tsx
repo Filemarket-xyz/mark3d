@@ -47,19 +47,7 @@ const MainInfo = styled(PageLayout, {
   minHeight: '100%',
   borderRadius: '$6 $6 0 0',
   top: '-$6',
-  boxShadow: '$footer',
-  '@xl': {
-    paddingLR: 'calc((100% - $breakpoints$lg) * 0.1 + $space$4)'
-  },
-  '@lg': {
-    paddingLR: 'calc((100% - $breakpoints$md) * 0.1 + $space$4)'
-  },
-  '@md': {
-    paddingLR: 'calc((100% - $breakpoints$sm) * 0.1 + $space$3)'
-  },
-  '@sm': {
-    paddingLR: '$3'
-  }
+  boxShadow: '$footer'
 })
 
 const GridLayout = styled('div', {

@@ -14,17 +14,4 @@ export const P = styled('p', {
     fontWeight: 400
 })
 
-export const Link = styled('a', {
-    ...textVariant('primary2').true,
-    textDecoration: 'none',
-    color: '$blue500',
-    position: 'relative',
-    '&:after': {
-        content: `url(${RedirectImg})`,
-        position: 'absolute',
-        top: 0,
-        right: '-20px'
-    }
-})
-
 export const GridBlock = styled('div')

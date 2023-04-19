@@ -2,6 +2,7 @@ import React from 'react';
 import {styled} from "../../../../../styles";
 import { GridBlock } from '../../helper/styles/style';
 import {textVariant} from "../../../../UIkit";
+import {BlueText, Tag} from "../../../../UIkit/Tag/Tag";
 
 const Categories = styled('div', {
     display: 'flex',
@@ -19,17 +20,6 @@ const Tags = styled('div', {
     marginTop: '$3'
 })
 
-const BlueText = styled('h5', {
-    ...textVariant('primary2').true,
-    color: '$blue500'
-})
-
-const Tag = styled(BlueText, {
-    padding: '6px 16px',
-    background: '#FFFFFF',
-    boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
-    borderRadius: '20px'
-})
 
 const Category = styled(BlueText, {
     fontSize: '24px'
@@ -42,12 +32,12 @@ const TagsSection = () => {
         <GridBlock>
             <Categories>
                 {categories.map((category, index) => {
-                    return <><Category>{category} </Category> {index !== (categories.length - 1) && '/'}</>
+                    return <React.Fragment key={index}><Category>{category} </Category> {index !== (categories.length - 1) && '/'}</React.Fragment>
                 })}
             </Categories>
             <Tags>
-                {tags.map((tag) => {
-                    return <Tag>{tag}</Tag>
+                {tags.map((tag, index) => {
+                    return <Tag key={index}>{tag}</Tag>
                 })}
             </Tags>
         </GridBlock>

@@ -1,10 +1,9 @@
 import React from 'react';
-import {Link} from "../../helper/styles/style";
 import {styled} from "../../../../../styles";
 import {useParams} from "react-router-dom";
 import {Params} from "../../../../utils/router/Params";
 import {useTokenStore} from "../../../../hooks/useTokenStore";
-import {textVariant} from "../../../../UIkit";
+import {Link, textVariant} from "../../../../UIkit";
 import { GridBlock } from '../../helper/styles/style';
 
 const NftName = styled('h1', {
