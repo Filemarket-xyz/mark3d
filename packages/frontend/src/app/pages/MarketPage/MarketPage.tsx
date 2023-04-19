@@ -4,7 +4,7 @@ import Tabs from '../../UIkit/Tabs/Tabs'
 import { Outlet } from 'react-router'
 import { observer } from 'mobx-react-lite'
 import { useOpenOrderListStore } from '../../hooks/useOrdersListStore'
-import FakeMint from "../../components/FakeMint/FakeMint";
+import FakeMint from '../../components/FakeMint/FakeMint'
 
 const TabsContainer = styled('div', {
   marginBottom: '$4'
