@@ -1,7 +1,7 @@
 import { TokenFullId } from '../../../../../processing/types'
 import { FC } from 'react'
 import { Button } from '../../../../../UIkit'
-import { useApproveExchange } from '../../../../../processing/hooks'
+import { useApproveExchange } from '../../../../../processing'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import MintModal from '../../../../Modal/Modal'
 

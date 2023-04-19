@@ -3,7 +3,7 @@ import { useAfterDidMountEffect } from '../../../hooks/useDidMountEffect'
 import {
   useMintCollection,
   CreateCollectionForm as FormDataToTransfer
-} from '../../../processing/hooks'
+} from '../../../processing/nft-interaction'
 import { CreateCollectionForm } from '../CreateCollectionPage'
 
 const convertFormDataToCollectionDTO = (

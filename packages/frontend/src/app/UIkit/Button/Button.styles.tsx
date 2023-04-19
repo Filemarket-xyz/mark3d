@@ -80,6 +80,20 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             }
           }
         },
+        input: {
+          true: {
+            color: 'white',
+            background: '$blue300',
+            '&[data-focus-ring=true]': {
+              focusRing: '$blue500'
+            },
+            '&[data-disabled=true]': {
+              color: 'white',
+              background: '$gray600',
+              cursor: 'not-allowed'
+            }
+          }
+        },
         small: {
           true: {
             height: '36px',
