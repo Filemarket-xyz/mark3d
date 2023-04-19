@@ -26,7 +26,7 @@ const Category = styled(BlueText, {
 })
 
 const TagsSection = () => {
-    const categories = ['Videos', 'Film', 'Pskovskoe por...']
+    const categories = ['Videos', 'Film']
     const tags = ['VR', 'Metaverse', 'Web3', 'Jedi', '3D Internet', 'NFT', 'DAO-ART', 'Art', 'Tag']
     return (
         <GridBlock>
