@@ -15,8 +15,25 @@ export const rsaGenerateKeyPair = async (seed: ArrayBuffer): Promise<RsaKeyPair>
   }
 }
 
+interface KeyWrap {
+  begin: string,
+  end: string
+}
+
+const publicKeyWrap: KeyWrap =
+  {
+    begin: '-----BEGIN RSA PUBLIC KEY-----',
+    end: '-----END RSA PUBLIC KEY-----'
+  }
+
+const privateKeyWrap: KeyWrap = {
+  begin: '-----BEGIN RSA PRIVATE KEY-----',
+  end: '-----END RSA PRIVATE KEY-----'
+}
+
+
 // It's just a shit. No one has a standard.
-const keyWraps: { begin: string, end: string }[] = [
+const keyWraps: KeyWrap[] = [
   {
     begin: '-----BEGIN PUBLIC KEY-----',
     end: '-----END PUBLIC KEY-----'
@@ -25,14 +42,8 @@ const keyWraps: { begin: string, end: string }[] = [
     begin: '-----BEGIN PRIVATE KEY-----',
     end: '-----END PRIVATE KEY-----'
   },
-  {
-    begin: '-----BEGIN RSA PUBLIC KEY-----',
-    end: '-----END RSA PUBLIC KEY-----'
-  },
-  {
-    begin: '-----BEGIN RSA PRIVATE KEY-----',
-    end: '-----END RSA PRIVATE KEY-----'
-  }
+  publicKeyWrap,
+  privateKeyWrap,
 ]
 
 function unwrapKey(key: string): string {
@@ -47,10 +58,63 @@ function unwrapKey(key: string): string {
 
 export function rsaPrivatePKCS8PemToBytes(pkcs8KeyPemString: string): RsaPrivateKey {
   const keyB64 = unwrapKey(pkcs8KeyPemString);
-  return Buffer.from(keyB64, 'base64')
+  const keyHex = Buffer.from(keyB64, 'base64').toString('hex')
+  // Dirty workaround. node-forge pem format export works wrong, so native crypto.subtle
+  // is unable to decode it. I am not sure why.
+  const fixedKeyHex = keyHex.replace(
+    /^308209290201000282020100/,
+    '30820943020100300d06092a864886f70d01010105000482092d308209290201000282020100'
+  )
+  return Buffer.from(fixedKeyHex, 'hex')
 }
 
 export function rsaPublicSubjectKeyInfoToBytes(subjectPublicKeyInfo: string): RsaPublicKey {
   const keyB64 = unwrapKey(subjectPublicKeyInfo);
   return Buffer.from(keyB64, 'base64')
+}
+
+const importPublicKey = (crypto: Crypto) =>
+  async (keyBytes: RsaPublicKey): Promise<CryptoKey> => {
+    return await crypto.subtle.importKey(
+      'spki',
+      keyBytes,
+      {
+        name: 'RSA-OAEP',
+        hash: 'SHA-512'
+      },
+      false,
+      ['encrypt']
+    )
+  }
+
+const importPrivateKey = (crypto: Crypto) =>
+  async (keyBytes: RsaPrivateKey): Promise<CryptoKey> => {
+    return await crypto.subtle.importKey(
+      'pkcs8',
+      keyBytes,
+      {
+        name: 'RSA-OAEP',
+        hash: 'SHA-512'
+      },
+      true,
+      ['decrypt']
+    )
+  }
+
+export const rsaEncryptNative = (crypto: Crypto) =>
+  async (message: ArrayBuffer, publicKey: RsaPublicKey): Promise<ArrayBuffer> => {
+    const key = await importPublicKey(crypto)(publicKey)
+    return await crypto.subtle.encrypt({name: 'RSA-OAEP'}, key, message)
+  }
+
+export const rsaDecryptNative = (crypto: Crypto) =>
+  async (message: ArrayBuffer, privateKey: RsaPrivateKey): Promise<ArrayBuffer> => {
+    const key = await importPrivateKey(crypto)(privateKey)
+    return await crypto.subtle.decrypt({name: 'RSA-OAEP'}, key, message)
+  }
+
+
+export const exportPrivateKeyToPem = async (keyDer: ArrayBuffer): Promise<string> => {
+  const b64String = Buffer.from(keyDer).toString('base64')
+  return `${privateKeyWrap.begin}\n${b64String}\n${privateKeyWrap.end}`
 }

@@ -6,64 +6,67 @@
  */
 import {
   AesKey,
+  AesKeyAndIv,
   EftAesDerivationFunction,
   EftRsaDerivationFunction,
   HashFunction,
   HkdfFunction,
-  HmacFunction, RsaKeyPair
+  HmacFunction,
+  RsaKeyPair,
+  RsaPrivateKey,
+  RsaPublicKey
 } from './lib/types';
-import {sha512Native, sha512} from './lib/sha512';
-import {rsaGenerateKeyPair} from './lib/rsa';
-import {hmacSha512, hmacSha512Native} from './lib/hmac-sha512';
-import {hkdfSha512, hkdfSha512Native} from './lib/hkdf-sha512';
-import {eftAesDerivation, eftAesDerivationNative, eftRsaDerivation, eftRsaDerivationNative} from './lib/eft-derivation';
+import {sha512Native} from './lib/sha512';
+import {rsaDecryptNative, rsaEncryptNative, rsaGenerateKeyPair} from './lib/rsa';
+import {hmacSha512Native} from './lib/hmac-sha512';
+import {hkdfSha512Native} from './lib/hkdf-sha512';
+import {eftAesDerivationNative, eftRsaDerivationNative} from './lib/eft-derivation';
+import {aesDecryptNative, aesEncryptNative} from './lib/aes';
 
 
 export class FileMarketCrypto {
-  // If crypto is provided, native crypto functions will be preferred
-  constructor(private crypto?: Crypto) {
+
+  // For now, you MUST use native crypto underneath,
+  // but it could be not native in the future
+  constructor(private crypto: Crypto) {
   }
 
   sha512: HashFunction = async (...args): Promise<ArrayBuffer> => {
-    if (this.crypto) {
-      return await sha512Native(this.crypto)(...args)
-    } else {
-      return await sha512(...args)
-    }
+    return await sha512Native(this.crypto)(...args)
   }
 
   rsaGenerateKeyPair = rsaGenerateKeyPair
 
   hmacSha512: HmacFunction = async (...args): Promise<ArrayBuffer> => {
-    if (this.crypto) {
-      return await hmacSha512Native(this.crypto)(...args)
-    } else {
-      return await hmacSha512(...args)
-    }
+    return await hmacSha512Native(this.crypto)(...args)
   }
 
   hkdfSha512: HkdfFunction = async (...args): Promise<ArrayBuffer> => {
-    if (this.crypto) {
-      return await hkdfSha512Native(this.crypto)(...args)
-    } else {
-      return await hkdfSha512(...args)
-    }
+    return await hkdfSha512Native(this.crypto)(...args)
   }
 
-  eftAesDerivation: EftAesDerivationFunction = async (...args): Promise<AesKey> => {
-    if (this.crypto) {
-      return await eftAesDerivationNative(this.crypto)(...args)
-    } else {
-      return await eftAesDerivation(...args)
-    }
+  eftAesDerivation: EftAesDerivationFunction = async (...args): Promise<AesKeyAndIv> => {
+    return await eftAesDerivationNative(this.crypto)(...args)
   }
 
   eftRsaDerivation: EftRsaDerivationFunction = async (...args): Promise<RsaKeyPair> => {
-    if (this.crypto) {
-      return await eftRsaDerivationNative(this.crypto)(...args)
-    } else {
-      return await eftRsaDerivation(...args)
-    }
+    return await eftRsaDerivationNative(this.crypto)(...args)
+  }
+
+  rsaEncrypt = async (data: ArrayBuffer, key: RsaPublicKey): Promise<ArrayBuffer> => {
+    return await rsaEncryptNative(this.crypto)(data, key)
+  }
+
+  rsaDecrypt = async (data: ArrayBuffer, key: RsaPrivateKey): Promise<ArrayBuffer> => {
+    return await rsaDecryptNative(this.crypto)(data, key)
+  }
+
+  aesEncrypt = async (data: ArrayBuffer, key: AesKeyAndIv): Promise<ArrayBuffer> => {
+    return await aesEncryptNative(this.crypto)(data, key)
+  }
+
+  aesDecrypt = async (data: ArrayBuffer, key: AesKey): Promise<ArrayBuffer> => {
+    return await aesDecryptNative(this.crypto)(data, key)
   }
 }
 

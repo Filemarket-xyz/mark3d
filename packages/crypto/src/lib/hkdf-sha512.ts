@@ -1,9 +1,10 @@
 // implementation of https://www.rfc-editor.org/rfc/rfc5869
 import {HkdfFunction, HmacFunction} from './types';
 import {hmacSha512, hmacSha512Native} from './hmac-sha512';
+import {hashLength} from './config';
 
-export const hkdfSha512: HkdfFunction = async (salt: ArrayBuffer, IKM: ArrayBuffer, info: ArrayBuffer, L: number): Promise<ArrayBuffer> => {
-  return await hkdfAux(hmacSha512, 512, salt, IKM, info, L)
+export const hkdfSha512: HkdfFunction = async (salt: ArrayBuffer, IKM: ArrayBuffer, info: ArrayBuffer, bytesLength: number): Promise<ArrayBuffer> => {
+  return await hkdfAux(hmacSha512, hashLength, salt, IKM, info, bytesLength)
 }
 
 export const hkdfSha512Native = (crypto: Crypto): HkdfFunction =>
@@ -26,8 +27,8 @@ export const hkdfSha512Native = (crypto: Crypto): HkdfFunction =>
   }
 
 export const hkdfSha512NativeHash = (crypto: Crypto): HkdfFunction =>
-  async (salt: ArrayBuffer, IKM: ArrayBuffer, info: ArrayBuffer, L: number): Promise<ArrayBuffer> => {
-    return await hkdfAux(hmacSha512Native(crypto), 512, salt, IKM, info, L)
+  async (salt: ArrayBuffer, IKM: ArrayBuffer, info: ArrayBuffer, bitsLen: number): Promise<ArrayBuffer> => {
+    return await hkdfAux(hmacSha512Native(crypto), hashLength, salt, IKM, info, bitsLen)
   }
 
 const hkdfAux = async (hmacF: HmacFunction, hashLen: number, salt: ArrayBuffer, IKM: ArrayBuffer, info: ArrayBuffer, L: number): Promise<ArrayBuffer> => {
