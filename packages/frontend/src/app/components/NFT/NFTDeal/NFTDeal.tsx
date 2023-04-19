@@ -22,15 +22,21 @@ const NFTDealStyle = styled('div', {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  flexDirection: 'column'
+  flexDirection: 'column',
+  '@md': {
+    width: '100%',
+    height: '201px'
+  }
 })
 
 const DealContainerInfo = styled('div', {
+  width: '100%',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   marginBottom: '$3',
   gap: '$3',
+  padding: '0 16px',
   '@sm': {
     flexDirection: 'column'
   }

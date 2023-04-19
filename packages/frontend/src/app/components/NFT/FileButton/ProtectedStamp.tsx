@@ -36,10 +36,24 @@ const LayoutStyled = styled('div', {
     }
   },
   '@md': {
-    gridTemplateColumns: '1fr',
-    gridTemplateRows: 'auto auto',
-    gap: '$4',
-    justifyContent: 'center'
+    flexDirection: 'column',
+    width: '100%',
+    justifyContent: 'space-between',
+    '& .buttons': {
+      width: '100%',
+      '& button': {
+        width: '100%',
+        '& span': {
+          fontSize: '12px',
+          '& .firstImg': {
+            width: '60px'
+          }
+        }
+      }
+    },
+    '& .tooltip': {
+      width: '100% !important'
+    }
   }
 })
 
@@ -48,7 +62,7 @@ export const ProtectedStamp: FC<PropsWithChildren> = ({ children }) => {
   return (
     <LayoutStyled>
       {children}
-      <Tooltip content={"Девочка вендздей с последней парты..."} rounded color="primary">
+      <Tooltip content={"Девочка вендздей с последней парты..."} rounded color="primary" className={'tooltip'}>
         <div className="buttons">
           <Button className={'buttons'}><span><img src={Protected} className={'firstImg'}/>Protected by EFT techology <img src={QuestionMark} className={'secondImg'}/></span></Button>
         </div>

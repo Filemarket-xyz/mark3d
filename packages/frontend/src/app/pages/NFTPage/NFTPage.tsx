@@ -24,6 +24,7 @@ import {GridBlock} from "./helper/styles/style";
 import TagsSection from "./section/Tags/TagsSection";
 import PropertiesSection from "./section/Properties/PropertiesSection";
 import {PropertiesCardProps} from "./section/Properties/PropertiesCard/PropertiesCard";
+import BaseInfoSection from "./section/BaseInfo/BaseInfoSection";
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',
@@ -47,18 +48,17 @@ const MainInfo = styled(PageLayout, {
   borderRadius: '$6 $6 0 0',
   top: '-$6',
   boxShadow: '$footer',
-  '@md': {
-    borderRadius: '$4 $4',
-    gridTemplateRows: 'max-content',
-    gap: '$5',
-    gridTemplateColumns: '1fr',
-    paddingLR: 'calc((100% - $breakpoints$sm) * 0.5 + $space$3)'
-  },
   '@xl': {
-    paddingLR: 'calc((100% - $breakpoints$lg) * 0.5 + $space$4)'
+    paddingLR: 'calc((100% - $breakpoints$lg) * 0.1 + $space$4)'
   },
   '@lg': {
-    paddingLR: 'calc((100% - $breakpoints$md) * 0.5 + $space$4)'
+    paddingLR: 'calc((100% - $breakpoints$md) * 0.1 + $space$4)'
+  },
+  '@md': {
+    paddingLR: 'calc((100% - $breakpoints$sm) * 0.1 + $space$3)'
+  },
+  '@sm': {
+    paddingLR: '$3'
   }
 })
 
@@ -69,13 +69,25 @@ const GridLayout = styled('div', {
   gridTemplateColumns: '3fr 1fr',
   gridTemplateRows: 'max-content',
   columnGap: '$4',
-  minHeight: '100%'
+  minHeight: '100%',
+  '@mdx': {
+    display: 'flex'
+  }
 })
 
 const GridBlockSection = styled(GridBlock, {
   display: 'flex',
   flexDirection: 'column',
-  gap: '48px',
+  gap: '48px'
+})
+
+const GridBlockSectionRow = styled(GridBlockSection, {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  gap: '12px',
+  '@mdx': {
+    flexDirection: 'column'
+  }
 })
 
 const DisplayLayout = styled('div', {
@@ -154,20 +166,23 @@ const NFTPage = observer(() => {
       <MainInfo>
         <GridLayout>
           <GridBlockSection>
-            <HomeLandSection/>
-            {window.innerWidth <= 900 && <GridBlockSection>
+            <BaseInfoSection/>
+            {window.innerWidth <= 900 && <GridBlockSectionRow>
               <ControlSection/>
               <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files}/>
-            </GridBlockSection>}
+            </GridBlockSectionRow>}
+            <HomeLandSection/>
             <TagsSection/>
             {window.innerWidth > 1200 && <><DescriptionSection/>
               <PropertiesSection properties={properties}/></>}
           </GridBlockSection>
+
           {window.innerWidth > 900 && <GridBlockSection>
             <ControlSection/>
             <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files}/>
           </GridBlockSection>}
         </GridLayout>
+
         {window.innerWidth <= 1200 && <DisplayLayout><DescriptionSection/>
         <PropertiesSection properties={properties}/></DisplayLayout>}
       </MainInfo>

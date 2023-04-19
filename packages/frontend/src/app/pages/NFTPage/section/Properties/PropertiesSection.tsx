@@ -4,9 +4,15 @@ import {GridBlock, PropertyTitle} from '../../helper/styles/style';
 import PropertiesCard, {PropertiesCardProps} from "./PropertiesCard/PropertiesCard";
 
 const PropertiesStyle = styled('div', {
-    display: 'flex',
-    gap: '16px',
-    flexWrap: 'wrap'
+    '@sm': {
+        overflowX: 'scroll',
+        '& .overflow': {
+            display: 'flex',
+            gap: '16px',
+            flexWrap: 'wrap',
+            width: 'max-content',
+        }
+    }
 })
 
 interface PropertiesProps {
@@ -18,9 +24,11 @@ const PropertiesSection:FC<PropertiesProps> = ({properties}) => {
         <GridBlock>
             <PropertyTitle>Properties</PropertyTitle>
         <PropertiesStyle>
-            {properties.map((property) => {
-                return <PropertiesCard type={property.type} rare={property.rare} chance={property.chance}/>
-            })}
+            <div className="overflow">
+                {properties.map((property) => {
+                    return <PropertiesCard type={property.type} rare={property.rare} chance={property.chance}/>
+                })}
+            </div>
         </PropertiesStyle>
         </GridBlock>
     );

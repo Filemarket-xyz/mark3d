@@ -7,11 +7,11 @@ import {P, PropertyTitle, GridBlock } from '../../helper/styles/style';
 const DescriptionSection = () => {
     const { collectionAddress, tokenId } = useParams<Params>()
     const { data: token } = useTokenStore(collectionAddress, tokenId)
-    return (
-        <GridBlock>
+    return(
+            <GridBlock>
             <PropertyTitle>Description</PropertyTitle>
-            <P>{token?.description}</P>
-        </GridBlock>
+            <P>{token?.description ?? 'Description is missing'}</P>
+            </GridBlock>
     );
 };
 

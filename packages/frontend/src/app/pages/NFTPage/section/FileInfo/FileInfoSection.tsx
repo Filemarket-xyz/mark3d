@@ -14,7 +14,10 @@ const FileInfoSectionStyle = styled('div', {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    padding: '12px'
+    padding: '12px',
+    '@md': {
+        width: '100%'
+    }
 })
 
 const FileList = styled('div', {

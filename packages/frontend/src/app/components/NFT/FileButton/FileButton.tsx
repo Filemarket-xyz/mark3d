@@ -27,7 +27,7 @@ const CardStyled = styled(Card, {
   },
   '&[data-disabled=true]': {
     cursor: 'not-allowed'
-  }
+  },
 })
 
 const ContentStyled = styled('div', {

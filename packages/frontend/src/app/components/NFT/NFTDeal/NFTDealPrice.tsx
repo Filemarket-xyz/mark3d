@@ -11,7 +11,7 @@ export interface NFTDealPriceProps {
 export const Price = styled('div', {
   display: 'flex',
   flexDirection: 'column',
-  width: '368px',
+  width: '100%',
   height: '64px',
   background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #232528',
   borderRadius: '16px',
