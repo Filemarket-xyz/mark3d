@@ -11,7 +11,7 @@ export type FileButtonProps = AriaButtonProps & {
 }
 
 const CardStyled = styled(Card, {
-  width: 368,
+  width: 300,
   '@md': {
     width: '100%'
   },
@@ -27,7 +27,7 @@ const CardStyled = styled(Card, {
   },
   '&[data-disabled=true]': {
     cursor: 'not-allowed'
-  },
+  }
 })
 
 const ContentStyled = styled('div', {

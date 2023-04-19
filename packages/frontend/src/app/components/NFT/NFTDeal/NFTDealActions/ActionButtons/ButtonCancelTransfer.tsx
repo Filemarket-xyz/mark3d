@@ -24,7 +24,6 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullI
       <Button
         primary
         fullWidth
-        borderRadiusSecond
         onPress={async () => {
           await cancelTransfer()
           callback?.()

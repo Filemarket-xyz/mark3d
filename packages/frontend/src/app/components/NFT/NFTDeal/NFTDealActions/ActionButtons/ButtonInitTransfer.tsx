@@ -44,7 +44,6 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, c
       <Button
         primary
         fullWidth
-        borderRadiusSecond
         onPress={openModal}
         isDisabled={isLoading}
       >
