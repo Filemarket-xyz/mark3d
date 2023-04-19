@@ -24,6 +24,7 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
       <Button
         primary
         fullWidth
+        borderRadiusSecond
         onPress={async () => {
           await finalizeTransfer()
           callback?.()

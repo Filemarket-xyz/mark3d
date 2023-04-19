@@ -137,6 +137,7 @@ export const {
 
     breakpoints: {
       sm: '600px',
+      mdx: '700px',
       md: '900px',
       lg: '1200px',
       xl: '1536px'
@@ -155,11 +156,13 @@ export const {
 
   media: {
     sm: '(max-width: 600px)',
+    mdx: '(max-width: 700px)',
     md: '(max-width: 900px)',
     lg: '(max-width: 1200px)',
     xl: '(max-width: 1536px)',
 
     smUp: '(min-width: 600px)',
+    mdxUp: '(min-width: 700px)',
     mdUp: '(min-width: 900px)',
     lgUp: '(min-width: 1200px)',
     xlUp: '(min-width: 1536px)'

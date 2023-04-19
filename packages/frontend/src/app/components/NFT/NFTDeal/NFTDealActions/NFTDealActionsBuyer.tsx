@@ -55,6 +55,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
             secondary
             isDisabled
             fullWidth
+            borderRadiusSecond
           >
             NFT is not listed
           </Button>

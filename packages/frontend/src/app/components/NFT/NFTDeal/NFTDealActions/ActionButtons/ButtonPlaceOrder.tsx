@@ -44,6 +44,7 @@ export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callb
       <Button
         primary
         fullWidth
+        borderRadiusSecond
         onPress={openModal}
         isDisabled={isLoading}
       >

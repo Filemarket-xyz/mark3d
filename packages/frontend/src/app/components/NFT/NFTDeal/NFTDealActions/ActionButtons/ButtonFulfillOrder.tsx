@@ -28,13 +28,14 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({ token
       <Button
         primary
         fullWidth
+        borderRadiusSecond
         onPress={async () => {
           await fulfillOrder()
           callback?.()
         }}
         isDisabled={isLoading}
       >
-        Buy
+        Buy now
       </Button>
     </>
   )

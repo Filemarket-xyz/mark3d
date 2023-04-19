@@ -24,6 +24,7 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
       <Button
         primary
         fullWidth
+        borderRadiusSecond
         onPress={async () => {
           await approveExchange()
           callback?.()

@@ -26,6 +26,7 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
       <Button
         primary
         fullWidth
+        borderRadiusSecond
         onPress={async () => {
           await approveTransfer()
           callback?.()
