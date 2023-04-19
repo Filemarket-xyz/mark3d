@@ -1,9 +1,10 @@
 package domain
 
 import (
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
-	"math/big"
 )
 
 type Transfer struct {
@@ -17,6 +18,7 @@ type Transfer struct {
 	OrderId           int64
 	PublicKey         string
 	EncryptedPassword string
+	Number            *big.Int
 }
 
 type TransferStatus struct {
@@ -37,6 +39,7 @@ func TransferToModel(t *Transfer) *models.Transfer {
 		TokenID:           t.TokenId.String(),
 		PublicKey:         t.PublicKey,
 		EncryptedPassword: t.EncryptedPassword,
+		Number:            t.Number.String(),
 	}
 }
 

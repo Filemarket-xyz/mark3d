@@ -1,22 +1,28 @@
-export type StorageData = Record<string, string>
-
+/**
+ * Assumed that the data is stored in a key-value format.
+ *
+ * If the data can oly be treated as a whole chunk, this
+ * provider should be in charge of handling chunk
+ * download and upload.
+ *
+ */
 export interface IStorageProvider {
-  /**
-   * Loads all data from the permanent storage
-   */
-  load: () => Promise<StorageData>
 
   /**
-   * Uploads all data to the permanent storage
-   * @param data
-   */
-  upload: (data: StorageData) => Promise<void>
-
-  /**
-   * Optimisation. If available, will not upload all data when updating only a single value needed.
-   * When value is null, the record is deleted.
+   * Sets a single value to correspond id
    * @param id
    * @param value
    */
-  uploadSingle?: (id: string, value?: string) => Promise<void>
+  set: (id: string, value: string | undefined) => Promise<void>
+
+  /**
+   * Gets a single value by key
+   * @param id
+   */
+  get: (id: string) => Promise<string | undefined>
+
+  /**
+   * Returns all keys available
+   */
+  ids: () => Promise<string[]>
 }

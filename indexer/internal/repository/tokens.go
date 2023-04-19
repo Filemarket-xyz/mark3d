@@ -3,11 +3,12 @@ package repository
 import (
 	"context"
 	"fmt"
+	"math/big"
+	"strings"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
-	"math/big"
-	"strings"
 )
 
 func (p *postgres) GetCollectionTokens(ctx context.Context, tx pgx.Tx,
@@ -70,22 +71,62 @@ func (p *postgres) GetTokensByAddress(ctx context.Context, tx pgx.Tx,
 	return res, nil
 }
 
-func (p *postgres) GetToken(ctx context.Context, tx pgx.Tx,
-	contractAddress common.Address, tokenId *big.Int) (*domain.Token, error) {
+func (p *postgres) GetToken(
+	ctx context.Context,
+	tx pgx.Tx,
+	contractAddress common.Address,
+	tokenId *big.Int,
+) (*domain.Token, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `SELECT owner,meta_uri,name,description,
-       image,hidden_file,creator FROM tokens WHERE collection_address=$1 AND token_id=$2`,
-		strings.ToLower(contractAddress.String()), tokenId.String())
+	query := `
+		SELECT
+			t.owner,
+			t.meta_uri,
+			t.name,
+			t.description,
+			t.image,
+			t.hidden_file,
+			t.creator, 
+			c.name 
+		FROM 
+			tokens t
+		INNER JOIN 
+			collections c ON t.collection_address = c.address
+		WHERE 
+			t.collection_address=$1 AND t.token_id=$2
+		`
+	row := tx.QueryRow(
+		ctx,
+		query,
+		strings.ToLower(contractAddress.String()),
+		tokenId.String(),
+	)
+
+	token := &domain.Token{}
 	var owner, creator string
-	t := &domain.Token{}
-	if err := row.Scan(&owner, &t.MetaUri, &t.Name, &t.Description, &t.Image,
-		&t.HiddenFile, &creator); err != nil {
+
+	err := row.Scan(
+		&owner,
+		&token.MetaUri,
+		&token.Name,
+		&token.Description,
+		&token.Image,
+		&token.HiddenFile,
+		&creator,
+		&token.CollectionName,
+	)
+	if err != nil {
 		return nil, err
 	}
-	t.CollectionAddress, t.TokenId, t.Owner, t.Creator = contractAddress, tokenId,
-		common.HexToAddress(owner), common.HexToAddress(creator)
-	return t, nil
+
+	token.CollectionAddress = contractAddress
+	token.TokenId = tokenId
+	token.Owner = common.HexToAddress(owner)
+	token.Creator = common.HexToAddress(creator)
+
+	return token, nil
 }
+
 
 func (p *postgres) InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error {
 	// language=PostgreSQL

@@ -22,13 +22,17 @@ import {hmacSha512Native} from './lib/hmac-sha512';
 import {hkdfSha512Native} from './lib/hkdf-sha512';
 import {eftAesDerivationNative, eftRsaDerivationNative} from './lib/eft-derivation';
 import {aesDecryptNative, aesEncryptNative} from './lib/aes';
+import forge from 'node-forge';
 
 
 export class FileMarketCrypto {
 
+  // Usually crypto is just window.crypto
   // For now, you MUST use native crypto underneath,
   // but it could be not native in the future
   constructor(private crypto: Crypto) {
+    // @ts-ignore
+    forge.options.usePureJavaScript = true;
   }
 
   sha512: HashFunction = async (...args): Promise<ArrayBuffer> => {

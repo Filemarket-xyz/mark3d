@@ -1,6 +1,6 @@
 import { Token } from '../../swagger/Api'
 import { DecryptResult, TokenFullId } from '../processing/types'
-import { useHiddenFileProcessorFactory } from '../processing/hooks'
+import { useHiddenFileProcessorFactory } from '../processing'
 import { useMemo } from 'react'
 import { utils } from 'ethers'
 import { useAccount } from 'wagmi'
@@ -50,8 +50,7 @@ export function useHiddenFileDownload(
         getFile: async () => {
           const encryptedFile = await ipfsService.fetchBytes(hiddenFileURI)
           const owner = await factory.getOwner(address, tokenFullId)
-          const file = await owner.decryptFile(encryptedFile, hiddenMeta)
-          return file
+          return await owner.decryptFile(encryptedFile, hiddenMeta)
         }
       }]
     }

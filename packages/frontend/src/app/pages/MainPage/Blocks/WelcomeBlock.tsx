@@ -56,14 +56,14 @@ const Description = styled('p', {
   }
 })
 
-const ToolCardNarrow = styled(ToolCard, {
+export const ToolCardNarrow = styled(ToolCard, {
   width: '350px',
   '@sm': {
     width: '100%'
   }
 })
 
-const ToolCardContent = styled('div', {
+export const ToolCardContent = styled('div', {
   gap: '$2',
   padding: '$4',
   display: 'flex',
@@ -73,7 +73,7 @@ const ToolCardContent = styled('div', {
   minHeight: 350
 })
 
-const ToolCardInfo = styled('div', {
+export const ToolCardInfo = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   gap: '$4',
@@ -82,7 +82,7 @@ const ToolCardInfo = styled('div', {
   }
 })
 
-const ToolTitle = styled('h5', {
+export const ToolTitle = styled('h5', {
   color: '$white',
   '@md': {
     fontSize: '$body2'
@@ -93,7 +93,7 @@ const ToolTitle = styled('h5', {
   ...textVariant('h5').true
 })
 
-const ToolDescription = styled('p', {
+export const ToolDescription = styled('p', {
   fontSize: '1.25rem',
   fontWeight: '500',
   color: '$white',

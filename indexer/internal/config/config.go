@@ -2,10 +2,11 @@ package config
 
 import (
 	"fmt"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/spf13/viper"
 	"path/filepath"
 	"time"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/spf13/viper"
 )
 
 type (
@@ -38,10 +39,13 @@ type (
 	}
 
 	ServiceConfig struct {
-		RpcUrls                 []string
-		AccessTokenAddress      common.Address
-		ExchangeAddress         common.Address
-		FraudDeciderWeb2Address common.Address
+		RpcUrls                      []string
+		AccessTokenAddress           common.Address
+		ExchangeAddress              common.Address
+		FraudDeciderWeb2Address      common.Address
+		AllowedBlockNumberDifference int64
+		TelegramHealthNotifierAddr   string
+		HealthCheckInterval          int
 	}
 
 	RedisConfig struct {
@@ -85,10 +89,13 @@ func Init(configPath string) (*Config, error) {
 			SwaggerHost:    jsonCfg.GetString("handler.swaggerHost"),
 		},
 		Service: &ServiceConfig{
-			RpcUrls:                 envCfg.GetStringSlice("RPC_URLS"),
-			AccessTokenAddress:      common.HexToAddress(jsonCfg.GetString("service.accessTokenAddress")),
-			FraudDeciderWeb2Address: common.HexToAddress(jsonCfg.GetString("service.fraudDeciderWeb2Address")),
-			ExchangeAddress:         common.HexToAddress(jsonCfg.GetString("service.exchangeAddress")),
+			RpcUrls:                      envCfg.GetStringSlice("RPC_URLS"),
+			AccessTokenAddress:           common.HexToAddress(jsonCfg.GetString("service.accessTokenAddress")),
+			FraudDeciderWeb2Address:      common.HexToAddress(jsonCfg.GetString("service.fraudDeciderWeb2Address")),
+			ExchangeAddress:              common.HexToAddress(jsonCfg.GetString("service.exchangeAddress")),
+			AllowedBlockNumberDifference: jsonCfg.GetInt64("service.allowedBlockNumberDifference"),
+			TelegramHealthNotifierAddr:   envCfg.GetString("TELEGRAM_HEALTH_NOTIFIER_ADDRESS"),
+			HealthCheckInterval:          jsonCfg.GetInt("service.healthCheckInterval"),
 		},
 		Redis: &RedisConfig{
 			Addr:     envCfg.GetString("REDIS_ADDRESS"),

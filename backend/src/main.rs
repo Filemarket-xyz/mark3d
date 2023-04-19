@@ -121,7 +121,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                             continue;
                         }
                     };
-            
+
                     println!("new collection: {:?}", c_c_event.instance);
                     add_in_set(&mut con, c_c_event.instance, &mut set).await?;
                     continue;
@@ -132,19 +132,19 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 println!("collection event");
                 let (_report_flag, report) =
                     match get_events(
-                        tx.hash,
-                        &web3,
-                        &conf.mark_3d_collection_contract,
+                    tx.hash,
+                    &web3,
+                    &conf.mark_3d_collection_contract,
                         &conf.fraud_decider_web2_contract).await {
-                        Ok(events) => events,
-                        Err(e) => {
-                            println!("parse events failed: {e}");
-                            continue;
-                        }
-                    };
+                    Ok(events) => events,
+                    Err(e) => {
+                        println!("parse events failed: {e}");
+                        continue;
+                    }
+                };
                 println!("fraud events: {:?} {:?}", _report_flag, report);
 
-                let private_key = match Rsa::private_key_from_pem(&report.private_key) {
+                let private_key = match Rsa::private_key_from_der(&report.private_key) {
                     Ok(k) => k,
                     Err(_) => {
                         println!("not approved, because invalid private key");
@@ -169,14 +169,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     }
                 };
 
-                let public_key = match private_key.public_key_to_pem() {
+                let public_key = match private_key.public_key_to_der_pkcs1() {
                     Ok(key) => key,
                     Err(_) => continue,
                 };
-                let report_public_key_s = String::from_utf8(report.public_key.clone()).unwrap().replace("\n", "");
-                let public_key_s = String::from_utf8(public_key).unwrap().replace("\n", "");
 
-                if report_public_key_s != public_key_s {
+                let are_keys_equal = report.public_key == public_key;
+
+                if are_keys_equal {
                     println!("not approved, because of unmatching keys");
                     match call_late_decision(
                         &transport2,

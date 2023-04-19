@@ -11,20 +11,6 @@ import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
 import { useStores } from '../../hooks'
 import { useTokenStore } from '../../hooks/useTokenStore'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
-import { useIsOwner } from '../../processing/hooks'
-import { transferPermissions } from '../../utils/transfer/status'
-import '@google/model-viewer'
-import { PreviewNFTFlow } from './components/PreviewNFTFlow'
-import { useIsBuyer } from '../../processing/hooks/useIsBuyer'
-import HomeLandSection from "./section/HomeLand/HomeLandSection";
-import ControlSection from "./section/Contol/ControlSection";
-import DescriptionSection from "./section/Description/DescriptionSection";
-import FileInfoSection from "./section/FileInfo/FileInfoSection";
-import {GridBlock} from "./helper/styles/style";
-import TagsSection from "./section/Tags/TagsSection";
-import PropertiesSection from "./section/Properties/PropertiesSection";
-import {PropertiesCardProps} from "./section/Properties/PropertiesCard/PropertiesCard";
-import BaseInfoSection from "./section/BaseInfo/BaseInfoSection";
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',

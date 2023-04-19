@@ -2,6 +2,9 @@ import React from 'react'
 import { styled } from '../../../styles'
 import { gradientPlaceholderImg, NavButton, textVariant, Txt } from '../../UIkit'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
+import { useNavigate } from 'react-router-dom'
+import { BigNumber, utils } from 'ethers'
+import { mark3dConfig } from '../../config/mark3d'
 
 export const CardControls = styled(BasicCardControls, {
   height: '144px',
@@ -103,7 +106,9 @@ export interface NFTCardProps {
   price?: string
 }
 
-export const Card = styled(BasicCard, {})
+export const Card = styled(BasicCard, {
+  cursor: 'pointer'
+})
 
 export const BorderLayout = styled('div', {
   background: 'transparent',
@@ -117,9 +122,10 @@ export const BorderLayout = styled('div', {
 })
 
 export default function NFTCard(props: NFTCardProps) {
+  const navigate = useNavigate()
   return (
     <BorderLayout>
-      <Card>
+      <Card onClick={() => { navigate(props.button.link) }}>
         <BasicCardSquareImg
           src={props.imageURL}
           onError={({ currentTarget }) => {
@@ -136,7 +142,7 @@ export default function NFTCard(props: NFTCardProps) {
               <UserName>{props.user.username}</UserName>
             </UserContainer>
             {props.price !== undefined && (
-              <Price>{props.price}</Price>
+              <Price>{`${utils.formatUnits(BigNumber.from(props.price ?? '0'), mark3dConfig.chain.nativeCurrency.decimals)} ${mark3dConfig.chain.nativeCurrency.symbol}`}</Price>
             )}
           </PriceInfo>
           <ButtonContainer>

@@ -6,7 +6,7 @@ import { NFTDealActionOwner } from './NFTDealActionsOwner'
 import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
 import { Txt } from '../../../../UIkit'
 import { stringifyError } from '../../../../utils/error'
-import { useIsOwner } from '../../../../processing/hooks'
+import { useIsOwner } from '../../../../processing'
 
 export interface NFTDealActionsProps {
   tokenFullId: TokenFullId

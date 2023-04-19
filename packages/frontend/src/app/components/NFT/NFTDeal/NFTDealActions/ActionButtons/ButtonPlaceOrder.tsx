@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { usePlaceOrder } from '../../../../../processing/hooks'
+import { usePlaceOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'

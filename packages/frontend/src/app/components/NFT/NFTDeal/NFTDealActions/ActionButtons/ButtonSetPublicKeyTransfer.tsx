@@ -1,7 +1,7 @@
 import { TokenFullId } from '../../../../../processing/types'
 import { FC } from 'react'
 import { Button } from '../../../../../UIkit'
-import { useSetPublicKey } from '../../../../../processing/hooks'
+import { useSetPublicKey } from '../../../../../processing'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import MintModal from '../../../../Modal/Modal'
 
