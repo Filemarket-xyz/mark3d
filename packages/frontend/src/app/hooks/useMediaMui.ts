@@ -15,7 +15,6 @@ export function useMediaMui() {
   const xlValue = useMediaQuery('(max-width:1536px)')
 
   const adaptive = ({ sm, xl, md, lg, defaultValue }: adaptiveType): string => {
-    console.log(`sm:${sm} md:${md} lg:${lg} xl:${xl}`)
     if (smValue && sm) {
       return sm
     }

@@ -1,8 +1,7 @@
 import { ISecureStorage } from './ISecureStorage'
 import { ensureCall } from '../../utils/error'
 import { IStorageSecurityProvider } from '../StorageSecurityProvider'
-import { IStorageProvider, StorageData } from '../StorageProvider'
-import { arrayToRecord } from '../../utils/structs'
+import { IStorageProvider } from '../StorageProvider'
 import { CallbacksChangingError } from './errors'
 
 const encrypt = async (provider: IStorageSecurityProvider | undefined, data: string): Promise<string> => {
@@ -17,8 +16,6 @@ export class SecureStorage implements ISecureStorage {
   private securityProvider?: IStorageSecurityProvider
   securityProviderChanging = false
 
-  data?: StorageData
-
   constructor(
     public readonly storageProvider: IStorageProvider
   ) {
@@ -26,39 +23,35 @@ export class SecureStorage implements ISecureStorage {
 
   async setSecurityProvider(securityProvider: IStorageSecurityProvider): Promise<void> {
     if (this.securityProvider) {
-      await this.ensureData()
-      if (this.data) {
-        const encryptedWithNewProviderData: Array<[string, string]> = await Promise.all(
-          Object
-            .entries(this.data)
-            .map(async ([id, encryptedValue]) => [
-              id,
-              await encrypt(securityProvider, await decrypt(this.securityProvider, encryptedValue))
-            ])
-        )
-        await this.setData(arrayToRecord(encryptedWithNewProviderData))
+      const ids = await this.storageProvider.ids()
+      const encryptedWithNewProvider: Array<[string, string]> = Object.create(null)
+      for (const id of ids) {
+        const encryptedValue = await this.storageProvider.get(id)
+        if (encryptedValue) {
+          encryptedWithNewProvider.push([
+            id,
+            await encrypt(
+              securityProvider,
+              await decrypt(
+                this.securityProvider,
+                encryptedValue
+              )
+            )
+          ])
+        }
+      }
+      for (const [id, value] of encryptedWithNewProvider) {
+        await this.storageProvider.set(id, value)
       }
     }
     this.securityProvider = securityProvider
-  }
-
-  private async ensureData(): Promise<void> {
-    if (!this.data) {
-      this.data = await this.storageProvider.load()
-    }
-  }
-
-  private async setData(data: StorageData): Promise<void> {
-    await this.storageProvider.upload(data)
-    this.data = data
   }
 
   async get(id: string): Promise<string | undefined> {
     if (this.securityProviderChanging) {
       throw new CallbacksChangingError()
     }
-    await this.ensureData()
-    const encryptedValue = this.data?.[id]
+    const encryptedValue = await this.storageProvider.get(id)
     if (!encryptedValue) {
       return undefined
     }
@@ -70,17 +63,10 @@ export class SecureStorage implements ISecureStorage {
       throw new CallbacksChangingError()
     }
     const encryptedValue = value && await encrypt(this.securityProvider, value)
-    if (this.storageProvider.uploadSingle) {
-      await this.storageProvider.uploadSingle(id, encryptedValue)
-    } else {
-      await this.ensureData()
-      const data = { ...this.data }
-      if (encryptedValue) {
-        data[id] = encryptedValue
-      } else {
-        delete data[id]
-      }
-      await this.setData(data)
-    }
+    await this.storageProvider.set(id, encryptedValue)
+  }
+
+  async ids(): Promise<string[]> {
+    return await this.storageProvider.ids()
   }
 }

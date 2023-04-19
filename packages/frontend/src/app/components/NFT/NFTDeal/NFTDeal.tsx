@@ -5,7 +5,7 @@ import { Order, Transfer } from '../../../../swagger/Api'
 import { NFTDealPrice } from './NFTDealPrice'
 import { TokenFullId } from '../../../processing/types'
 import { NFTDealActions } from './NFTDealActions/NFTDealActions'
-import { useSyncAESFileKey } from '../../../processing/hooks/useSyncAESFileKey'
+import { useSyncAESFileKey } from '../../../processing/nft-interaction/useSyncAESFileKey'
 
 export type NFTDealProps = PropsWithChildren<{
   tokenFullId: TokenFullId

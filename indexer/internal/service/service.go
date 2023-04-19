@@ -6,6 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"log"
+	"math/big"
+	"net/http"
+	"strings"
+	"time"
+
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -20,13 +27,8 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/internal/repository"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 	ethclient2 "github.com/mark3d-xyz/mark3d/indexer/pkg/ethclient"
+	healthnotifier "github.com/mark3d-xyz/mark3d/indexer/pkg/health_notifier"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/now"
-	"io"
-	"log"
-	"math/big"
-	"net/http"
-	"strings"
-	"time"
 )
 
 var (
@@ -51,6 +53,8 @@ type Service interface {
 	Orders
 	ListenBlockchain() error
 	Shutdown()
+
+	HealthCheck(context.Context) (*models.HealthStatusResponse, *models.ErrorResponse)
 }
 
 type EthClient interface {
@@ -66,6 +70,7 @@ type Collections interface {
 
 type Tokens interface {
 	GetToken(ctx context.Context, address common.Address, tokenId *big.Int) (*models.Token, *models.ErrorResponse)
+	GetTokenEncryptedPassword(ctx context.Context, address common.Address, tokenId *big.Int) (*models.EncryptedPasswordResponse, *models.ErrorResponse)
 	GetCollectionTokens(ctx context.Context, address common.Address) ([]*models.Token, *models.ErrorResponse)
 	GetTokensByAddress(ctx context.Context, address common.Address) (*models.TokensResponse, *models.ErrorResponse)
 }
@@ -88,6 +93,7 @@ type Orders interface {
 
 type service struct {
 	repository          repository.Repository
+	healthNotifier      healthnotifier.HealthNotifyer
 	cfg                 *config.ServiceConfig
 	ethClient           ethclient2.EthClient
 	accessTokenAddress  common.Address
@@ -97,25 +103,69 @@ type service struct {
 	closeCh             chan struct{}
 }
 
-func NewService(repo repository.Repository, ethClient ethclient2.EthClient,
-	cfg *config.ServiceConfig) (Service, error) {
+func NewService(
+	repo repository.Repository,
+	ethClient ethclient2.EthClient,
+	healthNotifier healthnotifier.HealthNotifyer,
+	cfg *config.ServiceConfig,
+) (Service, error) {
 	accessTokenInstance, err := access_token.NewMark3dAccessToken(cfg.AccessTokenAddress, nil)
 	if err != nil {
 		return nil, err
 	}
+
 	exchangeInstance, err := exchange.NewMark3dExchange(cfg.ExchangeAddress, nil)
 	if err != nil {
 		return nil, err
 	}
+
 	return &service{
 		ethClient:           ethClient,
 		repository:          repo,
+		healthNotifier:      healthNotifier,
 		cfg:                 cfg,
 		accessTokenAddress:  cfg.AccessTokenAddress,
 		accessTokenInstance: accessTokenInstance,
 		exchangeAddress:     cfg.ExchangeAddress,
 		exchangeInstance:    exchangeInstance,
 		closeCh:             make(chan struct{}),
+	}, nil
+}
+
+func (s *service) HealthCheck(ctx context.Context) (*models.HealthStatusResponse, *models.ErrorResponse) {
+	lastBlockNumber, err := s.repository.GetLastBlock(ctx)
+	if err != nil {
+		return nil, &models.ErrorResponse{
+			Code:    500,
+			Detail:  err.Error(),
+			Message: "Failed to get last block in indexer",
+		}
+	}
+	headBlockNumber, err := s.ethClient.GetLatestBlockNumber(ctx)
+	if err != nil {
+		return nil, &models.ErrorResponse{
+			Code:    500,
+			Detail:  err.Error(),
+			Message: "Failed to get head block from blockchain",
+		}
+	}
+
+	status := models.HealthStatusHealthy
+	backlog := big.NewInt(0).Sub(headBlockNumber, lastBlockNumber).Int64()
+	if backlog < 0 {
+		return nil, &models.ErrorResponse{
+			Code:    500,
+			Detail:  fmt.Sprintf("Somehow headBlockNumber - lastBlockNumber = %d", backlog),
+			Message: "Head block number is smaller than our last block number",
+		}
+	}
+	if backlog > s.cfg.AllowedBlockNumberDifference {
+		status = models.HealthStatusUnhealthy
+	}
+
+	return &models.HealthStatusResponse{
+		Status:       status,
+		BlockBacklog: backlog,
 	}, nil
 }
 
@@ -413,6 +463,7 @@ func (s *service) tryProcessTransferInit(ctx context.Context, tx pgx.Tx,
 		TokenId:           initEv.TokenId,
 		FromAddress:       initEv.From,
 		ToAddress:         initEv.To,
+		Number:            initEv.TransferNumber,
 	}
 	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
 	if err != nil {
@@ -457,6 +508,7 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 		CollectionAddress: l.Address,
 		TokenId:           initEv.TokenId,
 		FromAddress:       initEv.From,
+		Number:            initEv.TransferNumber,
 	}
 	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
 	if err != nil {
@@ -904,12 +956,24 @@ func (s *service) ListenBlockchain() error {
 			return err
 		}
 	}
+
+	lastNotificationTime := time.Now().Add(-1 * time.Hour)
 	for {
 		select {
 		case <-time.After(100 * time.Millisecond):
 			current, err := s.checkBlock(lastBlock)
 			if err != nil {
-				log.Println("process block failed", err)
+				err = fmt.Errorf("process block failed: %w", err)
+				log.Println(err)
+
+				// Send telegram notification if at least 120 seconds passed since last notification
+				elapsedTime := time.Now().Sub(lastNotificationTime)
+				if elapsedTime >= 120*time.Second {
+					err := s.healthNotifier.Notify(context.Background(), fmt.Sprint("ListenBlockchain: ", err.Error()))
+					if err != nil {
+						log.Printf("Failed to send error notification %v", err)
+					}
+				}
 			}
 			lastBlock = current
 		case <-s.closeCh:

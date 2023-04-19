@@ -33,4 +33,6 @@ export interface ISecureStorage<Value = string> {
    * @param value
    */
   set: (id: string, value: Value | undefined) => Promise<void>
+
+  ids: (id: string, value: Value | undefined) => Promise<string[]>
 }
