@@ -24,7 +24,6 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, cal
       <Button
         primary
         fullWidth
-        borderRadiusSecond
         onPress={async () => {
           await cancelOrder()
           callback?.()

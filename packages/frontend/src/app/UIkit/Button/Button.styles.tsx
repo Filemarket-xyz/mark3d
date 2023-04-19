@@ -114,11 +114,6 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             }
           }
         },
-        borderRadiusSecond: {
-          true: {
-            borderRadius: '$2'
-          }
-        },
         iconCover: {
           true: {
             '& > *': {

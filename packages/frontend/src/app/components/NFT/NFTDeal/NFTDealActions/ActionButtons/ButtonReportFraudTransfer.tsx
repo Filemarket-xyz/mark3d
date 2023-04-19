@@ -24,7 +24,6 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ 
       <Button
         primary
         fullWidth
-        borderRadiusSecond
         onPress={async () => {
           await reportFraud()
           callback?.()
