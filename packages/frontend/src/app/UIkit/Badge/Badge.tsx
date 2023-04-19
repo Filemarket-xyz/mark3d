@@ -11,7 +11,10 @@ const Wrapper = styled('div', {
   alignItems: 'center',
   borderRadius: '$3',
   width: 'max-content',
-  boxShadow: '$form'
+  boxShadow: '$form',
+  '@sm': {
+    width: '100%'
+  }
 })
 
 const Title = styled('p', {
