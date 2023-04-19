@@ -2,7 +2,7 @@ import { styled } from '../../../styles'
 
 export const Container = styled('div', {
   width: '100%',
-  paddingLR: 'calc((100% - $breakpoints$xl) * 0.5 + $space$4)',
+  paddingLR: 'calc((100% - $breakpoints$xl) * 0.3 + $space$4)',
   '@xl': {
     paddingLR: 'calc((100% - $breakpoints$lg) * 0.5 + $space$4)'
   },

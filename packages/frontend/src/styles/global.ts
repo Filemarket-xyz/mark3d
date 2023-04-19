@@ -48,7 +48,7 @@ export const globalStyles = globalCss({
     // overflowY: 'hidden'
   },
   body: {
-    overflow: 'overlay',
+    overflow: 'overlay'
   },
   '*::-webkit-scrollbar, html *::-webkit-scrollbar': {
     width: '5px'

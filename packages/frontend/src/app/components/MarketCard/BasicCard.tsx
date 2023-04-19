@@ -9,7 +9,7 @@ export const BasicCard = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   '&:hover': {
-    height: '375px',
+    height: '375px'
   }
 })
 
