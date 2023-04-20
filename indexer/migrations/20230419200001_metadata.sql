@@ -50,21 +50,58 @@ CREATE TABLE public.token_metadata_tags (
 ALTER TABLE public.token_metadata_tags
     OWNER TO indexer;
 
+ALTER TABLE public.tokens ADD COLUMN metadata_id BIGINT;
 ALTER TABLE public.tokens
-    ADD COLUMN metadata_id BIGINT;
-ALTER TABLE public.tokens
-    ADD FOREIGN KEY (metadata_id) REFERENCES public.token_metadata(id);
+    ADD FOREIGN KEY (metadata_id)
+    REFERENCES public.token_metadata(id);
+
+ALTER TABLE public.tokens DROP COLUMN name;
+ALTER TABLE public.tokens DROP COLUMN description;
+ALTER TABLE public.tokens DROP COLUMN image;
+ALTER TABLE public.tokens DROP COLUMN hidden_file;
 -- +goose Down
 -- +goose StatementBegin
 SELECT 'down SQL query';
 -- +goose StatementEnd
 ALTER TABLE public.tokens
-    DROP CONSTRAINT IF EXISTS tokens_metadata_id_fkey;
+    DROP CONSTRAINT tokens_metadata_id_fkey;
 ALTER TABLE public.tokens
-    DROP COLUMN IF EXISTS metadata_id;
+    DROP COLUMN metadata_id;
 
-DROP TABLE IF EXISTS public.token_metadata_tags;
-DROP TABLE IF EXISTS public.token_metadata_properties;
-DROP TABLE IF EXISTS public.token_metadata;
+DROP TABLE public.token_metadata_tags;
+DROP TABLE public.token_metadata_properties;
+DROP TABLE public.token_metadata;
 
-DROP TYPE IF EXISTS public.property_type_enum;
+DROP TYPE public.property_type_enum;
+
+ALTER TABLE public.tokens
+    ADD COLUMN name VARCHAR(255);
+UPDATE public.tokens
+    SET name = ''
+    WHERE name IS NULL;
+ALTER TABLE public.tokens
+    ALTER COLUMN name SET NOT NULL;
+
+ALTER TABLE public.tokens
+    ADD COLUMN description TEXT;
+UPDATE public.tokens
+    SET description = ''
+    WHERE description IS NULL;
+ALTER TABLE public.tokens
+    ALTER COLUMN description SET NOT NULL;
+
+ALTER TABLE public.tokens
+    ADD COLUMN image TEXT;
+UPDATE public.tokens
+    SET image = ''
+    WHERE image IS NULL;
+ALTER TABLE public.tokens
+    ALTER COLUMN image SET NOT NULL;
+
+ALTER TABLE public.tokens
+    ADD COLUMN hidden_file TEXT;
+UPDATE public.tokens
+    SET hidden_file = ''
+    WHERE hidden_file IS NULL;
+ALTER TABLE public.tokens
+    ALTER COLUMN hidden_file SET NOT NULL;

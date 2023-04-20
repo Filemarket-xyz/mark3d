@@ -11,26 +11,43 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 )
 
-func (p *postgres) GetCollectionTokens(ctx context.Context, tx pgx.Tx,
-	address common.Address) ([]*domain.Token, error) {
+func (p *postgres) GetCollectionTokens(
+	ctx context.Context,
+	tx pgx.Tx,
+	address common.Address,
+) ([]*domain.Token, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT collection_address,token_id,owner,
-       meta_uri,name,description,image,hidden_file,creator FROM tokens WHERE collection_address=$1`,
-		strings.ToLower(address.String()))
+	query := `
+		SELECT collection_address,token_id,owner,meta_uri,creator,metadata_id
+		FROM tokens WHERE collection_address=$1
+	`
+	rows, err := tx.Query(ctx, query, strings.ToLower(address.String()))
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
+
 	var res []*domain.Token
 	for rows.Next() {
 		var collectionAddress, tokenId, owner, creator string
+		var metadataId int64
 		t := &domain.Token{}
-		if err := rows.Scan(&collectionAddress, &tokenId, &owner, &t.MetaUri,
-			&t.Name, &t.Description, &t.Image, &t.HiddenFile, &creator); err != nil {
+
+		err := rows.Scan(&collectionAddress, &tokenId, &owner, &t.MetaUri, &creator, &metadataId)
+		if err != nil {
 			return nil, err
 		}
-		t.CollectionAddress, t.Owner, t.Creator = common.HexToAddress(collectionAddress), common.HexToAddress(owner),
-			common.HexToAddress(creator)
+
+		metadata, err := p.GetMetadata(ctx, tx, metadataId)
+		if err != nil {
+			return nil, err
+		}
+
+		t.CollectionAddress = common.HexToAddress(collectionAddress)
+		t.Owner = common.HexToAddress(owner)
+		t.Creator = common.HexToAddress(creator)
+		t.Metadata = metadata
+
 		var ok bool
 		t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
 		if !ok {
@@ -41,26 +58,44 @@ func (p *postgres) GetCollectionTokens(ctx context.Context, tx pgx.Tx,
 	return res, nil
 }
 
-func (p *postgres) GetTokensByAddress(ctx context.Context, tx pgx.Tx,
-	address common.Address) ([]*domain.Token, error) {
+func (p *postgres) GetTokensByAddress(
+	ctx context.Context,
+	tx pgx.Tx,
+	address common.Address,
+) ([]*domain.Token, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT collection_address,token_id,owner,
-       meta_uri,name,description,image,hidden_file,creator FROM tokens WHERE owner=$1`,
-		strings.ToLower(address.String()))
+	query := `
+		SELECT collection_address,token_id,owner,meta_uri,creator,metadata_id
+		FROM tokens WHERE owner=$1
+	`
+
+	rows, err := tx.Query(ctx, query, strings.ToLower(address.String()))
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
+
 	var res []*domain.Token
 	for rows.Next() {
 		var collectionAddress, tokenId, owner, creator string
+		var metadataId int64
 		t := &domain.Token{}
-		if err := rows.Scan(&collectionAddress, &tokenId, &owner, &t.MetaUri,
-			&t.Name, &t.Description, &t.Image, &t.HiddenFile, &creator); err != nil {
+
+		err := rows.Scan(&collectionAddress, &tokenId, &owner, &t.MetaUri, &creator, &metadataId)
+		if err != nil {
 			return nil, err
 		}
-		t.CollectionAddress, t.Owner, t.Creator = common.HexToAddress(collectionAddress), common.HexToAddress(owner),
-			common.HexToAddress(creator)
+
+		metadata, err := p.GetMetadata(ctx, tx, metadataId)
+		if err != nil {
+			return nil, err
+		}
+
+		t.CollectionAddress = common.HexToAddress(collectionAddress)
+		t.Owner = common.HexToAddress(owner)
+		t.Creator = common.HexToAddress(creator)
+		t.Metadata = metadata
+
 		var ok bool
 		t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
 		if !ok {
@@ -79,21 +114,11 @@ func (p *postgres) GetToken(
 ) (*domain.Token, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT
-			t.owner,
-			t.meta_uri,
-			t.name,
-			t.description,
-			t.image,
-			t.hidden_file,
-			t.creator, 
-			c.name 
-		FROM 
-			tokens t
-		INNER JOIN 
-			collections c ON t.collection_address = c.address
-		WHERE 
-			t.collection_address=$1 AND t.token_id=$2
+		SELECT t.owner, t.meta_uri, t.creator, c.name, t.metadata_id
+		FROM tokens t
+		INNER JOIN collections c ON t.collection_address = c.address
+		LEFT JOIN token_metadata tm on tm.id = t.metadata_id
+		WHERE t.collection_address=$1 AND t.token_id=$2
 		`
 	row := tx.QueryRow(
 		ctx,
@@ -104,17 +129,20 @@ func (p *postgres) GetToken(
 
 	token := &domain.Token{}
 	var owner, creator string
+	var metadataId int64
 
 	err := row.Scan(
 		&owner,
 		&token.MetaUri,
-		&token.Name,
-		&token.Description,
-		&token.Image,
-		&token.HiddenFile,
 		&creator,
 		&token.CollectionName,
+		&metadataId,
 	)
+	if err != nil {
+		return nil, err
+	}
+
+	metadata, err := p.GetMetadata(ctx, tx, metadataId)
 	if err != nil {
 		return nil, err
 	}
@@ -123,20 +151,32 @@ func (p *postgres) GetToken(
 	token.TokenId = tokenId
 	token.Owner = common.HexToAddress(owner)
 	token.Creator = common.HexToAddress(creator)
+	token.Metadata = metadata
 
 	return token, nil
 }
 
-
 func (p *postgres) InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error {
 	// language=PostgreSQL
-	if _, err := tx.Exec(ctx, `INSERT INTO tokens VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) ON CONFLICT ON CONSTRAINT tokens_pkey DO NOTHING `,
-		strings.ToLower(token.CollectionAddress.String()), token.TokenId.String(),
-		strings.ToLower(token.Owner.String()), token.MetaUri, token.Name,
-		token.Description, token.Image, token.HiddenFile,
-		strings.ToLower(token.Creator.String())); err != nil {
+	query := `
+		INSERT INTO tokens (collection_address, token_id, owner, meta_uri, creator, metadata_id)
+		VALUES ($1,$2,$3,$4,$5,$6) 
+		ON CONFLICT ON CONSTRAINT tokens_pkey DO NOTHING
+	`
+	_, err := tx.Exec(
+		ctx,
+		query,
+		strings.ToLower(token.CollectionAddress.String()),
+		token.TokenId.String(),
+		strings.ToLower(token.Owner.String()),
+		token.MetaUri,
+		strings.ToLower(token.Creator.String()),
+		token.Metadata.Id,
+	)
+	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -148,4 +188,146 @@ func (p *postgres) UpdateToken(ctx context.Context, tx pgx.Tx, token *domain.Tok
 		return err
 	}
 	return nil
+}
+
+func (p *postgres) GetMetadata(ctx context.Context, tx pgx.Tx, metadataId int64) (*domain.TokenMetadata, error) {
+	// JOINs are too heavy. Returns [count(tags) * count(attr)] rows
+	mdQuery := `
+		SELECT name, description, image, hidden_file, category, subcategory
+		FROM token_metadata
+		WHERE id = $1
+	`
+	pQuery := `
+		SELECT trait_type, display_type, value_type, property_type
+		FROM token_metadata_properties
+		WHERE metadata_id=$1
+	`
+	tQuery := `
+		SELECT tag
+		FROM token_metadata_tags
+		WHERE metadata_id=$1
+	`
+
+	var metadata domain.TokenMetadata
+	metadata.Id = metadataId
+	err := tx.QueryRow(ctx, mdQuery, metadataId).Scan(
+		&metadata.Name,
+		&metadata.Description,
+		&metadata.Image,
+		&metadata.HiddenFile,
+		&metadata.Category,
+		&metadata.Subcategory,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query metadata: %w", err)
+	}
+
+	// Properties
+	rows, err := tx.Query(ctx, pQuery, metadataId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query properties: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var prop domain.MetadataProperty
+		var propType string
+
+		if err := rows.Scan(&prop.TraitType, &prop.DisplayType, &prop.Value, &propType); err != nil {
+			return nil, err
+		}
+
+		switch propType {
+		case "attribute":
+			metadata.Attributes = append(metadata.Attributes, &prop)
+		case "ranking":
+			metadata.Rankings = append(metadata.Rankings, &prop)
+		case "stat":
+			metadata.Stats = append(metadata.Stats, &prop)
+		}
+	}
+
+	// Tags
+	tRows, err := tx.Query(ctx, tQuery, metadataId)
+	if err != nil {
+		return nil, err
+	}
+	defer tRows.Close()
+
+	for tRows.Next() {
+		var tag string
+
+		if err := tRows.Scan(&tag); err != nil {
+			return nil, err
+		}
+
+		metadata.Tags = append(metadata.Tags, tag)
+	}
+
+	return &metadata, nil
+}
+
+func (p *postgres) InsertMetadata(ctx context.Context, tx pgx.Tx, metadata *domain.TokenMetadata) (int64, error) {
+	// FIXME: too many separate INSERT statements. Use query builder later
+	query := `
+		INSERT INTO token_metadata (id, name, description, image, hidden_file, category, subcategory)
+		VALUES (DEFAULT,$1,$2,$3,$4,$5,$6)  
+		ON CONFLICT ON CONSTRAINT token_metadata_pkey DO NOTHING 
+		RETURNING id
+	`
+
+	var metadataId int64
+	err := tx.QueryRow(
+		ctx,
+		query,
+		metadata.Name,
+		metadata.Description,
+		metadata.Image,
+		metadata.HiddenFile,
+		metadata.Category,
+		metadata.Subcategory,
+	).Scan(&metadataId)
+	if err != nil {
+		return 0, err
+	}
+
+	query = `
+		INSERT INTO token_metadata_properties (id, metadata_id, trait_type, display_type, value_type, property_type)
+		VALUES (DEFAULT,$1,$2,$3,$4,$5)  
+		ON CONFLICT ON CONSTRAINT token_metadata_properties_pkey DO NOTHING
+	`
+	for _, attr := range metadata.Attributes {
+		_, err := tx.Exec(ctx, query, metadataId, attr.TraitType, attr.DisplayType, attr.Value, "attribute")
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	for _, stat := range metadata.Stats {
+		_, err := tx.Exec(ctx, query, metadataId, stat.TraitType, stat.DisplayType, stat.Value, "stat")
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	for _, ranking := range metadata.Rankings {
+		_, err := tx.Exec(ctx, query, metadataId, ranking.TraitType, ranking.DisplayType, ranking.Value, "ranking")
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	query = `
+		INSERT INTO token_metadata_tags (id, metadata_id, tag)
+		VALUES (DEFAULT, $1, $2)
+		ON CONFLICT ON CONSTRAINT token_metadata_tags_pkey DO NOTHING
+	`
+	for _, tag := range metadata.Tags {
+		_, err := tx.Exec(ctx, query, metadataId, tag)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return metadataId, nil
 }

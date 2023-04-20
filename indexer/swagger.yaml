@@ -565,16 +565,42 @@ definitions:
         description: uri метаданных токена
       name:
         type: string
-        description: Имя токена из метаданных
+        description: Метаданные - Имя токена из метаданных
       description:
         type: string
-        description: Описание токена из метаданных
+        description: Метаданные - Описание токена из метаданных
       image:
         type: string
-        description: Ссылка на пикчу из метаданных
+        description: Метаданные - Ссылка на пикчу из метаданных
       hiddenFile:
         type: string
-        description: Ссылка на зашифрованный файл из метаданных
+        description: Метаданные - Ссылка на зашифрованный файл из метаданных
+      category:
+        type: string
+        description: Метаданные - Категория
+      subcategory:
+        type: string
+        description: Метаданные - Подкатегория
+      tags:
+        type: array
+        items:
+          type: string
+        description: Метаданные - Тэги
+      attributes:
+        type: array
+        items:
+          $ref: "#/definitions/MetadataProperty"
+        description: Метаданные - Аттрибуты
+      rankings:
+        type: array
+        items:
+          $ref: "#/definitions/MetadataProperty"
+        description: Метаданные - Ранкинги
+      stats:
+        type: array
+        items:
+          $ref: "#/definitions/MetadataProperty"
+        description: Метаданные - Статы
       pendingTransferId:
         type: integer
         format: int64
@@ -739,6 +765,19 @@ definitions:
     enum:
       - Healthy
       - Unhealthy
+  MetadataProperty:
+    type: object
+    description: Структура для свойств в метаданных
+    properties:
+      traitType:
+        type: string
+        description: Название свойства
+      displayType:
+        type: string
+        description: Тип данных значения
+      value:
+        type: string
+        description: Значение свойства
 tags:
   - name: tokens
   - name: transfers
