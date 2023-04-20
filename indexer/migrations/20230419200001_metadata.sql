@@ -30,6 +30,7 @@ CREATE TABLE public.token_metadata_properties (
     CONSTRAINT token_metadata_properties_metadata_fkey
         FOREIGN KEY (metadata_id)
             REFERENCES public.token_metadata (id)
+            ON DELETE CASCADE
 );
 
 ALTER TABLE public.token_metadata_properties
@@ -43,6 +44,7 @@ CREATE TABLE public.token_metadata_tags (
   CONSTRAINT token_metadata_tags_metadata_fkey
       FOREIGN KEY (metadata_id)
           REFERENCES public.token_metadata (id)
+          ON DELETE CASCADE
 );
 
 ALTER TABLE public.token_metadata_tags
