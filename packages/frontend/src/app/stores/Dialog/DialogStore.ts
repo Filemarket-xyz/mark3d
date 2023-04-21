@@ -23,7 +23,7 @@ export class DialogRef {
 }
 
 export class DialogStore {
-  open: DialogCallInstance[] = []
+  instances: DialogCallInstance[] = []
 
   count = 0
 
@@ -37,9 +37,10 @@ export class DialogStore {
     this.count++
     const id = this.count
     const ref = new DialogRef(id, this)
-    this.open.push({
+    this.instances.push({
       ...call,
       id,
+      open: true,
       onClosed: () => {
         ref.closeListeners.forEach((fn) => fn())
       }
@@ -49,20 +50,21 @@ export class DialogStore {
 
   private closeDialogByOpenIndex(openIndex: number): void {
     if (openIndex >= 0) {
-      const instance = this.open[openIndex]
+      const instance = this.instances[openIndex]
+      instance.open = false
       instance.onClosed?.()
-      this.open.splice(openIndex, 1)
+      setTimeout(() => this.instances.splice(openIndex, 1), 1000)
     }
   }
 
   closeDialogById(id: number): void {
-    const openIndex = this.open.findIndex((instance) => instance.id === id)
+    const openIndex = this.instances.findIndex((instance) => instance.id === id)
     this.closeDialogByOpenIndex(openIndex)
   }
 
   closeDialog(component: ComponentType): void {
-    for (let i = 0; i < this.open.length; i++) {
-      if (this.open[i].component === component) {
+    for (let i = 0; i < this.instances.length; i++) {
+      if (this.instances[i].component === component) {
         this.closeDialogByOpenIndex(i)
       }
     }

@@ -6,7 +6,7 @@ export const DialogManager = observer((): JSX.Element => {
   return (
     <>
       {
-        dialogStore.open.map(instance => {
+        dialogStore.instances.map(instance => {
           const onClose = () => {
             dialogStore.closeDialogById(instance.id)
             if (instance.onClosed) {
@@ -17,7 +17,7 @@ export const DialogManager = observer((): JSX.Element => {
             <instance.component
               {...instance.props}
               key={instance.id}
-              open
+              open={instance.open}
               onClose={onClose}
             >
             </instance.component>
