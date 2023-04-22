@@ -1,35 +1,20 @@
+import { EftRsaDerivationFunction } from '../../../../../crypto/src/lib/types'
+import { buf2Hex } from '../../../../../crypto/src/lib/utils'
+import { fileMarketCrypto } from '../FileMarketCrypto'
 import { IHiddenFileBuyer } from './IHiddenFileBuyer'
-import { IStatefulCryptoProvider } from '../StatefulCryptoProvider'
-import { AESEncoding, CryptoMessage, DecryptResult, RSAPrivateKey, RSAPublicKey } from '../types'
-import { NoRSAPrivateKeyToRevealError } from './errors'
 
 export class HiddenFileBuyer implements IHiddenFileBuyer {
-  constructor(
-    public readonly cryptoProvider: IStatefulCryptoProvider,
-    public readonly surrogateId: string
-  ) {
+  constructor(public readonly surrogateId: string) {}
+
+  async initBuy(...args: Parameters<EftRsaDerivationFunction>): Promise<`0x${string}`> {
+    const { pub } = await fileMarketCrypto.eftRsaDerivation(...args)
+
+    return `0x${buf2Hex(pub)}`
   }
 
-  async initBuy(): Promise<RSAPublicKey> {
-    const pair = await this.cryptoProvider.genRSAKeyPair()
-    return pair.pub
-  }
+  async revealFraudReportRSAPrivateKey(...args: Parameters<EftRsaDerivationFunction>): Promise<`0x${string}`> {
+    const { priv } = await fileMarketCrypto.eftRsaDerivation(...args)
 
-  async revealFraudReportRSAPrivateKey(): Promise<RSAPrivateKey> {
-    const key = await this.cryptoProvider.getRSAPrivateKey()
-    if (!key) {
-      throw new NoRSAPrivateKeyToRevealError(this.surrogateId)
-    }
-    return key
-  }
-
-  async saveFileAESKey(encryptedKey: CryptoMessage): Promise<DecryptResult> {
-    const decryptResult = await this.cryptoProvider.decryptRSA(encryptedKey)
-    if (decryptResult.ok) {
-      await this.cryptoProvider.setAESKey(
-        Buffer.from(decryptResult.result).toString(AESEncoding)
-      )
-    }
-    return decryptResult
+    return `0x${buf2Hex(priv)}`
   }
 }
