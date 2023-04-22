@@ -1,11 +1,12 @@
-import React from 'react'
-import { styled } from '../../../styles'
-import { gradientPlaceholderImg, NavButton, textVariant, Txt } from '../../UIkit'
-import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
-import { useNavigate } from 'react-router-dom'
 import { BigNumber, utils } from 'ethers'
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+
+import { styled } from '../../../styles'
 import { mark3dConfig } from '../../config/mark3d'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
+import { gradientPlaceholderImg, NavButton, textVariant, Txt } from '../../UIkit'
+import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
 
 export const CardControls = styled(BasicCardControls, {
   height: '172px',
@@ -141,7 +142,6 @@ export const BorderLayout = styled('div', {
 })
 
 export default function NFTCard(props: NFTCardProps) {
-  console.log(props)
   const navigate = useNavigate()
   const { data: collectionAndNfts } =
         useCollectionTokenListStore(props.collection)
@@ -161,7 +161,7 @@ export default function NFTCard(props: NFTCardProps) {
                     <CardTitle title={props.title}>{props.title}</CardTitle>
                     <CardCollection>{collectionAndNfts.collection?.name}</CardCollection>
                     <UserContainer>
-                        <UserImg src={props.user.img}/>
+                        <UserImg src={props.user.img} />
                         <UserName>{props.user.username}</UserName>
                     </UserContainer>
                         <PriceInfo noneOpacity={props.price === undefined}>
