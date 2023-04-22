@@ -1,22 +1,3 @@
-
-// AES key is base64 encoded
-
-export const AESEncoding = 'base64' as const
-export type AESKey = string
-
-// We are not using higher abstractions specific to the libraries, cos libraries might change
-// RSA key is encoded as hex string, obtained by hex encoding result of pkcs8 or spki key export
-export type RSAPublicKey = string // 0x12...
-export type RSAPrivateKey = string // 0x12...
-
-export interface RSAKeyPair {
-  pub: RSAPublicKey // public is reserved keyword
-  priv: RSAPrivateKey // private is reserved keyword
-}
-
-// Word crypto just to make it differ from a lot of 'Message' types
-export type CryptoMessage = Uint8Array
-
 /**
  * Global NFT identifier
  */
@@ -41,7 +22,7 @@ export interface DecryptResultError {
   error: string
 }
 
-export type DecryptResult<ResultType = CryptoMessage> = DecryptResultOk<ResultType> | DecryptResultError
+export type DecryptResult<ResultType = ArrayBuffer> = DecryptResultOk<ResultType> | DecryptResultError
 
 export interface FileMeta {
   name?: string
