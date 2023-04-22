@@ -1,39 +1,55 @@
-import { useCollectionContract } from '../contracts'
-import { useStatusState } from '../../hooks'
-import { BigNumber, ContractReceipt, utils } from 'ethers'
-import { useCallback } from 'react'
-import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { assertContract, assertSigner } from '../utils/assert'
-import { mark3dConfig } from '../../config/mark3d'
 import assert from 'assert'
-import { TokenFullId } from '../types'
+import { BigNumber, ContractReceipt } from 'ethers'
+import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
+
+import { str2ab } from '../../../../../crypto/src/lib/utils'
+import { mark3dConfig } from '../../config/mark3d'
+import { useStatusState } from '../../hooks'
+import { useCollectionContract } from '../contracts'
+import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
+import { useSeed } from '../SeedProvider/useSeed'
+import { TokenFullId } from '../types'
+import { globalSaltMock } from '../utils'
+import { assertContract, assertSigner } from '../utils/assert'
 
 export function useApproveTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, publicKey?: string) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
+  const seed = useSeed(address)
   const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
   const factory = useHiddenFileProcessorFactory()
+
   const approveTransfer = useCallback(wrapPromise(async () => {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     assert(address, 'need to connect wallet')
+    assert(seed, 'seed not found')
     assert(collectionAddress, 'collection address not provided')
     assert(tokenId, 'tokenId is not provided')
     assert(publicKey, 'publicKey was not set (or transfer object is null)')
+
     if (!publicKey.startsWith('0x')) {
       publicKey = `0x${publicKey}`
     }
     const owner = await factory.getOwner(address, { collectionAddress, tokenId })
-    const encryptedAESPassword = await owner.prepareFileAESKeyForBuyer(publicKey)
+    const encryptedAESPassword = await owner.prepareFileAESKeyForBuyer(
+      str2ab(publicKey),
+      seed,
+      globalSaltMock,
+      str2ab(collectionAddress),
+      +tokenId
+    )
     console.log('approve transfer', 'tokenId', tokenId, 'encryptedAESPassword', encryptedAESPassword)
-    const res = await contract.approveTransfer(
+
+    const tx = await contract.approveTransfer(
       BigNumber.from(tokenId),
-      utils.hexlify(encryptedAESPassword) as `0x${string}`,
+      encryptedAESPassword,
       { gasPrice: mark3dConfig.gasPrice }
     )
-    return await res.wait()
-  }), [contract, signer, address, wrapPromise, publicKey])
+
+    return tx.wait()
+  }), [contract, signer, address, seed, wrapPromise, publicKey])
 
   return {
     ...statuses,
