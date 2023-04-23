@@ -13,6 +13,7 @@ import {
 } from 'react-hook-form'
 import { AutocompleteChangeReason } from '@mui/material'
 import { Loading } from '@nextui-org/react'
+import {ChangeEvent, useRef} from "react";
 
 const Listbox = styled('ul', {
   maxWidth: '600px',
@@ -62,11 +63,14 @@ interface ComboboxProps<T extends FieldValues> {
     data: ComboBoxOption | null,
     reason: AutocompleteChangeReason
   ) => void
+  onEnter?: (value?: string) => void
   otherFieldProps?: ControllerRenderProps<T, Path<T>>
   isLoading?: boolean
+  placeholder?: string
 }
 
 function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
+
   const {
     getRootProps,
     getInputProps,
@@ -107,16 +111,25 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
     return <ContentLoaded />
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && getInputProps().value) {
+      props.onEnter?.(getInputProps().value as string)
+    }
+  }
+
   return (
     <div>
       <div {...getRootProps()}>
         <PostfixedInput
-          placeholder='Select collection'
+          placeholder={props.placeholder ?? 'Select collection'}
           postfix={<img width={24} height={24} src={bottomArrow} />}
-          inputProps={getInputProps()}
+          inputProps={{
+            ...getInputProps(),
+            onKeyDown: handleKeyDown
+          }}
         />
       </div>
-      {groupedOptions.length > 0 && <Listbox {...getListboxProps()}>
+      {groupedOptions?.length > 0 && <Listbox {...getListboxProps()}>
         <Content />
       </Listbox>}
     </div>
@@ -127,9 +140,11 @@ export interface ControlledComboboxProps<T extends FieldValues> {
   comboboxProps: Omit<ComboboxProps<T>, 'onChange' | 'value'>
   control: Control<T, any>
   name: Path<T>
+  placeholder?: string
   rules?: {
     required?: boolean
   }
+  onEnter?: (value?: string) => void
 }
 
 export const ControlledComboBox = <T extends FieldValues>(
@@ -145,6 +160,8 @@ export const ControlledComboBox = <T extends FieldValues>(
         value={p.field.value}
         onChange={(_, data) => p.field.onChange(data)}
         otherFieldProps={p.field}
+        placeholder={props.placeholder}
+        onEnter={props.onEnter}
       />
     )}
   />

@@ -17,6 +17,7 @@ const FakeMintStyle = styled(Container, {
   color: 'white',
   paddingTop: '160px',
   paddingBottom: '80px',
+  marginBottom: '48px',
   '& a': {
     color: 'white'
   },

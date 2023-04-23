@@ -1,8 +1,8 @@
-import React from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { styled } from '../../../styles'
 import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
-import { Button, PageLayout, Txt } from '../../UIkit'
+import {Button, Link, PageLayout, Txt} from '../../UIkit'
 import { ComboBoxOption, ControlledComboBox } from '../../UIkit/Form/Combobox'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
@@ -24,11 +24,20 @@ import MintModal, {
 import { FormControl } from '../../UIkit/Form/FormControl'
 import { useModalProperties } from './hooks/useModalProperties'
 import { Tooltip } from '@nextui-org/react'
+import TagsSection from "../NFTPage/section/Tags/TagsSection";
+import {category, categoryOptions, license, licenseInfo, licenseOptions, subcategory} from "./helper/data/data";
 
 const Description = styled('p', {
   fontSize: '12px',
   color: '$gray600',
-  marginBottom: '$2'
+  marginBottom: '$2',
+  variants: {
+    secondary: {
+      true: {
+        fontSize: '14px'
+      }
+    }
+  }
 })
 
 const AddCollectionButton = styled(Button, {
@@ -84,13 +93,42 @@ const SubTitle = styled('div', {
   color: '$gray600'
 })
 
+const CategoryAndSubcategory = styled('div', {
+  display: 'flex',
+  gap: '30px',
+  '@sm': {
+    flexDirection: 'column',
+    gap: 0
+  },
+})
+
+const ContentField = styled(CollectionPickerContainer, {
+  padding: '$3',
+  border: '3px solid #e9e9e9',
+  borderRadius: '20px',
+  flexDirection: 'column',
+  flexWrap: 'wrap',
+  gap: '$3'
+})
+
+const NFTLicense = styled('h5', {
+  '& a': {
+    fontSize: '14px'
+  }
+})
+
 export interface CreateNFTForm {
   image: FileList
   hiddenFile: FileList
   name: string
   collection: ComboBoxOption
   description: string
+  tags: ComboBoxOption
+  category: ComboBoxOption
+  subcategory: ComboBoxOption
+  license: ComboBoxOption
 }
+
 
 const CreateNftPage = observer(() => {
   const { address } = useAccount()
@@ -99,6 +137,36 @@ const CreateNftPage = observer(() => {
     address: string
     name: string
   } | undefined = location.state?.collection
+
+  const [chosenTags, setChosenTags] = useState<string[]>([])
+
+  const tags: ComboBoxOption[] = [
+      {
+    title: 'VR',
+    id: '0'
+      },
+    {
+      title: 'AR',
+      id: '1'
+    },
+    {
+      title: 'Stream',
+      id: '2'
+    },
+    {
+      title: 'Minecraft',
+      id: '3'
+    },
+    {
+      title: 'Amogus',
+      id: '4'
+    },
+    {
+      title: 'RockPaper',
+      id: '5'
+    },
+
+  ]
 
   const {
     collectionMintOptions,
@@ -122,7 +190,8 @@ const CreateNftPage = observer(() => {
     handleSubmit,
     control,
     formState: { isValid },
-    resetField
+    resetField,
+      watch
   } = useForm<CreateNFTForm>({
     defaultValues: {
       collection: predefinedCollection
@@ -131,9 +200,17 @@ const CreateNftPage = observer(() => {
     }
   })
 
+  const chosenTag = watch('tags')
+  const chosenCategory = watch('category')
+  const license = watch('license')
+
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
     createNft(data)
   }
+
+  useEffect(() => {
+    if (chosenTag && !chosenTags.includes(chosenTag.title)) setChosenTags([...chosenTags, chosenTag.title])
+  }, [chosenTag])
 
   useAfterDidMountEffect(() => {
     if (isNftLoading) {
@@ -152,6 +229,14 @@ const CreateNftPage = observer(() => {
       )
     }
   }, [nftError, isNftLoading, nftResult])
+
+  const subcategoryOptions: ComboBoxOption[] = useMemo(() => {
+    return subcategory[chosenCategory?.title as category]
+  }, [chosenCategory])
+
+  const licenseDescription = useMemo(() => {
+    return licenseInfo[license?.title as license] ? licenseInfo[license?.title as license].description : 'Tags make it easier to find the right content'
+  }, [license])
 
   return (
     <>
@@ -238,6 +323,95 @@ const CreateNftPage = observer(() => {
               placeholder='Description of your item'
               {...register('description')}
             />
+          </FormControl>
+
+          <CategoryAndSubcategory>
+            <FormControl>
+              <Label>Category</Label>
+              <CollectionPickerContainer>
+                <ControlledComboBox<CreateNFTForm>
+                    name='category'
+                    control={control}
+                    placeholder={'Select a category'}
+                    comboboxProps={{
+                      options: categoryOptions
+                    }}
+                    rules={{ required: true }}
+                />
+              </CollectionPickerContainer>
+            </FormControl>
+
+            <FormControl>
+              <Label>Subcategory&nbsp;&nbsp;<TextGray>(Optional)</TextGray></Label>
+              <CollectionPickerContainer>
+                <ControlledComboBox<CreateNFTForm>
+                    name='subcategory'
+                    control={control}
+                    placeholder={'Select a subcategory'}
+                    comboboxProps={{
+                      options: subcategoryOptions
+                    }}
+                    rules={{ required: false }}
+                />
+              </CollectionPickerContainer>
+            </FormControl>
+          </CategoryAndSubcategory>
+
+          <FormControl>
+            <Label>Tags</Label>
+            <ContentField>
+              <ControlledComboBox<CreateNFTForm>
+                  name='tags'
+                  control={control}
+                  placeholder={'Content tags'}
+                  comboboxProps={{
+                    options: tags?.filter((tag) => !chosenTags.includes(tag.title))
+                  }}
+                  rules={{ required: true }}
+                  onEnter={(value) => {
+                    if (value && !chosenTags.includes(value)) setChosenTags([...chosenTags, value])
+                    console.log(value)
+                  }}
+              />
+              {chosenTags.length > 0 && <TagsSection tags={chosenTags} tagOptions={{isCanDelete: true, onDelete: (value?: string) => {
+                  if (value === chosenTag?.title) {
+                    resetField('tags')
+                  }
+                  setChosenTags([...chosenTags.filter((tag) => {
+                    return tag !== value
+                  })])
+                }}}/>}
+              {chosenTags.length <= 0 && <Description secondary>
+                Tags make it easier to find the right content
+              </Description>}
+            </ContentField>
+          </FormControl>
+
+          <FormControl>
+            <Label>Tags</Label>
+            <ContentField>
+              <ControlledComboBox<CreateNFTForm>
+                  name='license'
+                  control={control}
+                  placeholder={'License'}
+                  comboboxProps={{
+                    options: licenseOptions
+                  }}
+                  rules={{ required: true }}
+              />
+              {chosenTags.length > 0 && <TagsSection tags={chosenTags} tagOptions={{isCanDelete: true, onDelete: (value?: string) => {
+                  if (value === chosenTag?.title) {
+                    resetField('tags')
+                  }
+                  setChosenTags([...chosenTags.filter((tag) => {
+                    return tag !== value
+                  })])
+                }}}/>}
+              {chosenTags.length <= 0 && <Description secondary>
+                {licenseDescription}
+              </Description>}
+              <NFTLicense><Link href={'https://www.youtube.com/watch?v=dQw4w9WgXcQ'} target="_blank" iconRedirect={true}>About CC Licenses</Link></NFTLicense>
+            </ContentField>
           </FormControl>
 
           <Button
