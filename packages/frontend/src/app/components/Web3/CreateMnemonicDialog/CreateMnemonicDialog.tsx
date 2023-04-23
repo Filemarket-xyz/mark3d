@@ -12,6 +12,7 @@ import { mnemonicToSeed } from 'bip39'
 import { useAccount } from 'wagmi'
 import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useSeedProviderFactory } from '../../../processing'
+import {useStores} from "../../../hooks";
 
 const CreatedMnemonicStyle = styled('div', {
   width: '85%',
@@ -57,6 +58,7 @@ export function CreateMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX
   useCloseIfNotConnected(onClose)
   const { adaptive } = useMediaMui()
   const [mnemonic, setMnemonic] = useState<string>()
+  const { dialogStore } = useStores()
   const { address } = useAccount()
   const seedProviderFactory = useSeedProviderFactory()
   return (
@@ -68,10 +70,10 @@ export function CreateMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX
         sm: '400px',
         md: '650px',
         lg: '950px',
-        defaultValue: 'inherit'
+        defaultValue: '950px'
       })}
     >
-      <ModalTitle>Write down or remember this phrase</ModalTitle>
+      <ModalTitle>{mnemonic ? 'Remember this phrase' : 'Enter a password'}</ModalTitle>
       <CreatedMnemonicStyle>
         <div className="contentModalWindow">
           {mnemonic && <>
@@ -89,8 +91,9 @@ export function CreateMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX
               const seedProvider = await seedProviderFactory.getSeedProvider(address)
               const newMnemonic = createMnemonic()
               const seed = await mnemonicToSeed(newMnemonic)
-              await seedProvider.set(seed, password)
-              setMnemonic(createMnemonic())
+              await seedProvider.set(seed, password, newMnemonic)
+              setMnemonic(newMnemonic)
+              dialogStore.closeDialogByName('ConnectMain')
             }
           }}/>}
         </div>

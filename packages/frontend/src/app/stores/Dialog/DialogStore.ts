@@ -9,7 +9,8 @@ export class DialogRef {
   // eslint-disable-next-line no-useless-constructor
   constructor(
     private readonly dialogCallId: number,
-    public dialogStore: DialogStore
+    public dialogStore: DialogStore,
+    public readonly name?: string
   ) {
   }
 
@@ -50,6 +51,10 @@ export class DialogStore {
   private closeDialogByOpenIndex(openIndex: number): void {
     if (openIndex >= 0) {
       const instance = this.open[openIndex]
+      const body = document.querySelector('body')
+      if (body) {
+        body.style.overflow = 'overlay'
+      }
       instance.onClosed?.()
       this.open.splice(openIndex, 1)
     }
@@ -57,6 +62,12 @@ export class DialogStore {
 
   closeDialogById(id: number): void {
     const openIndex = this.open.findIndex((instance) => instance.id === id)
+    this.closeDialogByOpenIndex(openIndex)
+  }
+
+  closeDialogByName(name: string): void {
+    const openIndex = this.open.findIndex((instance) => instance.props.name === name)
+    console.log(this.open)
     this.closeDialogByOpenIndex(openIndex)
   }
 

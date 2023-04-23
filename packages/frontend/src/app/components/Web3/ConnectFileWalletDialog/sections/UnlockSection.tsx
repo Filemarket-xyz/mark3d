@@ -9,6 +9,7 @@ import { styled } from '../../../../../styles'
 import { useSeedProvider } from '../../../../processing'
 import { useAccount } from 'wagmi'
 import { stringifyError } from '../../../../utils/error'
+import {useStores} from "../../../../hooks";
 
 export interface UnlockSectionProps {
   onSuccess?: () => void
@@ -28,6 +29,8 @@ const ButtonContainer = styled('div', {
 export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
   const { register, handleSubmit, formState: { errors } } = useForm<CreatePasswordValue>()
 
+  const { dialogStore } = useStores()
+
   const { address } = useAccount()
   const { seedProvider } = useSeedProvider(address)
 
@@ -37,7 +40,9 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
     if (seedProvider) {
       seedProvider
         .unlock(v.password)
-        .then(onSuccess)
+        .then(() => {
+          dialogStore.closeDialogByName('ConnectMain')
+        })
         .catch(err => setError(stringifyError(err)))
     }
   }, [seedProvider])

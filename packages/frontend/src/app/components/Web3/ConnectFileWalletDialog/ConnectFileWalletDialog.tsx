@@ -23,7 +23,6 @@ export const ConnectFileWalletDialog = observer(({ open, onClose }: AppDialogPro
   const { adaptive } = useMediaMui()
   const { address } = useAccount()
   const canUnlock = useCanUnlock(address)
-
   return (
     <ConnectWalletWindowStyle>
       <Modal
@@ -34,12 +33,12 @@ export const ConnectFileWalletDialog = observer(({ open, onClose }: AppDialogPro
           sm: '400px',
           md: '650px',
           lg: '950px',
-          defaultValue: 'inherit'
+          defaultValue: '950px'
         })}
       >
         <ModalTitle>Connect Files Wallet</ModalTitle>
         <Modal.Body>
-          {canUnlock ? (<UnlockSection onSuccess={onClose}></UnlockSection>) : (<CreateOrImportSection/>)}
+          {canUnlock ? (<UnlockSection/>) : (<CreateOrImportSection/>)}
         </Modal.Body>
       </Modal>
     </ConnectWalletWindowStyle>

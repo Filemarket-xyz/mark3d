@@ -11,6 +11,7 @@ import { EnterSeedPhraseDialog } from '../../EnterSeedPhraseDialog'
 import { CreateMnemonicDialog } from '../../CreateMnemonicDialog'
 import { useStores } from '../../../../hooks'
 import { observer } from 'mobx-react-lite'
+import {DialogRef} from "../../../../stores/Dialog/DialogStore";
 
 const ConnectWalletWindowContentStyle = styled('div', {
   fontSize: '12px',
@@ -54,6 +55,7 @@ const ToolCardContentWallet = styled(ToolCardContent, {
     minHeight: '250px'
   }
 })
+
 
 export const CreateOrImportSection: FC = observer(() => {
   const { dialogStore } = useStores()

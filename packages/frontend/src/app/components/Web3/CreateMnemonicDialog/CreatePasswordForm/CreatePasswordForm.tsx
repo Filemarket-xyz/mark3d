@@ -15,6 +15,7 @@ const CreatePasswordStyle = styled('form', {
 
 export interface CreatePasswordValue {
   password: string
+    repeatPassword: string
 }
 
 export interface CreatePasswordProps {
@@ -27,7 +28,10 @@ const ButtonContainer = styled('div', {
 })
 
 export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<CreatePasswordValue>()
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<CreatePasswordValue>()
+
+    const password = watch('password')
+    const passwordRepeat = watch('repeatPassword')
 
   return (
         <CreatePasswordStyle onSubmit={handleSubmit(onSubmit)}>
@@ -39,6 +43,15 @@ export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
                     isError={!!errors?.password}
                 />
                 {errors?.password && <ErrorMessage><Txt h5>{errors.password?.message}</Txt></ErrorMessage>}
+            </FormControl>
+            <FormControl>
+                <Input
+                    type="password"
+                    placeholder='Repeat a password'
+                    {...register('repeatPassword', { validate: () =>  password === passwordRepeat ? undefined : 'Password are not matching'})}
+                    isError={!!errors?.repeatPassword}
+                />
+                {errors?.repeatPassword && <ErrorMessage><Txt h5>{errors.repeatPassword?.message}</Txt></ErrorMessage>}
             </FormControl>
             <ButtonContainer>
                 <Button

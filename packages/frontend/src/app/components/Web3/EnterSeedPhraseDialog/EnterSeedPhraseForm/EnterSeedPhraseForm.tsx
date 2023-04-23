@@ -6,6 +6,8 @@ import { Input } from '../../../../UIkit/Form/Input'
 import { Button, Txt } from '../../../../UIkit'
 import { validateImportMnemonic, validatePassword } from '../../ConnectFileWalletDialog/utils/validate'
 import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
+import {useSeedProvider} from "../../../../processing";
+import {useAccount} from "wagmi";
 
 const FormEnterSeedPhraseStyle = styled('form', {
   paddingTop: '2rem',
@@ -29,13 +31,14 @@ const ButtonContainer = styled('div', {
 
 export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit }) => {
   const { register, handleSubmit, formState: { errors } } = useForm<EnterSeedPhraseValue>()
-
+    const { address } = useAccount()
+    const { seedProvider } = useSeedProvider(address)
   return (
         <FormEnterSeedPhraseStyle onSubmit={handleSubmit(onSubmit)}>
             <FormControl>
                 <Input
                     type="string"
-                    placeholder='Enter seed phrase'
+                    placeholder={seedProvider?.mnemonic ? 'Enter a new seed-phrase' : 'Enter a seed-phrase'}
                     {...register('seedPhrase', { validate: validateImportMnemonic })}
                     isError={!!errors?.seedPhrase}
                 />

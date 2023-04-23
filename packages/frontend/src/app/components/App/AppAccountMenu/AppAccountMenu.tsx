@@ -6,6 +6,8 @@ import { useNetwork } from 'wagmi'
 import { mark3dConfig } from '../../../config/mark3d'
 import { AccountButton } from './AccountButton'
 import { Warning } from '@mui/icons-material'
+import {ChangeMnemonicButton} from "../../Web3/ChangeMnemonicButton/ChangeMnemonicButton";
+import {ViewMnemonicButton} from "../../Web3/ViewMnemonicButton/ViewMnemonicButton";
 
 const Spacer = styled('div', {
   display: 'flex',
@@ -55,6 +57,8 @@ export const AppAccountMenu: FC<AppAccountMenuProps> = ({ address }) => {
           )}
           <AccountButton address={address} onPress={close}/>
           <DisconnectButton onPress={close}/>
+          <ChangeMnemonicButton/>
+          <ViewMnemonicButton/>
         </Spacer>
       </PopoverContent>
     </Popover>
