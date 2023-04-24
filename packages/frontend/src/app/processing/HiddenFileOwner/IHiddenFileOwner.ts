@@ -13,13 +13,13 @@ export interface IHiddenFileOwner extends IHiddenFileBase {
    * @param file
    * @returns {@link ArrayBuffer} Encrypted file data
    */
-  encryptFile: (file: File, ...args: Parameters<EftAesDerivationFunction>) => Promise<ArrayBuffer>
+  encryptFile: (file: File, ...args: Parameters<EftAesDerivationFunction>) => Promise<Blob>
 
   /**
    * Decrypts the file if AES key exists.
    * @param file
    */
-  decryptFile: (encryptedFileData: ArrayBuffer, meta: FileMeta | undefined, ...args: Parameters<EftAesDerivationFunction>) => Promise<DecryptResult<File>>
+  decryptFile: (encryptedFileData: ArrayBuffer, meta: FileMeta | undefined, encryptedKey: ArrayBuffer | undefined, seed: ArrayBuffer, globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, tokenId: number, dealNumber: number | undefined) => Promise<DecryptResult<File>>
 
   /**
    * Encrypts stored AES key (AES key used to encrypt file) with provided publicKey.

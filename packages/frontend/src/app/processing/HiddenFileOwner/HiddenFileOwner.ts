@@ -10,9 +10,21 @@ export class HiddenFileOwner implements IHiddenFileOwner {
   async decryptFile(
     encryptedFileData: ArrayBuffer,
     meta: FileMeta | undefined,
-    ...args: Parameters<EftAesDerivationFunction>
+    encryptedKey: ArrayBuffer | undefined,
+    seed: ArrayBuffer,
+    globalSalt: ArrayBuffer,
+    collectionAddress: ArrayBuffer,
+    tokenId: number,
+    dealNumber: number | undefined
   ): Promise<DecryptResult<File>> {
-    const { key } = await fileMarketCrypto.eftAesDerivation(...args)
+    let key: ArrayBuffer
+    if (encryptedKey && dealNumber) {
+      const { priv } = await fileMarketCrypto.eftRsaDerivation(seed, globalSalt, collectionAddress, tokenId, dealNumber)
+      key = await fileMarketCrypto.rsaDecrypt(encryptedKey, priv)
+    } else {
+      const aesKeyAndIv = await fileMarketCrypto.eftAesDerivation(seed, globalSalt, collectionAddress, tokenId)
+      key = aesKeyAndIv.key
+    }
 
     try {
       const decryptedFile = await fileMarketCrypto.aesDecrypt(encryptedFileData, key)
@@ -29,11 +41,12 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     }
   }
 
-  async encryptFile(file: File, ...args: Parameters<EftAesDerivationFunction>): Promise<ArrayBuffer> {
+  async encryptFile(file: File, ...args: Parameters<EftAesDerivationFunction>): Promise<Blob> {
     const arrayBuffer = await file.arrayBuffer()
     const aesKeyAndIv = await fileMarketCrypto.eftAesDerivation(...args)
+    const encrypted = await fileMarketCrypto.aesEncrypt(arrayBuffer, aesKeyAndIv)
 
-    return fileMarketCrypto.aesEncrypt(arrayBuffer, aesKeyAndIv)
+    return new Blob([encrypted])
   }
 
   async prepareFileAESKeyForBuyer(

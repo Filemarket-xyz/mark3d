@@ -49,19 +49,19 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
           {(isOwner || canViewHiddenFiles) ? (
             files.map(({ cid, name, size, download }) => (
               <ProtectedStamp key={cid}>
-                  <FileButton
-                      name={name}
-                      caption={`download (${formatFileSize(size)})`}
-                      onPress={download}
-                  />
+                <FileButton
+                  name={name}
+                  caption={`download (${formatFileSize(size)})`}
+                  onPress={download}
+                />
               </ProtectedStamp>
             ))
           ) : (
             <ProtectedStamp>
               <FileButton
-                  name="Available only"
-                  caption="to the owner"
-                  isDisabled={true}
+                name="Available only"
+                caption="to the owner"
+                isDisabled={true}
               />
             </ProtectedStamp>
           )}
