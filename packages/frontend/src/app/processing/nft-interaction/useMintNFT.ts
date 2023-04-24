@@ -18,9 +18,10 @@ export interface MintNFTForm {
   image?: File // required
   hiddenFile?: File // required
   license?: string // required
-  categories?: string // required
-  tags?: string // required
-  subcategories?: string
+  licenseUrl?: string // required
+  categories?: string[] // required
+  tags?: string[] // required
+  subcategories?: string[]
 }
 
 interface MintNFTResult {

@@ -127,6 +127,7 @@ export interface CreateNFTForm {
   category: ComboBoxOption
   subcategory: ComboBoxOption
   license: ComboBoxOption
+  licenseUrl: string
   tagsValue: string[]
 }
 
@@ -206,7 +207,7 @@ const CreateNftPage = observer(() => {
   const license = watch('license')
 
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
-    createNft({...data, tagsValue: chosenTags})
+    createNft({...data, tagsValue: chosenTags, licenseUrl})
   }
 
   useEffect(() => {
@@ -237,6 +238,10 @@ const CreateNftPage = observer(() => {
 
   const licenseDescription = useMemo(() => {
     return licenseInfo[license?.title as license] ? licenseInfo[license?.title as license].description : 'Tags make it easier to find the right content'
+  }, [license])
+
+  const licenseUrl = useMemo(() => {
+    return licenseInfo[license?.title as license] ? licenseInfo[license?.title as license].src : 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
   }, [license])
 
   return (
@@ -403,7 +408,7 @@ const CreateNftPage = observer(() => {
               <Description secondary>
                 {licenseDescription}
               </Description>
-              <NFTLicense><Link href={'https://www.youtube.com/watch?v=dQw4w9WgXcQ'} target="_blank" iconRedirect={true}>About CC Licenses</Link></NFTLicense>
+              <NFTLicense><Link href={licenseUrl} target="_blank" iconRedirect={true}>About CC Licenses</Link></NFTLicense>
             </ContentField>
           </FormControl>
 
