@@ -50,6 +50,10 @@ export class DialogStore {
   private closeDialogByOpenIndex(openIndex: number): void {
     if (openIndex >= 0) {
       const instance = this.open[openIndex]
+      const body = document.querySelector('body')
+      if (body) {
+        body.style.overflow = 'overlay'
+      }
       instance.onClosed?.()
       this.open.splice(openIndex, 1)
     }

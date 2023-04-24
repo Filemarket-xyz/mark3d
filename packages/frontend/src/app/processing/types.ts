@@ -56,6 +56,10 @@ export interface ERC721TokenMeta {
   external_link?: string
   hidden_file?: string
   hidden_file_meta?: FileMeta
+  license?: string
+  categories?: string
+  tags?: string
+  subcategories?: string
 }
 
 export interface ERC721TokenMetaInput {
@@ -65,6 +69,10 @@ export interface ERC721TokenMetaInput {
   external_link?: string
   hidden_file?: File | Blob
   hidden_file_meta?: FileMeta
+  license?: string
+  categories?: string
+  tags?: string
+  subcategories?: string
 }
 
 export enum Mark3dAccessTokenEventNames {
