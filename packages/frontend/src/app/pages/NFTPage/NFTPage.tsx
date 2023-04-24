@@ -1,28 +1,29 @@
-import React, { useMemo } from 'react'
-import { styled } from '../../../styles'
-import { PageLayout} from '../../UIkit'
 import { observer } from 'mobx-react-lite'
+import React, { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { Params } from '../../utils/router/Params'
-import { makeTokenFullId } from '../../processing/utils/id'
-import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
-import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
-import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
+
+import { styled } from '../../../styles'
 import { useStores } from '../../hooks'
-import { useTokenStore } from '../../hooks/useTokenStore'
+import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
-import {GridBlock} from "./helper/styles/style";
-import {useIsBuyer, useIsOwner} from "../../processing";
-import {transferPermissions} from "../../utils/transfer/status";
-import {PropertiesCardProps} from "./section/Properties/PropertiesCard/PropertiesCard";
-import {PreviewNFTFlow} from "./components/PreviewNFTFlow";
-import BaseInfoSection from "./section/BaseInfo/BaseInfoSection";
-import ControlSection from "./section/Contol/ControlSection";
-import FileInfoSection from "./section/FileInfo/FileInfoSection";
-import HomeLandSection from "./section/HomeLand/HomeLandSection";
-import TagsSection from "./section/Tags/TagsSection";
-import DescriptionSection from "./section/Description/DescriptionSection";
-import PropertiesSection from "./section/Properties/PropertiesSection";
+import { useTokenStore } from '../../hooks/useTokenStore'
+import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
+import { useIsBuyer, useIsOwner } from '../../processing'
+import { makeTokenFullId } from '../../processing/utils/id'
+import { PageLayout } from '../../UIkit'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
+import { Params } from '../../utils/router/Params'
+import { transferPermissions } from '../../utils/transfer/status'
+import { PreviewNFTFlow } from './components/PreviewNFTFlow'
+import { GridBlock } from './helper/styles/style'
+import BaseInfoSection from './section/BaseInfo/BaseInfoSection'
+import ControlSection from './section/Contol/ControlSection'
+import DescriptionSection from './section/Description/DescriptionSection'
+import FileInfoSection from './section/FileInfo/FileInfoSection'
+import HomeLandSection from './section/HomeLand/HomeLandSection'
+import { PropertiesCardProps } from './section/Properties/PropertiesCard/PropertiesCard'
+import PropertiesSection from './section/Properties/PropertiesSection'
+import TagsSection from './section/Tags/TagsSection'
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',
@@ -86,13 +87,13 @@ const DisplayLayout = styled('div', {
 const NFTPage = observer(() => {
   const { collectionAddress, tokenId } = useParams<Params>()
   const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
-  const { data: token } = useTokenStore(collectionAddress, tokenId)
-  const tokenMetaStore = useTokenMetaStore(token?.metaUri)
+  const tokenStore = useTokenStore(collectionAddress, tokenId)
+  const tokenMetaStore = useTokenMetaStore(tokenStore.data?.metaUri)
   const { errorStore } = useStores()
-  const files = useHiddenFileDownload(tokenMetaStore, errorStore, token)
+  const files = useHiddenFileDownload(tokenMetaStore, errorStore, tokenStore.data)
   const tokenFullId = useMemo(
-      () => makeTokenFullId(collectionAddress, tokenId),
-      [collectionAddress, tokenId]
+    () => makeTokenFullId(collectionAddress, tokenId),
+    [collectionAddress, tokenId]
   )
   const { isOwner } = useIsOwner(tokenFullId)
   const isBuyer = useIsBuyer(transferStore.data)
@@ -145,32 +146,32 @@ const NFTPage = observer(() => {
           <PreviewNFTFlow
             getFile={files[0]?.getFile}
             canViewFile={isOwner || canViewHiddenFiles}
-            imageURL={getHttpLinkFromIpfsString(token?.image ?? '')}
+            imageURL={getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')}
           />
         }
       </NFTPreviewContainer>
       <MainInfo>
         <GridLayout>
           <GridBlockSection>
-            <BaseInfoSection/>
+            <BaseInfoSection />
             {window.innerWidth <= 900 && <GridBlockSectionRow>
-              <ControlSection/>
-              <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files}/>
+              <ControlSection />
+              <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files} />
             </GridBlockSectionRow>}
-            <HomeLandSection/>
-            <TagsSection/>
-            {window.innerWidth > 1200 && <><DescriptionSection/>
-              <PropertiesSection properties={properties}/></>}
+            <HomeLandSection />
+            <TagsSection />
+            {window.innerWidth > 1200 && <><DescriptionSection />
+              <PropertiesSection properties={properties} /></>}
           </GridBlockSection>
 
           {window.innerWidth > 900 && <GridBlockSection>
-            <ControlSection/>
-            <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files}/>
+            <ControlSection />
+            <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files} />
           </GridBlockSection>}
         </GridLayout>
 
-        {window.innerWidth <= 1200 && <DisplayLayout><DescriptionSection/>
-        <PropertiesSection properties={properties}/></DisplayLayout>}
+        {window.innerWidth <= 1200 && <DisplayLayout><DescriptionSection />
+        <PropertiesSection properties={properties} /></DisplayLayout>}
       </MainInfo>
     </>
   )

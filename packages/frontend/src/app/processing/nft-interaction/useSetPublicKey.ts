@@ -3,14 +3,13 @@ import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { str2ab } from '../../../../../crypto/src/lib/utils'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { useSeed } from '../SeedProvider/useSeed'
 import { TokenFullId } from '../types'
-import { globalSaltMock } from '../utils'
+import { dealNumberMock, globalSaltMock, hexToBuffer } from '../utils'
 import { assertContract, assertSigner } from '../utils/assert'
 
 /**
@@ -35,13 +34,14 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
 
     const tokenFullId = { collectionAddress, tokenId }
     const tokenIdBN = BigNumber.from(tokenId)
-    const transferCountBN = await contract.transferCounts(tokenIdBN)
+    // const transferCountBN = await contract.transferCounts(tokenIdBN)
+    const transferCountBN = BigNumber.from(dealNumberMock)
     const buyer = await factory.getBuyer(address, tokenFullId)
     await factory.registerTokenFullId(address, buyer, tokenFullId)
     const publicKey = await buyer.initBuy(
       seed,
       globalSaltMock,
-      str2ab(collectionAddress),
+      hexToBuffer(collectionAddress),
       +tokenId,
       transferCountBN.toNumber()
     )

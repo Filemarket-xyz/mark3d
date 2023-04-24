@@ -3,14 +3,13 @@ import { ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { str2ab } from '../../../../../crypto/src/lib/utils'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { useSeed } from '../SeedProvider/useSeed'
 import { ERC721TokenEventNames, FileMeta } from '../types'
-import { globalSaltMock } from '../utils'
+import { globalSaltMock, hexToBuffer } from '../utils'
 import { assertContract, assertSigner } from '../utils/assert'
 import { normalizeCounterId } from '../utils/id'
 import { useUploadLighthouse } from './useUploadLighthouse'
@@ -47,14 +46,13 @@ export function useMintNFT(form: MintNFTForm = {}) {
       const owner = await factory.getOwner(address, undefined)
       const tokenCountBN = await contract.tokensCount()
 
-      const encryptedArrayBuffer = await owner.encryptFile(
+      const hiddenFileEncrypted = await owner.encryptFile(
         hiddenFile,
         seed,
         globalSaltMock,
-        str2ab(collectionAddress),
-        tokenCountBN.toNumber() + 1
+        hexToBuffer(collectionAddress),
+        tokenCountBN.toNumber()
       )
-      const hiddenFileEncrypted = new Blob([encryptedArrayBuffer])
       const hiddenFileMeta: FileMeta = {
         name: hiddenFile.name,
         type: hiddenFile.type,

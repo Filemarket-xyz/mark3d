@@ -3,14 +3,13 @@ import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { str2ab } from '../../../../../crypto/src/lib/utils'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { useSeed } from '../SeedProvider/useSeed'
 import { TokenFullId } from '../types'
-import { globalSaltMock } from '../utils'
+import { globalSaltMock, hexToBuffer } from '../utils'
 import { assertContract, assertSigner } from '../utils/assert'
 
 export function useApproveTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, publicKey?: string) {
@@ -34,10 +33,10 @@ export function useApproveTransfer({ collectionAddress, tokenId }: Partial<Token
     }
     const owner = await factory.getOwner(address, { collectionAddress, tokenId })
     const encryptedAESPassword = await owner.prepareFileAESKeyForBuyer(
-      str2ab(publicKey),
+      hexToBuffer(publicKey),
       seed,
       globalSaltMock,
-      str2ab(collectionAddress),
+      hexToBuffer(collectionAddress),
       +tokenId
     )
     console.log('approve transfer', 'tokenId', tokenId, 'encryptedAESPassword', encryptedAESPassword)
