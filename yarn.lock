@@ -2900,6 +2900,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/browser-passworder@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "@metamask/browser-passworder@npm:4.1.0"
+  checksum: f1edb3b75594b8e8d075b3134c9ce6c73573160eb48184ef722b9d96a5763db1e2e9acb166fc5c66c7c82936e134a02a3fb4c0022ca9a948857a30181cb84d7e
+  languageName: node
+  linkType: hard
+
 "@metamask/safe-event-emitter@npm:2.0.0, @metamask/safe-event-emitter@npm:^2.0.0":
   version: 2.0.0
   resolution: "@metamask/safe-event-emitter@npm:2.0.0"
@@ -13447,6 +13454,7 @@ __metadata:
     "@emotion/styled": ^11.10.5
     "@google/model-viewer": ^2.1.1
     "@lighthouse-web3/sdk": ^0.1.9
+    "@metamask/browser-passworder": ^4.1.0
     "@mui/icons-material": ^5.11.0
     "@mui/material": ^5.10.12
     "@nextui-org/react": ^1.0.0-beta.10
