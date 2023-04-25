@@ -1,3 +1,7 @@
+import { FileMarketCrypto } from '../../../../../crypto/src'
+import { ISeedProvider } from '../SeedProvider'
+
 export interface IHiddenFileBase {
-  readonly surrogateId: string
+  readonly crypto: FileMarketCrypto
+  readonly seedProvider: ISeedProvider
 }

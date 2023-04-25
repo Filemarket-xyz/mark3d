@@ -94,3 +94,5 @@ export enum ERC721TokenEventSignatures {
   ApprovalForAll = 'ApprovalForAll(address,address,bool)',
   Transfer = 'Transfer(address,address,uint256)',
 }
+
+export type PersistentDerivationParams = [globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, tokenId: number]
