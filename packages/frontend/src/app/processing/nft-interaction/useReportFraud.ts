@@ -1,4 +1,3 @@
-import assert from 'assert'
 import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
@@ -7,15 +6,13 @@ import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { useSeed } from '../SeedProvider/useSeed'
 import { TokenFullId } from '../types'
 import { dealNumberMock, globalSaltMock, hexToBuffer } from '../utils'
-import { assertContract, assertSigner } from '../utils/assert'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId } from '../utils/assert'
 
 export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
-  const seed = useSeed(address)
   const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
 
   const factory = useHiddenFileProcessorFactory()
@@ -23,23 +20,21 @@ export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFull
   const reportFraud = useCallback(wrapPromise(async () => {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
-    assert(address, 'need to connect wallet')
-    assert(collectionAddress, 'collection address not provided')
-    assert(tokenId, 'tokenId is not provided')
-    assert(seed, 'seed not found')
+    assertAccount(address)
+    assertCollection(collectionAddress)
+    assertTokenId(tokenId)
 
     const tokenIdBN = BigNumber.from(tokenId)
     // const transferCountBN = await contract.transferCounts(tokenIdBN)
     const transferCountBN = BigNumber.from(dealNumberMock)
-    const buyer = await factory.getBuyer(address, { collectionAddress, tokenId })
-    const privateKey = await buyer.revealFraudReportRSAPrivateKey(
-      seed,
+    const buyer = await factory.getBuyer(address)
+    const privateKey = await buyer.revealRsaPrivateKey(
+      transferCountBN.toNumber(),
       globalSaltMock,
       hexToBuffer(collectionAddress),
-      +tokenId,
-      transferCountBN.toNumber()
+      +tokenId
     )
-    console.log('report fraud', 'tokenId', tokenId, 'privateKey', privateKey)
+    console.log('report fraud', { tokenId, privateKey })
 
     const tx = await contract.reportFraud(
       tokenIdBN,
@@ -48,7 +43,7 @@ export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFull
     )
 
     return tx.wait()
-  }), [contract, signer, address, wrapPromise, seed])
+  }), [contract, signer, address, wrapPromise])
 
   return {
     ...statuses,

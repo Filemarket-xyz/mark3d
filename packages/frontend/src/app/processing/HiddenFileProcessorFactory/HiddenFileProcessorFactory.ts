@@ -1,61 +1,44 @@
-import { utils } from 'ethers/lib.esm'
 
-import { IHiddenFileBase } from '../HiddenFileBase'
+import { utils } from 'ethers'
+
+import { fileMarketCrypto } from '../FileMarketCrypto'
 import { HiddenFileBuyer } from '../HiddenFileBuyer'
 import { HiddenFileOwner } from '../HiddenFileOwner'
-import { IStorageFactory, storageFactory } from '../StorageFactory'
-import { TokenFullId } from '../types'
+import { ISeedProviderFactory, seedProviderFactory } from '../SeedProviderFactory'
 import { IHiddenFileProcessorFactory } from './IHiddenFileProcessorFactory'
 
 export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
-  private readonly owners: Record<string, Record<string, HiddenFileOwner>> = Object.create(null)
-  private readonly buyers: Record<string, Record<string, HiddenFileBuyer>> = Object.create(null)
+  private readonly owners: Record<string, HiddenFileOwner> = Object.create(null)
+  private readonly buyers: Record<string, HiddenFileBuyer> = Object.create(null)
 
-  constructor(private readonly storageFactory: IStorageFactory) {}
+  constructor(private readonly seedProviderFactory: ISeedProviderFactory) {}
 
-  async getBuyer(account: string, tokenFullId: TokenFullId): Promise<HiddenFileBuyer> {
+  async getBuyer(account: string): Promise<HiddenFileBuyer> {
     account = utils.getAddress(account)
-    const { tokenIdStorage } = await this.storageFactory.getStorages(account)
-    const surrogateId = await tokenIdStorage.getSurrogateIdOrCreate(tokenFullId)
-    const accountBuyers = this.buyers[account]
-    const existing = accountBuyers?.[surrogateId]
+    const seedProvider = await this.seedProviderFactory.getSeedProvider(account)
+    const existing = this.buyers[account]
     if (existing) return existing
 
-    const buyer = new HiddenFileBuyer(surrogateId)
-    this.buyers[account] = {
-      ...accountBuyers,
-      [surrogateId]: buyer
-    }
+    const buyer = new HiddenFileBuyer(seedProvider, fileMarketCrypto)
+    this.buyers[account] = buyer
 
     return buyer
   }
 
-  async getOwner(account: string, tokenFullId: TokenFullId | undefined): Promise<HiddenFileOwner> {
+  async getOwner(account: string): Promise<HiddenFileOwner> {
     account = utils.getAddress(account)
-    const { tokenIdStorage } = await this.storageFactory.getStorages(account)
-    const surrogateId = await tokenIdStorage.getSurrogateIdOrCreate(tokenFullId)
-    const accountOwners = this.owners[account]
-    const existing = accountOwners?.[surrogateId]
+    const seedProvider = await this.seedProviderFactory.getSeedProvider(account)
+    const existing = this.owners[account]
     if (existing) return existing
 
-    const owner = new HiddenFileOwner(surrogateId)
-    this.owners[account] = {
-      ...accountOwners,
-      [surrogateId]: owner
-    }
+    const owner = new HiddenFileOwner(seedProvider, fileMarketCrypto)
+    this.owners[account] = owner
 
     return owner
-  }
-
-  async registerTokenFullId(
-    account: string, hiddenFileProcessor: IHiddenFileBase, tokenFullId: TokenFullId
-  ): Promise<void> {
-    const { tokenIdStorage } = await this.storageFactory.getStorages(account)
-    await tokenIdStorage.setTokenFullId(hiddenFileProcessor.surrogateId, tokenFullId)
   }
 }
 
 /**
  * Exists as singleton
  */
-export const hiddenFileProcessorFactory = new HiddenFileProcessorFactory(storageFactory)
+export const hiddenFileProcessorFactory = new HiddenFileProcessorFactory(seedProviderFactory)

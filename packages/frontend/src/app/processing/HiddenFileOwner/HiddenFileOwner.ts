@@ -1,33 +1,37 @@
-import { EftAesDerivationFunction, RsaPublicKey } from '../../../../../crypto/src/lib/types'
+import { FileMarketCrypto } from '../../../../../crypto/src'
+import { RsaPublicKey } from '../../../../../crypto/src/lib/types'
 import { buf2Hex } from '../../../../../crypto/src/lib/utils'
-import { fileMarketCrypto } from '../FileMarketCrypto'
-import { DecryptResult, FileMeta } from '../types'
+import { ISeedProvider } from '../SeedProvider'
+import { DecryptResult, FileMeta, PersistentDerivationParams } from '../types'
+import { assertSeed } from '../utils'
 import { IHiddenFileOwner } from './IHiddenFileOwner'
 
 export class HiddenFileOwner implements IHiddenFileOwner {
-  constructor(public readonly surrogateId: string) {}
+  constructor(
+    public readonly seedProvider: ISeedProvider,
+    public readonly crypto: FileMarketCrypto
+  ) {}
 
   async decryptFile(
     encryptedFileData: ArrayBuffer,
     meta: FileMeta | undefined,
-    encryptedKey: ArrayBuffer | undefined,
-    seed: ArrayBuffer,
-    globalSalt: ArrayBuffer,
-    collectionAddress: ArrayBuffer,
-    tokenId: number,
-    dealNumber: number | undefined
+    encryptedPassword: ArrayBuffer | undefined,
+    dealNumber: number | undefined,
+    ...args: PersistentDerivationParams
   ): Promise<DecryptResult<File>> {
-    let key: ArrayBuffer
-    if (encryptedKey && dealNumber) {
-      const { priv } = await fileMarketCrypto.eftRsaDerivation(seed, globalSalt, collectionAddress, tokenId, dealNumber)
-      key = await fileMarketCrypto.rsaDecrypt(encryptedKey, priv)
-    } else {
-      const aesKeyAndIv = await fileMarketCrypto.eftAesDerivation(seed, globalSalt, collectionAddress, tokenId)
-      key = aesKeyAndIv.key
-    }
-
     try {
-      const decryptedFile = await fileMarketCrypto.aesDecrypt(encryptedFileData, key)
+      assertSeed(this.seedProvider.seed)
+
+      let key: ArrayBuffer
+      if (encryptedPassword && dealNumber) {
+        const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...args, dealNumber)
+        key = await this.crypto.rsaDecrypt(encryptedPassword, priv)
+      } else {
+        const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...args)
+        key = aesKeyAndIv.key
+      }
+
+      const decryptedFile = await this.crypto.aesDecrypt(encryptedFileData, key)
 
       return {
         ok: true,
@@ -41,21 +45,25 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     }
   }
 
-  async encryptFile(file: File, ...args: Parameters<EftAesDerivationFunction>): Promise<Blob> {
+  async encryptFile(file: File, ...args: PersistentDerivationParams): Promise<Blob> {
+    assertSeed(this.seedProvider.seed)
+
     const arrayBuffer = await file.arrayBuffer()
-    const aesKeyAndIv = await fileMarketCrypto.eftAesDerivation(...args)
-    const encrypted = await fileMarketCrypto.aesEncrypt(arrayBuffer, aesKeyAndIv)
+    const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...args)
+    const encrypted = await this.crypto.aesEncrypt(arrayBuffer, aesKeyAndIv)
 
     return new Blob([encrypted])
   }
 
-  async prepareFileAESKeyForBuyer(
+  async encryptFilePassword(
     publicKey: RsaPublicKey,
-    ...args: Parameters<EftAesDerivationFunction>
+    ...args: PersistentDerivationParams
   ): Promise<`0x${string}`> {
-    const { key } = await fileMarketCrypto.eftAesDerivation(...args)
-    const encryptedPublicKey = await fileMarketCrypto.rsaEncrypt(key, publicKey)
+    assertSeed(this.seedProvider.seed)
 
-    return `0x${buf2Hex(encryptedPublicKey)}`
+    const { key } = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...args)
+    const encryptedPassword = await this.crypto.rsaEncrypt(key, publicKey)
+
+    return `0x${buf2Hex(encryptedPassword)}`
   }
 }

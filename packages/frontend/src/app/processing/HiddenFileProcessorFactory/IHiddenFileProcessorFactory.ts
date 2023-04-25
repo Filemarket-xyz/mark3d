@@ -1,4 +1,3 @@
-import { IHiddenFileBase } from '../HiddenFileBase'
 import { IHiddenFileBuyer } from '../HiddenFileBuyer'
 import { IHiddenFileOwner } from '../HiddenFileOwner'
 import { TokenFullId } from '../types'
@@ -22,15 +21,4 @@ export interface IHiddenFileProcessorFactory {
    * @param tokenFullId
    */
   getBuyer: (account: string, tokenFullId: TokenFullId) => Promise<IHiddenFileBuyer>
-
-  /**
-   * Sets TokenFullId correspodning to the surrogateId. Usually called after NFT was minted and
-   * TokenFullId becomes known.
-   * @param account address of the account, on behalf of which NFT is processed
-   * @param hiddenFileProcessor
-   * @param tokenFullId
-   */
-  registerTokenFullId: (
-    account: string, hiddenFileProcessor: IHiddenFileBase, tokenFullId: TokenFullId
-  ) => Promise<void>
 }
