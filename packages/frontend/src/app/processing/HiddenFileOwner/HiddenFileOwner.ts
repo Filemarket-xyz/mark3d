@@ -57,12 +57,22 @@ export class HiddenFileOwner implements IHiddenFileOwner {
 
   async encryptFilePassword(
     publicKey: RsaPublicKey,
+    lastEncryptedPassword: ArrayBuffer | undefined,
+    dealNumber: number | undefined,
     ...args: PersistentDerivationParams
   ): Promise<`0x${string}`> {
     assertSeed(this.seedProvider.seed)
 
-    const { key } = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...args)
-    const encryptedPassword = await this.crypto.rsaEncrypt(key, publicKey)
+    let password: ArrayBuffer
+    if (lastEncryptedPassword && dealNumber) {
+      const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...args, dealNumber)
+      password = await this.crypto.rsaDecrypt(lastEncryptedPassword, priv)
+    } else {
+      const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...args)
+      password = aesKeyAndIv.key
+    }
+
+    const encryptedPassword = await this.crypto.rsaEncrypt(password, publicKey)
 
     return `0x${buf2Hex(encryptedPassword)}`
   }

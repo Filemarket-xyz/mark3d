@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi'
 
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useLastTransferInfo } from '../../hooks/useLastTransferInfo'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
@@ -15,6 +16,7 @@ export function useApproveTransfer({ collectionAddress, tokenId }: Partial<Token
   const { address } = useAccount()
   const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
   const factory = useHiddenFileProcessorFactory()
+  const { encryptedPassword, dealNumber } = useLastTransferInfo(collectionAddress, tokenId)
 
   const approveTransfer = useCallback(wrapPromise(async () => {
     assertContract(contract, mark3dConfig.collectionToken.name)
@@ -30,6 +32,8 @@ export function useApproveTransfer({ collectionAddress, tokenId }: Partial<Token
     const owner = await factory.getOwner(address)
     const encryptedFilePassword = await owner.encryptFilePassword(
       hexToBuffer(publicKey),
+      encryptedPassword,
+      dealNumber,
       globalSaltMock,
       hexToBuffer(collectionAddress),
       +tokenId
@@ -43,7 +47,7 @@ export function useApproveTransfer({ collectionAddress, tokenId }: Partial<Token
     )
 
     return tx.wait()
-  }), [contract, signer, address, wrapPromise, publicKey])
+  }), [contract, signer, address, wrapPromise, publicKey, encryptedPassword, dealNumber])
 
   return {
     ...statuses,
