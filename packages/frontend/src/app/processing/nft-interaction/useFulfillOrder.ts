@@ -8,8 +8,7 @@ import { useStatusState } from '../../hooks'
 import { useCollectionContract, useExchangeContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
-import { dealNumberMock, globalSaltMock, hexToBuffer } from '../utils'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId } from '../utils/assert'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, dealNumberMock, globalSaltMock, hexToBuffer } from '../utils'
 
 /**
  * Fulfills an existing order.

@@ -8,8 +8,7 @@ import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
-import { globalSaltMock, hexToBuffer } from '../utils'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId } from '../utils/assert'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, globalSaltMock, hexToBuffer } from '../utils'
 
 export function useApproveTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, publicKey?: string) {
   const { contract, signer } = useCollectionContract(collectionAddress)

@@ -5,7 +5,7 @@ import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { TokenFullId } from '../types'
-import { assertCollection, assertContract, assertSigner, assertTokenId } from '../utils/assert'
+import { assertCollection, assertContract, assertSigner, assertTokenId } from '../utils'
 
 /**
  * Used to approve Mark3dExchange contract to manage user's NFT. Should be called prior to placeOrder.

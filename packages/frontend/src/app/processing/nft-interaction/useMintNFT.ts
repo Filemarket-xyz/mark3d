@@ -7,9 +7,7 @@ import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { ERC721TokenEventNames, FileMeta } from '../types'
-import { globalSaltMock, hexToBuffer } from '../utils'
-import { assertAccount, assertContract, assertSigner } from '../utils/assert'
-import { normalizeCounterId } from '../utils/id'
+import { assertAccount, assertContract, assertSigner, globalSaltMock, hexToBuffer, normalizeCounterId } from '../utils'
 import { useUploadLighthouse } from './useUploadLighthouse'
 
 export interface MintNFTForm {
