@@ -34,8 +34,19 @@ describe("Trade token", async () => {
 
     const collectionToClone = await collectionFactory.deploy();
     fraudDecider = await fraudDeciderFactory.deploy();
-    accessToken = await accessTokenFactory.deploy("Mark3D Access Token", "MARK3D", "",
-      collectionToClone.address, true, fraudDecider.address);
+
+    const encoder = new TextEncoder();
+    const globalSalt = ethers.utils.hexlify(encoder.encode("Global Salt"));
+
+    accessToken = await accessTokenFactory.deploy(
+      "Mark3D Access Token",
+      "MARK3D",
+      "",
+      globalSalt,
+      collectionToClone.address,
+      true,
+      fraudDecider.address
+    );
     const salt = genRanHex(64);
     await accessToken.connect(accounts[1]).createCollection("0x" + salt,
       "TEST", "TEST", "", "", "0x");
@@ -110,8 +121,19 @@ describe("Trade token with fraud not approved", async () => {
 
     const collectionToClone = await collectionFactory.deploy();
     fraudDecider = await fraudDeciderFactory.deploy();
-    accessToken = await accessTokenFactory.deploy("Mark3D Access Token", "MARK3D", "",
-      collectionToClone.address, true, fraudDecider.address);
+
+    const encoder = new TextEncoder();
+    const globalSalt = ethers.utils.hexlify(encoder.encode("Global Salt"));
+
+    accessToken = await accessTokenFactory.deploy(
+      "Mark3D Access Token",
+      "MARK3D",
+      "",
+      globalSalt,
+      collectionToClone.address,
+      true,
+      fraudDecider.address
+    );
     const salt = genRanHex(64);
     await accessToken.connect(accounts[1]).createCollection("0x" + salt,
       "TEST", "TEST", "", "", "0x");
@@ -191,8 +213,19 @@ describe("Trade token with fraud approved", async () => {
 
     const collectionToClone = await collectionFactory.deploy();
     fraudDecider = await fraudDeciderFactory.deploy();
-    accessToken = await accessTokenFactory.deploy("Mark3D Access Token", "MARK3D", "",
-      collectionToClone.address, true, fraudDecider.address);
+
+    const encoder = new TextEncoder();
+    const globalSalt = ethers.utils.hexlify(encoder.encode("Global Salt"));
+
+    accessToken = await accessTokenFactory.deploy(
+      "Mark3D Access Token",
+      "MARK3D",
+      "",
+      globalSalt,
+      collectionToClone.address,
+      true,
+      fraudDecider.address
+    );
     const salt = genRanHex(64);
     await accessToken.connect(accounts[1]).createCollection("0x" + salt,
       "TEST", "TEST", "", "", "0x");
