@@ -79,5 +79,5 @@ export function useHiddenFileDownload(
         )
       }
     }]
-  }, [factory, token, address, meta])
+  }, [factory, token, address, meta, encryptedPassword, dealNumber])
 }
