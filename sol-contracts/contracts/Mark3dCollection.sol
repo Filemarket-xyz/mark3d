@@ -188,7 +188,6 @@ contract Mark3dCollection is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpg
     ) external {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "Mark3dCollection: caller is not token owner or approved");
         require(transfers[tokenId].initiator == address(0), "Mark3dCollection: transfer for this token was already created");
-        require(owner() == _msgSender() || block.timestamp > salesStartTimestamp, "Mark3dCollection: transfer can't be done before sales start day");
         transfers[tokenId] = TransferInfo(tokenId, _msgSender(), _msgSender(), to,
             callbackReceiver, data, bytes(""), bytes(""), false, 0, 0);
         transferCounts[tokenId]++;
