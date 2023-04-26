@@ -77,7 +77,8 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
     getInputProps,
     getListboxProps,
     getOptionProps,
-    groupedOptions
+    groupedOptions,
+      inputValue
   } = useAutocomplete({
     options: props.options,
     getOptionLabel: (option) => option.title,
@@ -114,8 +115,10 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && getInputProps().value) {
-      props.onEnter?.(getInputProps().value as string)
+    if (event.key === 'Enter' && inputValue) {
+      props.onEnter?.(inputValue as string)
+      event.preventDefault();
+      return false
     }
   }
 
