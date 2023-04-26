@@ -6,8 +6,8 @@ import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { ERC721TokenEventNames, FileMeta } from '../types'
-import { assertAccount, assertContract, assertSigner, globalSaltMock, hexToBuffer, normalizeCounterId } from '../utils'
+import { FileMeta } from '../types'
+import { assertAccount, assertContract, assertSigner, globalSaltMock, hexToBuffer } from '../utils'
 import { useUploadLighthouse } from './useUploadLighthouse'
 
 export interface MintNFTForm {
@@ -64,29 +64,18 @@ export function useMintNFT(form: MintNFTForm = {}) {
     })
     console.log('mint metadata', metadata)
 
-    const tx = await contract.mintWithoutId(
+    const tx = await contract.mint(
       address as `0x${string}`,
+      tokenCountBN,
       metadata.url,
       '0x00',
       { gasPrice: mark3dConfig.gasPrice }
     )
     const receipt = await tx.wait()
     console.log({ receipt })
-    const transferEvent = receipt.events?.find(event => event.event === ERC721TokenEventNames.Transfer)
-    if (!transferEvent) {
-      throw Error(`receipt does not contain ${ERC721TokenEventNames.Transfer} event`)
-    }
-
-    const tokenIdArgIndex = 2
-    const rawTokenId = transferEvent.args?.[tokenIdArgIndex]
-    if (!rawTokenId) {
-      throw Error(`${ERC721TokenEventNames.Transfer} does not have an arg with index ${tokenIdArgIndex}`)
-    }
-
-    const tokenId = normalizeCounterId(rawTokenId)
 
     return {
-      tokenId,
+      tokenId: tokenCountBN.toString(),
       receipt
     }
   }), [contract, signer, address, factory, form, wrapPromise])
