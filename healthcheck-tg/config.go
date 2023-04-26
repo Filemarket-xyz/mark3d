@@ -47,7 +47,7 @@ func GetConfig() *Config {
 		for i, chatID := range chatIDsStr {
 			integer, err := strconv.ParseInt(chatID, 10, 64)
 			if err != nil {
-				log.Fatal("Failed parse CHAT_IDS env variable")
+				log.Fatal("Failed parse CHAT_IDs env variable")
 			}
 			chatIDs[i] = integer
 		}
