@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, {useEffect, useMemo} from 'react'
 import { styled } from '../../../styles'
 import { PageLayout} from '../../UIkit'
 import { observer } from 'mobx-react-lite'
@@ -100,6 +100,10 @@ const NFTPage = observer(() => {
     transferStore.data
   )
 
+  useEffect(() => {
+    console.log(token)
+  }, [token])
+
   const properties: PropertiesCardProps[] = [
     {
       type: 'Background',
@@ -158,7 +162,7 @@ const NFTPage = observer(() => {
               <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files}/>
             </GridBlockSectionRow>}
             <HomeLandSection/>
-            <TagsSection/>
+            <TagsSection categories={[...Array.from(token?.categories ?? []), ...Array.from(token?.subcategories ?? [])]} tags={token?.tags}/>
             {window.innerWidth > 1200 && <><DescriptionSection/>
               <PropertiesSection properties={properties}/></>}
           </GridBlockSection>

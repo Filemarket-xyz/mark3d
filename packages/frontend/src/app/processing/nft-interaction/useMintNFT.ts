@@ -17,6 +17,11 @@ export interface MintNFTForm {
   collectionAddress?: string // required
   image?: File // required
   hiddenFile?: File // required
+  license?: string // required
+  licenseUrl?: string // required
+  categories?: string[] // required
+  tags?: string[] // required
+  subcategories?: string[]
 }
 
 interface MintNFTResult {
@@ -34,7 +39,7 @@ export function useMintNFT(form: MintNFTForm = {}) {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     assert(address, 'need to connect wallet')
-    const { name, description, image, hiddenFile, collectionAddress } = form
+    const { name, description, image, hiddenFile, collectionAddress, license, tags, subcategories, categories } = form
     if (name && collectionAddress && image && hiddenFile) {
       const owner = await factory.getOwner(address, undefined)
       const hiddenFileEncrypted = new Blob([await owner.encryptFile(hiddenFile)])
@@ -49,7 +54,11 @@ export function useMintNFT(form: MintNFTForm = {}) {
         image,
         external_link: mark3dConfig.externalLink,
         hidden_file: hiddenFileEncrypted,
-        hidden_file_meta: hiddenFileMeta
+        hidden_file_meta: hiddenFileMeta,
+        categories,
+        license,
+        tags,
+        subcategories
       })
       console.log('mint metadata', metadata)
       const result = await contract.mintWithoutId(

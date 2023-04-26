@@ -63,11 +63,11 @@ const DownloadInfoStyled = styled('div', {
 })
 
 const NameStyled = styled('div', {
-  width: '100%',
   overflow: 'hidden',
-  textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   color: '$gray800',
+  width: '278px',
+  textOverflow: 'ellipsis',
   variants: {
     disabled: {
       true: {
