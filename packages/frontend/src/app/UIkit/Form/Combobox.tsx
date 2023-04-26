@@ -13,6 +13,7 @@ import {
 } from 'react-hook-form'
 import { AutocompleteChangeReason } from '@mui/material'
 import { Loading } from '@nextui-org/react'
+import {ChangeEvent, useRef} from "react";
 
 const Listbox = styled('ul', {
   maxWidth: '600px',
@@ -62,24 +63,30 @@ interface ComboboxProps<T extends FieldValues> {
     data: ComboBoxOption | null,
     reason: AutocompleteChangeReason
   ) => void
+  onEnter?: (value?: string) => void
   otherFieldProps?: ControllerRenderProps<T, Path<T>>
   isLoading?: boolean
+  placeholder?: string
+  isDisabled?: boolean
 }
 
 function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
+
   const {
     getRootProps,
     getInputProps,
     getListboxProps,
     getOptionProps,
-    groupedOptions
+    groupedOptions,
+      inputValue
   } = useAutocomplete({
     options: props.options,
     getOptionLabel: (option) => option.title,
     isOptionEqualToValue: (option1, option2) => option1?.id === option2?.id,
     ...props.otherFieldProps,
     value: props.otherFieldProps?.value ?? null,
-    onChange: props.onChange
+    onChange: props.onChange,
+    readOnly: props.isDisabled
   })
 
   const ContentLoaded = () => {
@@ -107,16 +114,27 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
     return <ContentLoaded />
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && inputValue) {
+      props.onEnter?.(inputValue as string)
+      event.preventDefault();
+      return false
+    }
+  }
+
   return (
     <div>
       <div {...getRootProps()}>
         <PostfixedInput
-          placeholder='Select collection'
+          placeholder={props.placeholder ?? 'Select collection'}
           postfix={<img width={24} height={24} src={bottomArrow} />}
-          inputProps={getInputProps()}
+          inputProps={{
+            ...getInputProps(),
+            onKeyDown: handleKeyDown,
+          }}
         />
       </div>
-      {groupedOptions.length > 0 && <Listbox {...getListboxProps()}>
+      {groupedOptions?.length > 0 && <Listbox {...getListboxProps()}>
         <Content />
       </Listbox>}
     </div>
@@ -127,9 +145,12 @@ export interface ControlledComboboxProps<T extends FieldValues> {
   comboboxProps: Omit<ComboboxProps<T>, 'onChange' | 'value'>
   control: Control<T, any>
   name: Path<T>
+  placeholder?: string
   rules?: {
     required?: boolean
   }
+  onEnter?: (value?: string) => void
+  isDisabled?: boolean
 }
 
 export const ControlledComboBox = <T extends FieldValues>(
@@ -145,6 +166,9 @@ export const ControlledComboBox = <T extends FieldValues>(
         value={p.field.value}
         onChange={(_, data) => p.field.onChange(data)}
         otherFieldProps={p.field}
+        placeholder={props.placeholder}
+        onEnter={props.onEnter}
+        isDisabled={props.isDisabled}
       />
     )}
   />

@@ -13,7 +13,7 @@ const NftName = styled('h1', {
     marginBottom: '$2'
 })
 
-const NftLicence = styled('h5', {})
+export const NftLicence = styled('h5', {})
 
 const BaseInfoSection = () => {
     const { collectionAddress, tokenId } = useParams<Params>()

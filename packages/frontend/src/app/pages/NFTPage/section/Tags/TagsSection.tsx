@@ -1,8 +1,7 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {styled} from "../../../../../styles";
 import { GridBlock } from '../../helper/styles/style';
-import {textVariant} from "../../../../UIkit";
-import {BlueText, Tag} from "../../../../UIkit/Tag/Tag";
+import Tag, {BlueText, TagOptions} from "../../../../UIkit/Tag/Tag";
 
 const Categories = styled('div', {
     display: 'flex',
@@ -17,7 +16,6 @@ const Tags = styled('div', {
     display: 'flex',
     gap: '8px',
     flexWrap: 'wrap',
-    marginTop: '$3'
 })
 
 
@@ -25,22 +23,32 @@ const Category = styled(BlueText, {
     fontSize: '24px'
 })
 
-const TagsSection = () => {
-    const categories = ['Videos', 'Film']
-    const tags = ['VR', 'Metaverse', 'Web3', 'Jedi', '3D Internet', 'NFT', 'DAO-ART', 'Art', 'Tag']
+const GridBlockDisplay = styled(GridBlock, {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px'
+})
+
+interface TagsSectionProps {
+    categories?: string[]
+    tags?: string[]
+    tagOptions?: TagOptions
+}
+
+const TagsSection:FC<TagsSectionProps> = ({categories, tags, tagOptions}) => {
     return (
-        <GridBlock>
-            <Categories>
+        <GridBlockDisplay>
+            {categories && <Categories>
                 {categories.map((category, index) => {
                     return <React.Fragment key={index}><Category>{category} </Category> {index !== (categories.length - 1) && '/'}</React.Fragment>
                 })}
-            </Categories>
-            <Tags>
+            </Categories>}
+            {tags && <Tags>
                 {tags.map((tag, index) => {
-                    return <Tag key={index}>{tag}</Tag>
+                    return <Tag key={index} tagOptions={tagOptions} value={tag}>{tag}</Tag>
                 })}
-            </Tags>
-        </GridBlock>
+            </Tags>}
+        </GridBlockDisplay>
     );
 };
 

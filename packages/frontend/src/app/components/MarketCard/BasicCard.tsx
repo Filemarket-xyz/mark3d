@@ -1,26 +1,26 @@
 import { styled } from '../../../styles'
 
 export const BasicCard = styled('div', {
-  maxWidth: '255px',
-  height: '320px',
+  width: '100%',
+  height: '364px',
   borderRadius: '$3',
   position: 'relative',
   overflow: 'hidden',
-  boxShadow: '0px 4px 15px rgba(19, 19, 45, 0.1)',
+  display: 'flex',
+  flexDirection: 'column',
   '&:hover': {
-    boxShadow: '0px 12px 25px rgba(19, 19, 45, 0.35)'
+    height: '375px'
   }
 })
 
 export const BasicCardSquareImg = styled('img', {
-  width: '255px',
-  height: '255px',
-  borderRadius: 'inherit',
-  borderBottomLeftRadius: '0',
-  borderBottomRightRadius: '0',
+  width: '232px',
+  height: '232px',
+  borderRadius: '8px',
   outline: '1px solid $whiteOp50',
   outlineOffset: '-1px',
-  objectFit: 'cover'
+  objectFit: 'cover',
+  margin: '0 auto'
 })
 
 export const BasicCardControls = styled('div', {

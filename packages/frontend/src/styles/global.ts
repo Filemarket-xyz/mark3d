@@ -48,9 +48,24 @@ export const globalStyles = globalCss({
     // overflowY: 'hidden'
   },
   body: {
-    overflowY: 'auto',
-    scrollbarGutter: 'stable'
+    overflow: 'overlay'
   },
+  '*::-webkit-scrollbar, html *::-webkit-scrollbar': {
+    width: '5px'
+  },
+  '*::-webkit-scrollbar-track, html *::-webkit-scrollbar-track': {
+    background: 'none',
+    boxShadow: 'inset 0 0 5px 5px #80C8FF',
+    border: 'solid 3px transparent'
+  },
+
+  '*::-webkit-scrollbar-thumb, html *::-webkit-scrollbar-thumb': {
+    background: '#80C8FF',
+    borderRadius: '5px',
+    boxShadow: 'inset 0 0 5px 5px #80C8FF',
+    border: 'solid 3px transparent'
+  },
+
   '#root': {
     height: '100%'
   }

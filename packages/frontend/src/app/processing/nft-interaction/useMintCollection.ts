@@ -21,6 +21,7 @@ interface CreateCollectionResult {
   collectionId: string
   collectionTokenAddress: string
   receipt: ContractReceipt // вся инфа о транзе
+  collectionName: string
 }
 
 export function useMintCollection(form: CreateCollectionForm = {}) {
@@ -64,9 +65,11 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
     }
     const collectionId = normalizeCounterId(getArg(collectionIdArgIndex))
     const collectionTokenAddress: string = getArg(collectionAddressArgIndex)
+    const collectionName = 'Test'
     return {
       collectionId,
       collectionTokenAddress,
+      collectionName,
       receipt
     }
   }), [contract, signer, name, symbol, image, description, wrapPromise, upload])
