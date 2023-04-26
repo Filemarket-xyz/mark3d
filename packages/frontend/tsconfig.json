@@ -2,7 +2,10 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "noEmit": true
+    "noEmit": true,
+    "lib": [
+      "es5", "es6", "dom", "dom.iterable"
+    ]
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
