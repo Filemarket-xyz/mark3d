@@ -39,9 +39,9 @@ export function useFulfillOrder(
     const buyer = await factory.getBuyer(address)
 
     // const transferCountBN = await collectionContract.transferCounts(tokenIdBN)
-    const transferCountBN = BigNumber.from(dealNumberMock - 1)
+    const transferCountBN = BigNumber.from(dealNumberMock)
     const publicKey = await buyer.initBuy(
-      transferCountBN.toNumber() + 1,
+      transferCountBN.toNumber(),
       globalSaltMock,
       hexToBuffer(collectionAddress),
       +tokenId
