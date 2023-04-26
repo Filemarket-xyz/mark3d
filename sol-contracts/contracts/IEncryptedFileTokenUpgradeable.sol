@@ -45,6 +45,7 @@ interface IEncryptedFileTokenUpgradeable is IERC721Upgradeable {
     /// @dev Init token transfer. Shortcut for draftTransfer+completeTransferDraft
     /// @notice MUST revert if the caller is not owner of token or approved address
     /// @notice MUST revert if transfer process for token has been initiated already
+    /// @notice MUST revert if non-owner tries transfer before salesStartTimestamp
     /// @param tokenId is id for token to transfer
     /// @param to token receiver
     /// @param data transfer data
@@ -59,6 +60,7 @@ interface IEncryptedFileTokenUpgradeable is IERC721Upgradeable {
     /// @dev Draft transfer. This method is useful if some third party need to lock NFT before receiver will be defined
     /// @notice MUST revert if the caller is not owner of token or approved address
     /// @notice MUST revert if transfer process for token has been initiated already
+    /// @notice MUST revert if non-owner tries transfer before salesStartTimestamp
     /// @param tokenId is id for token to transfer
     /// @param callbackReceiver is contract on which callbacks will be called. zero address if not needed
     function draftTransfer(
