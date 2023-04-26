@@ -21,8 +21,8 @@ const BaseInfoSection = () => {
     return (
         <GridBlock>
             <NftName>{token?.name}</NftName>
-            <Link href={'https://www.youtube.com/watch?v=dQw4w9WgXcQ'} target="_blank">Minted on Sep 9, 2022</Link>
-            <NftLicence>License: <Link href={'https://www.youtube.com/watch?v=dQw4w9WgXcQ'} target="_blank">CC BY 4.0</Link></NftLicence>
+            {token?.date && <Link href={token?.mintSrc ?? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'} target="_blank">Minted on {new Date(token?.date).toDateString().substring(4)}</Link>}
+            {token?.license && <NftLicence>License: <Link href={token?.licenseUrl ?? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'} target="_blank">{token?.license}</Link></NftLicence>}
         </GridBlock>
     );
 };
