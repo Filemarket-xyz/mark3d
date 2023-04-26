@@ -77,7 +77,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
         username: reduceAddress(collection?.owner ?? '')
       },
       button: {
-        link: `/collection/${token.collection}/${token.tokenId}`,
+        link: `/collection/${token.collectionAddress}/${token.tokenId}`,
         text: 'Go to page'
       }
     }))

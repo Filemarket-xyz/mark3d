@@ -26,11 +26,11 @@ export function useHiddenFileDownload(
   const { address } = useAccount()
   const { meta } = tokenMetaStore
   return useMemo(() => {
-    if (factory && token && token.collection && token.tokenId && address && meta?.hidden_file) {
+    if (factory && token && token.collectionAddress && token.tokenId && address && meta?.hidden_file) {
       const hiddenFileURI = meta.hidden_file
       const hiddenMeta = meta.hidden_file_meta
       const tokenFullId: TokenFullId = {
-        collectionAddress: utils.getAddress(token.collection),
+        collectionAddress: utils.getAddress(token.collectionAddress),
         tokenId: token.tokenId
       }
       return [{
