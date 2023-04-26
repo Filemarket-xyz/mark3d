@@ -1,7 +1,8 @@
-import { makeAutoObservable } from 'mobx'
+import { action, makeAutoObservable } from 'mobx'
 import { ComponentType, ReactNode } from 'react'
-import { DialogCall, DialogCallInstance, DialogProps } from '../../utils/dialog'
+
 import { AlertSnackbar } from '../../UIkit'
+import { DialogCall, DialogCallInstance, DialogProps } from '../../utils/dialog'
 
 export class DialogRef {
   public closeListeners: Array<() => void> = []
@@ -48,12 +49,12 @@ export class DialogStore {
     return ref
   }
 
-  private closeDialogByOpenIndex(openIndex: number): void {
-    if (openIndex >= 0) {
-      const instance = this.instances[openIndex]
+  private closeDialogByOpenIndex(index: number): void {
+    if (index >= 0) {
+      const instance = this.instances[index]
       instance.open = false
       instance.onClosed?.()
-      setTimeout(() => this.instances.splice(openIndex, 1), 1000)
+      setTimeout(action(() => this.instances.splice(index, 1)), 1000)
     }
   }
 
