@@ -42,6 +42,11 @@ services:
       - indexer-postgres-data:/var/lib/postgresql/data
     env_file: ~/.indexer_pg_env
     restart: unless-stopped
+    healthcheck:
+      test: pg_isready -d file_market_indexer -U indexer
+      interval: 10s
+      timeout: 5s
+      retries: 5
   indexer-redis:
     image: redis:7
     volumes:
