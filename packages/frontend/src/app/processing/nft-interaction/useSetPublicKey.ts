@@ -25,6 +25,7 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
     assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
     assert(address, 'need to connect wallet')
+    assert(mark3dConfig.gasPrice, 'gas price is undefined') // !!!!!
     const tokenFullId = { collectionAddress, tokenId }
     const buyer = await factory.getBuyer(address, tokenFullId)
     await factory.registerTokenFullId(address, buyer, tokenFullId)
@@ -33,7 +34,8 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
     const result = await contract.setTransferPublicKey(
       BigNumber.from(tokenId),
       publicKey as `0x${string}`,
-      { gasPrice: mark3dConfig.gasPrice }
+      // { gasPrice: mark3dConfig.gasPrice }
+      mark3dConfig.gasPrice
     )
     return await result.wait()
   }), [contract, signer, address, collectionAddress, tokenId])
