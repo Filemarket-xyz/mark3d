@@ -4,13 +4,17 @@ import {GridBlock, PropertyTitle} from '../../helper/styles/style';
 import PropertiesCard, {PropertiesCardProps} from "./PropertiesCard/PropertiesCard";
 
 const PropertiesStyle = styled('div', {
-    '@sm': {
+    width: '100%',
+    '& .overflow': {
+        width: '100%',
+        display: 'flex',
+        gap: '16px',
+        flexWrap: 'wrap',
+    },
+    '@lg': {
         overflowX: 'scroll',
         '& .overflow': {
-            display: 'flex',
-            gap: '16px',
-            flexWrap: 'wrap',
-            width: 'max-content',
+            width: 'max-content'
         }
     }
 })

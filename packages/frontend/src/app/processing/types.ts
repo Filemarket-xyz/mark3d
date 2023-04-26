@@ -24,6 +24,13 @@ export interface DecryptResultError {
 
 export type DecryptResult<ResultType = ArrayBuffer> = DecryptResultOk<ResultType> | DecryptResultError
 
+export interface Attribute {
+  trait_type: string
+  value: any
+  display_type?: string
+  max_value?: any
+}
+
 export interface FileMeta {
   name?: string
   type?: string // mime type
@@ -37,6 +44,12 @@ export interface ERC721TokenMeta {
   external_link?: string
   hidden_file?: string
   hidden_file_meta?: FileMeta
+  license?: string
+  licenseUrl?: string
+  categories?: string[]
+  tags?: string[]
+  subcategories?: string[]
+  attributes?: Attribute[]
 }
 
 export interface ERC721TokenMetaInput {
@@ -46,6 +59,12 @@ export interface ERC721TokenMetaInput {
   external_link?: string
   hidden_file?: File | Blob
   hidden_file_meta?: FileMeta
+  license?: string
+  licenseUrl?: string
+  categories?: string[]
+  tags?: string[]
+  subcategories?: string[]
+  attributes?: Attribute[]
 }
 
 export enum Mark3dAccessTokenEventNames {
