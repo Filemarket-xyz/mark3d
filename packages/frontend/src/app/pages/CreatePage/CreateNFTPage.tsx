@@ -74,13 +74,13 @@ const CollectionPickerContainer = styled('div', {
         'calc(100% - 2 * calc((100% - $breakpoints$lg) * 0.5 + $space$3) - $space$2 - 48px)'
     },
     '@lg': {
-      width: 'calc(100% - 2 * calc((100% - $breakpoints$md) * 0.5 + $space$3))'
+      width: 'calc(100% - 2 * calc((100% - $breakpoints$md) * 0.5 + $space$4))'
     },
     '@md': {
-      width: 'calc(100% - 2 * calc((100% - $breakpoints$sm) * 0.5 + $space$2))'
+      width: 'calc(100% - 2 * calc((100% - $breakpoints$sm) * 0.5 + $space$3))'
     },
     '@sm': {
-      width: 'calc(100% - 2 * $space$2)'
+      width: 'calc(100% - 2 * $space$3)'
     }
   }
 })
@@ -100,6 +100,9 @@ const CategoryAndSubcategory = styled('div', {
     flexDirection: 'column',
     gap: 0
   },
+  '& ul': {
+    maxWidth: '285px'
+  }
 })
 
 const ContentField = styled(CollectionPickerContainer, {
@@ -108,7 +111,20 @@ const ContentField = styled(CollectionPickerContainer, {
   borderRadius: '20px',
   flexDirection: 'column',
   flexWrap: 'wrap',
-  gap: '$3'
+  gap: '$3',
+  '& ul': {
+    maxWidth: '562px',
+    '@lg': {
+      width: 'calc(100% - 2 * calc((100% - $breakpoints$md) * 0.5 + $space$5))'
+    },
+    '@md': {
+      width: 'calc(100% - 2 * calc((100% - $breakpoints$sm) * 0.5 + $space$4))'
+    },
+    '@sm': {
+      width: 'calc(100% - 2 * $space$4)'
+    }
+  }
+
 })
 
 const NFTLicense = styled('h5', {
@@ -141,7 +157,6 @@ const CreateNftPage = observer(() => {
   } | undefined = location.state?.collection
 
   const [chosenTags, setChosenTags] = useState<string[]>([])
-
   const tags: ComboBoxOption[] = [
       {
     title: 'VR',
@@ -198,13 +213,15 @@ const CreateNftPage = observer(() => {
     defaultValues: {
       collection: predefinedCollection
         ? { id: predefinedCollection.address, title: predefinedCollection.name }
-        : undefined
+        : undefined,
+      license: {id: licenseOptions[0].id, title: licenseOptions[0].title}
     }
   })
 
   const chosenTag = watch('tags')
   const chosenCategory = watch('category')
   const license = watch('license')
+  const category = watch('category')
 
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
     createNft({...data, tagsValue: chosenTags, licenseUrl})
@@ -358,13 +375,14 @@ const CreateNftPage = observer(() => {
                       options: subcategoryOptions
                     }}
                     rules={{ required: false }}
+                    isDisabled={!category}
                 />
               </CollectionPickerContainer>
             </FormControl>
           </CategoryAndSubcategory>
 
           <FormControl>
-            <Label>Tags</Label>
+            <Label>Tags&nbsp;&nbsp;<TextGray>(Optional)</TextGray></Label>
             <ContentField>
               <ControlledComboBox<CreateNFTForm>
                   name='tags'
@@ -373,7 +391,7 @@ const CreateNftPage = observer(() => {
                   comboboxProps={{
                     options: tags?.filter((tag) => !chosenTags.includes(tag.title))
                   }}
-                  rules={{ required: true }}
+                  rules={{ required: false }}
                   onEnter={(value) => {
                     if (value && !chosenTags.includes(value)) setChosenTags([...chosenTags, value])
                     console.log(value)
@@ -383,7 +401,7 @@ const CreateNftPage = observer(() => {
                   if (value === chosenTag?.title) {
                     resetField('tags')
                   }
-                  setChosenTags([...chosenTags.filter((tag) => {
+                  setChosenTags([...chosenTags?.filter((tag) => {
                     return tag !== value
                   })])
                 }}}/>}

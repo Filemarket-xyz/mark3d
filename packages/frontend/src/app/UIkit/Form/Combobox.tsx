@@ -67,6 +67,7 @@ interface ComboboxProps<T extends FieldValues> {
   otherFieldProps?: ControllerRenderProps<T, Path<T>>
   isLoading?: boolean
   placeholder?: string
+  isDisabled?: boolean
 }
 
 function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
@@ -83,7 +84,8 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
     isOptionEqualToValue: (option1, option2) => option1?.id === option2?.id,
     ...props.otherFieldProps,
     value: props.otherFieldProps?.value ?? null,
-    onChange: props.onChange
+    onChange: props.onChange,
+    readOnly: props.isDisabled
   })
 
   const ContentLoaded = () => {
@@ -125,7 +127,7 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
           postfix={<img width={24} height={24} src={bottomArrow} />}
           inputProps={{
             ...getInputProps(),
-            onKeyDown: handleKeyDown
+            onKeyDown: handleKeyDown,
           }}
         />
       </div>
@@ -145,6 +147,7 @@ export interface ControlledComboboxProps<T extends FieldValues> {
     required?: boolean
   }
   onEnter?: (value?: string) => void
+  isDisabled?: boolean
 }
 
 export const ControlledComboBox = <T extends FieldValues>(
@@ -162,6 +165,7 @@ export const ControlledComboBox = <T extends FieldValues>(
         otherFieldProps={p.field}
         placeholder={props.placeholder}
         onEnter={props.onEnter}
+        isDisabled={props.isDisabled}
       />
     )}
   />
