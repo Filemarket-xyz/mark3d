@@ -130,13 +130,13 @@ jobs:
           sed -i 's/filemarket.xyz/dev.filemarket.xyz/g' ~/indexer-swagger/swagger.yaml
       - name: Up migration
         if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' }}
-        run: docker-compose -f docker-compose.yml up -d --build indexer-postgres-migration
+        run: docker-compose -f docker-compose.dev.yml up -d --build indexer-postgres-migration
       - name: Check migration status
         if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' }}
         run: ./check_migration.sh
       - name: Update compose
         if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' || needs.check-changes.outputs.backend_changes == 'true' || needs.check-changes.outputs.healthcheck_changes == 'true' }}
-        run: docker-compose -f docker-compose.yml up -d indexer-swagger indexer-postgres indexer-redis oracle-redis indexer-service oracle-service healthcheck-service
+        run: docker-compose -f docker-compose.dev.yml up -d indexer-swagger indexer-postgres indexer-redis oracle-redis indexer-service oracle-service healthcheck-service
       - name: update nginx
         run: |
           sudo mv filemarket.dev.conf /etc/nginx/conf.d/filemarket.dev.conf
