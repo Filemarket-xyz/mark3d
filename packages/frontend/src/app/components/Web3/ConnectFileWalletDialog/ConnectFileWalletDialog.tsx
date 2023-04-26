@@ -30,10 +30,10 @@ export const ConnectFileWalletDialog = observer(({ open, onClose }: AppDialogPro
         open={open}
         onClose={onClose}
         width={adaptive({
-          sm: '400px',
-          md: '650px',
-          lg: '950px',
-          defaultValue: '950px'
+          sm: canUnlock ? '300px' : '400px',
+          md: canUnlock ? '300px' : '650px',
+          lg: canUnlock ? '400px' : '950px',
+          defaultValue: canUnlock ? '500px' : '950px'
         })}
       >
         <ModalTitle>Connect Files Wallet</ModalTitle>

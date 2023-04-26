@@ -11,7 +11,7 @@ import {useAccount} from "wagmi";
 
 const FormEnterSeedPhraseStyle = styled('form', {
   paddingTop: '2rem',
-  width: '80%',
+  width: '90%',
   margin: '0 auto'
 })
 

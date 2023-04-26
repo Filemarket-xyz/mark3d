@@ -9,7 +9,7 @@ import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
 
 const CreatePasswordStyle = styled('form', {
   paddingTop: '2rem',
-  width: '80%',
+  width: '100%',
   margin: '0 auto'
 })
 

@@ -8,14 +8,14 @@ import { CreatePasswordForm } from './CreatePasswordForm/CreatePasswordForm'
 import { createMnemonic } from '../ConnectFileWalletDialog/utils/createMnemonic'
 import { ButtonContainer } from '../../MarketCard/NFTCard'
 import { useMediaMui } from '../../../hooks/useMediaMui'
-import { mnemonicToSeed } from 'bip39'
+import {mnemonicToEntropy, mnemonicToSeed} from 'bip39'
 import { useAccount } from 'wagmi'
 import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useSeedProviderFactory } from '../../../processing'
 import {useStores} from "../../../hooks";
 
 const CreatedMnemonicStyle = styled('div', {
-  width: '85%',
+  width: '90%',
   position: 'relative',
   margin: '0 auto',
   fontSize: '12px',
@@ -90,7 +90,8 @@ export function CreateMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX
             if (address) {
               const seedProvider = await seedProviderFactory.getSeedProvider(address)
               const newMnemonic = createMnemonic()
-              const seed = await mnemonicToSeed(newMnemonic)
+              const seed = ArrayBuffer(mnemonicToEntropy(newMnemonic))
+              console.log(Arra)
               await seedProvider.set(seed, password, newMnemonic)
               setMnemonic(newMnemonic)
               dialogStore.closeDialogByName('ConnectMain')
