@@ -2,6 +2,7 @@ import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
+import { buf2Hex } from '../../../../../crypto/src/lib/utils'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
@@ -37,7 +38,7 @@ export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFull
 
     const tx = await contract.reportFraud(
       tokenIdBN,
-      privateKey,
+      `0x${buf2Hex(privateKey)}`,
       { gasPrice: mark3dConfig.gasPrice }
     )
 

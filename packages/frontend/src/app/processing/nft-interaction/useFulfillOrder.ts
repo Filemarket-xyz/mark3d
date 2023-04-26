@@ -3,6 +3,7 @@ import { BigNumber, BigNumberish, ContractReceipt, utils } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
+import { buf2Hex } from '../../../../../crypto/src/lib/utils'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract, useExchangeContract } from '../contracts'
@@ -50,7 +51,7 @@ export function useFulfillOrder(
 
     const tx = await exchangeContract.fulfillOrder(
       utils.getAddress(collectionAddress),
-      publicKey,
+      `0x${buf2Hex(publicKey)}`,
       tokenIdBN,
       {
         value: BigNumber.from(price),
