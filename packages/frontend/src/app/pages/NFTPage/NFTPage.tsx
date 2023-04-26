@@ -100,6 +100,9 @@ const NFTPage = observer(() => {
     transferStore.data
   )
 
+  const categories = ['Videos', 'Film', 'Pskovskoe por...']
+  const tags = ['VR', 'Metaverse', 'Web3', 'Jedi', '3D Internet', 'NFT', 'DAO-ART', 'Art', 'Tag']
+
   const properties: PropertiesCardProps[] = [
     {
       type: 'Background',
@@ -158,7 +161,7 @@ const NFTPage = observer(() => {
               <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files}/>
             </GridBlockSectionRow>}
             <HomeLandSection/>
-            <TagsSection/>
+            <TagsSection categories={categories} tags={tags}/>
             {window.innerWidth > 1200 && <><DescriptionSection/>
               <PropertiesSection properties={properties}/></>}
           </GridBlockSection>

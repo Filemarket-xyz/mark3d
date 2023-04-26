@@ -12,7 +12,12 @@ const convertFormDataToNftDTO = (form: CreateNFTForm): FormToTransfer => {
     collectionAddress: form.collection.id,
     description: form.description,
     hiddenFile: form.hiddenFile[0],
-    image: form.image[0]
+    image: form.image[0],
+    categories: [form.category.title],
+    subcategories: [form.subcategory?.title],
+    license: form.license.title,
+    licenseUrl: form.licenseUrl,
+    tags: form.tagsValue
   }
 }
 
