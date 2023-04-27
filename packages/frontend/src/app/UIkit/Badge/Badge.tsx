@@ -10,7 +10,7 @@ const Wrapper = styled('div', {
   padding: '$2 $3',
   alignItems: 'center',
   borderRadius: '$3',
-  width: 'max-content',
+  width: '220px',
   boxShadow: '$form'
 })
 
@@ -21,7 +21,11 @@ const Title = styled('p', {
 
 const Value = styled('p', {
   ...textVariant('primary1').true,
-  color: '$blue500'
+  color: '$blue500',
+  textOverflow:'ellipsis',
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  width: '100%'
 })
 
 const Content = styled('div', {
@@ -29,7 +33,8 @@ const Content = styled('div', {
   flexDirection: 'column',
   justifyContent: 'center',
   gap: '$1',
-  minHeight: 48
+  minHeight: 48,
+  width: '140px'
 })
 
 const Image = styled('img', {

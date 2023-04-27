@@ -1,6 +1,6 @@
 import { TokenFullId } from '../../../../../processing/types'
 import { FC } from 'react'
-import { useApproveTransfer } from '../../../../../processing/hooks'
+import { useApproveTransfer } from '../../../../../processing'
 import { Button } from '../../../../../UIkit'
 import { Transfer } from '../../../../../../swagger/Api'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
@@ -26,6 +26,7 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
       <Button
         primary
         fullWidth
+        borderRadiusSecond
         onPress={async () => {
           await approveTransfer()
           callback?.()

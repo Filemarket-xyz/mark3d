@@ -10,7 +10,7 @@ import { ButtonReportFraudTransfer } from './ActionButtons/ButtonReportFraudTran
 import { ButtonCancelTransfer } from './ActionButtons/ButtonCancelTransfer'
 import { Button } from '../../../../UIkit'
 import { HideAction } from './HideAction'
-import { useIsBuyer } from '../../../../processing/hooks/useIsBuyer'
+import { useIsBuyer } from '../../../../processing'
 
 export interface NFTDealActionsBuyerProps {
   tokenFullId: TokenFullId
@@ -55,6 +55,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
             secondary
             isDisabled
             fullWidth
+            borderRadiusSecond
           >
             NFT is not listed
           </Button>

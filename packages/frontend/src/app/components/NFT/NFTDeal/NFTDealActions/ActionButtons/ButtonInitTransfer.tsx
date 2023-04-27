@@ -2,7 +2,7 @@ import { FC } from 'react'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import { useHookToCallback } from '../../../../../hooks/useHookToCallback'
-import { useInitTransfer } from '../../../../../processing/hooks'
+import { useInitTransfer } from '../../../../../processing'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
 import { Modal } from '@nextui-org/react'
 import MintModal, { ModalTitle } from '../../../../Modal/Modal'
@@ -44,6 +44,7 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, c
       <Button
         primary
         fullWidth
+        borderRadiusSecond
         onPress={openModal}
         isDisabled={isLoading}
       >

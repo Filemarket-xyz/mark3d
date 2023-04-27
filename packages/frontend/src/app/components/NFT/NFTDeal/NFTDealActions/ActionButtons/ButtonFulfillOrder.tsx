@@ -1,6 +1,6 @@
 import { TokenFullId } from '../../../../../processing/types'
 import { FC } from 'react'
-import { useFulfillOrder } from '../../../../../processing/hooks'
+import { useFulfillOrder } from '../../../../../processing'
 import { Button } from '../../../../../UIkit'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import MintModal from '../../../../Modal/Modal'
@@ -28,13 +28,14 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({ token
       <Button
         primary
         fullWidth
+        borderRadiusSecond
         onPress={async () => {
           await fulfillOrder()
           callback?.()
         }}
         isDisabled={isLoading}
       >
-        Buy
+        Buy now
       </Button>
     </>
   )
