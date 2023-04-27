@@ -572,21 +572,34 @@ definitions:
       image:
         type: string
         description: Метаданные - Ссылка на пикчу из метаданных
+      externalLink:
+        type: string
+        description: не интернал не амнистия
       hiddenFile:
         type: string
         description: Метаданные - Ссылка на зашифрованный файл из метаданных
-      category:
+      license:
         type: string
-        description: Метаданные - Категория
-      subcategory:
+      licenseUrl:
         type: string
-        description: Метаданные - Подкатегория
+      hiddenFileMeta:
+        $ref: "#/definitions/HiddenFileMetaData"
+      categories:
+        type: array
+        description: Метаданные - Категории
+        items:
+          type: string
+      subcategories:
+        type: array
+        description: Метаданные - Подкатегории
+        items:
+          type: string
       tags:
         type: array
         items:
           type: string
         description: Метаданные - Тэги
-      attributes:
+      properties:
         type: array
         items:
           $ref: "#/definitions/MetadataProperty"
@@ -778,6 +791,20 @@ definitions:
       value:
         type: string
         description: Значение свойства
+  HiddenFileMetaData:
+    type: object
+    description: Метаданные скрытого файла
+    properties:
+      name:
+        type: string
+        description: Имя файла
+      type:
+        type: string
+        description: Тип файла
+      size:
+        type: number
+        format: int64
+        description: Размер данных
 tags:
   - name: tokens
   - name: transfers

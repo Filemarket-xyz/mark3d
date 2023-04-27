@@ -291,11 +291,11 @@ func (s *service) loadTokenParams(ctx context.Context, cid string) domain.TokenM
 		return domain.TokenMetadata{}
 	}
 
-	var meta domain.TokenMetadata
+	var meta domain.TokenMetadataIpfs
 	if err := json.Unmarshal(data, &meta); err != nil {
 		return domain.TokenMetadata{}
 	}
-	return meta
+	return domain.IpfsMetadataToDomain(meta)
 }
 
 func (s *service) processCollectionCreation(
