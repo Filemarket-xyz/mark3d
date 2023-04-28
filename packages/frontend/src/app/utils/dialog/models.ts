@@ -14,5 +14,6 @@ export interface DialogCall<Props extends DialogProps> {
 
 export type DialogCallInstance = DialogCall<any> & {
   id: number
+  open: boolean
   onClosed: () => void // used to notify that dialog has been closed
 }

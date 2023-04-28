@@ -1,35 +1,29 @@
+
+import { FileMarketCrypto } from '../../../../../crypto/src'
+import { ISeedProvider } from '../SeedProvider'
+import { PersistentDerivationParams } from '../types'
+import { assertSeed } from '../utils'
 import { IHiddenFileBuyer } from './IHiddenFileBuyer'
-import { IStatefulCryptoProvider } from '../StatefulCryptoProvider'
-import { AESEncoding, CryptoMessage, DecryptResult, RSAPrivateKey, RSAPublicKey } from '../types'
-import { NoRSAPrivateKeyToRevealError } from './errors'
 
 export class HiddenFileBuyer implements IHiddenFileBuyer {
   constructor(
-    public readonly cryptoProvider: IStatefulCryptoProvider,
-    public readonly surrogateId: string
-  ) {
+    public readonly seedProvider: ISeedProvider,
+    public readonly crypto: FileMarketCrypto
+  ) {}
+
+  async initBuy(dealNumber: number, ...args: PersistentDerivationParams): Promise<ArrayBuffer> {
+    assertSeed(this.seedProvider.seed)
+
+    const { pub } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...args, dealNumber)
+
+    return pub
   }
 
-  async initBuy(): Promise<RSAPublicKey> {
-    const pair = await this.cryptoProvider.genRSAKeyPair()
-    return pair.pub
-  }
+  async revealRsaPrivateKey(dealNumber: number, ...args: PersistentDerivationParams): Promise<ArrayBuffer> {
+    assertSeed(this.seedProvider.seed)
 
-  async revealFraudReportRSAPrivateKey(): Promise<RSAPrivateKey> {
-    const key = await this.cryptoProvider.getRSAPrivateKey()
-    if (!key) {
-      throw new NoRSAPrivateKeyToRevealError(this.surrogateId)
-    }
-    return key
-  }
+    const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...args, dealNumber)
 
-  async saveFileAESKey(encryptedKey: CryptoMessage): Promise<DecryptResult> {
-    const decryptResult = await this.cryptoProvider.decryptRSA(encryptedKey)
-    if (decryptResult.ok) {
-      await this.cryptoProvider.setAESKey(
-        Buffer.from(decryptResult.result).toString(AESEncoding)
-      )
-    }
-    return decryptResult
+    return priv
   }
 }

@@ -18,7 +18,7 @@ export const hmacSha512Native = (crypto: Crypto): HmacFunction => async (key: Ar
       false,
       ['sign', 'verify']
     )
-  return await window
+  return window
     .crypto
     .subtle
     .sign('HMAC', nativeKey, payload)

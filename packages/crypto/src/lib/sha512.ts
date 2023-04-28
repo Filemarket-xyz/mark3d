@@ -8,5 +8,5 @@ export const sha512: HashFunction = async (data: ArrayBuffer): Promise<ArrayBuff
 }
 
 export const sha512Native = (crypto: Crypto): HashFunction => async (data: ArrayBuffer): Promise<ArrayBuffer> => {
-  return await crypto.subtle.digest('SHA-512', data)
+  return crypto.subtle.digest('SHA-512', data)
 }

@@ -15,8 +15,14 @@ module.exports = {
     sourceType: 'module',
     project: 'tsconfig.json'
   },
-  plugins: ['react'],
+  plugins: ['react', 'simple-import-sort', 'unused-imports'],
   rules: {
+    'simple-import-sort/imports': 'warn',
+    'simple-import-sort/exports': 'warn',
+    'import/first': 'warn',
+    'import/newline-after-import': 'warn',
+    'import/no-duplicates': 'warn',
+    'unused-imports/no-unused-imports': 'error',
     'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': ['error'],
     'react/react-in-jsx-scope': 'off',
@@ -41,7 +47,11 @@ module.exports = {
     ],
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/no-dynamic-delete': 'off',
-    'no-void': 'off'
+    'no-void': 'off',
+    '@typescript-eslint/return-await': ['warn', 'in-try-catch'],
+    '@typescript-eslint/promise-function-async': 'off',
+    '@typescript-eslint/no-floating-promises': 'off',
+    'react/jsx-tag-spacing': 'warn'
   },
   settings: {
     react: {
