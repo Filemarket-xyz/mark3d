@@ -1,0 +1,19 @@
+{
+  "server": {
+    "port": 9202,
+    "readTimeout": "5s",
+    "writeTimeout": "5s",
+    "maxHeaderBytes": 1024
+  },
+  "handler": {
+    "requestTimeout": "5s",
+    "swaggerHost": "https://dev-indexer-swagger.mark3d.xyz"
+  },
+  "service": {
+    "accessTokenAddress": "0xE47AAb76dF0A9CD8d142753198AcaaB475Bf2A21",
+    "exchangeAddress": "0x387EE91bA3f6bA73Ef323DeFab14FC2aa80db923",
+    "fraudDeciderWeb2Address": "0x730E5fAa6a0A88eFF1D37114C82725C593D16943",
+    "allowedBlockNumberDifference": 20,
+    "healthCheckInterval": 60
+  }
+}

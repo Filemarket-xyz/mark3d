@@ -68,7 +68,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
     const tokens = this.tokens ?? []
 
     return tokens.map((token) => ({
-      collection: reduceAddress(token.collection ?? ''),
+      collection: reduceAddress(token.collectionAddress ?? ''),
       imageURL: token.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
       title: token.name ?? '—',
       user: {
@@ -77,7 +77,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
       },
       button: {
         text: 'Go to page',
-        link: `/collection/${token.collection}/${token.tokenId}`
+        link: `/collection/${token.collectionAddress}/${token.tokenId}`
       }
     }))
   }

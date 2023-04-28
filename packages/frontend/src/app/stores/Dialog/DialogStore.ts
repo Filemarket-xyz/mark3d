@@ -1,7 +1,8 @@
-import { makeAutoObservable } from 'mobx'
+import { action, makeAutoObservable } from 'mobx'
 import { ComponentType, ReactNode } from 'react'
-import { DialogCall, DialogCallInstance, DialogProps } from '../../utils/dialog'
+
 import { AlertSnackbar } from '../../UIkit'
+import { DialogCall, DialogCallInstance, DialogProps } from '../../utils/dialog'
 
 export class DialogRef {
   public closeListeners: Array<() => void> = []
@@ -24,7 +25,7 @@ export class DialogRef {
 }
 
 export class DialogStore {
-  open: DialogCallInstance[] = []
+  instances: DialogCallInstance[] = []
 
   count = 0
 
@@ -38,9 +39,10 @@ export class DialogStore {
     this.count++
     const id = this.count
     const ref = new DialogRef(id, this)
-    this.open.push({
+    this.instances.push({
       ...call,
       id,
+      open: true,
       onClosed: () => {
         ref.closeListeners.forEach((fn) => fn())
       }
@@ -48,20 +50,17 @@ export class DialogStore {
     return ref
   }
 
-  private closeDialogByOpenIndex(openIndex: number): void {
-    if (openIndex >= 0) {
-      const instance = this.open[openIndex]
-      const body = document.querySelector('body')
-      if (body) {
-        body.style.overflow = 'overlay'
-      }
+  private closeDialogByOpenIndex(index: number): void {
+    if (index >= 0) {
+      const instance = this.instances[index]
+      instance.open = false
       instance.onClosed?.()
-      this.open.splice(openIndex, 1)
+      setTimeout(action(() => this.instances.splice(index, 1)), 1000)
     }
   }
 
   closeDialogById(id: number): void {
-    const openIndex = this.open.findIndex((instance) => instance.id === id)
+    const openIndex = this.instances.findIndex((instance) => instance.id === id)
     this.closeDialogByOpenIndex(openIndex)
   }
 
@@ -71,8 +70,8 @@ export class DialogStore {
   }
 
   closeDialog(component: ComponentType): void {
-    for (let i = 0; i < this.open.length; i++) {
-      if (this.open[i].component === component) {
+    for (let i = 0; i < this.instances.length; i++) {
+      if (this.instances[i].component === component) {
         this.closeDialogByOpenIndex(i)
       }
     }

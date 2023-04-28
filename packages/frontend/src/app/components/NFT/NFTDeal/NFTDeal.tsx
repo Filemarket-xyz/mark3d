@@ -1,11 +1,11 @@
-import React, { FC, PropsWithChildren } from 'react'
-import { styled } from '../../../../styles'
 import { observer } from 'mobx-react-lite'
+import React, { FC, PropsWithChildren } from 'react'
+
+import { styled } from '../../../../styles'
 import { Order, Transfer } from '../../../../swagger/Api'
-import { NFTDealPrice } from './NFTDealPrice'
 import { TokenFullId } from '../../../processing/types'
 import { NFTDealActions } from './NFTDealActions/NFTDealActions'
-import { useSyncAESFileKey } from '../../../processing/nft-interaction/useSyncAESFileKey'
+import { NFTDealPrice } from './NFTDealPrice'
 
 export type NFTDealProps = PropsWithChildren<{
   tokenFullId: TokenFullId
@@ -61,13 +61,12 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
   reFetchOrder,
   children
 }) => {
-  useSyncAESFileKey(tokenFullId, transfer)
   return (
     <NFTDealStyle>
       <DealContainerInfo>
         {children}
         {order && (
-          <NFTDealPrice price={order.price ?? '0'}/>
+          <NFTDealPrice price={order.price ?? '0'} />
         )}
       </DealContainerInfo>
       <ButtonsContainer>

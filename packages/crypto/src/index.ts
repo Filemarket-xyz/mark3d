@@ -30,47 +30,47 @@ export class FileMarketCrypto {
   // Usually crypto is just window.crypto
   // For now, you MUST use native crypto underneath,
   // but it could be not native in the future
-  constructor(private crypto: Crypto) {
+  constructor(private crypto: Crypto = window.crypto) {
     // @ts-ignore
     forge.options.usePureJavaScript = true;
   }
 
   sha512: HashFunction = async (...args): Promise<ArrayBuffer> => {
-    return await sha512Native(this.crypto)(...args)
+    return sha512Native(this.crypto)(...args)
   }
 
   rsaGenerateKeyPair = rsaGenerateKeyPair
 
   hmacSha512: HmacFunction = async (...args): Promise<ArrayBuffer> => {
-    return await hmacSha512Native(this.crypto)(...args)
+    return hmacSha512Native(this.crypto)(...args)
   }
 
   hkdfSha512: HkdfFunction = async (...args): Promise<ArrayBuffer> => {
-    return await hkdfSha512Native(this.crypto)(...args)
+    return hkdfSha512Native(this.crypto)(...args)
   }
 
   eftAesDerivation: EftAesDerivationFunction = async (...args): Promise<AesKeyAndIv> => {
-    return await eftAesDerivationNative(this.crypto)(...args)
+    return eftAesDerivationNative(this.crypto)(...args)
   }
 
   eftRsaDerivation: EftRsaDerivationFunction = async (...args): Promise<RsaKeyPair> => {
-    return await eftRsaDerivationNative(this.crypto)(...args)
+    return eftRsaDerivationNative(this.crypto)(...args)
   }
 
   rsaEncrypt = async (data: ArrayBuffer, key: RsaPublicKey): Promise<ArrayBuffer> => {
-    return await rsaEncryptNative(this.crypto)(data, key)
+    return rsaEncryptNative(this.crypto)(data, key)
   }
 
   rsaDecrypt = async (data: ArrayBuffer, key: RsaPrivateKey): Promise<ArrayBuffer> => {
-    return await rsaDecryptNative(this.crypto)(data, key)
+    return rsaDecryptNative(this.crypto)(data, key)
   }
 
   aesEncrypt = async (data: ArrayBuffer, key: AesKeyAndIv): Promise<ArrayBuffer> => {
-    return await aesEncryptNative(this.crypto)(data, key)
+    return aesEncryptNative(this.crypto)(data, key)
   }
 
   aesDecrypt = async (data: ArrayBuffer, key: AesKey): Promise<ArrayBuffer> => {
-    return await aesDecryptNative(this.crypto)(data, key)
+    return aesDecryptNative(this.crypto)(data, key)
   }
 }
 

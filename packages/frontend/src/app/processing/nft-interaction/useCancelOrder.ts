@@ -1,11 +1,11 @@
-import { TokenFullId } from '../types'
 import { BigNumber, ContractReceipt } from 'ethers'
-import { useExchangeContract } from '../contracts'
-import { useStatusState } from '../../hooks'
 import { useCallback } from 'react'
-import { assertContract, assertSigner } from '../utils/assert'
+
 import { mark3dConfig } from '../../config/mark3d'
-import assert from 'assert'
+import { useStatusState } from '../../hooks'
+import { useExchangeContract } from '../contracts'
+import { TokenFullId } from '../types'
+import { assertCollection, assertContract, assertSigner, assertTokenId } from '../utils'
 
 /**
  * Calls Mark3dExchange contract to cancel an order
@@ -17,17 +17,19 @@ export function useCancelOrder({ collectionAddress, tokenId }: Partial<TokenFull
   const { contract, signer } = useExchangeContract()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
   const cancelOrder = useCallback(wrapPromise(async () => {
-    assert(collectionAddress, 'collectionAddress is not provided')
-    assert(tokenId, 'tokenId is not provided')
+    assertCollection(collectionAddress)
+    assertTokenId(tokenId)
     assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
-    console.log('cancel order', 'collectionAddress', collectionAddress, 'tokenId', tokenId)
-    const result = await contract.cancelOrder(
+    console.log('cancel order', { collectionAddress, tokenId })
+
+    const tx = await contract.cancelOrder(
       collectionAddress as `0x${string}`,
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice }
     )
-    return await result.wait()
+
+    return tx.wait()
   }), [contract, signer, wrapPromise, collectionAddress, tokenId])
   return {
     ...statuses,
