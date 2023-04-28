@@ -1,3 +1,4 @@
+import assert from 'assert'
 import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
@@ -27,6 +28,7 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
     assertAccount(address)
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
+    assert(mark3dConfig.gasPrice, 'gas price is undefined') // !!!!!
 
     const tokenIdBN = BigNumber.from(tokenId)
     // const transferCountBN = await contract.transferCounts(tokenIdBN)

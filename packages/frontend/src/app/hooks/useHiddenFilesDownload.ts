@@ -28,17 +28,17 @@ export function useHiddenFileDownload(
   const factory = useHiddenFileProcessorFactory()
   const { address } = useAccount()
   const { meta } = tokenMetaStore
-  const { encryptedPassword, dealNumber } = useLastTransferInfo(token?.collection, token?.tokenId)
+  const { encryptedPassword, dealNumber } = useLastTransferInfo(token?.collectionAddress, token?.tokenId)
 
   return useMemo(() => {
-    if (!factory || !token || !token.collection || !token.tokenId || !address || !meta?.hidden_file) {
+    if (!factory || !token || !token.collectionAddress || !token.tokenId || !address || !meta?.hidden_file) {
       return []
     }
 
     const hiddenFileURI = meta.hidden_file
     const hiddenMeta = meta.hidden_file_meta
     const tokenFullId: TokenFullId = {
-      collectionAddress: utils.getAddress(token.collection),
+      collectionAddress: utils.getAddress(token.collectionAddress),
       tokenId: token.tokenId
     }
     const collectionAddressBuffer = hexToBuffer(tokenFullId.collectionAddress)

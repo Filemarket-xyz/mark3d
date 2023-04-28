@@ -18,4 +18,4 @@ Env variables:
 * UPDATE_INTERVAL     - Interval between updates
 * DEBUG               - Enable debug logging
 * ALLOWED_IPS         - List of IPs that allowed to call `/notify'
-* CHAT_IDS            - List of chat ids that will receive notification
+* CHAT_IDs            - List of chat ids that will receive notification
