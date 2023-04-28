@@ -18,8 +18,10 @@ export const rsaGenerateKeyPair = async (seed: ArrayBuffer): Promise<RsaKeyPair>
 
 const rsaPrivateKeyPKCS8ToBytes = (privateKey: pki.rsa.PrivateKey): RsaPrivateKey => {
   const privateKeyAsn1 = pki.privateKeyToAsn1(privateKey);
-  const privateKeyInfo = pki.wrapRsaPrivateKey(privateKeyAsn1);
-  const privateKeyDer = asn1.toDer(privateKeyInfo);
+  // privateKey comes without additional info about it and window.crypto.importKey can't recognize it
+  // so we need to wrap this privateKey in ASN.1 object with additional data (version, algorithmId)
+  const privateKeyInfoAsn1 = pki.wrapRsaPrivateKey(privateKeyAsn1);
+  const privateKeyDer = asn1.toDer(privateKeyInfoAsn1);
 
   return Buffer.from(privateKeyDer.toHex(), 'hex')
 }
@@ -33,7 +35,7 @@ const rsaPublicSubjectKeyInfoToBytes = (publicKey: pki.rsa.PublicKey): RsaPublic
 
 const importPublicKey = (crypto: Crypto) =>
   async (keyBytes: RsaPublicKey): Promise<CryptoKey> => {
-    return await crypto.subtle.importKey(
+    return crypto.subtle.importKey(
       'spki',
       keyBytes,
       {
@@ -47,7 +49,7 @@ const importPublicKey = (crypto: Crypto) =>
 
 const importPrivateKey = (crypto: Crypto) =>
   async (keyBytes: RsaPrivateKey): Promise<CryptoKey> => {
-    return await crypto.subtle.importKey(
+    return crypto.subtle.importKey(
       'pkcs8',
       keyBytes,
       {
@@ -62,11 +64,11 @@ const importPrivateKey = (crypto: Crypto) =>
 export const rsaEncryptNative = (crypto: Crypto) =>
   async (message: ArrayBuffer, publicKey: RsaPublicKey): Promise<ArrayBuffer> => {
     const key = await importPublicKey(crypto)(publicKey)
-    return await crypto.subtle.encrypt({name: 'RSA-OAEP'}, key, message)
+    return crypto.subtle.encrypt({name: 'RSA-OAEP'}, key, message)
   }
 
 export const rsaDecryptNative = (crypto: Crypto) =>
   async (message: ArrayBuffer, privateKey: RsaPrivateKey): Promise<ArrayBuffer> => {
     const key = await importPrivateKey(crypto)(privateKey)
-    return await crypto.subtle.decrypt({name: 'RSA-OAEP'}, key, message)
+    return crypto.subtle.decrypt({name: 'RSA-OAEP'}, key, message)
   }
