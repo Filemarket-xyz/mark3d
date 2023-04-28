@@ -1,20 +1,20 @@
 import React from 'react';
 import {Link, Txt} from "../../../../../UIkit";
-import Twitter from "../../img/Twitter.svg";
-import Telegram from "../../img/Telegram.svg";
 import {styled} from "../../../../../../styles";
+import EmailImg from '../../../../../../assets/img/Email.svg'
 
-
-const SocialsContainer = styled('div', {
+const BottomSectionStyle = styled('div', {
     display: 'flex',
-    gap: '10px'
+    justifyContent: 'space-between',
+    width: '100%',
+    flexWrap: 'wrap',
+    gap: '$3'
 })
-
-const SocialImage = styled('img', { width: '32px', height: '32px' })
 
 const Info = styled('div', {
     display: 'flex',
     gap: '$4',
+    flexWrap: 'wrap',
     '@sm': {
         flexDirection: 'column',
         gap: '0',
@@ -25,10 +25,20 @@ const Info = styled('div', {
 const Divider = styled('div', {
     width: '1px',
     height: '18px',
-    background: '$gray200',
+    background: '#232528',
     borderRadius: '2px',
     '@sm': {
         display: 'none'
+    }
+})
+
+const Email = styled('div', {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    '& img': {
+        width: '16px',
+        height: '13px'
     }
 })
 
@@ -36,41 +46,22 @@ const date = new Date()
 
 const BottomSection = () => {
     return (
-        <div>
+        <BottomSectionStyle>
             <Info>
                 <Txt secondary1 css={{ fontSize: 14 }}>
-                    Copyright © {date.getFullYear()} FileMarket
+                    © {date.getFullYear()} FileMarket.xyz, Inc
                 </Txt>
                 <Divider />
                 <Link footer>Privacy policy</Link>
                 <Link footer>Terms of Service</Link>
             </Info>
-            <SocialsContainer>
-                <Link
-                    href='https://twitter.com/filemarket_xyz'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                >
-                    <SocialImage src={Twitter} />
-                </Link>
-
-                <Link
-                    href='https://t.me/filemarketchat'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                >
-                    <SocialImage src={Telegram} />
-                </Link>
-
-                <Link
-                    href='https://t.me/FileMarket_xyz'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                >
-                    <SocialImage src={Telegram} />
-                </Link>
-            </SocialsContainer>
-        </div>
+            <Email>
+                <img src={EmailImg}/>
+                <Txt secondary1 css={{ fontSize: 14 }}>
+                    genesis@filemarket.xyz
+                </Txt>
+            </Email>
+        </BottomSectionStyle>
     );
 };
 

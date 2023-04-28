@@ -32,13 +32,21 @@ const FooterContainer = styled(Container, {
   }
 })
 
+const Line = styled('div', {
+  width: '100%',
+  height: '1px',
+  background: '#232528',
+  margin: '32px 0'
+})
+
 
 export default function Footer() {
   return (
     <FooterWrapper>
       <FooterContainer>
         <TopSection/>
-          <BottomSection/>
+        <Line/>
+        <BottomSection/>
       </FooterContainer>
     </FooterWrapper>
   )
