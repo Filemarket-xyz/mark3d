@@ -32,7 +32,7 @@ export const ViewMnemonicButton: FC<ChangeMnemonicButton> = observer(({ onPress 
                     openWindow()
             }}
         >
-            View mnemonic
+            Files wallet seed phrase
         </Link>
     )
 })

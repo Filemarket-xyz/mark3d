@@ -6,8 +6,8 @@ import { ModalTitle } from '../../Modal/Modal'
 import { Txt } from '../../../UIkit'
 import { EnterSeedPhraseForm } from './EnterSeedPhraseForm/EnterSeedPhraseForm'
 import { useMediaMui } from '../../../hooks/useMediaMui'
-import { useAccount, useDisconnect } from 'wagmi'
-import { mnemonicToSeed } from 'bip39'
+import { useAccount } from 'wagmi'
+import {mnemonicToEntropy} from 'bip39'
 import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useSeedProvider } from '../../../processing'
 import {useStores} from "../../../hooks";
@@ -64,8 +64,8 @@ export function EnterSeedPhraseDialog({ open, onClose }: AppDialogProps<{}>): JS
           {!isSuccess
             ? <EnterSeedPhraseForm
               onSubmit={async (value) => {
-                const seed = await mnemonicToSeed(value.seedPhrase)
-                await seedProvider?.set(seed, value.password, value.seedPhrase)
+                const seed = mnemonicToEntropy(value.seedPhrase)
+                await seedProvider?.set(Buffer.from(seed), value.password)
                 setIsSuccess(true)
                 onClose()
                 dialogStore.closeDialogByName('ConnectMain')
