@@ -3,6 +3,7 @@ import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
+import { buf2Hex } from '../../../../../crypto/src/lib/utils'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useLastTransferInfo } from '../../hooks/useLastTransferInfo'
@@ -42,7 +43,7 @@ export function useApproveTransfer({ collectionAddress, tokenId }: Partial<Token
 
     const tx = await contract.approveTransfer(
       BigNumber.from(tokenId),
-      encryptedFilePassword,
+      `0x${buf2Hex(encryptedFilePassword)}`,
       { gasPrice: mark3dConfig.gasPrice }
     )
 

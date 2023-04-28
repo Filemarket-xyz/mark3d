@@ -1,6 +1,5 @@
 import { FileMarketCrypto } from '../../../../../crypto/src'
 import { RsaPublicKey } from '../../../../../crypto/src/lib/types'
-import { buf2Hex } from '../../../../../crypto/src/lib/utils'
 import { ISeedProvider } from '../SeedProvider'
 import { DecryptResult, FileMeta, PersistentDerivationParams } from '../types'
 import { assertSeed } from '../utils'
@@ -22,16 +21,16 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     try {
       assertSeed(this.seedProvider.seed)
 
-      let key: ArrayBuffer
+      let password: ArrayBuffer
       if (encryptedPassword && dealNumber) {
         const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...args, dealNumber)
-        key = await this.crypto.rsaDecrypt(encryptedPassword, priv)
+        password = await this.crypto.rsaDecrypt(encryptedPassword, priv)
       } else {
         const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...args)
-        key = aesKeyAndIv.key
+        password = aesKeyAndIv.key
       }
 
-      const decryptedFile = await this.crypto.aesDecrypt(encryptedFileData, key)
+      const decryptedFile = await this.crypto.aesDecrypt(encryptedFileData, password)
 
       return {
         ok: true,
@@ -60,7 +59,7 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     lastEncryptedPassword: ArrayBuffer | undefined,
     dealNumber: number | undefined,
     ...args: PersistentDerivationParams
-  ): Promise<`0x${string}`> {
+  ): Promise<ArrayBuffer> {
     assertSeed(this.seedProvider.seed)
 
     let password: ArrayBuffer
@@ -74,6 +73,6 @@ export class HiddenFileOwner implements IHiddenFileOwner {
 
     const encryptedPassword = await this.crypto.rsaEncrypt(password, publicKey)
 
-    return `0x${buf2Hex(encryptedPassword)}`
+    return encryptedPassword
   }
 }

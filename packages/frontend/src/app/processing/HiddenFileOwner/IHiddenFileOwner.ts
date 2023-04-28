@@ -26,6 +26,6 @@ export interface IHiddenFileOwner extends IHiddenFileBase {
    * Public key is not saved, it is used immediately.
    * @param publicKey
    */
-  encryptFilePassword: (publicKey: RsaPublicKey, lastEncryptedPassword: ArrayBuffer | undefined, dealNumber: number | undefined, ...args: PersistentDerivationParams) => Promise<`0x${string}`>
+  encryptFilePassword: (publicKey: RsaPublicKey, lastEncryptedPassword: ArrayBuffer | undefined, dealNumber: number | undefined, ...args: PersistentDerivationParams) => Promise<ArrayBuffer>
 
 }
