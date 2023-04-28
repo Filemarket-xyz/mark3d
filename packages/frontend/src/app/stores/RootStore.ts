@@ -1,14 +1,15 @@
+import { CollectionStore } from './Collection/CollectionStore'
+import { CollectionAndTokenListStore } from './CollectionAndTokenList/CollectionAndTokenListStore'
+import { CollectionTokenListStore } from './CollectionTokenList/CollectionTokenListStore'
 import { DialogStore } from './Dialog/DialogStore'
 import { ErrorStore } from './Error/ErrorStore'
-import { CollectionAndTokenListStore } from './CollectionAndTokenList/CollectionAndTokenListStore'
-import { TransferListStore } from './Transfer/TransferListStore'
-import { CollectionTokenListStore } from './CollectionTokenList/CollectionTokenListStore'
-import { TransferStore } from './Transfer/TransferStore'
 import { OrderStore } from './Order/OrderStore'
-import { TokenStore } from './Token/TokenStore'
-import { TokenMetaStore } from './Token/TokenMetaStore'
 import { OpenOrderListStore } from './OrderList/OrderListStore'
-import { CollectionStore } from './Collection/CollectionStore'
+import { TokenMetaStore } from './Token/TokenMetaStore'
+import { TokenStore } from './Token/TokenStore'
+import { LastTransferInfoStore } from './Transfer/LastTransferInfoStore'
+import { TransferListStore } from './Transfer/TransferListStore'
+import { TransferStore } from './Transfer/TransferStore'
 import { TransfersHistoryStore } from './TransfersHistory/TransfersHistoryStore'
 import { UserTransferStore } from './UserTransfers/UserTransfersStore'
 
@@ -26,6 +27,7 @@ export class RootStore {
   collectionStore: CollectionStore
   transfersHistoryStore: TransfersHistoryStore
   userTransferStore: UserTransferStore
+  lastTransferInfoStore: LastTransferInfoStore
 
   constructor() {
     this.dialogStore = new DialogStore()
@@ -41,6 +43,7 @@ export class RootStore {
     this.collectionStore = new CollectionStore(this)
     this.transfersHistoryStore = new TransfersHistoryStore(this)
     this.userTransferStore = new UserTransferStore(this)
+    this.lastTransferInfoStore = new LastTransferInfoStore(this)
   }
 }
 

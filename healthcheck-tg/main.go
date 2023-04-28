@@ -3,9 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -27,26 +26,11 @@ func main() {
 
 	server := listenToHealthReports(bot, cfg)
 	shut := make(chan os.Signal, 1)
-	signal.Notify(shut, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(shut, syscall.SIGTERM, syscall.SIGINT)
 
 	log.Printf("Starting bot %s... on port %s", bot.Self.UserName, cfg.Port)
 
-	u := tgapi.NewUpdate(0)
-	u.Timeout = cfg.UpdateInterval
-	updates, _ := bot.GetUpdatesChan(u)
-
-loop:
-	for {
-		select {
-		case update := <-updates:
-			if update.Message == nil {
-				continue
-			}
-			// process messages
-		case <-shut:
-			break loop
-		}
-	}
+	<-shut
 
 	log.Println("Shutting down...")
 
@@ -61,18 +45,7 @@ loop:
 func listenToHealthReports(bot *tgapi.BotAPI, cfg *Config) *http.Server {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/notify", func(w http.ResponseWriter, r *http.Request) {
-		ip, _, err := net.SplitHostPort(r.RemoteAddr)
-		if err != nil {
-			http.Error(w, "Invalid remote address", http.StatusBadRequest)
-			return
-		}
-
-		if !isIPAllowed(ip, cfg.AllowedIPs) {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			return
-		}
-
-		logMessage, err := ioutil.ReadAll(r.Body)
+		logMessage, err := io.ReadAll(r.Body)
 		if r != nil {
 			defer r.Body.Close()
 		}
@@ -85,7 +58,9 @@ func listenToHealthReports(bot *tgapi.BotAPI, cfg *Config) *http.Server {
 		for _, chatID := range cfg.ChatIDs {
 			msg := tgapi.NewMessage(chatID, msgText)
 			msg.ParseMode = "MarkdownV2"
-			bot.Send(msg)
+			if _, err := bot.Send(msg); err != nil {
+				log.Println("send healthcheck msg failed", err)
+			}
 		}
 
 		w.WriteHeader(http.StatusOK)
@@ -103,19 +78,4 @@ func listenToHealthReports(bot *tgapi.BotAPI, cfg *Config) *http.Server {
 	}()
 
 	return server
-}
-
-// Check if the IP is localhost or in the allowed list
-func isIPAllowed(ip string, allowedIPs []string) bool {
-	if ip == "127.0.0.1" || ip == "::1" {
-		return true
-	}
-
-	for _, allowedIP := range allowedIPs {
-		if ip == allowedIP {
-			return true
-		}
-	}
-
-	return false
 }

@@ -6,7 +6,7 @@ info:
   version: 1.0.0
 schemes:
   - https
-host: mark3d.xyz
+host: filemarket.xyz
 basePath: /api
 paths:
   /collections/{address}:

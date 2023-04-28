@@ -1,5 +1,7 @@
-import { CryptoMessage, DecryptResult, FileMeta, RSAPublicKey } from '../types'
+/* eslint-disable max-len */
+import { RsaPublicKey } from '../../../../../crypto/src/lib/types'
 import { IHiddenFileBase } from '../HiddenFileBase'
+import { DecryptResult, FileMeta, PersistentDerivationParams } from '../types'
 
 /**
  * Used to mint and sell NFT
@@ -9,22 +11,21 @@ export interface IHiddenFileOwner extends IHiddenFileBase {
   /**
    * Generates AES key, saves it and encrypts the file.
    * @param file
-   * @returns {@link CryptoMessage} Encrypted file data
+   * @returns {@link ArrayBuffer} Encrypted file data
    */
-  encryptFile: (file: File) => Promise<CryptoMessage>
+  encryptFile: (file: File, ...args: PersistentDerivationParams) => Promise<Blob>
 
   /**
    * Decrypts the file if AES key exists.
-   * @throws {@link NoAESKeyToDecrypt}
    * @param file
    */
-  decryptFile: (encryptedFileData: CryptoMessage, meta?: FileMeta) => Promise<DecryptResult<File>>
+  decryptFile: (encryptedFileData: ArrayBuffer, meta: FileMeta | undefined, encryptedPassword: ArrayBuffer | undefined, dealNumber: number | undefined, ...args: PersistentDerivationParams) => Promise<DecryptResult<File>>
 
   /**
    * Encrypts stored AES key (AES key used to encrypt file) with provided publicKey.
    * Public key is not saved, it is used immediately.
    * @param publicKey
    */
-  prepareFileAESKeyForBuyer: (publicKey: RSAPublicKey) => Promise<CryptoMessage>
+  encryptFilePassword: (publicKey: RsaPublicKey, lastEncryptedPassword: ArrayBuffer | undefined, dealNumber: number | undefined, ...args: PersistentDerivationParams) => Promise<ArrayBuffer>
 
 }

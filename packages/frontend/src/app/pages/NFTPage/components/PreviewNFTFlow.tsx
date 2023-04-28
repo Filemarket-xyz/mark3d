@@ -1,14 +1,15 @@
-import { Loading } from '@nextui-org/react'
-import { useState } from 'react'
-import { styled } from '../../../../styles'
-import { DecryptResult } from '../../../processing/types'
-import { Button, textVariant, gradientPlaceholderImg } from '../../../UIkit'
-import { Swiper, SwiperSlide as SwiperSlideUnstyled } from 'swiper/react'
-import css from './styles.module.css'
-import { Navigation, Pagination } from 'swiper'
-
 import 'swiper/css'
 import 'swiper/css/navigation'
+
+import { Loading } from '@nextui-org/react'
+import { useState } from 'react'
+import { Navigation, Pagination } from 'swiper'
+import { Swiper, SwiperSlide as SwiperSlideUnstyled } from 'swiper/react'
+
+import { styled } from '../../../../styles'
+import { DecryptResult } from '../../../processing/types'
+import { Button, gradientPlaceholderImg, textVariant } from '../../../UIkit'
+import css from './styles.module.css'
 
 const CenterContainer = styled('div', {
   display: 'flex',
