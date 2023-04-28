@@ -67,8 +67,7 @@ export class DialogStore {
 
   closeDialogByName(name: string): void {
     const openIndex = this.open.findIndex((instance) => instance.props.name === name)
-    console.log(this.open)
-    this.closeDialogByOpenIndex(openIndex)
+    openIndex >-1 && this.closeDialogByOpenIndex(openIndex)
   }
 
   closeDialog(component: ComponentType): void {

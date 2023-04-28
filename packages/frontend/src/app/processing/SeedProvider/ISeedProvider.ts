@@ -28,7 +28,7 @@ export interface ISeedProvider {
    * @param newSeed
    * @param password
    */
-  set: (newSeed: ArrayBuffer, password: string, newMnemonic: string) => Promise<void>
+  set: (newSeed: ArrayBuffer, password: string) => Promise<void>
 
   /**
    * Clears the seed field

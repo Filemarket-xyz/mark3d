@@ -41,6 +41,7 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
       seedProvider
         .unlock(v.password)
         .then(() => {
+          onSuccess?.()
           dialogStore.closeDialogByName('ConnectMain')
         })
         .catch(err => setError(stringifyError(err)))
