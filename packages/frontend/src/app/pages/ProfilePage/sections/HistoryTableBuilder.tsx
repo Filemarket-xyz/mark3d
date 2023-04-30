@@ -1,14 +1,15 @@
 import { ComponentProps } from 'react'
-import { RowWrapper, RowBody } from '../../../components/Table'
+
+import { RowBody, RowWrapper } from '../../../components/Table'
 import {
-  TableBuilder,
   ITableBuilder,
-  ITransformedRow,
   ITableColumn,
-  ITableRowCell
+  ITableRowCell,
+  ITransformedRow,
+  TableBuilder
 } from '../../../components/Table/TableBuilder'
 import { HeadItem } from '../../ExplorerPage/components/Table/Table'
-import { RowCellStyled, ItemShareButton } from './HistorySection'
+import { ItemShareButton, RowCellStyled } from './HistorySection'
 
 export class HistoryTableBuilder extends TableBuilder implements ITableBuilder {
   public renderRows() {

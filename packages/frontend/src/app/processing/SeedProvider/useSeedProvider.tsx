@@ -1,6 +1,7 @@
-import { SeedProvider } from './SeedProvider'
 import { useEffect, useState } from 'react'
+
 import { useSeedProviderFactory } from '../SeedProviderFactory'
+import { SeedProvider } from './SeedProvider'
 
 export function useSeedProvider(
   account: string | undefined

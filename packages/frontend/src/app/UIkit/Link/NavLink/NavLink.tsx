@@ -1,8 +1,9 @@
-import { linkStyled } from '../Link.styles'
-import { NavLink as RouterNavLink } from 'react-router-dom'
 import React, { ComponentProps, forwardRef } from 'react'
-import { useLink } from '../useLink'
 import { PressHookProps } from 'react-aria'
+import { NavLink as RouterNavLink } from 'react-router-dom'
+
+import { linkStyled } from '../Link.styles'
+import { useLink } from '../useLink'
 
 const NavLinkStyled = linkStyled(RouterNavLink)
 

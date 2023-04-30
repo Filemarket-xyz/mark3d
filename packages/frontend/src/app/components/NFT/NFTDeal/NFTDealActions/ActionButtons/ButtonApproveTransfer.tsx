@@ -1,9 +1,10 @@
-import { TokenFullId } from '../../../../../processing/types'
 import { FC } from 'react'
-import { useApproveTransfer } from '../../../../../processing'
-import { Button } from '../../../../../UIkit'
+
 import { Transfer } from '../../../../../../swagger/Api'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
+import { useApproveTransfer } from '../../../../../processing'
+import { TokenFullId } from '../../../../../processing/types'
+import { Button } from '../../../../../UIkit'
 import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonApproveTransferProps {
@@ -22,7 +23,7 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
   })
   return (
     <>
-      <MintModal {...modalProps}/>
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth

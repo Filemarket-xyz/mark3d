@@ -1,38 +1,33 @@
-import {FC, useState} from 'react'
-import {useAccount} from 'wagmi'
-import { Link, Txt } from '../../../UIkit'
 import { PressEvent } from '@react-types/shared/src/events'
-import {useSeed} from "../../../processing/SeedProvider/useSeed";
-import {useInfoModal} from "../../../hooks/useInfoModal";
-import {useSeedProvider} from "../../../processing";
-import {observer} from "mobx-react-lite";
-import {UnlockSection} from "../ConnectFileWalletDialog/sections/UnlockSection";
-import {InfoModal} from "../../Modal/InfoModal";
-import {useStores} from "../../../hooks";
-import {ViewMnemonicDialog} from "../ViewMnemonicDialog/ViewMnemonicDialog";
+import { observer } from 'mobx-react-lite'
+import { FC } from 'react'
+
+import { useStores } from '../../../hooks'
+import { Link } from '../../../UIkit'
+import { ViewMnemonicDialog } from '../ViewMnemonicDialog/ViewMnemonicDialog'
+
 export interface ChangeMnemonicButton {
-    onPress?: (e: PressEvent) => void
+  onPress?: (e: PressEvent) => void
 }
 
 export const ViewMnemonicButton: FC<ChangeMnemonicButton> = observer(({ onPress }) => {
-    const { dialogStore } = useStores()
+  const { dialogStore } = useStores()
 
-    const openWindow = () => {
-        dialogStore.openDialog({
-            component: ViewMnemonicDialog,
-            props: { }
-        })
-    }
+  const openWindow = () => {
+    dialogStore.openDialog({
+      component: ViewMnemonicDialog,
+      props: { }
+    })
+  }
 
-
-    return (
+  return (
         <Link
             type="button"
             onPress={(e) => {
-                    openWindow()
+              openWindow()
             }}
         >
             Files wallet seed phrase
         </Link>
-    )
+  )
 })

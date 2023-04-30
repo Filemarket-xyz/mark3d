@@ -1,4 +1,5 @@
 import { FC } from 'react'
+
 import { getProfileImageUrl } from '../../../utils/nfts/getProfileImageUrl'
 
 export interface AddressIconProps {

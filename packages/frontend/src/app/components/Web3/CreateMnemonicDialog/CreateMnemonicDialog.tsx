@@ -1,18 +1,19 @@
-import React, { useState } from 'react'
 import { Modal } from '@nextui-org/react'
-import { AppDialogProps } from '../../../utils/dialog'
-import { styled } from '../../../../styles'
-import { ModalTitle } from '../../Modal/Modal'
-import { Button, Txt } from '../../../UIkit'
-import { CreatePasswordForm } from './CreatePasswordForm/CreatePasswordForm'
-import { createMnemonic } from '../ConnectFileWalletDialog/utils/createMnemonic'
-import { ButtonContainer } from '../../MarketCard/NFTCard'
-import { useMediaMui } from '../../../hooks/useMediaMui'
-import {entropyToMnemonic, mnemonicToEntropy} from 'bip39'
+import { mnemonicToEntropy } from 'bip39'
+import React, { useState } from 'react'
 import { useAccount } from 'wagmi'
+
+import { styled } from '../../../../styles'
+import { useStores } from '../../../hooks'
 import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
+import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeedProviderFactory } from '../../../processing'
-import {useStores} from "../../../hooks";
+import { Button, Txt } from '../../../UIkit'
+import { AppDialogProps } from '../../../utils/dialog'
+import { ButtonContainer } from '../../MarketCard/NFTCard'
+import { ModalTitle } from '../../Modal/Modal'
+import { createMnemonic } from '../ConnectFileWalletDialog/utils/createMnemonic'
+import { CreatePasswordForm } from './CreatePasswordForm/CreatePasswordForm'
 
 const CreatedMnemonicStyle = styled('div', {
   width: '90%',
@@ -96,7 +97,7 @@ export function CreateMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX
               setMnemonic(newMnemonic)
               dialogStore.closeDialogByName('ConnectMain')
             }
-          }}/>}
+          }} />}
         </div>
         {mnemonic &&
             <ButtonContainer>

@@ -1,7 +1,8 @@
-import { cssShowHideIn, styled } from '../../../../styles'
 import { ComponentProps, forwardRef } from 'react'
 import { AriaToggleButtonProps, mergeProps, useFocusRing, useToggleButton } from 'react-aria'
 import { ToggleProps, useToggleState } from 'react-stately'
+
+import { cssShowHideIn, styled } from '../../../../styles'
 import { useDOMRef } from '../../../hooks'
 import { NavbarToggleIcon } from './NavBarToggleIcon'
 
@@ -47,7 +48,7 @@ export const NavBarToggle = forwardRef<HTMLButtonElement, NavBarToggleProps>((pr
       data-pressed={isPressed}
       {...mergeProps(buttonProps, focusProps, otherProps)}
     >
-      <NavbarToggleIcon isExpanded={state.isSelected}/>
+      <NavbarToggleIcon isExpanded={state.isSelected} />
     </StyledNavBarToggle>
   )
 })

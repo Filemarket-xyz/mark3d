@@ -1,15 +1,15 @@
 import { FC, useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { CreatePasswordValue } from '../../CreateMnemonicDialog/CreatePasswordForm/CreatePasswordForm'
-import { FormControl } from '../../../../UIkit/Form/FormControl'
-import { Input } from '../../../../UIkit/Form/Input'
-import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
-import { Button, Txt } from '../../../../UIkit'
+import { useAccount } from 'wagmi'
+
 import { styled } from '../../../../../styles'
 import { useSeedProvider } from '../../../../processing'
-import { useAccount } from 'wagmi'
+import { Button, Txt } from '../../../../UIkit'
+import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
+import { FormControl } from '../../../../UIkit/Form/FormControl'
+import { Input } from '../../../../UIkit/Form/Input'
 import { stringifyError } from '../../../../utils/error'
-import {useStores} from "../../../../hooks";
+import { CreatePasswordValue } from '../../CreateMnemonicDialog/CreatePasswordForm/CreatePasswordForm'
 
 export interface UnlockSectionProps {
   onSuccess?: () => void
@@ -29,8 +29,6 @@ const ButtonContainer = styled('div', {
 export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
   const { register, handleSubmit, formState: { errors } } = useForm<CreatePasswordValue>()
 
-  const { dialogStore } = useStores()
-
   const { address } = useAccount()
   const { seedProvider } = useSeedProvider(address)
 
@@ -42,7 +40,6 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
         .unlock(v.password)
         .then(() => {
           onSuccess?.()
-          dialogStore.closeDialogByName('ConnectMain')
         })
         .catch(err => setError(stringifyError(err)))
     }

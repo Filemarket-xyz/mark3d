@@ -1,4 +1,5 @@
 import React, { memo, MouseEvent, useEffect, useRef } from 'react'
+
 import { keyframes, styled } from '../../../styles'
 
 const dripExpand = keyframes({
@@ -84,7 +85,7 @@ export const Drip = memo<DripProps>((
       <svg height="20" style={{ top, left }} viewBox="0 0 20 20" width="20">
         <g fill="none" fillRule="evenodd" stroke="none" strokeWidth="1">
           <g className="nextui-drip-filler" fill={color}>
-            <rect height="100%" rx="10" width="100%"/>
+            <rect height="100%" rx="10" width="100%" />
           </g>
         </g>
       </svg>

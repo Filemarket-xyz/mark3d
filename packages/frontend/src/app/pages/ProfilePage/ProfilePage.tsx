@@ -3,11 +3,12 @@ import { useMemo } from 'react'
 import { Outlet } from 'react-router'
 import { useParams } from 'react-router-dom'
 import { useAccount } from 'wagmi'
+
 import { styled } from '../../../styles'
 import { useCollectionAndTokenListStore } from '../../hooks'
 import { useTransfersHistory } from '../../hooks/useTransfersHistory'
 import { useUserTransferStore } from '../../hooks/useUserTransfers'
-import { textVariant, Container, gradientPlaceholderImg } from '../../UIkit'
+import { Container, gradientPlaceholderImg, textVariant } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
@@ -111,7 +112,7 @@ const ProfilePage = observer(() => {
   return (
     <>
       <GrayOverlay>
-        <Background/>
+        <Background />
 
         <Container>
           <Profile>

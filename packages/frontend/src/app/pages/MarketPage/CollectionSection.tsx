@@ -1,8 +1,9 @@
 import React from 'react'
-import { CardsContainer } from './NftSection'
-import collectionImg from './img/cardImg.jpg'
+
 import CollectionCard, { CollectionCardProps } from '../../components/MarketCard/CollectionCard'
+import collectionImg from './img/cardImg.jpg'
 import icon from './img/icon.jpg'
+import { CardsContainer } from './NftSection'
 
 const card: CollectionCardProps = {
   imageUrl: collectionImg,

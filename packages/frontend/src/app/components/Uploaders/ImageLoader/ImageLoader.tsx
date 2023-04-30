@@ -1,6 +1,7 @@
 import { useDrop } from '@react-aria/dnd'
 import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
+
 import { styled } from '../../../../styles'
 import { TextBold } from '../../../pages/CreatePage/CreateCollectionPage'
 import { textVariant } from '../../../UIkit'

@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite'
+
 import { useStores } from '../../hooks'
 
 export const DialogManager = observer((): JSX.Element => {

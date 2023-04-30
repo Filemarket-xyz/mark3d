@@ -1,6 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { NavBarToggle } from './NavBarToggle'
 import { useState } from 'react'
+
+import { NavBarToggle } from './NavBarToggle'
 
 const story: ComponentMeta<typeof NavBarToggle> = {
   component: NavBarToggle,

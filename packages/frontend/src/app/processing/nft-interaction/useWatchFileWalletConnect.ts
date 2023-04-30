@@ -1,5 +1,6 @@
-import { useAccount, useDisconnect } from 'wagmi'
 import { useCallback, useEffect, useState } from 'react'
+import { useAccount, useDisconnect } from 'wagmi'
+
 import { ConnectFileWalletDialog } from '../../components/Web3/ConnectFileWalletDialog'
 import { useStores } from '../../hooks'
 import { useSeedProvider } from '../SeedProvider'

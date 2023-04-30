@@ -1,7 +1,8 @@
+import { observer } from 'mobx-react-lite'
+import React, { FC } from 'react'
+
 import { styled } from '../../../../styles'
 import { textVariant } from '../../../UIkit'
-import React, { FC } from 'react'
-import { observer } from 'mobx-react-lite'
 import { formatCurrency } from '../../../utils/web3/currency'
 
 export interface NFTDealPriceProps {

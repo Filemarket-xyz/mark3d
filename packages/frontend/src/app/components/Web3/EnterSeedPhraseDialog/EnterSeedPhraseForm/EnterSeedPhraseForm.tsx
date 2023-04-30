@@ -1,13 +1,14 @@
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
+import { useAccount } from 'wagmi'
+
 import { styled } from '../../../../../styles'
+import { useSeedProvider } from '../../../../processing'
+import { Button, Txt } from '../../../../UIkit'
+import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
 import { FormControl } from '../../../../UIkit/Form/FormControl'
 import { Input } from '../../../../UIkit/Form/Input'
-import { Button, Txt } from '../../../../UIkit'
 import { validateImportMnemonic, validatePassword } from '../../ConnectFileWalletDialog/utils/validate'
-import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
-import {useSeedProvider} from "../../../../processing";
-import {useAccount} from "wagmi";
 
 const FormEnterSeedPhraseStyle = styled('form', {
   paddingTop: '2rem',
@@ -31,8 +32,8 @@ const ButtonContainer = styled('div', {
 
 export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit }) => {
   const { register, handleSubmit, formState: { errors } } = useForm<EnterSeedPhraseValue>()
-    const { address } = useAccount()
-    const { seedProvider } = useSeedProvider(address)
+  const { address } = useAccount()
+  const { seedProvider } = useSeedProvider(address)
   return (
         <FormEnterSeedPhraseStyle onSubmit={handleSubmit(onSubmit)}>
             <FormControl>

@@ -1,4 +1,5 @@
 import { createContext, PropsWithChildren, useContext } from 'react'
+
 import { RootStore, rootStore } from '../stores/RootStore'
 
 export const StoreContext = createContext<RootStore>(rootStore)

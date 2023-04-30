@@ -1,11 +1,12 @@
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
+
 import { styled } from '../../../../../styles'
+import { Button, Txt } from '../../../../UIkit'
+import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
 import { FormControl } from '../../../../UIkit/Form/FormControl'
 import { Input } from '../../../../UIkit/Form/Input'
-import { Button, Txt } from '../../../../UIkit'
 import { validatePassword } from '../../ConnectFileWalletDialog/utils/validate'
-import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
 
 const CreatePasswordStyle = styled('form', {
   paddingTop: '2rem',
@@ -15,7 +16,7 @@ const CreatePasswordStyle = styled('form', {
 
 export interface CreatePasswordValue {
   password: string
-    repeatPassword: string
+  repeatPassword: string
 }
 
 export interface CreatePasswordProps {
@@ -30,8 +31,8 @@ const ButtonContainer = styled('div', {
 export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
   const { register, handleSubmit, formState: { errors }, watch } = useForm<CreatePasswordValue>()
 
-    const password = watch('password')
-    const passwordRepeat = watch('repeatPassword')
+  const password = watch('password')
+  const passwordRepeat = watch('repeatPassword')
 
   return (
         <CreatePasswordStyle onSubmit={handleSubmit(onSubmit)}>
@@ -48,7 +49,7 @@ export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
                 <Input
                     type="password"
                     placeholder='Repeat a password'
-                    {...register('repeatPassword', { validate: () =>  password === passwordRepeat ? undefined : 'Password are not matching'})}
+                    {...register('repeatPassword', { validate: () => password === passwordRepeat ? undefined : 'Password are not matching' })}
                     isError={!!errors?.repeatPassword}
                 />
                 {errors?.repeatPassword && <ErrorMessage><Txt h5>{errors.repeatPassword?.message}</Txt></ErrorMessage>}

@@ -1,8 +1,9 @@
-import accessToken from '../../abi/Mark3dAccessToken'
-import exchangeToken from '../../abi/Mark3dExchange'
-import collectionToken from '../../abi/Mark3dCollection'
-import { utils } from 'ethers'
 import { Chain } from '@web3modal/ethereum'
+import { utils } from 'ethers'
+
+import accessToken from '../../abi/Mark3dAccessToken'
+import collectionToken from '../../abi/Mark3dCollection'
+import exchangeToken from '../../abi/Mark3dExchange'
 
 const filecoinHyperspace: Chain = {
   id: 3141,

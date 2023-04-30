@@ -5,9 +5,10 @@ import {
 import {
   AriaButtonProps
 } from 'react-aria'
+
 import { Drip } from '../../Drip'
-import { useButton } from '../useButton'
 import { buttonStyled } from '../Button.styles'
+import { useButton } from '../useButton'
 
 const LinkButtonStyled = buttonStyled('a')
 export type LinkButtonProps = AriaButtonProps & ComponentProps<typeof LinkButtonStyled>
@@ -27,7 +28,7 @@ export const LinkButton = forwardRef<HTMLAnchorElement, LinkButtonProps>(
         ref={buttonRef}
       >
         {children}
-        <Drip {...dripProps} color='white'/>
+        <Drip {...dripProps} color='white' />
       </LinkButtonStyled>
     )
   }

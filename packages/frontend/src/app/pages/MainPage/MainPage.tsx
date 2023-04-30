@@ -1,5 +1,5 @@
-import WelcomeBlock from './Blocks/WelcomeBlock'
 import { styled } from '../../../styles'
+import WelcomeBlock from './Blocks/WelcomeBlock'
 
 const GradientWrapper = styled('div', {
   width: '100%',

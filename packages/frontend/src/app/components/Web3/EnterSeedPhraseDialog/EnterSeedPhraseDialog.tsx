@@ -1,16 +1,17 @@
-import React, { useState } from 'react'
 import { Modal } from '@nextui-org/react'
-import { AppDialogProps } from '../../../utils/dialog'
-import { styled } from '../../../../styles'
-import { ModalTitle } from '../../Modal/Modal'
-import { Txt } from '../../../UIkit'
-import { EnterSeedPhraseForm } from './EnterSeedPhraseForm/EnterSeedPhraseForm'
-import { useMediaMui } from '../../../hooks/useMediaMui'
+import { mnemonicToEntropy } from 'bip39'
+import React, { useState } from 'react'
 import { useAccount } from 'wagmi'
-import {mnemonicToEntropy} from 'bip39'
+
+import { styled } from '../../../../styles'
+import { useStores } from '../../../hooks'
 import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
+import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeedProvider } from '../../../processing'
-import {useStores} from "../../../hooks";
+import { Txt } from '../../../UIkit'
+import { AppDialogProps } from '../../../utils/dialog'
+import { ModalTitle } from '../../Modal/Modal'
+import { EnterSeedPhraseForm } from './EnterSeedPhraseForm/EnterSeedPhraseForm'
 
 const ModalStyle = styled(Modal, {
   fontSize: '20px'
@@ -70,7 +71,7 @@ export function EnterSeedPhraseDialog({ open, onClose }: AppDialogProps<{}>): JS
                 onClose()
                 dialogStore.closeDialogByName('ConnectMain')
               }
-              }/>
+              } />
             : <Txt h2>{'SUCCESS!'}</Txt>
           }
         </div>

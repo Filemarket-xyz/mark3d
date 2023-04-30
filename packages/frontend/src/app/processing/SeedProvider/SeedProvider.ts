@@ -1,8 +1,9 @@
-import { ISeedProvider } from './ISeedProvider'
-import { IStorageProvider } from '../StorageProvider'
 import * as passworder from '@metamask/browser-passworder'
-import { utils } from 'ethers'
 import { entropyToMnemonic } from 'bip39'
+import { utils } from 'ethers'
+
+import { IStorageProvider } from '../StorageProvider'
+import { ISeedProvider } from './ISeedProvider'
 
 const seedStorageKey = 'seed'
 
@@ -89,7 +90,7 @@ export class SeedProvider implements ISeedProvider {
   }
 
   get mnemonic(): string | undefined {
-    if (this.seed){
+    if (this.seed) {
       return entropyToMnemonic(Buffer.from(this.seed).toString())
     }
   }

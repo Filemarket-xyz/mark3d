@@ -1,7 +1,8 @@
 import { FC, useState } from 'react'
+
 import Logo from '../../../../assets/icons/Plus.svg'
-import { Button, NavLink, Popover, PopoverContent, PopoverTrigger } from '../../../UIkit'
 import { styled } from '../../../../styles'
+import { Button, NavLink, Popover, PopoverContent, PopoverTrigger } from '../../../UIkit'
 import { paths } from './paths'
 
 const Spacer = styled('div', {
@@ -17,7 +18,7 @@ export const AppPlusNav: FC = () => {
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger>
         <Button icon secondary small>
-          <img src={Logo} alt="plus"/>
+          <img src={Logo} alt="plus" />
         </Button>
       </PopoverTrigger>
       <PopoverContent>

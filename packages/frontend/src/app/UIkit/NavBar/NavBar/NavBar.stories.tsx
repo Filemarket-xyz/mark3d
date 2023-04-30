@@ -1,6 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { NavBar } from './NavBar'
 import { BrowserRouter } from 'react-router-dom'
+
+import { NavBar } from './NavBar'
 
 const story: ComponentMeta<typeof NavBar> = {
   title: 'UIKit/NavBar',
