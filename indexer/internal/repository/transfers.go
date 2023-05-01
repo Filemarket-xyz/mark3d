@@ -384,7 +384,7 @@ func (p *postgres) getTransferStatuses(
 			transfer_id,
 			timestamp,
 			status,
-			tx_id,
+			tx_id
 		FROM transfer_statuses 
 		WHERE transfer_id=ANY($1) 
 		ORDER BY transfer_id,timestamp DESC
@@ -489,34 +489,21 @@ func (p *postgres) GetActiveTransfer(
 	// language=PostgreSQL
 	query := `
 		SELECT 
-			t.id, 
-			t.from_address, 
-			t.to_address, 
-			t.fraud_approved, 
-			COALESCE(o.id, 0), 
-			t.public_key, 
-			t.encrypted_password,
-			t.number
-		FROM 
-			transfers AS t 
+			t.id, t.from_address, t.to_address, t.fraud_approved, t.public_key, 
+			t.encrypted_password, t.number,
+			COALESCE(o.id, 0)
+		FROM transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
-		WHERE 
-			collection_address = $1 
+		WHERE collection_address = $1 
 			AND token_id = $2 
 			AND NOT (
-				SELECT 
-					ts.status 
-				FROM 
-					transfer_statuses AS ts 
-				WHERE 
-					ts.transfer_id = t.id 
+				SELECT ts.status 
+				FROM transfer_statuses AS ts 
+				WHERE ts.transfer_id = t.id 
 					AND ts.timestamp =(
-						SELECT 
-							MAX(ts2.timestamp) 
-						FROM 
-							transfer_statuses AS ts2 
-						WHERE 
-							ts2.transfer_id = t.id
+						SELECT MAX(ts2.timestamp) 
+						FROM transfer_statuses AS ts2 
+						WHERE ts2.transfer_id = t.id
 					)
 			)= ANY('{Finished,Cancelled}')
 	`
@@ -533,10 +520,10 @@ func (p *postgres) GetActiveTransfer(
 		&from,
 		&to,
 		&t.FraudApproved,
-		&t.OrderId,
 		&t.PublicKey,
 		&t.EncryptedPassword,
 		&number,
+		&t.OrderId,
 	)
 	if err != nil {
 		return nil, err
