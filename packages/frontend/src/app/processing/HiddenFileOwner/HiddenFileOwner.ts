@@ -1,32 +1,46 @@
 import { FileMarketCrypto } from '../../../../../crypto/src'
 import { RsaPublicKey } from '../../../../../crypto/src/lib/types'
+import { IBlockchainDataProvider } from '../BlockchainDataProvider'
 import { ISeedProvider } from '../SeedProvider'
-import { DecryptResult, FileMeta, PersistentDerivationParams } from '../types'
-import { assertSeed } from '../utils'
+import { DecryptResult, FileMeta, PersistentDerivationArgs } from '../types'
+import { assertSeed, hexToBuffer } from '../utils'
 import { IHiddenFileOwner } from './IHiddenFileOwner'
 
 export class HiddenFileOwner implements IHiddenFileOwner {
+  #args: PersistentDerivationArgs
+  #tokenFullId: [ArrayBuffer, number]
+
   constructor(
+    public readonly address: string,
+    public readonly collectionAddress: ArrayBuffer,
+    public readonly tokenId: number,
     public readonly seedProvider: ISeedProvider,
-    public readonly crypto: FileMarketCrypto
-  ) {}
+    public readonly crypto: FileMarketCrypto,
+    public readonly blockchainDataProvider: IBlockchainDataProvider
+  ) {
+    assertSeed(this.seedProvider.seed)
+
+    this.#tokenFullId = [this.collectionAddress, this.tokenId]
+    this.#args = [this.seedProvider.seed, blockchainDataProvider.globalSalt, ...this.#tokenFullId]
+  }
 
   async decryptFile(
     encryptedFileData: ArrayBuffer,
     meta: FileMeta | undefined,
-    encryptedPassword: ArrayBuffer | undefined,
-    dealNumber: number | undefined,
-    ...args: PersistentDerivationParams
+    creator: string | undefined
   ): Promise<DecryptResult<File>> {
     try {
-      assertSeed(this.seedProvider.seed)
-
       let password: ArrayBuffer
-      if (encryptedPassword && dealNumber) {
-        const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...args, dealNumber)
-        password = await this.crypto.rsaDecrypt(encryptedPassword, priv)
+      if (this.address === creator) {
+        const {
+          encryptedPassword,
+          dealNumber
+        } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullId)
+
+        const { priv } = await this.crypto.eftRsaDerivation(...this.#args, dealNumber)
+        password = await this.crypto.rsaDecrypt(hexToBuffer(encryptedPassword), priv)
       } else {
-        const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...args)
+        const aesKeyAndIv = await this.crypto.eftAesDerivation(...this.#args)
         password = aesKeyAndIv.key
       }
 
@@ -44,11 +58,9 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     }
   }
 
-  async encryptFile(file: File, ...args: PersistentDerivationParams): Promise<Blob> {
-    assertSeed(this.seedProvider.seed)
-
+  async encryptFile(file: File): Promise<Blob> {
     const arrayBuffer = await file.arrayBuffer()
-    const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...args)
+    const aesKeyAndIv = await this.crypto.eftAesDerivation(...this.#args)
     const encrypted = await this.crypto.aesEncrypt(arrayBuffer, aesKeyAndIv)
 
     return new Blob([encrypted])
@@ -56,18 +68,19 @@ export class HiddenFileOwner implements IHiddenFileOwner {
 
   async encryptFilePassword(
     publicKey: RsaPublicKey,
-    lastEncryptedPassword: ArrayBuffer | undefined,
-    dealNumber: number | undefined,
-    ...args: PersistentDerivationParams
+    creator: string | undefined
   ): Promise<ArrayBuffer> {
-    assertSeed(this.seedProvider.seed)
-
     let password: ArrayBuffer
-    if (lastEncryptedPassword && dealNumber) {
-      const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...args, dealNumber)
-      password = await this.crypto.rsaDecrypt(lastEncryptedPassword, priv)
+    if (this.address === creator) {
+      const {
+        encryptedPassword: lastEncryptedPassword,
+        dealNumber
+      } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullId)
+
+      const { priv } = await this.crypto.eftRsaDerivation(...this.#args, dealNumber)
+      password = await this.crypto.rsaDecrypt(hexToBuffer(lastEncryptedPassword), priv)
     } else {
-      const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...args)
+      const aesKeyAndIv = await this.crypto.eftAesDerivation(...this.#args)
       password = aesKeyAndIv.key
     }
 

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /**
  * Global NFT identifier
  */
@@ -114,4 +115,4 @@ export enum ERC721TokenEventSignatures {
   Transfer = 'Transfer(address,address,uint256)',
 }
 
-export type PersistentDerivationParams = [globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, tokenId: number]
+export type PersistentDerivationArgs = [seed: ArrayBuffer, globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, tokenId: number]
