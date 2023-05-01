@@ -426,6 +426,9 @@ definitions:
     type: object
     description: Ответ на запрос зашифрованного пароля из последней передачи токена
     properties:
+      dealNumber:
+        type: string
+        description: Номер последнего трансфера токена
       encryptedPassword:
         type: string
         description: Зашифрованный пароль из последней передачи токена

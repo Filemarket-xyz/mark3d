@@ -584,7 +584,7 @@ func (p *postgres) UpdateTransfer(ctx context.Context, tx pgx.Tx, transfer *doma
 		transfer.FraudApproved,
 		transfer.PublicKey,
 		transfer.EncryptedPassword,
-		transfer.Number,
+		transfer.Number.String(),
 		transfer.Id,
 	)
 	if err != nil {
@@ -624,17 +624,14 @@ func (p *postgres) GetTokenEncryptedPassword(
 	tx pgx.Tx,
 	contractAddress common.Address,
 	tokenId *big.Int,
-) (string, error) {
-	// FIXME: not the fastest query
+) (string, *big.Int, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT encrypted_password
+		SELECT number, encrypted_password
 		FROM transfers
-		WHERE 
-			number ~ '^[0-9]+$'
-			AND collection_address=$1
-			AND token_id=$2
-		ORDER BY number::numeric DESC
+		WHERE collection_address=$1
+		  AND token_id=$2
+		ORDER BY number DESC
 		LIMIT 1;
 	`
 
@@ -645,11 +642,17 @@ func (p *postgres) GetTokenEncryptedPassword(
 		tokenId.String(),
 	)
 
-	var pwd string
-	err := row.Scan(&pwd)
+	var pwd, numberStr string
+
+	err := row.Scan(&pwd, &numberStr)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
-	return pwd, nil
+	number, ok := big.NewInt(0).SetString(numberStr, 10)
+	if !ok {
+		return "", nil, fmt.Errorf("failed to parse big int: %s", numberStr)
+	}
+
+	return pwd, number, nil
 }
