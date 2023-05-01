@@ -1,4 +1,4 @@
-import { buf2Hex } from '../../../../../crypto/src/lib/utils'
+import { bufferToHex } from '../../../../../crypto/src/lib/utils'
 
 export const hexToBuffer = (hex: string) => {
   let string = hex
@@ -10,5 +10,5 @@ export const hexToBuffer = (hex: string) => {
 }
 
 export const bufferToEtherHex = (buffer: ArrayBuffer): `0x${string}` => {
-  return `0x${buf2Hex(buffer)}`
+  return `0x${bufferToHex(buffer)}`
 }
