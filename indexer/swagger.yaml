@@ -585,6 +585,13 @@ definitions:
         type: string
       licenseUrl:
         type: string
+      mintTxHash:
+        type: string
+        description: Хэш транзакции минта
+      mintTxTimestamp:
+        type: number
+        description: Время транзакции минта
+        format: uint64
       hiddenFileMeta:
         $ref: "#/definitions/HiddenFileMetaData"
       categories:

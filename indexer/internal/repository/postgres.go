@@ -41,7 +41,7 @@ type Tokens interface {
 	InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error
 	UpdateToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error
 	GetMetadata(ctx context.Context, tx pgx.Tx, address common.Address, tokenId *big.Int) (*domain.TokenMetadata, error)
-	InsertMetadata(ctx context.Context, tx pgx.Tx, metadata *domain.TokenMetadata, contractAddress common.Address, tokenId *big.Int) (int64, error)
+	InsertMetadata(ctx context.Context, tx pgx.Tx, metadata *domain.TokenMetadata, contractAddress common.Address, tokenId *big.Int) error
 }
 
 type Transfers interface {

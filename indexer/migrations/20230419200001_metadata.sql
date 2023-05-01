@@ -49,7 +49,7 @@ CREATE TABLE public.token_metadata_properties (
     metadata_id   BIGINT      NOT NULL,
     trait_type    TEXT        NOT NULL,
     display_type  TEXT        NOT NULL,
-    value_type    TEXT        NOT NULL,
+    value         TEXT        NOT NULL,
     max_value     VARCHAR(20) NOT NULL,
     property_type public.property_type_enum NOT NULL,
     PRIMARY KEY (id),

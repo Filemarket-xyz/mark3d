@@ -13,6 +13,8 @@ type Token struct {
 	TokenId           *big.Int
 	Owner             common.Address
 	Creator           common.Address
+	MintTxTimestamp   uint64
+	MintTxHash        common.Hash
 	MetaUri           string
 	Metadata          *TokenMetadata
 }
@@ -31,17 +33,19 @@ func TokenToModel(t *Token) *models.Token {
 			Size: t.Metadata.HiddenFileMeta.Size,
 			Type: t.Metadata.HiddenFileMeta.Type,
 		},
-		Image:         t.Metadata.Image,
-		License:       t.Metadata.License,
-		LicenseURL:    t.Metadata.LicenseUrl,
-		MetaURI:       t.MetaUri,
-		Name:          t.Metadata.Name,
-		Owner:         t.Owner.String(),
-		Properties:    MapSlice(t.Metadata.Properties, MetadataPropertyToModel),
-		Rankings:      MapSlice(t.Metadata.Rankings, MetadataPropertyToModel),
-		Stats:         MapSlice(t.Metadata.Stats, MetadataPropertyToModel),
-		Subcategories: t.Metadata.Subcategories,
-		Tags:          t.Metadata.Tags,
-		TokenID:       t.TokenId.String(),
+		Image:           t.Metadata.Image,
+		License:         t.Metadata.License,
+		LicenseURL:      t.Metadata.LicenseUrl,
+		MintTxTimestamp: t.MintTxTimestamp,
+		MintTxHash:      t.MintTxHash.String(),
+		MetaURI:         t.MetaUri,
+		Name:            t.Metadata.Name,
+		Owner:           t.Owner.String(),
+		Properties:      MapSlice(t.Metadata.Properties, MetadataPropertyToModel),
+		Rankings:        MapSlice(t.Metadata.Rankings, MetadataPropertyToModel),
+		Stats:           MapSlice(t.Metadata.Stats, MetadataPropertyToModel),
+		Subcategories:   t.Metadata.Subcategories,
+		Tags:            t.Metadata.Tags,
+		TokenID:         t.TokenId.String(),
 	}
 }

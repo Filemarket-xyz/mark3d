@@ -19,8 +19,7 @@ func (p *postgres) GetCollectionTokens(
 	// language=PostgreSQL
 	query := `
 		SELECT 
-		    t.token_id, t.owner, t.meta_uri, t.creator,
-		    
+		    t.token_id, t.owner, t.meta_uri, t.creator, t.mint_transaction_timestamp, t.mint_transaction_hash,
 		    c.name
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
@@ -34,10 +33,10 @@ func (p *postgres) GetCollectionTokens(
 
 	var res []*domain.Token
 	for rows.Next() {
-		var tokenId, owner, creator string
+		var tokenId, owner, creator, mintTxHash string
 		t := &domain.Token{}
 
-		err := rows.Scan(&tokenId, &owner, &t.MetaUri, &creator, &t.CollectionName)
+		err := rows.Scan(&tokenId, &owner, &t.MetaUri, &creator, &t.MintTxTimestamp, &mintTxHash, &t.CollectionName)
 		if err != nil {
 			return nil, err
 		}
@@ -45,6 +44,7 @@ func (p *postgres) GetCollectionTokens(
 		t.CollectionAddress = collectionAddress
 		t.Owner = common.HexToAddress(owner)
 		t.Creator = common.HexToAddress(creator)
+		t.MintTxHash = common.HexToHash(mintTxHash)
 
 		var ok bool
 		t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
@@ -71,7 +71,8 @@ func (p *postgres) GetTokensByAddress(
 	// language=PostgreSQL
 	query := `
 		SELECT 
-		    t.collection_address, t.token_id, t.meta_uri, t.creator,
+		    t.collection_address, t.token_id, t.meta_uri, t.creator, 
+		    t.mint_transaction_timestamp, t.mint_transaction_hash,
 		    c.name
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
@@ -86,17 +87,25 @@ func (p *postgres) GetTokensByAddress(
 
 	var res []*domain.Token
 	for rows.Next() {
-		var collectionAddress, tokenId, creator string
+		var collectionAddress, tokenId, creator, mintTxHash string
 		t := &domain.Token{}
 
-		err := rows.Scan(&collectionAddress, &tokenId, &t.MetaUri, &creator, &t.CollectionAddress)
-		if err != nil {
+		if err := rows.Scan(
+			&collectionAddress,
+			&tokenId,
+			&t.MetaUri,
+			&creator,
+			&t.MintTxTimestamp,
+			&mintTxHash,
+			&t.CollectionName,
+		); err != nil {
 			return nil, err
 		}
 
 		t.Owner = ownerAddress
 		t.CollectionAddress = common.HexToAddress(collectionAddress)
 		t.Creator = common.HexToAddress(creator)
+		t.MintTxHash = common.HexToHash(mintTxHash)
 
 		var ok bool
 		t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
@@ -124,7 +133,7 @@ func (p *postgres) GetToken(
 	// language=PostgreSQL
 	query := `
 		SELECT 
-		    t.owner, t.meta_uri, t.creator,
+		    t.owner, t.meta_uri, t.creator, t.mint_transaction_timestamp, t.mint_transaction_hash,
 		    c.name
 		FROM tokens t
 		INNER JOIN collections c ON t.collection_address = c.address
@@ -137,12 +146,14 @@ func (p *postgres) GetToken(
 	)
 
 	t := &domain.Token{}
-	var owner, creator string
+	var owner, creator, mintTxHash string
 
 	err := row.Scan(
 		&owner,
 		&t.MetaUri,
 		&creator,
+		&t.MintTxTimestamp,
+		&mintTxHash,
 		&t.CollectionName,
 	)
 	if err != nil {
@@ -153,6 +164,7 @@ func (p *postgres) GetToken(
 	t.TokenId = tokenId
 	t.Owner = common.HexToAddress(owner)
 	t.Creator = common.HexToAddress(creator)
+	t.MintTxHash = common.HexToHash(mintTxHash)
 
 	metadata, err := p.GetMetadata(ctx, tx, t.CollectionAddress, t.TokenId)
 	if err != nil {
@@ -166,8 +178,10 @@ func (p *postgres) GetToken(
 func (p *postgres) InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error {
 	// language=PostgreSQL
 	query := `
-		INSERT INTO tokens (collection_address, token_id, owner, meta_uri, creator)
-		VALUES ($1,$2,$3,$4,$5) 
+		INSERT INTO tokens (
+		    collection_address, token_id, owner, meta_uri, creator, mint_transaction_timestamp, mint_transaction_hash
+		)
+		VALUES ($1,$2,$3,$4,$5,$6,$7) 
 		ON CONFLICT ON CONSTRAINT tokens_pkey DO NOTHING
 	`
 	_, err := tx.Exec(ctx, query,
@@ -176,17 +190,20 @@ func (p *postgres) InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Tok
 		strings.ToLower(token.Owner.String()),
 		token.MetaUri,
 		strings.ToLower(token.Creator.String()),
+		token.MintTxTimestamp,
+		strings.ToLower(token.MintTxHash.Hex()),
 	)
 	if err != nil {
 		return err
 	}
 
-	// TODO: Insert metadata
+	if err := p.InsertMetadata(ctx, tx, token.Metadata, token.CollectionAddress, token.TokenId); err != nil {
+		return err
+	}
 
 	return nil
 }
 
-// TODO: what fields can we change, because we do not handle Metadata
 func (p *postgres) UpdateToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error {
 	// language=PostgreSQL
 	if _, err := tx.Exec(ctx, `UPDATE tokens SET owner=$1,meta_uri=$2 WHERE collection_address=$3 AND token_id=$4`,
@@ -234,7 +251,7 @@ func (p *postgres) GetMetadata(
 	}
 
 	propertiesQuery := `
-		SELECT trait_type, display_type, value_type, max_value, property_type
+		SELECT trait_type, display_type, value, max_value, property_type
 		FROM token_metadata_properties
 		WHERE metadata_id=$1
 	`
@@ -334,7 +351,7 @@ func (p *postgres) InsertMetadata(
 	metadata *domain.TokenMetadata,
 	collectionAddress common.Address,
 	tokenId *big.Int,
-) (int64, error) {
+) error {
 	// FIXME: too many separate INSERT statements. Use query builder later
 	tokenQuery := `
 		INSERT INTO token_metadata (
@@ -359,12 +376,12 @@ func (p *postgres) InsertMetadata(
 		metadata.ExternalLink,
 	).Scan(&metadataId)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
 	propertiesQuery := `
 		INSERT INTO token_metadata_properties (
-		    id, metadata_id, trait_type, display_type, value_type, max_value, property_type
+		    id, metadata_id, trait_type, display_type, value, max_value, property_type
 		)
 		VALUES (DEFAULT,$1,$2,$3,$4,$5,$6)  
 		ON CONFLICT ON CONSTRAINT token_metadata_properties_pkey DO NOTHING
@@ -379,7 +396,7 @@ func (p *postgres) InsertMetadata(
 			"property",
 		)
 		if err != nil {
-			return 0, err
+			return err
 		}
 	}
 
@@ -393,7 +410,7 @@ func (p *postgres) InsertMetadata(
 			"stat",
 		)
 		if err != nil {
-			return 0, err
+			return err
 		}
 	}
 
@@ -407,7 +424,7 @@ func (p *postgres) InsertMetadata(
 			"ranking",
 		)
 		if err != nil {
-			return 0, err
+			return err
 		}
 	}
 
@@ -419,7 +436,7 @@ func (p *postgres) InsertMetadata(
 	for _, tag := range metadata.Tags {
 		_, err := tx.Exec(ctx, tagsQuery, metadataId, tag)
 		if err != nil {
-			return 0, err
+			return err
 		}
 	}
 
@@ -431,7 +448,7 @@ func (p *postgres) InsertMetadata(
 	for _, category := range metadata.Categories {
 		_, err := tx.Exec(ctx, categoriesQuery, metadataId, category)
 		if err != nil {
-			return 0, err
+			return err
 		}
 	}
 
@@ -443,9 +460,9 @@ func (p *postgres) InsertMetadata(
 	for _, subcategory := range metadata.Subcategories {
 		_, err := tx.Exec(ctx, subcategoriesQuery, metadataId, subcategory)
 		if err != nil {
-			return 0, err
+			return err
 		}
 	}
 
-	return metadataId, nil
+	return nil
 }

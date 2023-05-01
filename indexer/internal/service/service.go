@@ -404,8 +404,14 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 	return nil
 }
 
-func (s *service) tryProcessCollectionTransferEvent(ctx context.Context, tx pgx.Tx,
-	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
+func (s *service) tryProcessCollectionTransferEvent(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *collection.Mark3dCollection,
+	t *types.Transaction,
+	l *types.Log,
+	blockNumber *big.Int,
+) error {
 	transfer, err := instance.ParseTransfer(*l)
 	if err != nil {
 		return nil
@@ -413,16 +419,25 @@ func (s *service) tryProcessCollectionTransferEvent(ctx context.Context, tx pgx.
 	if transfer.From != common.HexToAddress(zeroAddress) {
 		return nil
 	}
+
+	block, err := s.ethClient.BlockByNumber(ctx, blockNumber)
+	if err != nil {
+		return nil
+	}
+
 	metaUri, err := s.collectionTokenURI(ctx, l.Address, transfer.TokenId)
 	if err != nil {
 		return err
 	}
+
 	meta := s.loadTokenParams(ctx, metaUri)
 	token := &domain.Token{
 		CollectionAddress: *t.To(),
 		TokenId:           transfer.TokenId,
 		Owner:             transfer.To,
 		Creator:           transfer.To,
+		MintTxTimestamp:   block.Time(),
+		MintTxHash:        t.Hash(),
 		MetaUri:           metaUri,
 		Metadata:          &meta,
 	}
@@ -866,12 +881,13 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 	if err != nil {
 		return err
 	}
+
 	for _, l := range receipt.Logs {
 		instance, err := collection.NewMark3dCollection(l.Address, nil)
 		if err != nil {
 			return err
 		}
-		if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l); err != nil {
+		if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l, receipt.BlockNumber); err != nil {
 			return err
 		}
 		if err := s.tryProcessTransferInit(ctx, tx, instance, t, l); err != nil {
