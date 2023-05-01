@@ -1,38 +1,74 @@
 
 import { utils } from 'ethers'
 
+import { FileMarketCrypto } from '../../../../../crypto/src'
+import { blockchainDataProvider, IBlockchainDataProvider } from '../BlockchainDataProvider'
 import { fileMarketCrypto } from '../FileMarketCrypto'
 import { HiddenFileBuyer } from '../HiddenFileBuyer'
 import { HiddenFileOwner } from '../HiddenFileOwner'
 import { ISeedProviderFactory, seedProviderFactory } from '../SeedProviderFactory'
+import { hexToBuffer } from '../utils'
 import { IHiddenFileProcessorFactory } from './IHiddenFileProcessorFactory'
 
 export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
-  private readonly owners: Record<string, HiddenFileOwner> = Object.create(null)
-  private readonly buyers: Record<string, HiddenFileBuyer> = Object.create(null)
+  private readonly owners: Record<string, Record<string, HiddenFileOwner>> = Object.create(null)
+  private readonly buyers: Record<string, Record<string, HiddenFileBuyer>> = Object.create(null)
 
-  constructor(private readonly seedProviderFactory: ISeedProviderFactory) {}
+  constructor(
+    private readonly seedProviderFactory: ISeedProviderFactory,
+    private readonly crypto: FileMarketCrypto,
+    private readonly blockchainDataProvider: IBlockchainDataProvider
+  ) {}
 
-  async getBuyer(account: string): Promise<HiddenFileBuyer> {
+  #tokenFullIdKey(collectionAddress: string, tokenId: number) {
+    return `${collectionAddress}/${tokenId}`
+  }
+
+  async getBuyer(account: string, collectionAddress: string, tokenId: number): Promise<HiddenFileBuyer> {
     account = utils.getAddress(account)
-    const seedProvider = await this.seedProviderFactory.getSeedProvider(account)
-    const existing = this.buyers[account]
+    const key = this.#tokenFullIdKey(collectionAddress, tokenId)
+
+    const accountBuyers = this.buyers[account]
+    const existing = accountBuyers?.[key]
     if (existing) return existing
 
-    const buyer = new HiddenFileBuyer(seedProvider, fileMarketCrypto)
-    this.buyers[account] = buyer
+    const seedProvider = await this.seedProviderFactory.getSeedProvider(account)
+    const buyer = new HiddenFileBuyer(
+      hexToBuffer(collectionAddress),
+      tokenId,
+      seedProvider,
+      this.crypto,
+      this.blockchainDataProvider
+    )
+    this.buyers[account] = {
+      ...accountBuyers,
+      [key]: buyer
+    }
 
     return buyer
   }
 
-  async getOwner(account: string): Promise<HiddenFileOwner> {
+  async getOwner(account: string, collectionAddress: string, tokenId: number): Promise<HiddenFileOwner> {
     account = utils.getAddress(account)
-    const seedProvider = await this.seedProviderFactory.getSeedProvider(account)
-    const existing = this.owners[account]
+    const key = this.#tokenFullIdKey(collectionAddress, tokenId)
+
+    const accountOwners = this.owners[account]
+    const existing = accountOwners?.[key]
     if (existing) return existing
 
-    const owner = new HiddenFileOwner(seedProvider, fileMarketCrypto)
-    this.owners[account] = owner
+    const seedProvider = await this.seedProviderFactory.getSeedProvider(account)
+    const owner = new HiddenFileOwner(
+      account,
+      hexToBuffer(collectionAddress),
+      tokenId,
+      seedProvider,
+      this.crypto,
+      this.blockchainDataProvider
+    )
+    this.owners[account] = {
+      ...accountOwners,
+      [key]: owner
+    }
 
     return owner
   }
@@ -41,4 +77,8 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
 /**
  * Exists as singleton
  */
-export const hiddenFileProcessorFactory = new HiddenFileProcessorFactory(seedProviderFactory)
+export const hiddenFileProcessorFactory = new HiddenFileProcessorFactory(
+  seedProviderFactory,
+  fileMarketCrypto,
+  blockchainDataProvider
+)
