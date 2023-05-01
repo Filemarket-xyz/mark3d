@@ -1,6 +1,9 @@
 package domain
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/mark3d-xyz/mark3d/indexer/models"
+)
 
 type HiddenFileMetadata struct {
 	Name string
@@ -102,7 +105,7 @@ func IpfsMetadataToDomain(m TokenMetadataIpfs) TokenMetadata {
 					MaxValue:    maxValue,
 				})
 			} else {
-				res.Rankings = append(res.Stats, &MetadataProperty{
+				res.Rankings = append(res.Rankings, &MetadataProperty{
 					TraitType:   a.TraitType,
 					DisplayType: a.DisplayType,
 					Value:       fmt.Sprintf("%.0f", f),
@@ -118,4 +121,12 @@ func IpfsMetadataToDomain(m TokenMetadataIpfs) TokenMetadata {
 		}
 	}
 	return res
+}
+
+func MetadataPropertyToModel(mp *MetadataProperty) *models.MetadataProperty {
+	return &models.MetadataProperty{
+		DisplayType: mp.DisplayType,
+		TraitType:   mp.TraitType,
+		Value:       mp.Value,
+	}
 }

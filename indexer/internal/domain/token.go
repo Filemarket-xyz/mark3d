@@ -45,11 +45,3 @@ func TokenToModel(t *Token) *models.Token {
 		TokenID:       t.TokenId.String(),
 	}
 }
-
-func MetadataPropertyToModel(mp *MetadataProperty) *models.MetadataProperty {
-	return &models.MetadataProperty{
-		DisplayType: mp.DisplayType,
-		TraitType:   mp.TraitType,
-		Value:       mp.Value,
-	}
-}
