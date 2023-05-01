@@ -42,15 +42,15 @@ ALTER TABLE public.hidden_file_metadata
     OWNER TO indexer;
 
 
-CREATE TYPE public.property_type_enum AS ENUM ('attribute', 'ranking', 'stat');
+CREATE TYPE public.property_type_enum AS ENUM ('property', 'ranking', 'stat');
 
 CREATE TABLE public.token_metadata_properties (
-    id            BIGSERIAL NOT NULL,
-    metadata_id   BIGINT    NOT NULL,
-    trait_type    TEXT      NOT NULL,
-    display_type  TEXT      NOT NULL,
-    value_type    TEXT      NOT NULL,
-    max_value     FLOAT8    NOT NULL,
+    id            BIGSERIAL   NOT NULL,
+    metadata_id   BIGINT      NOT NULL,
+    trait_type    TEXT        NOT NULL,
+    display_type  TEXT        NOT NULL,
+    value_type    TEXT        NOT NULL,
+    max_value     VARCHAR(20) NOT NULL,
     property_type public.property_type_enum NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT token_metadata_properties_metadata_fkey
