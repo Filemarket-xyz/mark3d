@@ -1,20 +1,19 @@
-import { bufferToHex } from '../../../../../crypto/src/lib/utils'
-import { globalSaltMock } from '../utils'
+import { ContractProvider, contractProvider } from '../ContractProvider'
+import { bufferToEtherHex, globalSaltMock } from '../utils'
 import { IBlockchainDataProvider } from './IBlockchainDataProvider'
 
 export class BlockchainDataProvider implements IBlockchainDataProvider {
   readonly #url: string
   globalSalt = globalSaltMock
 
-  constructor(readonly baseUrl: string = '/api') {
+  constructor(
+    private readonly contractProvider: ContractProvider,
+    readonly baseUrl: string = '/api'
+  ) {
     this.#url = baseUrl
   }
 
-  async getLastTransferInfo(collectionAddress: ArrayBuffer, tokenId: number) {
-    const response = await fetch(
-      `${this.#url}/tokens/${bufferToHex(collectionAddress)}/${tokenId}/encrypted_password`,
-      { method: 'GET' }
-    )
+  async #stringifyResponse(response: Response) {
     const data = await response.json()
 
     if (!response.ok) {
@@ -23,9 +22,32 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
 
     return data
   }
+
+  async getLastTransferInfo(collectionAddress: ArrayBuffer, tokenId: number) {
+    const response = await fetch(
+      `${this.#url}/tokens/${bufferToEtherHex(collectionAddress)}/${tokenId}/encrypted_password`,
+      { method: 'GET' }
+    )
+
+    return this.#stringifyResponse(response)
+  }
+
+  async setGlobalSalt() {
+    if (this.globalSalt) return
+
+    const response = await fetch(`${this.#url}/global_salt`, { method: 'GET' })
+
+    this.globalSalt = await this.#stringifyResponse(response)
+  }
+
+  async getCollectionCreator(address: ArrayBuffer) {
+    const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(address))
+
+    return contract.owner()
+  }
 }
 
 /**
  * Exists as singleton
  */
-export const blockchainDataProvider = new BlockchainDataProvider()
+export const blockchainDataProvider = new BlockchainDataProvider(contractProvider)

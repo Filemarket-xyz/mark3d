@@ -10,4 +10,15 @@ export interface IBlockchainDataProvider {
     encryptedPassword: string
     dealNumber: number
   }>
+
+  /**
+   * Requests the globalSalt once and sets it.
+   */
+  setGlobalSalt: () => Promise<void>
+
+  /**
+   * @param address
+   * @returns The addres of the owner, and therefore the creator of the collection
+   */
+  getCollectionCreator: (address: ArrayBuffer) => Promise<`0x${string}`>
 }
