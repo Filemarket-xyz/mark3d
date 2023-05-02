@@ -45,11 +45,7 @@ export function useHiddenFileDownload(
       download: async () => {
         const encryptedFile = await ipfsService.fetchBytes(hiddenFileURI)
         const owner = await factory.getOwner(address, collectionAddress, tokenId)
-        const file = await owner.decryptFile(
-          encryptedFile,
-          hiddenMeta,
-          token.creator
-        )
+        const file = await owner.decryptFile(encryptedFile, hiddenMeta)
         if (file.ok) {
           saveAs(file.result, file.result.name)
         } else {
@@ -59,11 +55,7 @@ export function useHiddenFileDownload(
       getFile: async () => {
         const encryptedFile = await ipfsService.fetchBytes(hiddenFileURI)
         const owner = await factory.getOwner(address, collectionAddress, tokenId)
-        return owner.decryptFile(
-          encryptedFile,
-          hiddenMeta,
-          token.creator
-        )
+        return owner.decryptFile(encryptedFile, hiddenMeta)
       }
     }]
   }, [factory, token, address, meta])

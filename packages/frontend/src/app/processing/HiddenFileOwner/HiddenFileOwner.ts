@@ -24,12 +24,10 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     this.#args = [this.seedProvider.seed, blockchainDataProvider.globalSalt, ...this.#tokenFullId]
   }
 
-  async decryptFile(
-    encryptedFileData: ArrayBuffer,
-    meta: FileMeta | undefined,
-    creator: string | undefined
-  ): Promise<DecryptResult<File>> {
+  async decryptFile(encryptedFile: ArrayBuffer, meta: FileMeta | undefined): Promise<DecryptResult<File>> {
     try {
+      const creator = await this.blockchainDataProvider.getCollectionCreator(this.collectionAddress)
+
       let password: ArrayBuffer
       if (this.address === creator) {
         const {
@@ -44,7 +42,7 @@ export class HiddenFileOwner implements IHiddenFileOwner {
         password = aesKeyAndIv.key
       }
 
-      const decryptedFile = await this.crypto.aesDecrypt(encryptedFileData, password)
+      const decryptedFile = await this.crypto.aesDecrypt(encryptedFile, password)
 
       return {
         ok: true,
@@ -66,10 +64,9 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     return new Blob([encrypted])
   }
 
-  async encryptFilePassword(
-    publicKey: RsaPublicKey,
-    creator: string | undefined
-  ): Promise<ArrayBuffer> {
+  async encryptFilePassword(publicKey: RsaPublicKey): Promise<ArrayBuffer> {
+    const creator = await this.blockchainDataProvider.getCollectionCreator(this.collectionAddress)
+
     let password: ArrayBuffer
     if (this.address === creator) {
       const {

@@ -19,13 +19,12 @@ export interface IHiddenFileOwner extends IHiddenFileBase {
    * Decrypts the file if AES key exists.
    * @param file
    */
-  decryptFile: (encryptedFileData: ArrayBuffer, meta: FileMeta | undefined, creator: string | undefined) => Promise<DecryptResult<File>>
+  decryptFile: (encryptedFile: ArrayBuffer, meta: FileMeta | undefined) => Promise<DecryptResult<File>>
 
   /**
    * Encrypts stored AES key (AES key used to encrypt file) with provided publicKey.
    * Public key is not saved, it is used immediately.
    * @param publicKey
    */
-  encryptFilePassword: (publicKey: RsaPublicKey, creator: string | undefined) => Promise<ArrayBuffer>
-
+  encryptFilePassword: (publicKey: RsaPublicKey) => Promise<ArrayBuffer>
 }

@@ -28,8 +28,7 @@ export function useApproveTransfer({ collectionAddress, tokenId }: Partial<Token
       publicKey = `0x${publicKey}`
     }
     const owner = await factory.getOwner(address, collectionAddress, +tokenId)
-    const creator = await contract.owner()
-    const encryptedFilePassword = await owner.encryptFilePassword(hexToBuffer(publicKey), creator)
+    const encryptedFilePassword = await owner.encryptFilePassword(hexToBuffer(publicKey))
     console.log('approve transfer', { tokenId, encryptedFilePassword })
 
     const tx = await contract.approveTransfer(
