@@ -51,6 +51,7 @@ CREATE TABLE public.token_metadata_properties (
     display_type  TEXT        NOT NULL,
     value         TEXT        NOT NULL,
     max_value     VARCHAR(20) NOT NULL,
+    min_value     VARCHAR(20) NOT NULL,
     property_type public.property_type_enum NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT token_metadata_properties_metadata_fkey

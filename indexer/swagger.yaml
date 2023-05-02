@@ -801,6 +801,10 @@ definitions:
       value:
         type: string
         description: Значение свойства
+      max_value:
+        type: string
+      min_value:
+        type: string
   HiddenFileMetaData:
     type: object
     description: Метаданные скрытого файла

@@ -34,6 +34,7 @@ type MetadataProperty struct {
 	DisplayType string
 	Value       string
 	MaxValue    string
+	MinValue    string
 }
 
 type HiddenFileMetadataIpfs struct {
@@ -47,6 +48,7 @@ type MetadataPropertyIpfs struct {
 	DisplayType string      `json:"displayType"`
 	Value       interface{} `json:"value"`
 	MaxValue    interface{} `json:"maxValue"`
+	MinValue    interface{} `json:"minValue"`
 }
 
 type TokenMetadataIpfs struct {
@@ -85,39 +87,44 @@ func IpfsMetadataToDomain(m TokenMetadataIpfs) TokenMetadata {
 			Size: m.HiddenFileMeta.Size,
 		}
 	}
+
 	for _, a := range m.Attributes {
-		if s, ok := a.Value.(string); ok {
-			res.Properties = append(res.Properties, &MetadataProperty{
-				TraitType:   a.TraitType,
-				DisplayType: a.DisplayType,
-				Value:       s,
-			})
-		} else if f, ok := a.Value.(float64); ok {
-			var maxValue string
-			if mf, ok := a.MaxValue.(float64); ok {
-				maxValue = fmt.Sprintf("%.0f", mf)
+		switch value := a.Value.(type) {
+		case string:
+			res.Properties = append(res.Properties, NewMetadataProperty(
+				a.TraitType,
+				a.DisplayType,
+				value,
+				"",
+				"",
+			))
+		case float64:
+			valueStr := fmt.Sprintf("%.6f", value)
+
+			maxValue := ""
+			if maxValueF, ok := a.MaxValue.(float64); ok {
+				maxValue = fmt.Sprintf("%.6f", maxValueF)
 			}
+
+			minValue := ""
+			if minValueF, ok := a.MinValue.(float64); ok {
+				minValue = fmt.Sprintf("%.6f", minValueF)
+			}
+
+			md := NewMetadataProperty(a.TraitType, a.DisplayType, valueStr, maxValue, minValue)
 			if a.DisplayType == "number" {
-				res.Stats = append(res.Stats, &MetadataProperty{
-					TraitType:   a.TraitType,
-					DisplayType: a.DisplayType,
-					Value:       fmt.Sprintf("%.0f", f),
-					MaxValue:    maxValue,
-				})
+				res.Stats = append(res.Stats, md)
 			} else {
-				res.Rankings = append(res.Rankings, &MetadataProperty{
-					TraitType:   a.TraitType,
-					DisplayType: a.DisplayType,
-					Value:       fmt.Sprintf("%.0f", f),
-					MaxValue:    maxValue,
-				})
+				res.Rankings = append(res.Rankings, md)
 			}
-		} else {
-			res.Properties = append(res.Properties, &MetadataProperty{
-				TraitType:   a.TraitType,
-				DisplayType: a.DisplayType,
-				Value:       fmt.Sprintf("%v", a.Value),
-			})
+		default:
+			res.Properties = append(res.Properties, NewMetadataProperty(
+				a.TraitType,
+				a.DisplayType,
+				fmt.Sprintf("%v", a.Value),
+				"",
+				"",
+			))
 		}
 	}
 	return res
@@ -128,5 +135,15 @@ func MetadataPropertyToModel(mp *MetadataProperty) *models.MetadataProperty {
 		DisplayType: mp.DisplayType,
 		TraitType:   mp.TraitType,
 		Value:       mp.Value,
+	}
+}
+
+func NewMetadataProperty(traitType, displayType, value, maxValue, minValue string) *MetadataProperty {
+	return &MetadataProperty{
+		TraitType:   traitType,
+		DisplayType: displayType,
+		Value:       value,
+		MaxValue:    maxValue,
+		MinValue:    minValue,
 	}
 }

@@ -251,7 +251,7 @@ func (p *postgres) GetMetadata(
 	}
 
 	propertiesQuery := `
-		SELECT trait_type, display_type, value, max_value, property_type
+		SELECT trait_type, display_type, value, max_value, min_value, property_type
 		FROM token_metadata_properties
 		WHERE metadata_id=$1
 	`
@@ -270,6 +270,7 @@ func (p *postgres) GetMetadata(
 			&prop.DisplayType,
 			&prop.Value,
 			&prop.MaxValue,
+			&prop.MinValue,
 			&propType,
 		); err != nil {
 			return nil, err
@@ -381,9 +382,9 @@ func (p *postgres) InsertMetadata(
 
 	propertiesQuery := `
 		INSERT INTO token_metadata_properties (
-		    id, metadata_id, trait_type, display_type, value, max_value, property_type
+		    id, metadata_id, trait_type, display_type, value, max_value, min_value, property_type
 		)
-		VALUES (DEFAULT,$1,$2,$3,$4,$5,$6)  
+		VALUES (DEFAULT,$1,$2,$3,$4,$5,$6,$7)  
 		ON CONFLICT ON CONSTRAINT token_metadata_properties_pkey DO NOTHING
 	`
 	for _, attr := range metadata.Properties {
@@ -392,6 +393,7 @@ func (p *postgres) InsertMetadata(
 			attr.TraitType,
 			attr.DisplayType,
 			attr.Value,
+			"",
 			"",
 			"property",
 		)
@@ -407,6 +409,7 @@ func (p *postgres) InsertMetadata(
 			stat.DisplayType,
 			stat.Value,
 			stat.MaxValue,
+			stat.MinValue,
 			"stat",
 		)
 		if err != nil {
@@ -421,6 +424,7 @@ func (p *postgres) InsertMetadata(
 			ranking.DisplayType,
 			ranking.Value,
 			ranking.MaxValue,
+			ranking.MinValue,
 			"ranking",
 		)
 		if err != nil {
