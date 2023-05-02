@@ -225,9 +225,9 @@ func (p *postgres) GetMetadata(
 		    tm.id, tm.name, tm.description, tm.image, tm.external_link, tm.hidden_file, tm.license, tm.license_url,
 			hfm.name, hfm.type, hfm.size
 		FROM token_metadata tm
-		LEFT JOIN hidden_file_metadata hfm on tm.id = hfm.metadata_id
-		WHERE collection_address=$1 
-		  AND token_id=$2
+		JOIN hidden_file_metadata hfm 
+		    ON tm.collection_address = hfm.collection_address AND tm.token_id = hfm.token_id
+		WHERE tm.collection_address=$1 AND tm.token_id=$2
 	`
 	var md domain.TokenMetadata
 	err := tx.QueryRow(ctx, metadataQuery,
@@ -382,10 +382,9 @@ func (p *postgres) InsertMetadata(
 
 	propertiesQuery := `
 		INSERT INTO token_metadata_properties (
-		    id, metadata_id, trait_type, display_type, value, max_value, min_value, property_type
+		    metadata_id, trait_type, display_type, value, max_value, min_value, property_type
 		)
-		VALUES (DEFAULT,$1,$2,$3,$4,$5,$6,$7)  
-		ON CONFLICT ON CONSTRAINT token_metadata_properties_pkey DO NOTHING
+		VALUES ($1,$2,$3,$4,$5,$6,$7)  
 	`
 	for _, attr := range metadata.Properties {
 		_, err := tx.Exec(ctx, propertiesQuery,
@@ -433,9 +432,8 @@ func (p *postgres) InsertMetadata(
 	}
 
 	tagsQuery := `
-		INSERT INTO token_metadata_tags (id, metadata_id, tag)
-		VALUES (DEFAULT, $1, $2)
-		ON CONFLICT ON CONSTRAINT token_metadata_tags_pkey DO NOTHING
+		INSERT INTO token_metadata_tags (metadata_id, tag)
+		VALUES ($1, $2)
 	`
 	for _, tag := range metadata.Tags {
 		_, err := tx.Exec(ctx, tagsQuery, metadataId, tag)
@@ -445,9 +443,8 @@ func (p *postgres) InsertMetadata(
 	}
 
 	categoriesQuery := `
-		INSERT INTO token_metadata_categories (id, metadata_id, category)
-		VALUES (DEFAULT, $1, $2)
-		ON CONFLICT ON CONSTRAINT token_metadata_categories_pkey DO NOTHING
+		INSERT INTO token_metadata_categories (metadata_id, category)
+		VALUES ($1, $2)
 	`
 	for _, category := range metadata.Categories {
 		_, err := tx.Exec(ctx, categoriesQuery, metadataId, category)
@@ -457,9 +454,8 @@ func (p *postgres) InsertMetadata(
 	}
 
 	subcategoriesQuery := `
-		INSERT INTO token_metadata_subcategories (id, metadata_id, subcategory)
-		VALUES (DEFAULT, $1, $2)
-		ON CONFLICT ON CONSTRAINT token_metadata_subcategories_pkey DO NOTHING
+		INSERT INTO token_metadata_subcategories (metadata_id, subcategory)
+		VALUES ($1, $2)
 	`
 	for _, subcategory := range metadata.Subcategories {
 		_, err := tx.Exec(ctx, subcategoriesQuery, metadataId, subcategory)
