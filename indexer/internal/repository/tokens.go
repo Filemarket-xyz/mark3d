@@ -278,6 +278,13 @@ func (p *postgres) GetMetadata(
 
 		switch propType {
 		case "property":
+			traitCountByValue, traitTotal, err := p.GetTraitCount(ctx, tx, prop.TraitType, prop.Value)
+			if err != nil {
+				return nil, err
+			}
+			prop.TraitTotal = traitTotal
+			prop.TraitValueCount = traitCountByValue
+
 			md.Properties = append(md.Properties, &prop)
 		case "ranking":
 			md.Rankings = append(md.Rankings, &prop)
@@ -465,4 +472,36 @@ func (p *postgres) InsertMetadata(
 	}
 
 	return nil
+}
+
+// GetTraitCount works on trigger `trigger_update_metadata_trait_count`.
+// See migration `20230502210950_metadata_trait_count.sql`.
+func (p *postgres) GetTraitCount(
+	ctx context.Context,
+	tx pgx.Tx,
+	traitType string,
+	value string,
+) (int64, int64, error) {
+	query := `
+		SELECT
+			t1.count,
+			t2.total_count
+		FROM public.metadata_trait_count t1
+		JOIN (SELECT
+				 trait_type,
+				 SUM(count) AS total_count
+			 FROM public.metadata_trait_count
+			 WHERE trait_type = $1
+			 GROUP BY trait_type
+			 ) t2 ON t1.trait_type = t2.trait_type
+		WHERE t1.trait_type=$1 AND t1.value=$2
+	`
+	row := tx.QueryRow(ctx, query, traitType, value)
+
+	var countByValue, total int64
+	if err := row.Scan(&countByValue, &total); err != nil {
+		return 0, 0, err
+	}
+
+	return countByValue, total, nil
 }

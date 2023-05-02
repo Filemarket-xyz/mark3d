@@ -805,6 +805,12 @@ definitions:
         type: string
       min_value:
         type: string
+      traitValueCount:
+        type: integer
+        description: Количество таких же value в заданном trait_type
+      traitTotal:
+        type: integer
+        description: Общее количество записей с таким trait_type
   HiddenFileMetaData:
     type: object
     description: Метаданные скрытого файла

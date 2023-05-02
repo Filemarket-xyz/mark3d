@@ -30,11 +30,13 @@ type TokenMetadata struct {
 }
 
 type MetadataProperty struct {
-	TraitType   string
-	DisplayType string
-	Value       string
-	MaxValue    string
-	MinValue    string
+	TraitType       string
+	DisplayType     string
+	Value           string
+	MaxValue        string
+	MinValue        string
+	TraitValueCount int64
+	TraitTotal      int64
 }
 
 type HiddenFileMetadataIpfs struct {
@@ -132,9 +134,13 @@ func IpfsMetadataToDomain(m TokenMetadataIpfs) TokenMetadata {
 
 func MetadataPropertyToModel(mp *MetadataProperty) *models.MetadataProperty {
 	return &models.MetadataProperty{
-		DisplayType: mp.DisplayType,
-		TraitType:   mp.TraitType,
-		Value:       mp.Value,
+		DisplayType:     mp.DisplayType,
+		TraitType:       mp.TraitType,
+		Value:           mp.Value,
+		MaxValue:        mp.MaxValue,
+		MinValue:        mp.MinValue,
+		TraitValueCount: mp.TraitValueCount,
+		TraitTotal:      mp.TraitTotal,
 	}
 }
 
