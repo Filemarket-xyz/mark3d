@@ -1,10 +1,9 @@
 import { ContractProvider, contractProvider } from '../ContractProvider'
-import { bufferToEtherHex, globalSaltMock } from '../utils'
+import { bufferToEtherHex, hexToBuffer } from '../utils'
 import { IBlockchainDataProvider } from './IBlockchainDataProvider'
 
 export class BlockchainDataProvider implements IBlockchainDataProvider {
   readonly #url: string
-  globalSalt = globalSaltMock
 
   constructor(
     private readonly contractProvider: ContractProvider,
@@ -32,12 +31,11 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
     return this.#stringifyResponse(response)
   }
 
-  async setGlobalSalt() {
-    if (this.globalSalt) return
+  async getGlobalSalt() {
+    const contract = this.contractProvider.getAccessTokenContract()
+    const globalSaltBN = await contract.globalSalt()
 
-    const response = await fetch(`${this.#url}/global_salt`, { method: 'GET' })
-
-    this.globalSalt = await this.#stringifyResponse(response)
+    return hexToBuffer(globalSaltBN.toString())
   }
 
   async getCollectionCreator(address: ArrayBuffer) {

@@ -1,5 +1,4 @@
 export interface IBlockchainDataProvider {
-  globalSalt: ArrayBuffer
 
   /**
    * @param collectionAddress
@@ -12,9 +11,9 @@ export interface IBlockchainDataProvider {
   }>
 
   /**
-   * Requests the globalSalt once and sets it.
+   * @returns The globalSalt.
    */
-  setGlobalSalt: () => Promise<void>
+  getGlobalSalt: () => Promise<ArrayBuffer>
 
   /**
    * @param address
