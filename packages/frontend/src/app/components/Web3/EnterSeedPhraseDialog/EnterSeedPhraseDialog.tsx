@@ -68,7 +68,6 @@ export function EnterSeedPhraseDialog({ open, onClose }: AppDialogProps<{}>): JS
                 const seed = mnemonicToEntropy(value.seedPhrase)
                 await seedProvider?.set(Buffer.from(seed, 'hex'), value.password)
                 setIsSuccess(true)
-                onClose()
                 dialogStore.closeDialogByName('ConnectMain')
               }
               } />
