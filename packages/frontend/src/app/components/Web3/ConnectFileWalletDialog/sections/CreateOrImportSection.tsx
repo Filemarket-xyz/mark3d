@@ -56,7 +56,7 @@ const ToolCardContentWallet = styled(ToolCardContent, {
   }
 })
 
-export const CreateOrImportSection: FC = observer(() => {
+export const CreateOrImportSection: FC<{ onSuccess?: () => void }> = observer(({ onSuccess }) => {
   const { dialogStore } = useStores()
   const openImportAccountDialog = () => {
     dialogStore.openDialog({
@@ -68,7 +68,9 @@ export const CreateOrImportSection: FC = observer(() => {
   const openCreatedMnemonicDialog = () => {
     dialogStore.openDialog({
       component: CreateMnemonicDialog,
-      props: {}
+      props: {
+        onSuccess
+      }
     })
   }
   return (

@@ -40,9 +40,9 @@ export const ConnectFileWalletDialog = observer(({ open, onClose }: AppDialogPro
       >
         <ModalTitle>Connect Files Wallet</ModalTitle>
         <Modal.Body>
-          {canUnlock ? (<UnlockSection onSuccess={() => {
+          {canUnlock ? (<UnlockSection />) : (<CreateOrImportSection onSuccess={() => {
             onClose()
-          }} />) : (<CreateOrImportSection />)}
+          }} />)}
         </Modal.Body>
       </Modal>
     </ConnectWalletWindowStyle>

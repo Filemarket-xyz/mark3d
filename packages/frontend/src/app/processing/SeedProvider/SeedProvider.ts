@@ -7,7 +7,7 @@ import { ISeedProvider } from './ISeedProvider'
 
 const seedStorageKey = 'seed'
 
-const seedByteLength = 32
+const seedByteLength = 64
 
 export class SeedProvider implements ISeedProvider {
   seed: ArrayBuffer | undefined
@@ -46,11 +46,11 @@ export class SeedProvider implements ISeedProvider {
       throw new Error('Unable to unlock seed: cannot decrypt seed')
     }
     const seedBuf = Buffer.from(seed, 'hex')
-    if (seedBuf.byteLength !== seedByteLength) {
-      throw new Error(
-        `Unable to unlock seed: expected seed to be ${seedByteLength} bytes, but got ${seedBuf.byteLength}`
-      )
-    }
+    // if (seedBuf.byteLength !== seedByteLength) {
+    //   throw new Error(
+    //     `Unable to unlock seed: expected seed to be ${seedByteLength} bytes, but got ${seedBuf.byteLength}`
+    //   )
+    // }
     this.setSeed(seedBuf)
   }
 
@@ -91,7 +91,7 @@ export class SeedProvider implements ISeedProvider {
 
   get mnemonic(): string | undefined {
     if (this.seed) {
-      return entropyToMnemonic(Buffer.from(this.seed).toString())
+      return entropyToMnemonic(Buffer.from(this.seed).toString('hex'))
     }
   }
 }

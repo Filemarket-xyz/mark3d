@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../styles'
-import { useStores } from '../../../hooks'
 import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeedProviderFactory } from '../../../processing'
@@ -55,11 +54,10 @@ const CreatedMnemonicStyle = styled('div', {
 
 })
 
-export function CreateMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX.Element {
+export function CreateMnemonicDialog({ open, onClose, onSuccess }: AppDialogProps<{ onSuccess?: () => void }>): JSX.Element {
   useCloseIfNotConnected(onClose)
   const { adaptive } = useMediaMui()
   const [mnemonic, setMnemonic] = useState<string>()
-  const { dialogStore } = useStores()
   const { address } = useAccount()
   const seedProviderFactory = useSeedProviderFactory()
   return (
@@ -91,11 +89,12 @@ export function CreateMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX
             if (address) {
               const seedProvider = await seedProviderFactory.getSeedProvider(address)
               const newMnemonic = createMnemonic()
-              const seed = Buffer.from(mnemonicToEntropy(newMnemonic))
+              const seed = Buffer.from(mnemonicToEntropy(newMnemonic), 'hex')
+              console.log(mnemonicToEntropy(newMnemonic))
               // console.log(entropyToMnemonic(seed.toString()))
               await seedProvider.set(seed, password)
               setMnemonic(newMnemonic)
-              dialogStore.closeDialogByName('ConnectMain')
+              onSuccess?.()
             }
           }} />}
         </div>
