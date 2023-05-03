@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers'
+
 import { ContractProvider, contractProvider } from '../ContractProvider'
 import { bufferToEtherHex, hexToBuffer } from '../utils'
 import { IBlockchainDataProvider } from './IBlockchainDataProvider'
@@ -33,6 +35,7 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
 
   async getGlobalSalt() {
     const contract = this.contractProvider.getAccessTokenContract()
+
     const globalSalt = await contract.globalSalt()
 
     return hexToBuffer(globalSalt)
@@ -42,6 +45,14 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(address))
 
     return contract.owner()
+  }
+
+  async getTransferCount(collectionAddress: ArrayBuffer, tokenId: number) {
+    const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(collectionAddress))
+
+    const transferCountBN = await contract.transferCounts(BigNumber.from(tokenId))
+
+    return transferCountBN.toNumber()
   }
 }
 

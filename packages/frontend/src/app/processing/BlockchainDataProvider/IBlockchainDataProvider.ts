@@ -20,4 +20,11 @@ export interface IBlockchainDataProvider {
    * @returns The addres of the owner, and therefore the creator of the collection
    */
   getCollectionCreator: (address: ArrayBuffer) => Promise<`0x${string}`>
+
+  /**
+   * @param collectionAddress
+   * @param tokenId
+   * @returns Transfer count of token with provided tokenId
+   */
+  getTransferCount: (collectionAddress: ArrayBuffer, tokenId: number) => Promise<number>
 }
