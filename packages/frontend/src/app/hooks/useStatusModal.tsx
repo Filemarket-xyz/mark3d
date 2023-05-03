@@ -1,7 +1,8 @@
+import { ReactNode, useCallback, useEffect } from 'react'
+
+import { ErrorBody, extractMessageFromError, InProgressBody, SuccessOkBody } from '../components/Modal/Modal'
 import { useModalProperties } from '../pages/CreatePage/hooks/useModalProperties'
 import { useStatusState } from './useStatusState'
-import { ReactNode, useCallback, useEffect } from 'react'
-import { ErrorBody, extractMessageFromError, InProgressBody, SuccessOkBody } from '../components/Modal/Modal'
 
 type StatusStateType = ReturnType<typeof useStatusState>
 

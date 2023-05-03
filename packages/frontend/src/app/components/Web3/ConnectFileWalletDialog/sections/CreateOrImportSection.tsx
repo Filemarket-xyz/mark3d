@@ -1,16 +1,17 @@
+import { observer } from 'mobx-react-lite'
 import React, { FC } from 'react'
-import { Button, ToolCard, Txt } from '../../../../UIkit'
+
+import { styled } from '../../../../../styles'
+import { useStores } from '../../../../hooks'
 import {
   ToolCardContent,
   ToolCardInfo,
   ToolDescription,
   ToolTitle
 } from '../../../../pages/MainPage/Blocks/WelcomeBlock'
-import { styled } from '../../../../../styles'
-import { EnterSeedPhraseDialog } from '../../EnterSeedPhraseDialog'
+import { Button, ToolCard, Txt } from '../../../../UIkit'
 import { CreateMnemonicDialog } from '../../CreateMnemonicDialog'
-import { useStores } from '../../../../hooks'
-import { observer } from 'mobx-react-lite'
+import { EnterSeedPhraseDialog } from '../../EnterSeedPhraseDialog'
 
 const ConnectWalletWindowContentStyle = styled('div', {
   fontSize: '12px',
@@ -55,7 +56,7 @@ const ToolCardContentWallet = styled(ToolCardContent, {
   }
 })
 
-export const CreateOrImportSection: FC = observer(() => {
+export const CreateOrImportSection: FC<{ onSuccess?: () => void }> = observer(({ onSuccess }) => {
   const { dialogStore } = useStores()
   const openImportAccountDialog = () => {
     dialogStore.openDialog({
@@ -67,7 +68,9 @@ export const CreateOrImportSection: FC = observer(() => {
   const openCreatedMnemonicDialog = () => {
     dialogStore.openDialog({
       component: CreateMnemonicDialog,
-      props: {}
+      props: {
+        onSuccess
+      }
     })
   }
   return (

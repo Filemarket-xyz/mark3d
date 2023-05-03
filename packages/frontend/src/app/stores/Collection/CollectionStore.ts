@@ -1,14 +1,15 @@
-import {
-  IActivateDeactivate,
-  storeRequest,
-  IStoreRequester,
-  storeReset,
-  RequestContext
-} from '../../utils/store'
-import { ErrorStore } from '../Error/ErrorStore'
 import { makeAutoObservable } from 'mobx'
+
 import { Collection } from '../../../swagger/Api'
 import { api } from '../../config/api'
+import {
+  IActivateDeactivate,
+  IStoreRequester,
+  RequestContext,
+  storeRequest,
+  storeReset
+} from '../../utils/store'
+import { ErrorStore } from '../Error/ErrorStore'
 
 export class CollectionStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore

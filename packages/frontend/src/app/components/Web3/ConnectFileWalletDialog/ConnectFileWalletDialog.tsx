@@ -1,15 +1,16 @@
 import { Modal } from '@nextui-org/react'
-import { ModalTitle } from '../../Modal/Modal'
-import { AppDialogProps } from '../../../utils/dialog'
-import { styled } from '../../../../styles'
-import React from 'react'
 import { observer } from 'mobx-react-lite'
-import { useMediaMui } from '../../../hooks/useMediaMui'
-import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
-import { CreateOrImportSection } from './sections/CreateOrImportSection'
+import React from 'react'
 import { useAccount } from 'wagmi'
-import { UnlockSection } from './sections/UnlockSection'
+
+import { styled } from '../../../../styles'
+import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
+import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useCanUnlock } from '../../../processing/SeedProvider/useCanUnlock'
+import { AppDialogProps } from '../../../utils/dialog'
+import { ModalTitle } from '../../Modal/Modal'
+import { CreateOrImportSection } from './sections/CreateOrImportSection'
+import { UnlockSection } from './sections/UnlockSection'
 
 const ConnectWalletWindowStyle = styled('div', {
   background: 'red',
@@ -23,23 +24,25 @@ export const ConnectFileWalletDialog = observer(({ open, onClose }: AppDialogPro
   const { adaptive } = useMediaMui()
   const { address } = useAccount()
   const canUnlock = useCanUnlock(address)
-
   return (
     <ConnectWalletWindowStyle>
       <Modal
         closeButton
         open={open}
         onClose={onClose}
+        preventClose={true}
         width={adaptive({
-          sm: '400px',
-          md: '650px',
-          lg: '950px',
-          defaultValue: 'inherit'
+          sm: canUnlock ? '300px' : '400px',
+          md: canUnlock ? '300px' : '650px',
+          lg: canUnlock ? '400px' : '950px',
+          defaultValue: canUnlock ? '500px' : '950px'
         })}
       >
         <ModalTitle>Connect Files Wallet</ModalTitle>
         <Modal.Body>
-          {canUnlock ? (<UnlockSection onSuccess={onClose}></UnlockSection>) : (<CreateOrImportSection/>)}
+          {canUnlock ? (<UnlockSection />) : (<CreateOrImportSection onSuccess={() => {
+            onClose()
+          }} />)}
         </Modal.Body>
       </Modal>
     </ConnectWalletWindowStyle>

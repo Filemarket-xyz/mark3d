@@ -1,8 +1,8 @@
+import { PressEvent } from '@react-types/shared/src/events'
 import React, { ComponentProps, forwardRef } from 'react'
+
 import { linkStyled } from '../Link.styles'
 import { useLink } from '../useLink'
-import { PressEvent } from '@react-types/shared/src/events'
-
 
 const LinkStyled = linkStyled('a')
 

@@ -1,11 +1,12 @@
 import React, { FC, ReactNode, useState } from 'react'
+
 import { styled } from '../../../../../styles'
-import cross from './img/cross.svg'
-import check from './img/check.svg'
-import arrow from './img/arrow.svg'
-import RowContent from './RowContent'
-import { textVariant } from '../../../../UIkit'
 import { RowBody, RowWrapper } from '../../../../components/Table'
+import { textVariant } from '../../../../UIkit'
+import arrow from './img/arrow.svg'
+import check from './img/check.svg'
+import cross from './img/cross.svg'
+import RowContent from './RowContent'
 
 /** Defines content when row is expanded */
 export interface IRowContent {

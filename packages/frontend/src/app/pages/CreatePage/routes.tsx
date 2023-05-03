@@ -1,4 +1,5 @@
 import { Navigate, RouteObject } from 'react-router-dom'
+
 import CreateCollectionPage from './CreateCollectionPage'
 import CreateNFTPage from './CreateNFTPage'
 

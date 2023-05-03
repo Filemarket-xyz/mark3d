@@ -1,8 +1,9 @@
-import { ErrorStore } from '../../stores/Error/ErrorStore'
-import { tap } from '../structs'
 import { action } from 'mobx'
-import { errorResponseToMessage, stringifyError } from '../error'
+
 import { ErrorResponse, HttpResponse } from '../../../swagger/Api'
+import { ErrorStore } from '../../stores/Error/ErrorStore'
+import { errorResponseToMessage, stringifyError } from '../error'
+import { tap } from '../structs'
 
 /**
  * Maintains request statuses. Prohibits concurrent requests.

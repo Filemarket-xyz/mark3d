@@ -1,7 +1,8 @@
-import { useOwnerOfNFT } from './useOwnerOfNFT'
-import { useAccount } from 'wagmi'
 import { utils } from 'ethers'
+import { useAccount } from 'wagmi'
+
 import { TokenFullId } from '../types'
+import { useOwnerOfNFT } from './useOwnerOfNFT'
 
 export function useIsOwner(tokenFullId: Partial<TokenFullId> = {}) {
   const { data: ownerAddress, ...statuses } = useOwnerOfNFT(tokenFullId)

@@ -1,7 +1,8 @@
 import { FC, forwardRef } from 'react'
-import { Card, Drip, Txt, useButton } from '../../../UIkit'
-import { styled } from '../../../../styles'
 import { AriaButtonProps } from 'react-aria'
+
+import { styled } from '../../../../styles'
+import { Card, Drip, Txt, useButton } from '../../../UIkit'
 import downloadIcon from './img/Download.svg'
 import downloadDisabled from './img/DownloadDisabled.svg'
 
@@ -27,7 +28,7 @@ const CardStyled = styled(Card, {
   },
   '&[data-disabled=true]': {
     cursor: 'not-allowed'
-  },
+  }
 })
 
 const ContentStyled = styled('div', {
@@ -127,7 +128,7 @@ export const FileButton: FC<FileButtonProps> = forwardRef<HTMLDivElement, FileBu
           </DownloadTextStyled>
         </DownloadInfoStyled>
       </ContentStyled>
-      <Drip {...dripProps} color='white'/>
+      <Drip {...dripProps} color='white' />
     </CardStyled>
   )
 })

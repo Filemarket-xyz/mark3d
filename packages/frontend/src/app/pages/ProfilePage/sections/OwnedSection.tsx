@@ -1,10 +1,11 @@
 import { observer } from 'mobx-react-lite'
 import { useParams } from 'react-router-dom'
 import { useAccount } from 'wagmi'
+
 import { styled } from '../../../../styles'
-import { CardsPlaceholder, NavButton, textVariant } from '../../../UIkit'
 import NFTCard from '../../../components/MarketCard/NFTCard'
 import { useCollectionAndTokenListStore } from '../../../hooks'
+import { CardsPlaceholder, NavButton, textVariant } from '../../../UIkit'
 import { Params } from '../../../utils/router/Params'
 import { CardsContainer } from '../../MarketPage/NftSection'
 

@@ -1,5 +1,5 @@
-import { IStorageSecurityProvider } from '../StorageSecurityProvider'
 import { IStorageProvider } from '../StorageProvider'
+import { IStorageSecurityProvider } from '../StorageSecurityProvider'
 
 export interface ISecureStorage<Value = string> {
 

@@ -1,7 +1,8 @@
-import { useDOMRef } from '../../hooks'
-import { mergeProps, useFocusRing, useHover, usePress } from 'react-aria'
-import { ForwardedRef } from 'react'
 import { PressEvent } from '@react-types/shared/src/events'
+import { ForwardedRef } from 'react'
+import { mergeProps, useFocusRing, useHover, usePress } from 'react-aria'
+
+import { useDOMRef } from '../../hooks'
 
 export const useLink = <T extends { isDisabled?: boolean, onPress?: (e: PressEvent) => void }, >(
   { isDisabled, onPress, ...other }: T,

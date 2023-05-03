@@ -1,6 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { Txt } from './Txt'
+
 import { StitchesProvider } from '../../../styles'
+import { Txt } from './Txt'
 
 const story: ComponentMeta<typeof Txt> = {
   component: Txt,

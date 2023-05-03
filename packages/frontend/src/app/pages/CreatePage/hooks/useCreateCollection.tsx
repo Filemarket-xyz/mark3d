@@ -1,8 +1,9 @@
 import { useState } from 'react'
+
 import { useAfterDidMountEffect } from '../../../hooks/useDidMountEffect'
 import {
-  useMintCollection,
-  CreateCollectionForm as FormDataToTransfer
+  CreateCollectionForm as FormDataToTransfer,
+  useMintCollection
 } from '../../../processing/nft-interaction'
 import { CreateCollectionForm } from '../CreateCollectionPage'
 

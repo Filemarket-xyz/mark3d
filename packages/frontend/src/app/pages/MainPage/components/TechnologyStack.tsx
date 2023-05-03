@@ -1,7 +1,7 @@
 import React from 'react'
+
 import { styled } from '../../../../styles'
 import { textVariant } from '../../../UIkit'
-
 // technology icons
 import item1 from '../img/TechnologyStack/1.svg'
 import item2 from '../img/TechnologyStack/2.svg'
@@ -111,7 +111,7 @@ export const TechnologyStack = () => {
         <ItemsContainer>
           {items.map(({ src, href }) => (
             <Item key={src} href={href} target='_blank'>
-              <ItemImg src={src}/>
+              <ItemImg src={src} />
             </Item>
           ))}
         </ItemsContainer>

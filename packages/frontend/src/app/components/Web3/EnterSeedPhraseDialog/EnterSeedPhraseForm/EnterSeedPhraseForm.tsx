@@ -1,15 +1,18 @@
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
+import { useAccount } from 'wagmi'
+
 import { styled } from '../../../../../styles'
+import { useSeedProvider } from '../../../../processing'
+import { Button, Txt } from '../../../../UIkit'
+import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
 import { FormControl } from '../../../../UIkit/Form/FormControl'
 import { Input } from '../../../../UIkit/Form/Input'
-import { Button, Txt } from '../../../../UIkit'
 import { validateImportMnemonic, validatePassword } from '../../ConnectFileWalletDialog/utils/validate'
-import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
 
 const FormEnterSeedPhraseStyle = styled('form', {
   paddingTop: '2rem',
-  width: '80%',
+  width: '90%',
   margin: '0 auto'
 })
 
@@ -29,13 +32,14 @@ const ButtonContainer = styled('div', {
 
 export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit }) => {
   const { register, handleSubmit, formState: { errors } } = useForm<EnterSeedPhraseValue>()
-
+  const { address } = useAccount()
+  const { seedProvider } = useSeedProvider(address)
   return (
         <FormEnterSeedPhraseStyle onSubmit={handleSubmit(onSubmit)}>
             <FormControl>
                 <Input
                     type="string"
-                    placeholder='Enter seed phrase'
+                    placeholder={seedProvider?.mnemonic ? 'Enter a new seed-phrase' : 'Enter a seed-phrase'}
                     {...register('seedPhrase', { validate: validateImportMnemonic })}
                     isError={!!errors?.seedPhrase}
                 />

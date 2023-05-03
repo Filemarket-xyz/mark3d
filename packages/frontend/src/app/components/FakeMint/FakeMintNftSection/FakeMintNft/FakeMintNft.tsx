@@ -1,13 +1,14 @@
+import { ComponentProps } from '@stitches/react'
+import { BigNumber, utils } from 'ethers'
 import React, { FC } from 'react'
-import { BasicCardSquareImg } from '../../../MarketCard/BasicCard'
+
+import { styled } from '../../../../../styles'
+import { mark3dConfig } from '../../../../config/mark3d'
 import { Button, gradientPlaceholderImg, Txt } from '../../../../UIkit'
+import { BasicCardSquareImg } from '../../../MarketCard/BasicCard'
 import {
   Price
 } from '../../../MarketCard/NFTCard'
-import { styled } from '../../../../../styles'
-import { ComponentProps } from '@stitches/react'
-import { BigNumber, utils } from 'ethers'
-import { mark3dConfig } from '../../../../config/mark3d'
 
 const HeightContainer = styled('div', {
   height: '566px',
@@ -236,7 +237,7 @@ const FakeMintNft: FC<FakeMintNftProps> = (props) => {
                                 {props.rarity?.toString().toUpperCase()}
                             </Txt>
                         </CardRarity>
-                        <Line rarity={props.rarity}/>
+                        <Line rarity={props.rarity} />
                         <CardFakeNftText>Jammy Chance: <Txt h5>{props.chance}%</Txt></CardFakeNftText>
                         <CardFakeNftText>Encrypted file inside: <Txt h5>Gifts Bundle</Txt></CardFakeNftText>
                         <PriceFakeNft>{`${utils.formatUnits(BigNumber.from(props.price ?? '0'), mark3dConfig.chain.nativeCurrency.decimals).split('.')[0]} ${mark3dConfig.chain.nativeCurrency.symbol}`}</PriceFakeNft>

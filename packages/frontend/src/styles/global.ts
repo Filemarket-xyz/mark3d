@@ -1,9 +1,9 @@
-import { globalCss } from './stitches.config'
+import interRegular from '../assets/fonts/Inter-Regular.ttf'
+import montserratBold from '../assets/fonts/Montserrat-Bold.ttf'
 import montserratRegular from '../assets/fonts/Montserrat-Regular.ttf'
 import montserratSemiBold from '../assets/fonts/Montserrat-SemiBold.ttf'
-import montserratBold from '../assets/fonts/Montserrat-Bold.ttf'
 import soraBold from '../assets/fonts/Sora-Bold.ttf'
-import interRegular from '../assets/fonts/Inter-Regular.ttf'
+import { globalCss } from './stitches.config'
 
 export const globalStyles = globalCss({
   '@font-face': [

@@ -1,14 +1,15 @@
-import { useAccessTokenContract } from '../contracts'
-import { useCallback } from 'react'
-import { randomBytes } from 'ethers/lib/utils'
-import { useStatusState } from '../../hooks'
+import assert from 'assert'
 import { ContractReceipt } from 'ethers'
+import { randomBytes } from 'ethers/lib/utils'
+import { useCallback } from 'react'
+
 import { mark3dConfig } from '../../config/mark3d'
+import { useStatusState } from '../../hooks'
+import { useAccessTokenContract } from '../contracts'
 import { Mark3dAccessTokenEventNames } from '../types'
 import { assertContract, assertSigner } from '../utils/assert'
-import assert from 'assert'
-import { useUploadLighthouse } from './useUploadLighthouse'
 import { normalizeCounterId } from '../utils/id'
+import { useUploadLighthouse } from './useUploadLighthouse'
 
 export interface CreateCollectionForm {
   name?: string // required, hook will return error if omitted

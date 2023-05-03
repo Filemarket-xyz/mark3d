@@ -1,7 +1,8 @@
-import { ISeedProviderFactory } from './ISeedProviderFactory'
-import { SeedProvider } from '../SeedProvider'
 import { utils } from 'ethers/lib.esm'
+
+import { SeedProvider } from '../SeedProvider'
 import { IStorageFactory, storageFactory } from '../StorageFactory'
+import { ISeedProviderFactory } from './ISeedProviderFactory'
 
 export class SeedProviderFactory implements ISeedProviderFactory {
   private readonly seedProviders: Record<string, SeedProvider> = Object.create(null)
@@ -29,7 +30,7 @@ export class SeedProviderFactory implements ISeedProviderFactory {
       job = this.createSeedProvider(account)
       this.jobs[account] = job
     }
-    return await job
+    return job
   }
 }
 

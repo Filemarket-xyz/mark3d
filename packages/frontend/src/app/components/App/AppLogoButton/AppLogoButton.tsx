@@ -1,9 +1,10 @@
 import { ComponentProps, forwardRef } from 'react'
-import { Link } from 'react-router-dom'
 import { AriaButtonProps } from 'react-aria'
+import { Link } from 'react-router-dom'
+
+import LogoIcon from '../../../../assets/FileMarket.svg'
 import { BreakpointsOptions, styled } from '../../../../styles'
 import { Drip, useButton } from '../../../UIkit'
-import LogoIcon from '../../../../assets/FileMarket.svg'
 
 const height = 30
 
@@ -82,7 +83,7 @@ export const AppLogoButton = forwardRef<HTMLAnchorElement, AppLogoButtonProps>((
         src={LogoIcon}
         alt="FileMarket logo"
       />
-      <Drip {...dripProps}/>
+      <Drip {...dripProps} />
     </LinkStyled>
   )
 })
