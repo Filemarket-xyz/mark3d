@@ -55,7 +55,9 @@ export class DialogStore {
       const instance = this.instances[index]
       instance.open = false
       instance.onClosed?.()
-      setTimeout(action(() => this.instances.splice(index, 1)), 1000)
+      setTimeout(action(() => {
+        this.instances = this.instances.filter(({ id }) => id !== instance.id)
+      }), 1000)
     }
   }
 
