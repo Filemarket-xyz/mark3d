@@ -1,10 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import { useParams } from 'react-router-dom'
 import { useAccount } from 'wagmi'
+
 import { styled } from '../../../../styles'
-import { CardsPlaceholder, NavButton, textVariant } from '../../../UIkit'
 import NFTCard from '../../../components/MarketCard/NFTCard'
+import Plug from '../../../components/Plug/Plug'
 import { useCollectionAndTokenListStore } from '../../../hooks'
+import { CardsPlaceholder, NavButton, textVariant } from '../../../UIkit'
 import { Params } from '../../../utils/router/Params'
 import { CardsContainer } from '../../MarketPage/NftSection'
 
@@ -33,7 +35,7 @@ export const OwnedSection = observer(() => {
     if (profileAddress === currentAddress) {
       return (
         <>
-          <P>There is no NFT yet, wish to add one?</P>
+          <Plug type={'NFT'} />
           <NavButton
             primary
             to={'/create/nft'}
@@ -45,7 +47,7 @@ export const OwnedSection = observer(() => {
       )
     }
 
-    return <P>The NFT list is empty</P>
+    return <Plug type={'NFT'} />
   }
 
   return (

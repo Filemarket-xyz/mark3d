@@ -1,14 +1,16 @@
+import { observer } from 'mobx-react-lite'
+import { useParams } from 'react-router-dom'
+
 import { styled } from '../../../../styles'
+import Plug from '../../../components/Plug/Plug'
+import { ITableColumn } from '../../../components/Table/TableBuilder'
+import { useTransfersHistory } from '../../../hooks/useTransfersHistory'
+import { NavButton } from '../../../UIkit'
+import { Params } from '../../../utils/router/Params'
 import { TableBody } from '../../ExplorerPage/components/Table/Table'
 import { RowCell } from '../../ExplorerPage/components/TableRow/TableRow'
-import { ITableColumn } from '../../../components/Table/TableBuilder'
-import { NavButton } from '../../../UIkit'
 import openLinkIcon from '../img/open-link-icon.svg'
 import { HistoryTableBuilder } from './HistoryTableBuilder'
-import { observer } from 'mobx-react-lite'
-import { useTransfersHistory } from '../../../hooks/useTransfersHistory'
-import { useParams } from 'react-router-dom'
-import { Params } from '../../../utils/router/Params'
 
 export const Wrapper = styled(TableBody, {
   gap: '$2',
@@ -72,7 +74,7 @@ export const HistorySection = observer(() => {
       ) : tableRows.length ? (
         <Wrapper>{historyTableBuilder.renderRows()}</Wrapper>
       ) : (
-        <EmptyTablePlaceholder>History is empty</EmptyTablePlaceholder>
+        <Plug type={'NFT'} />
       )}
     </>
   )
