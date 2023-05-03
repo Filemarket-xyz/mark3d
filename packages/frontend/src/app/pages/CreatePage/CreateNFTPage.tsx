@@ -1,8 +1,8 @@
-import React, {useEffect, useMemo, useState} from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { styled } from '../../../styles'
 import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
-import {Button, Link, PageLayout, Txt} from '../../UIkit'
+import { Button, Link, PageLayout, Txt } from '../../UIkit'
 import { ComboBoxOption, ControlledComboBox } from '../../UIkit/Form/Combobox'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
@@ -24,8 +24,8 @@ import MintModal, {
 import { FormControl } from '../../UIkit/Form/FormControl'
 import { useModalProperties } from './hooks/useModalProperties'
 import { Tooltip } from '@nextui-org/react'
-import TagsSection from "../NFTPage/section/Tags/TagsSection";
-import {category, categoryOptions, license, licenseInfo, licenseOptions, subcategory} from "./helper/data/data";
+import TagsSection from '../NFTPage/section/Tags/TagsSection'
+import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory } from './helper/data/data'
 
 const Description = styled('p', {
   fontSize: '12px',
@@ -147,7 +147,6 @@ export interface CreateNFTForm {
   tagsValue: string[]
 }
 
-
 const CreateNftPage = observer(() => {
   const { address } = useAccount()
   const location = useLocation()
@@ -158,10 +157,10 @@ const CreateNftPage = observer(() => {
 
   const [chosenTags, setChosenTags] = useState<string[]>([])
   const tags: ComboBoxOption[] = [
-      {
-    title: 'VR',
-    id: '0'
-      },
+    {
+      title: 'VR',
+      id: '0'
+    },
     {
       title: 'AR',
       id: '1'
@@ -181,8 +180,7 @@ const CreateNftPage = observer(() => {
     {
       title: 'RockPaper',
       id: '5'
-    },
-
+    }
   ]
 
   const {
@@ -208,13 +206,13 @@ const CreateNftPage = observer(() => {
     control,
     formState: { isValid },
     resetField,
-      watch
+    watch
   } = useForm<CreateNFTForm>({
     defaultValues: {
       collection: predefinedCollection
         ? { id: predefinedCollection.address, title: predefinedCollection.name }
         : undefined,
-      license: {id: licenseOptions[0].id, title: licenseOptions[0].title}
+      license: { id: licenseOptions[0].id, title: licenseOptions[0].title }
     }
   })
 
@@ -224,7 +222,7 @@ const CreateNftPage = observer(() => {
   const category = watch('category')
 
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
-    createNft({...data, tagsValue: chosenTags, licenseUrl})
+    createNft({ ...data, tagsValue: chosenTags, licenseUrl })
   }
 
   useEffect(() => {
@@ -397,14 +395,17 @@ const CreateNftPage = observer(() => {
                     console.log(value)
                   }}
               />
-              {chosenTags.length > 0 && <TagsSection tags={chosenTags} tagOptions={{isCanDelete: true, onDelete: (value?: string) => {
+              {chosenTags.length > 0 && <TagsSection tags={chosenTags} tagOptions={{
+                isCanDelete: true,
+                onDelete: (value?: string) => {
                   if (value === chosenTag?.title) {
                     resetField('tags')
                   }
                   setChosenTags([...chosenTags?.filter((tag) => {
                     return tag !== value
                   })])
-                }}}/>}
+                }
+              }}/>}
               {chosenTags.length <= 0 && <Description secondary>
                 Tags make it easier to find the right content
               </Description>}
