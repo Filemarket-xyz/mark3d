@@ -1,3 +1,5 @@
+import { utils } from 'ethers'
+
 import { FileMarketCrypto } from '../../../../../crypto/src'
 import { RsaPublicKey } from '../../../../../crypto/src/lib/types'
 import { IBlockchainDataProvider } from '../BlockchainDataProvider'
@@ -29,7 +31,10 @@ export class HiddenFileOwner implements IHiddenFileOwner {
       const creator = await this.blockchainDataProvider.getCollectionCreator(this.collectionAddress)
 
       let password: ArrayBuffer
-      if (this.address === creator) {
+      if (this.address === utils.getAddress(creator)) {
+        const aesKeyAndIv = await this.crypto.eftAesDerivation(...this.#args)
+        password = aesKeyAndIv.key
+      } else {
         const {
           encryptedPassword,
           dealNumber
@@ -37,9 +42,6 @@ export class HiddenFileOwner implements IHiddenFileOwner {
 
         const { priv } = await this.crypto.eftRsaDerivation(...this.#args, dealNumber)
         password = await this.crypto.rsaDecrypt(hexToBuffer(encryptedPassword), priv)
-      } else {
-        const aesKeyAndIv = await this.crypto.eftAesDerivation(...this.#args)
-        password = aesKeyAndIv.key
       }
 
       const decryptedFile = await this.crypto.aesDecrypt(encryptedFile, password)
@@ -68,7 +70,10 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     const creator = await this.blockchainDataProvider.getCollectionCreator(this.collectionAddress)
 
     let password: ArrayBuffer
-    if (this.address === creator) {
+    if (this.address === utils.getAddress(creator)) {
+      const aesKeyAndIv = await this.crypto.eftAesDerivation(...this.#args)
+      password = aesKeyAndIv.key
+    } else {
       const {
         encryptedPassword: lastEncryptedPassword,
         dealNumber
@@ -76,9 +81,6 @@ export class HiddenFileOwner implements IHiddenFileOwner {
 
       const { priv } = await this.crypto.eftRsaDerivation(...this.#args, dealNumber)
       password = await this.crypto.rsaDecrypt(hexToBuffer(lastEncryptedPassword), priv)
-    } else {
-      const aesKeyAndIv = await this.crypto.eftAesDerivation(...this.#args)
-      password = aesKeyAndIv.key
     }
 
     const encryptedPassword = await this.crypto.rsaEncrypt(password, publicKey)
