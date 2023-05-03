@@ -115,4 +115,4 @@ export enum ERC721TokenEventSignatures {
   Transfer = 'Transfer(address,address,uint256)',
 }
 
-export type PersistentDerivationArgs = [seed: ArrayBuffer, globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, tokenId: number]
+export type PersistentDerivationArgs = [globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, tokenId: number]

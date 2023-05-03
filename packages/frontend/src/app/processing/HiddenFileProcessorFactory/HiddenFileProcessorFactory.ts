@@ -14,6 +14,8 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
   private readonly owners: Record<string, Record<string, HiddenFileOwner>> = Object.create(null)
   private readonly buyers: Record<string, Record<string, HiddenFileBuyer>> = Object.create(null)
 
+  #globalSalt?: ArrayBuffer
+
   constructor(
     private readonly seedProviderFactory: ISeedProviderFactory,
     private readonly crypto: FileMarketCrypto,
@@ -32,13 +34,16 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
     const existing = accountBuyers?.[key]
     if (existing) return existing
 
-    const globalSalt = await this.blockchainDataProvider.getGlobalSalt()
+    if (!this.#globalSalt) {
+      this.#globalSalt = await this.blockchainDataProvider.getGlobalSalt()
+    }
+
     const seedProvider = await this.seedProviderFactory.getSeedProvider(account)
     const buyer = new HiddenFileBuyer(
       this.crypto,
       this.blockchainDataProvider,
       seedProvider,
-      globalSalt,
+      this.#globalSalt,
       hexToBuffer(collectionAddress),
       tokenId
     )
@@ -58,14 +63,17 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
     const existing = accountOwners?.[key]
     if (existing) return existing
 
-    const globalSalt = await this.blockchainDataProvider.getGlobalSalt()
+    if (!this.#globalSalt) {
+      this.#globalSalt = await this.blockchainDataProvider.getGlobalSalt()
+    }
+
     const seedProvider = await this.seedProviderFactory.getSeedProvider(account)
     const owner = new HiddenFileOwner(
       account,
       this.crypto,
       this.blockchainDataProvider,
       seedProvider,
-      globalSalt,
+      this.#globalSalt,
       hexToBuffer(collectionAddress),
       tokenId
     )

@@ -7,8 +7,7 @@ import { assertSeed } from '../utils'
 import { IHiddenFileBuyer } from './IHiddenFileBuyer'
 
 export class HiddenFileBuyer implements IHiddenFileBuyer {
-  #args: PersistentDerivationArgs
-  #tokenFullId: [ArrayBuffer, number]
+  #persistentArgs: PersistentDerivationArgs
 
   constructor(
     public readonly crypto: FileMarketCrypto,
@@ -18,20 +17,21 @@ export class HiddenFileBuyer implements IHiddenFileBuyer {
     public readonly collectionAddress: ArrayBuffer,
     public readonly tokenId: number
   ) {
-    assertSeed(this.seedProvider.seed)
-
-    this.#tokenFullId = [this.collectionAddress, this.tokenId]
-    this.#args = [this.seedProvider.seed, this.globalSalt, ...this.#tokenFullId]
+    this.#persistentArgs = [this.globalSalt, this.collectionAddress, this.tokenId]
   }
 
   async initBuy(dealNumber: number): Promise<ArrayBuffer> {
-    const { pub } = await this.crypto.eftRsaDerivation(...this.#args, dealNumber)
+    assertSeed(this.seedProvider.seed)
+
+    const { pub } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
 
     return pub
   }
 
   async revealRsaPrivateKey(dealNumber: number): Promise<ArrayBuffer> {
-    const { priv } = await this.crypto.eftRsaDerivation(...this.#args, dealNumber)
+    assertSeed(this.seedProvider.seed)
+
+    const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
 
     return priv
   }
