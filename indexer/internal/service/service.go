@@ -888,34 +888,34 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 			return err
 		}
 		if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l, receipt.BlockNumber); err != nil {
-			return err
+			return fmt.Errorf("process collection transfer: %w", err)
 		}
 		if err := s.tryProcessTransferInit(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process transfer init: %w", err)
 		}
 		if err := s.tryProcessTransferDraft(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process transfer draft: %w", err)
 		}
 		if err := s.tryProcessTransferDraftCompletion(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process draft completion: %w", err)
 		}
 		if err := s.tryProcessPublicKeySet(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process public key set: %w", err)
 		}
 		if err := s.tryProcessPasswordSet(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process password set: %w", err)
 		}
 		if err := s.tryProcessTransferFinish(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process transfer finish: %w", err)
 		}
 		if err := s.tryProcessTransferFraudReported(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process fraud reported: %w", err)
 		}
 		if err := s.tryProcessTransferFraudDecided(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process fraud decided: %w", err)
 		}
 		if err := s.tryProcessTransferCancel(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process transfer cancel: %w", err)
 		}
 	}
 	return nil
