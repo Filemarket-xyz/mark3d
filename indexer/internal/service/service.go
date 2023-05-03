@@ -39,13 +39,6 @@ const (
 	zeroAddress = "0x0000000000000000000000000000000000000000"
 )
 
-type metaData struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Image       string `json:"image"`
-	HiddenFile  string `json:"hidden_file"`
-}
-
 type Service interface {
 	Collections
 	Tokens
@@ -277,35 +270,41 @@ func (s *service) isCollection(ctx context.Context, tx pgx.Tx, address common.Ad
 	return true, nil
 }
 
-func (s *service) loadTokenParams(ctx context.Context, cid string) metaData {
+func (s *service) loadTokenParams(ctx context.Context, cid string) domain.TokenMetadata {
 	cid = strings.TrimPrefix(cid, "ipfs://")
 	if cid == "" {
-		return metaData{}
+		return domain.TokenMetadata{}
 	}
 	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://gateway.lighthouse.storage/ipfs/%s", cid), nil)
 	if err != nil {
-		return metaData{}
+		return domain.TokenMetadata{}
 	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return metaData{}
+		return domain.TokenMetadata{}
 	}
 	defer resp.Body.Close()
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return metaData{}
+		return domain.TokenMetadata{}
 	}
-	var meta metaData
+
+	var meta domain.TokenMetadataIpfs
 	if err := json.Unmarshal(data, &meta); err != nil {
-		return metaData{}
+		return domain.TokenMetadata{}
 	}
-	return meta
+	return domain.IpfsMetadataToDomain(meta)
 }
 
-func (s *service) processCollectionCreation(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, blockNumber uint64, ev *access_token.Mark3dAccessTokenCollectionCreation) error {
+func (s *service) processCollectionCreation(
+	ctx context.Context,
+	tx pgx.Tx,
+	t *types.Transaction,
+	blockNumber uint64,
+	ev *access_token.Mark3dAccessTokenCollectionCreation,
+) error {
 	from, err := types.Sender(types.LatestSignerForChainID(t.ChainId()), t)
 	if err != nil {
 		return err
@@ -405,8 +404,14 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 	return nil
 }
 
-func (s *service) tryProcessCollectionTransferEvent(ctx context.Context, tx pgx.Tx,
-	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
+func (s *service) tryProcessCollectionTransferEvent(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *collection.Mark3dCollection,
+	t *types.Transaction,
+	l *types.Log,
+	blockNumber *big.Int,
+) error {
 	transfer, err := instance.ParseTransfer(*l)
 	if err != nil {
 		return nil
@@ -414,27 +419,34 @@ func (s *service) tryProcessCollectionTransferEvent(ctx context.Context, tx pgx.
 	if transfer.From != common.HexToAddress(zeroAddress) {
 		return nil
 	}
+
+	block, err := s.ethClient.BlockByNumber(ctx, blockNumber)
+	if err != nil {
+		return nil
+	}
+
 	metaUri, err := s.collectionTokenURI(ctx, l.Address, transfer.TokenId)
 	if err != nil {
 		return err
 	}
+
 	meta := s.loadTokenParams(ctx, metaUri)
 	token := &domain.Token{
 		CollectionAddress: *t.To(),
 		TokenId:           transfer.TokenId,
 		Owner:             transfer.To,
-		MetaUri:           metaUri,
-		Name:              meta.Name,
-		Description:       meta.Description,
-		Image:             meta.Image,
-		HiddenFile:        meta.HiddenFile,
 		Creator:           transfer.To,
+		MintTxTimestamp:   block.Time(),
+		MintTxHash:        t.Hash(),
+		MetaUri:           metaUri,
+		Metadata:          &meta,
 	}
+
 	if err := s.repository.InsertToken(ctx, tx, token); err != nil {
 		return err
 	}
 	log.Println("token inserted", token.CollectionAddress.String(), token.TokenId.String(), token.Owner.String(),
-		token.MetaUri, token.Description, token.Image, token.HiddenFile)
+		token.MetaUri, token.Metadata)
 	return nil
 }
 
@@ -869,12 +881,13 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 	if err != nil {
 		return err
 	}
+
 	for _, l := range receipt.Logs {
 		instance, err := collection.NewMark3dCollection(l.Address, nil)
 		if err != nil {
 			return err
 		}
-		if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l); err != nil {
+		if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l, receipt.BlockNumber); err != nil {
 			return err
 		}
 		if err := s.tryProcessTransferInit(ctx, tx, instance, t, l); err != nil {
