@@ -1,19 +1,19 @@
-import { getContract, getProvider, Provider } from '@wagmi/core'
+import { getContract, Provider } from '@wagmi/core'
 
 import { mark3dConfig } from '../../config/mark3d'
+import { wagmiClient } from '../../config/web3Modal'
 
 export class ContractProvider {
-  #provider: Provider
-
-  constructor(private readonly config: typeof mark3dConfig) {
-    this.#provider = getProvider({ chainId: this.config.chain.id })
-  }
+  constructor(
+    private readonly provider: Provider,
+    private readonly config: typeof mark3dConfig
+  ) {}
 
   getCollectionContract(address: string) {
     return getContract({
       address,
       abi: this.config.collectionToken.abi,
-      signerOrProvider: this.#provider
+      signerOrProvider: this.provider
     })
   }
 
@@ -21,7 +21,7 @@ export class ContractProvider {
     return getContract({
       address: this.config.accessToken.address,
       abi: this.config.accessToken.abi,
-      signerOrProvider: this.#provider
+      signerOrProvider: this.provider
     })
   }
 
@@ -29,9 +29,9 @@ export class ContractProvider {
     return getContract({
       address: this.config.exchangeToken.address,
       abi: this.config.exchangeToken.abi,
-      signerOrProvider: this.#provider
+      signerOrProvider: this.provider
     })
   }
 }
 
-export const contractProvider = new ContractProvider(mark3dConfig)
+export const contractProvider = new ContractProvider(wagmiClient.provider, mark3dConfig)
