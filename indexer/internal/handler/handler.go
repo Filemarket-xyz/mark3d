@@ -68,5 +68,5 @@ func (h *handler) handleHealthCheck(w http.ResponseWriter, r *http.Request) {
 		sendResponse(w, err.Code, err)
 		return
 	}
-	sendResponse(w, 200, response)
+	sendResponse(w, 200, *response)
 }
