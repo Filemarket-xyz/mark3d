@@ -556,7 +556,7 @@ func (p *postgres) InsertTransfer(ctx context.Context, tx pgx.Tx, transfer *doma
 		transfer.FraudApproved,
 		transfer.PublicKey,
 		transfer.EncryptedPassword,
-		transfer.Number,
+		transfer.Number.String(),
 	)
 	var id int64
 	if err := row.Scan(&id); err != nil {
