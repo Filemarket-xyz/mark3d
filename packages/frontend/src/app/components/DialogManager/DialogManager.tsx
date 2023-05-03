@@ -10,10 +10,8 @@ export const DialogManager = observer((): JSX.Element => {
         dialogStore.instances.map(instance => {
           const onClose = () => {
             dialogStore.closeDialogById(instance.id)
-            if (instance.onClosed) {
-              instance.onClosed()
-            }
           }
+          // instance.onClosed is called inside closeDialogById
           return (
             <instance.component
               {...instance.props}
