@@ -107,7 +107,7 @@ func main() {
 					}
 				}
 				if resp.Status != models.HealthStatusHealthy {
-					err := healthNotifier.Notify(ctx, fmt.Sprintf("%v", resp))
+					err := healthNotifier.Notify(ctx, fmt.Sprintf("%v", *resp))
 					if err != nil {
 						log.Printf("Falied to send health notification %v", err)
 					}

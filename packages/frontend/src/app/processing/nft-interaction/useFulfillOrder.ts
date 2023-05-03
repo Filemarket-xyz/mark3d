@@ -3,13 +3,12 @@ import { BigNumber, BigNumberish, ContractReceipt, utils } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { buf2Hex } from '../../../../../crypto/src/lib/utils'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract, useExchangeContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, dealNumberMock, globalSaltMock, hexToBuffer } from '../utils'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex } from '../utils'
 
 /**
  * Fulfills an existing order.
@@ -36,23 +35,14 @@ export function useFulfillOrder(
     assertAccount(address)
     assert(price, 'price is not provided')
 
-    const tokenIdBN = BigNumber.from(tokenId)
-    const buyer = await factory.getBuyer(address)
-
-    // const transferCountBN = await collectionContract.transferCounts(tokenIdBN)
-    const transferCountBN = BigNumber.from(dealNumberMock)
-    const publicKey = await buyer.initBuy(
-      transferCountBN.toNumber(),
-      globalSaltMock,
-      hexToBuffer(collectionAddress),
-      +tokenId
-    )
+    const buyer = await factory.getBuyer(address, collectionAddress, +tokenId)
+    const publicKey = await buyer.initBuy()
     console.log('fulfill order', { collectionAddress, publicKey, tokenId, price })
 
     const tx = await exchangeContract.fulfillOrder(
       utils.getAddress(collectionAddress),
-      `0x${buf2Hex(publicKey)}`,
-      tokenIdBN,
+      bufferToEtherHex(publicKey),
+      BigNumber.from(tokenId),
       {
         value: BigNumber.from(price),
         gasPrice: mark3dConfig.gasPrice

@@ -7,7 +7,6 @@ import { OrderStore } from './Order/OrderStore'
 import { OpenOrderListStore } from './OrderList/OrderListStore'
 import { TokenMetaStore } from './Token/TokenMetaStore'
 import { TokenStore } from './Token/TokenStore'
-import { LastTransferInfoStore } from './Transfer/LastTransferInfoStore'
 import { TransferListStore } from './Transfer/TransferListStore'
 import { TransferStore } from './Transfer/TransferStore'
 import { TransfersHistoryStore } from './TransfersHistory/TransfersHistoryStore'
@@ -27,7 +26,6 @@ export class RootStore {
   collectionStore: CollectionStore
   transfersHistoryStore: TransfersHistoryStore
   userTransferStore: UserTransferStore
-  lastTransferInfoStore: LastTransferInfoStore
 
   constructor() {
     this.dialogStore = new DialogStore()
@@ -43,7 +41,6 @@ export class RootStore {
     this.collectionStore = new CollectionStore(this)
     this.transfersHistoryStore = new TransfersHistoryStore(this)
     this.userTransferStore = new UserTransferStore(this)
-    this.lastTransferInfoStore = new LastTransferInfoStore(this)
   }
 }
 
