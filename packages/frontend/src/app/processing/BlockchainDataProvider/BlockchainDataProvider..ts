@@ -33,9 +33,9 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
 
   async getGlobalSalt() {
     const contract = this.contractProvider.getAccessTokenContract()
-    const globalSaltBN = await contract.globalSalt()
+    const globalSalt = await contract.globalSalt()
 
-    return hexToBuffer(globalSaltBN.toString())
+    return hexToBuffer(globalSalt)
   }
 
   async getCollectionCreator(address: ArrayBuffer) {

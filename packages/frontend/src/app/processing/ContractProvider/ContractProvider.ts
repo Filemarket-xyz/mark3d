@@ -20,7 +20,7 @@ export class ContractProvider {
   getAccessTokenContract() {
     return getContract({
       address: this.config.accessToken.address,
-      abi: this.config.collectionToken.abi,
+      abi: this.config.accessToken.abi,
       signerOrProvider: this.#provider
     })
   }
@@ -28,7 +28,7 @@ export class ContractProvider {
   getExchangeContract() {
     return getContract({
       address: this.config.exchangeToken.address,
-      abi: this.config.collectionToken.abi,
+      abi: this.config.exchangeToken.abi,
       signerOrProvider: this.#provider
     })
   }
