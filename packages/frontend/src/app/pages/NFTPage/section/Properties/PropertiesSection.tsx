@@ -26,16 +26,23 @@ interface PropertiesProps {
 
 const PropertiesSection: FC<PropertiesProps> = ({ properties }) => {
   return (
-        <GridBlock>
-            <PropertyTitle>Properties</PropertyTitle>
-        <PropertiesStyle>
-            <div className="overflow">
-                {properties.map((property) => {
-                  return <PropertiesCard type={property.type} rare={property.rare} chance={property.chance} />
-                })}
-            </div>
-        </PropertiesStyle>
-        </GridBlock>
+    <GridBlock>
+      <PropertyTitle>Properties</PropertyTitle>
+      <PropertiesStyle>
+        <div className="overflow">
+          {properties.map((property) => {
+            return (
+              <PropertiesCard
+                key={property.type}
+                type={property.type}
+                rare={property.rare}
+                chance={property.chance}
+              />
+            )
+          })}
+        </div>
+      </PropertiesStyle>
+    </GridBlock>
   )
 }
 

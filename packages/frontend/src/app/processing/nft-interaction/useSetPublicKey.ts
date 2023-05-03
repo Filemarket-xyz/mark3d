@@ -5,10 +5,11 @@ import { useAccount } from 'wagmi'
 
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useBlockchainDataProvider } from '../BlockchainDataProvider'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, dealNumberMock } from '../utils'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
 
 /**
  * Sets public key in a transfer process
@@ -20,6 +21,7 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
   const { address } = useAccount()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
   const factory = useHiddenFileProcessorFactory()
+  const blockchainDataProvider = useBlockchainDataProvider()
 
   const setPublicKey = useCallback(wrapPromise(async () => {
     assertContract(contract, mark3dConfig.exchangeToken.name)
@@ -29,17 +31,15 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
     assertTokenId(tokenId)
     assert(mark3dConfig.gasPrice, 'gas price is undefined') // !!!!!
 
-    const tokenIdBN = BigNumber.from(tokenId)
-    // const transferCountBN = await contract.transferCounts(tokenIdBN)
-    const transferCountBN = BigNumber.from(dealNumberMock)
+    const dealNumber = await blockchainDataProvider.getTransferCount(hexToBuffer(collectionAddress), +tokenId)
     const buyer = await factory.getBuyer(address, collectionAddress, +tokenId)
-    const publicKey = await buyer.initBuy(transferCountBN.toNumber())
+    const publicKey = await buyer.initBuy()
     console.log('setTransferPublicKey', { tokenId, publicKey })
 
     const tx = await contract.setTransferPublicKey(
-      tokenIdBN,
+      BigNumber.from(tokenId),
       bufferToEtherHex(publicKey),
-      transferCountBN,
+      BigNumber.from(dealNumber),
       { gasPrice: mark3dConfig.gasPrice }
     )
 
