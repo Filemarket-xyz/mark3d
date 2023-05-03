@@ -32,13 +32,15 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
     const existing = accountBuyers?.[key]
     if (existing) return existing
 
+    const globalSalt = await this.blockchainDataProvider.getGlobalSalt()
     const seedProvider = await this.seedProviderFactory.getSeedProvider(account)
     const buyer = new HiddenFileBuyer(
-      hexToBuffer(collectionAddress),
-      tokenId,
-      seedProvider,
       this.crypto,
-      this.blockchainDataProvider
+      this.blockchainDataProvider,
+      seedProvider,
+      globalSalt,
+      hexToBuffer(collectionAddress),
+      tokenId
     )
     this.buyers[account] = {
       ...accountBuyers,
@@ -56,14 +58,16 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
     const existing = accountOwners?.[key]
     if (existing) return existing
 
+    const globalSalt = await this.blockchainDataProvider.getGlobalSalt()
     const seedProvider = await this.seedProviderFactory.getSeedProvider(account)
     const owner = new HiddenFileOwner(
       account,
-      hexToBuffer(collectionAddress),
-      tokenId,
-      seedProvider,
       this.crypto,
-      this.blockchainDataProvider
+      this.blockchainDataProvider,
+      seedProvider,
+      globalSalt,
+      hexToBuffer(collectionAddress),
+      tokenId
     )
     this.owners[account] = {
       ...accountOwners,

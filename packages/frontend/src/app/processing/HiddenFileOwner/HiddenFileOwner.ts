@@ -14,16 +14,17 @@ export class HiddenFileOwner implements IHiddenFileOwner {
 
   constructor(
     public readonly address: string,
-    public readonly collectionAddress: ArrayBuffer,
-    public readonly tokenId: number,
-    public readonly seedProvider: ISeedProvider,
     public readonly crypto: FileMarketCrypto,
-    public readonly blockchainDataProvider: IBlockchainDataProvider
+    public readonly blockchainDataProvider: IBlockchainDataProvider,
+    public readonly seedProvider: ISeedProvider,
+    public readonly globalSalt: ArrayBuffer,
+    public readonly collectionAddress: ArrayBuffer,
+    public readonly tokenId: number
   ) {
     assertSeed(this.seedProvider.seed)
 
     this.#tokenFullId = [this.collectionAddress, this.tokenId]
-    this.#args = [this.seedProvider.seed, blockchainDataProvider.globalSalt, ...this.#tokenFullId]
+    this.#args = [this.seedProvider.seed, this.globalSalt, ...this.#tokenFullId]
   }
 
   async decryptFile(encryptedFile: ArrayBuffer, meta: FileMeta | undefined): Promise<DecryptResult<File>> {
