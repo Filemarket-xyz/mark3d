@@ -8,7 +8,7 @@ import { useStatusState } from '../../hooks'
 import { useCollectionContract, useExchangeContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, dealNumberMock } from '../utils'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex } from '../utils'
 
 /**
  * Fulfills an existing order.
@@ -35,18 +35,14 @@ export function useFulfillOrder(
     assertAccount(address)
     assert(price, 'price is not provided')
 
-    const tokenIdBN = BigNumber.from(tokenId)
     const buyer = await factory.getBuyer(address, collectionAddress, +tokenId)
-
-    // const transferCountBN = await collectionContract.transferCounts(tokenIdBN)
-    const transferCountBN = BigNumber.from(dealNumberMock)
-    const publicKey = await buyer.initBuy(transferCountBN.toNumber())
+    const publicKey = await buyer.initBuy()
     console.log('fulfill order', { collectionAddress, publicKey, tokenId, price })
 
     const tx = await exchangeContract.fulfillOrder(
       utils.getAddress(collectionAddress),
       bufferToEtherHex(publicKey),
-      tokenIdBN,
+      BigNumber.from(tokenId),
       {
         value: BigNumber.from(price),
         gasPrice: mark3dConfig.gasPrice

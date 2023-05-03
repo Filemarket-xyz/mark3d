@@ -10,7 +10,7 @@ import { IHiddenFileOwner } from './IHiddenFileOwner'
 
 export class HiddenFileOwner implements IHiddenFileOwner {
   #persistentArgs: PersistentDerivationArgs
-  #tokenFullId: [ArrayBuffer, number]
+  #tokenFullIdArgs: [ArrayBuffer, number]
 
   constructor(
     public readonly address: string,
@@ -21,8 +21,8 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     public readonly collectionAddress: ArrayBuffer,
     public readonly tokenId: number
   ) {
-    this.#tokenFullId = [this.collectionAddress, this.tokenId]
-    this.#persistentArgs = [this.globalSalt, ...this.#tokenFullId]
+    this.#tokenFullIdArgs = [this.collectionAddress, this.tokenId]
+    this.#persistentArgs = [this.globalSalt, ...this.#tokenFullIdArgs]
   }
 
   async decryptFile(encryptedFile: ArrayBuffer, meta: FileMeta | undefined): Promise<DecryptResult<File>> {
@@ -39,7 +39,7 @@ export class HiddenFileOwner implements IHiddenFileOwner {
         const {
           encryptedPassword,
           dealNumber
-        } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullId)
+        } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullIdArgs)
 
         const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
         password = await this.crypto.rsaDecrypt(hexToBuffer(encryptedPassword), priv)
@@ -82,7 +82,7 @@ export class HiddenFileOwner implements IHiddenFileOwner {
       const {
         encryptedPassword: lastEncryptedPassword,
         dealNumber
-      } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullId)
+      } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullIdArgs)
 
       const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
       password = await this.crypto.rsaDecrypt(hexToBuffer(lastEncryptedPassword), priv)

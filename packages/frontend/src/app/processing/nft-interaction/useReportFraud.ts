@@ -7,7 +7,7 @@ import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, dealNumberMock } from '../utils'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex } from '../utils'
 
 export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
@@ -23,15 +23,12 @@ export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFull
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
 
-    const tokenIdBN = BigNumber.from(tokenId)
-    // const transferCountBN = await contract.transferCounts(tokenIdBN)
-    const transferCountBN = BigNumber.from(dealNumberMock)
     const buyer = await factory.getBuyer(address, collectionAddress, +tokenId)
-    const privateKey = await buyer.revealRsaPrivateKey(transferCountBN.toNumber())
+    const privateKey = await buyer.revealRsaPrivateKey()
     console.log('report fraud', { tokenId, privateKey })
 
     const tx = await contract.reportFraud(
-      tokenIdBN,
+      BigNumber.from(tokenId),
       bufferToEtherHex(privateKey),
       { gasPrice: mark3dConfig.gasPrice }
     )
