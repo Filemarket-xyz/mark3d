@@ -25,40 +25,49 @@ func (p *postgres) GetCollectionTokens(
 		INNER JOIN collections c ON c.address = t.collection_address
 		WHERE t.collection_address=$1
 	`
-	rows, err := tx.Query(ctx, query, strings.ToLower(collectionAddress.String()))
+	var res []*domain.Token
+
+	err := func(res *[]*domain.Token, query string) error {
+		rows, err := tx.Query(ctx, query, strings.ToLower(collectionAddress.String()))
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var tokenId, owner, creator, mintTxHash string
+			t := &domain.Token{}
+
+			err := rows.Scan(&tokenId, &owner, &t.MetaUri, &creator, &t.MintTxTimestamp, &mintTxHash, &t.CollectionName)
+			if err != nil {
+				return err
+			}
+
+			t.CollectionAddress = collectionAddress
+			t.Owner = common.HexToAddress(owner)
+			t.Creator = common.HexToAddress(creator)
+			t.MintTxHash = common.HexToHash(mintTxHash)
+
+			var ok bool
+			t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
+			if !ok {
+				return fmt.Errorf("failed to parse big int: %s", tokenId)
+			}
+
+			*res = append(*res, t)
+		}
+		return rows.Err()
+	}(&res, query)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
-	var res []*domain.Token
-	for rows.Next() {
-		var tokenId, owner, creator, mintTxHash string
-		t := &domain.Token{}
-
-		err := rows.Scan(&tokenId, &owner, &t.MetaUri, &creator, &t.MintTxTimestamp, &mintTxHash, &t.CollectionName)
+	for _, r := range res {
+		metadata, err := p.GetMetadata(ctx, tx, r.CollectionAddress, r.TokenId)
 		if err != nil {
 			return nil, err
 		}
-
-		t.CollectionAddress = collectionAddress
-		t.Owner = common.HexToAddress(owner)
-		t.Creator = common.HexToAddress(creator)
-		t.MintTxHash = common.HexToHash(mintTxHash)
-
-		var ok bool
-		t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
-		if !ok {
-			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
-		}
-
-		metadata, err := p.GetMetadata(ctx, tx, t.CollectionAddress, t.TokenId)
-		if err != nil {
-			return nil, err
-		}
-		t.Metadata = metadata
-
-		res = append(res, t)
+		r.Metadata = metadata
 	}
 	return res, nil
 }
@@ -78,48 +87,56 @@ func (p *postgres) GetTokensByAddress(
 		INNER JOIN collections c ON c.address = t.collection_address
 		WHERE t.owner=$1
 	`
+	var res []*domain.Token
 
-	rows, err := tx.Query(ctx, query, strings.ToLower(ownerAddress.String()))
+	err := func(res *[]*domain.Token, query string) error {
+		rows, err := tx.Query(ctx, query, strings.ToLower(ownerAddress.String()))
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var collectionAddress, tokenId, creator, mintTxHash string
+			t := &domain.Token{}
+
+			if err := rows.Scan(
+				&collectionAddress,
+				&tokenId,
+				&t.MetaUri,
+				&creator,
+				&t.MintTxTimestamp,
+				&mintTxHash,
+				&t.CollectionName,
+			); err != nil {
+				return err
+			}
+
+			t.Owner = ownerAddress
+			t.CollectionAddress = common.HexToAddress(collectionAddress)
+			t.Creator = common.HexToAddress(creator)
+			t.MintTxHash = common.HexToHash(mintTxHash)
+
+			var ok bool
+			t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
+			if !ok {
+				return fmt.Errorf("failed to parse big int: %s", tokenId)
+			}
+
+			*res = append(*res, t)
+		}
+		return rows.Err()
+	}(&res, query)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
-	var res []*domain.Token
-	for rows.Next() {
-		var collectionAddress, tokenId, creator, mintTxHash string
-		t := &domain.Token{}
-
-		if err := rows.Scan(
-			&collectionAddress,
-			&tokenId,
-			&t.MetaUri,
-			&creator,
-			&t.MintTxTimestamp,
-			&mintTxHash,
-			&t.CollectionName,
-		); err != nil {
-			return nil, err
-		}
-
-		t.Owner = ownerAddress
-		t.CollectionAddress = common.HexToAddress(collectionAddress)
-		t.Creator = common.HexToAddress(creator)
-		t.MintTxHash = common.HexToHash(mintTxHash)
-
-		var ok bool
-		t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
-		if !ok {
-			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
-		}
-
-		metadata, err := p.GetMetadata(ctx, tx, t.CollectionAddress, t.TokenId)
+	for _, r := range res {
+		metadata, err := p.GetMetadata(ctx, tx, r.CollectionAddress, r.TokenId)
 		if err != nil {
 			return nil, err
 		}
-		t.Metadata = metadata
-
-		res = append(res, t)
+		r.Metadata = metadata
 	}
 	return res, nil
 }
@@ -225,11 +242,12 @@ func (p *postgres) GetMetadata(
 		    tm.id, tm.name, tm.description, tm.image, tm.external_link, tm.hidden_file, tm.license, tm.license_url,
 			hfm.name, hfm.type, hfm.size
 		FROM token_metadata tm
-		JOIN hidden_file_metadata hfm 
+		LEFT JOIN hidden_file_metadata hfm 
 		    ON tm.collection_address = hfm.collection_address AND tm.token_id = hfm.token_id
 		WHERE tm.collection_address=$1 AND tm.token_id=$2
 	`
 	var md domain.TokenMetadata
+	var hf domain.HiddenFileMetadata
 	err := tx.QueryRow(ctx, metadataQuery,
 		strings.ToLower(contractAddress.String()),
 		tokenId.String(),
@@ -242,55 +260,66 @@ func (p *postgres) GetMetadata(
 		&md.HiddenFile,
 		&md.License,
 		&md.LicenseUrl,
-		&md.HiddenFileMeta.Name,
-		&md.HiddenFileMeta.Type,
-		&md.HiddenFileMeta.Size,
+		&hf.Name,
+		&hf.Type,
+		&hf.Size,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query metadata: %w", err)
 	}
+
+	md.HiddenFileMeta = &hf
 
 	propertiesQuery := `
 		SELECT trait_type, display_type, value, max_value, min_value, property_type
 		FROM token_metadata_properties
 		WHERE metadata_id=$1
 	`
-	rows, err := tx.Query(ctx, propertiesQuery, md.Id)
+	err = func(md *domain.TokenMetadata, query string) error {
+		rows, err := tx.Query(ctx, query, md.Id)
+		if err != nil {
+			return fmt.Errorf("failed to query properties: %w", err)
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var prop domain.MetadataProperty
+			var propType string
+
+			if err := rows.Scan(
+				&prop.TraitType,
+				&prop.DisplayType,
+				&prop.Value,
+				&prop.MaxValue,
+				&prop.MinValue,
+				&propType,
+			); err != nil {
+				return err
+			}
+
+			switch propType {
+			case "property":
+				md.Properties = append(md.Properties, &prop)
+			case "ranking":
+				md.Rankings = append(md.Rankings, &prop)
+			case "stat":
+				md.Stats = append(md.Stats, &prop)
+			}
+		}
+		return rows.Err()
+	}(&md, propertiesQuery)
 	if err != nil {
-		return nil, fmt.Errorf("failed to query properties: %w", err)
+		return nil, err
 	}
-	defer rows.Close()
 
-	for rows.Next() {
-		var prop domain.MetadataProperty
-		var propType string
-
-		if err := rows.Scan(
-			&prop.TraitType,
-			&prop.DisplayType,
-			&prop.Value,
-			&prop.MaxValue,
-			&prop.MinValue,
-			&propType,
-		); err != nil {
+	// Getting Trait counts
+	for _, prop := range md.Properties {
+		traitCountByValue, traitTotal, err := p.GetTraitCount(ctx, tx, prop.TraitType, prop.Value)
+		if err != nil {
 			return nil, err
 		}
-
-		switch propType {
-		case "property":
-			traitCountByValue, traitTotal, err := p.GetTraitCount(ctx, tx, prop.TraitType, prop.Value)
-			if err != nil {
-				return nil, err
-			}
-			prop.TraitTotal = traitTotal
-			prop.TraitValueCount = traitCountByValue
-
-			md.Properties = append(md.Properties, &prop)
-		case "ranking":
-			md.Rankings = append(md.Rankings, &prop)
-		case "stat":
-			md.Stats = append(md.Stats, &prop)
-		}
+		prop.TraitTotal = traitTotal
+		prop.TraitValueCount = traitCountByValue
 	}
 
 	tagsQuery := `
@@ -298,18 +327,25 @@ func (p *postgres) GetMetadata(
 		FROM token_metadata_tags
 		WHERE metadata_id=$1
 	`
-	tRows, err := tx.Query(ctx, tagsQuery, md.Id)
+	err = func(md *domain.TokenMetadata, query string) error {
+		rows, err := tx.Query(ctx, tagsQuery, md.Id)
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var tag string
+			if err := rows.Scan(&tag); err != nil {
+				return err
+			}
+			md.Tags = append(md.Tags, tag)
+		}
+
+		return rows.Err()
+	}(&md, tagsQuery)
 	if err != nil {
 		return nil, err
-	}
-	defer tRows.Close()
-
-	for tRows.Next() {
-		var tag string
-		if err := tRows.Scan(&tag); err != nil {
-			return nil, err
-		}
-		md.Tags = append(md.Tags, tag)
 	}
 
 	categoriesQuery := `
@@ -317,18 +353,24 @@ func (p *postgres) GetMetadata(
 		FROM token_metadata_categories
 		WHERE metadata_id=$1
 	`
-	cRows, err := tx.Query(ctx, categoriesQuery, md.Id)
+	err = func(md *domain.TokenMetadata, query string) error {
+		rows, err := tx.Query(ctx, categoriesQuery, md.Id)
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var category string
+			if err := rows.Scan(&category); err != nil {
+				return err
+			}
+			md.Categories = append(md.Categories, category)
+		}
+		return rows.Err()
+	}(&md, categoriesQuery)
 	if err != nil {
 		return nil, err
-	}
-	defer cRows.Close()
-
-	for cRows.Next() {
-		var category string
-		if err := cRows.Scan(&category); err != nil {
-			return nil, err
-		}
-		md.Categories = append(md.Categories, category)
 	}
 
 	subcategoriesQuery := `
@@ -336,18 +378,24 @@ func (p *postgres) GetMetadata(
 		FROM token_metadata_subcategories
 		WHERE metadata_id=$1
 	`
-	scRows, err := tx.Query(ctx, subcategoriesQuery, md.Id)
+	err = func(md *domain.TokenMetadata, query string) error {
+		rows, err := tx.Query(ctx, subcategoriesQuery, md.Id)
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var subcategory string
+			if err := rows.Scan(&subcategory); err != nil {
+				return err
+			}
+			md.Subcategories = append(md.Subcategories, subcategory)
+		}
+		return rows.Err()
+	}(&md, subcategoriesQuery)
 	if err != nil {
 		return nil, err
-	}
-	defer scRows.Close()
-
-	for scRows.Next() {
-		var subcategory string
-		if err := scRows.Scan(&subcategory); err != nil {
-			return nil, err
-		}
-		md.Subcategories = append(md.Subcategories, subcategory)
 	}
 
 	return &md, nil
@@ -383,6 +431,23 @@ func (p *postgres) InsertMetadata(
 		metadata.LicenseUrl,
 		metadata.ExternalLink,
 	).Scan(&metadataId)
+	if err != nil {
+		return err
+	}
+
+	hiddenFileMetadataQuery := `
+		INSERT INTO hidden_file_metadata (
+			collection_address, token_id, name, type, size
+		)
+		VALUES ($1,$2,$3,$4,$5)  
+	`
+	_, err = tx.Exec(ctx, hiddenFileMetadataQuery,
+		strings.ToLower(collectionAddress.String()),
+		tokenId.String(),
+		metadata.HiddenFileMeta.Name,
+		metadata.HiddenFileMeta.Type,
+		metadata.HiddenFileMeta.Size,
+	)
 	if err != nil {
 		return err
 	}
