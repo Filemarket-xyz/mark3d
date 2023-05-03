@@ -5,13 +5,12 @@ import { useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
 import { Token } from '../../swagger/Api'
-import { globalSaltMock, hexToBuffer, useHiddenFileProcessorFactory } from '../processing'
-import { DecryptResult, TokenFullId } from '../processing/types'
+import { useHiddenFileProcessorFactory } from '../processing'
+import { DecryptResult } from '../processing/types'
 import { ipfsService } from '../services/IPFSService'
 import { ErrorStore } from '../stores/Error/ErrorStore'
 import { TokenMetaStore } from '../stores/Token/TokenMetaStore'
 import { getIpfsCidWithFilePath } from '../utils/nfts/getHttpLinkFromIpfsString'
-import { useLastTransferInfo } from './useLastTransferInfo'
 
 export interface HiddenFileDownload {
   cid: string
@@ -28,7 +27,6 @@ export function useHiddenFileDownload(
   const factory = useHiddenFileProcessorFactory()
   const { address } = useAccount()
   const { meta } = tokenMetaStore
-  const { encryptedPassword, dealNumber } = useLastTransferInfo(token?.collectionAddress, token?.tokenId)
 
   return useMemo(() => {
     if (!factory || !token || !token.collectionAddress || !token.tokenId || !address || !meta?.hidden_file) {
@@ -37,11 +35,8 @@ export function useHiddenFileDownload(
 
     const hiddenFileURI = meta.hidden_file
     const hiddenMeta = meta.hidden_file_meta
-    const tokenFullId: TokenFullId = {
-      collectionAddress: utils.getAddress(token.collectionAddress),
-      tokenId: token.tokenId
-    }
-    const collectionAddressBuffer = hexToBuffer(tokenFullId.collectionAddress)
+    const collectionAddress = utils.getAddress(token.collectionAddress)
+    const tokenId = +token.tokenId
 
     return [{
       cid: getIpfsCidWithFilePath(hiddenFileURI),
@@ -49,16 +44,8 @@ export function useHiddenFileDownload(
       size: hiddenMeta?.size || 0,
       download: async () => {
         const encryptedFile = await ipfsService.fetchBytes(hiddenFileURI)
-        const owner = await factory.getOwner(address)
-        const file = await owner.decryptFile(
-          encryptedFile,
-          hiddenMeta,
-          encryptedPassword,
-          dealNumber,
-          globalSaltMock,
-          collectionAddressBuffer,
-          +tokenFullId.tokenId
-        )
+        const owner = await factory.getOwner(address, collectionAddress, tokenId)
+        const file = await owner.decryptFile(encryptedFile, hiddenMeta)
         if (file.ok) {
           saveAs(file.result, file.result.name)
         } else {
@@ -67,17 +54,9 @@ export function useHiddenFileDownload(
       },
       getFile: async () => {
         const encryptedFile = await ipfsService.fetchBytes(hiddenFileURI)
-        const owner = await factory.getOwner(address)
-        return owner.decryptFile(
-          encryptedFile,
-          hiddenMeta,
-          encryptedPassword,
-          dealNumber,
-          globalSaltMock,
-          collectionAddressBuffer,
-          +tokenFullId.tokenId
-        )
+        const owner = await factory.getOwner(address, collectionAddress, tokenId)
+        return owner.decryptFile(encryptedFile, hiddenMeta)
       }
     }]
-  }, [factory, token, address, meta, encryptedPassword, dealNumber])
+  }, [factory, token, address, meta])
 }

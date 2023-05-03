@@ -3,7 +3,7 @@
 SELECT 'up SQL query';
 -- +goose StatementEnd
 ALTER TABLE public.transfers
-    ADD COLUMN number VARCHAR(255) NOT NULL;
+    ADD COLUMN number NUMERIC NOT NULL default -1;
 -- +goose Down
 -- +goose StatementBegin
 SELECT 'down SQL query';

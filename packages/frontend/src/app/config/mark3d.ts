@@ -38,12 +38,12 @@ export const mark3dConfig = {
   // Hardcode high gas price in testnet to prevent "transaction underpriced" error
   gasPrice: mark3dChain.testnet ? utils.parseUnits('30', 'gwei') : undefined,
   accessToken: {
-    address: '0xDF5a6aBa1D6a68c4e933127829dddBF106f45075',
+    address: '0xE47AAb76dF0A9CD8d142753198AcaaB475Bf2A21',
     abi: accessToken.abi,
     name: accessToken.contractName
   },
   exchangeToken: {
-    address: '0x1358f538b52D60c8012091adA98c8604F81e5556',
+    address: '0x387EE91bA3f6bA73Ef323DeFab14FC2aa80db923',
     abi: exchangeToken.abi,
     name: exchangeToken.contractName
   },

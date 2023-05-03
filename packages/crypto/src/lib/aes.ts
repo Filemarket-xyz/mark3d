@@ -2,7 +2,7 @@ import {AesKey, AesKeyAndIv} from './types';
 import * as Crypto from 'crypto';
 import {sha512Native} from './sha512';
 import {aesIVLength, hashLength} from './config';
-import {buf2Hex} from './utils';
+import {bufferToHex} from './utils';
 
 export const aesEncryptNative = (crypto: Crypto) =>
   async (data: ArrayBuffer, keyAndIv: AesKeyAndIv) => {
@@ -59,7 +59,7 @@ export const aesDecryptNative = (crypto: Crypto) =>
       message
     )
     const hashDecrypted = await sha512Native(crypto)(decryptedData)
-    if (buf2Hex(hashDecrypted) !== buf2Hex(hash)) {
+    if (bufferToHex(hashDecrypted) !== bufferToHex(hash)) {
       throw Error('Decrypted data hash does not match')
     }
     return decryptedData

@@ -10,11 +10,11 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'https://filemarket.xyz/',
+        target: 'https://dev.filemarket.xyz/',
         changeOrigin: true,
       },
       '/static': {
-        target: 'https://filemarket.xyz/',
+        target: 'https://dev.filemarket.xyz/',
         changeOrigin: true,
       },
     },
