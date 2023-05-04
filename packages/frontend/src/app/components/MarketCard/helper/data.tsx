@@ -7,20 +7,20 @@ import PictureImg from './img/Picture.svg'
 import RarImg from './img/Rar.svg'
 import VideoImg from './img/Video.svg'
 
-export type type = 'document' | 'music' | 'rar' | 'picture' | '3D' | 'video' | 'code' | 'another'
+export type typeFiles = 'document' | 'music' | 'rar' | 'picture' | '3D' | 'video' | 'code' | 'another'
 
-export const typeOptions: Record<type, string[]> = {
-  '3D': [],
+export const typeOptions: Record<typeFiles, string[]> = {
+  '3D': ['.obj', '.3ds', '.fbx', '.dae', '.blend', '.stl', '.ply', '.max'],
   another: [],
-  code: [],
-  document: [],
-  music: [],
-  picture: [],
-  rar: [],
-  video: []
+  code: ['.c', '.cpp', '.h', '.hpp', '.java', '.py', '.rb', '.html', '.css', '.js', '.php', '.sql', '.xml'],
+  document: ['.doc', '.docx', '.pdf', '.txt', '.rtf', '.odt', '.wpd', '.tex', '.ppt', '.pptx', '.xls', '.xlsx', '.csv', '.ods'],
+  music: ['.mp3', '.wav', '.aac', '.wma', '.flac', '.m4a', '.ogg', '.ape', '.alac'],
+  picture: ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tif', '.tiff', '.psd', '.ai', '.eps'],
+  rar: ['.zip', '.rar', '.7z', '.tar', '.gz', '.tgz', '.bz2', '.xz'],
+  video: ['.mp4', '.avi', '.mov', '.mkv', '.wmv', '.flv', '.mpeg', '.mpg', '.3gp', '.webm']
 }
 
-export const typeImg: Record<type, string> = {
+export const typeImg: Record<typeFiles, string> = {
   '3D': GlbImg,
   another: AnotherImg,
   code: CodeImg,

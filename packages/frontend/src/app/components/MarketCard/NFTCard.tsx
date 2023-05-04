@@ -3,10 +3,12 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { styled } from '../../../styles'
+import { HiddenFileMetaData } from '../../../swagger/Api'
 import { mark3dConfig } from '../../config/mark3d'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
 import { gradientPlaceholderImg, NavButton, textVariant, Txt } from '../../UIkit'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
+import FileType from './FileType'
 
 export const CardControls = styled(BasicCardControls, {
   height: '172px',
@@ -121,7 +123,7 @@ export interface NFTCardProps {
     link: string
   }
   price?: string
-  hiddenFile?: string
+  hiddenFile?: HiddenFileMetaData
 }
 
 export const Card = styled(BasicCard, {
@@ -138,6 +140,7 @@ export const BorderLayout = styled('div', {
   alignItems: 'flex-start',
   paddingTop: '12px',
   border: '1px solid #E9E9EA',
+  position: 'relative',
   ...generateHoverStylesForCard()
 })
 
@@ -157,6 +160,7 @@ export default function NFTCard(props: NFTCardProps) {
                       currentTarget.src = gradientPlaceholderImg
                     }}
                 />
+              <FileType file={props.hiddenFile} />
                 <CardControls>
                     <CardTitle title={props.title}>{props.title}</CardTitle>
                     <CardCollection>{collectionAndNfts.collection?.name}</CardCollection>

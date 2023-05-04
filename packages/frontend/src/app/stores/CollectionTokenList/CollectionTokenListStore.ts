@@ -68,7 +68,6 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
   get nftCards(): NFTCardProps[] {
     const tokens = this.data.tokens ?? []
     const collection = this.data.collection
-
     return tokens.map((token) => ({
       collection: collection?.name ?? '',
       imageURL: token.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
@@ -80,7 +79,8 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
       button: {
         link: `/collection/${token.collectionAddress}/${token.tokenId}`,
         text: 'Go to page'
-      }
+      },
+      hiddenFile: token.hiddenFileMeta
     }))
   }
 }

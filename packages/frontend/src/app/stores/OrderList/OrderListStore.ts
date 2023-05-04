@@ -70,7 +70,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
       .map(
         ({ token, order }): NFTCardProps => ({
           collection: token?.collectionAddress ?? '',
-          hiddenFile: token?.hiddenFile,
+          hiddenFile: token?.hiddenFileMeta,
           imageURL: token?.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
           title: token?.name ?? '—',
           user: {
