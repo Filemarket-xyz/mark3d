@@ -1,5 +1,6 @@
-import { useAccount, useDisconnect } from 'wagmi'
 import { useCallback, useEffect, useState } from 'react'
+import { useAccount, useDisconnect } from 'wagmi'
+
 import { ConnectFileWalletDialog } from '../../components/Web3/ConnectFileWalletDialog'
 import { useStores } from '../../hooks'
 import { useSeedProvider } from '../SeedProvider'
@@ -14,7 +15,9 @@ export default function useWatchFileWalletConnect(): void {
   const openConnectFileWalletDialog = useCallback(() => {
     dialogStore.openDialog({
       component: ConnectFileWalletDialog,
-      props: {}
+      props: {
+        name: 'ConnectMain'
+      }
     }).onClose(() => setCheckHasSeed(true))
   }, [dialogStore, setCheckHasSeed])
 

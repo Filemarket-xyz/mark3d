@@ -1,7 +1,8 @@
 import React from 'react'
-import { BlockWrapper, Subtitle } from './ToolsBlock'
+
 import { ExplorerSlider } from '../components/ExplorerSlider'
 import slideImg from '../img/explorer-slide.jpg'
+import { BlockWrapper, Subtitle } from './ToolsBlock'
 
 export default function ExplorerBlock() {
   return (

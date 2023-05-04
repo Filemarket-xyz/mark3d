@@ -55,7 +55,7 @@ const cols: ITableColumn[] = [
 ]
 
 export const EmptyTablePlaceholder = styled('div', {
-  dflex: 'center',
+  flex: 'center',
   justifyContent: 'center',
   color: '$gray500',
   paddingBottom: '$3'

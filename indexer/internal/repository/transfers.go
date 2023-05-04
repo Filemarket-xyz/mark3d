@@ -384,7 +384,7 @@ func (p *postgres) getTransferStatuses(
 			transfer_id,
 			timestamp,
 			status,
-			tx_id,
+			tx_id
 		FROM transfer_statuses 
 		WHERE transfer_id=ANY($1) 
 		ORDER BY transfer_id,timestamp DESC
@@ -489,34 +489,21 @@ func (p *postgres) GetActiveTransfer(
 	// language=PostgreSQL
 	query := `
 		SELECT 
-			t.id, 
-			t.from_address, 
-			t.to_address, 
-			t.fraud_approved, 
-			COALESCE(o.id, 0), 
-			t.public_key, 
-			t.encrypted_password,
-			t.number
-		FROM 
-			transfers AS t 
+			t.id, t.from_address, t.to_address, t.fraud_approved, t.public_key, 
+			t.encrypted_password, t.number,
+			COALESCE(o.id, 0)
+		FROM transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
-		WHERE 
-			collection_address = $1 
+		WHERE collection_address = $1 
 			AND token_id = $2 
 			AND NOT (
-				SELECT 
-					ts.status 
-				FROM 
-					transfer_statuses AS ts 
-				WHERE 
-					ts.transfer_id = t.id 
+				SELECT ts.status 
+				FROM transfer_statuses AS ts 
+				WHERE ts.transfer_id = t.id 
 					AND ts.timestamp =(
-						SELECT 
-							MAX(ts2.timestamp) 
-						FROM 
-							transfer_statuses AS ts2 
-						WHERE 
-							ts2.transfer_id = t.id
+						SELECT MAX(ts2.timestamp) 
+						FROM transfer_statuses AS ts2 
+						WHERE ts2.transfer_id = t.id
 					)
 			)= ANY('{Finished,Cancelled}')
 	`
@@ -533,10 +520,10 @@ func (p *postgres) GetActiveTransfer(
 		&from,
 		&to,
 		&t.FraudApproved,
-		&t.OrderId,
 		&t.PublicKey,
 		&t.EncryptedPassword,
 		&number,
+		&t.OrderId,
 	)
 	if err != nil {
 		return nil, err
@@ -569,7 +556,7 @@ func (p *postgres) InsertTransfer(ctx context.Context, tx pgx.Tx, transfer *doma
 		transfer.FraudApproved,
 		transfer.PublicKey,
 		transfer.EncryptedPassword,
-		transfer.Number,
+		transfer.Number.String(),
 	)
 	var id int64
 	if err := row.Scan(&id); err != nil {
@@ -597,7 +584,7 @@ func (p *postgres) UpdateTransfer(ctx context.Context, tx pgx.Tx, transfer *doma
 		transfer.FraudApproved,
 		transfer.PublicKey,
 		transfer.EncryptedPassword,
-		transfer.Number,
+		transfer.Number.String(),
 		transfer.Id,
 	)
 	if err != nil {
@@ -637,18 +624,25 @@ func (p *postgres) GetTokenEncryptedPassword(
 	tx pgx.Tx,
 	contractAddress common.Address,
 	tokenId *big.Int,
-) (string, error) {
-	// FIXME: not the fastest query
+) (string, string, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT encrypted_password
-		FROM transfers
-		WHERE 
-			number ~ '^[0-9]+$'
-			AND collection_address=$1
-			AND token_id=$2
-		ORDER BY number::numeric DESC
-		LIMIT 1;
+		WITH latest_transfer_statuses AS (
+			SELECT transfer_id, status, timestamp
+			FROM transfer_statuses
+			WHERE status = ANY('{Finished,PasswordSet}')
+				AND transfer_id IN (
+					SELECT id
+					FROM transfers
+					WHERE collection_address = $1
+						AND token_id = $2
+				)
+			ORDER BY timestamp DESC
+			LIMIT 1
+		)
+		SELECT t.number, t.encrypted_password
+		FROM transfers t
+		JOIN latest_transfer_statuses lts ON t.id = lts.transfer_id;
 	`
 
 	row := tx.QueryRow(
@@ -658,11 +652,13 @@ func (p *postgres) GetTokenEncryptedPassword(
 		tokenId.String(),
 	)
 
-	var pwd string
-	err := row.Scan(&pwd)
+	var pwd, number string
+
+	err := row.Scan(&number, &pwd)
+
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return pwd, nil
+	return pwd, number, nil
 }

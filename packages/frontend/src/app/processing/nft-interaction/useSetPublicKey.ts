@@ -3,13 +3,13 @@ import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { buf2Hex } from '../../../../../crypto/src/lib/utils'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
+import { useBlockchainDataProvider } from '../BlockchainDataProvider'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, dealNumberMock, globalSaltMock, hexToBuffer } from '../utils'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
 
 /**
  * Sets public key in a transfer process
@@ -21,6 +21,7 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
   const { address } = useAccount()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
   const factory = useHiddenFileProcessorFactory()
+  const blockchainDataProvider = useBlockchainDataProvider()
 
   const setPublicKey = useCallback(wrapPromise(async () => {
     assertContract(contract, mark3dConfig.exchangeToken.name)
@@ -30,22 +31,15 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
     assertTokenId(tokenId)
     assert(mark3dConfig.gasPrice, 'gas price is undefined') // !!!!!
 
-    const tokenIdBN = BigNumber.from(tokenId)
-    // const transferCountBN = await contract.transferCounts(tokenIdBN)
-    const transferCountBN = BigNumber.from(dealNumberMock)
-    const buyer = await factory.getBuyer(address)
-    const publicKey = await buyer.initBuy(
-      transferCountBN.toNumber(),
-      globalSaltMock,
-      hexToBuffer(collectionAddress),
-      +tokenId
-    )
+    const dealNumber = await blockchainDataProvider.getTransferCount(hexToBuffer(collectionAddress), +tokenId)
+    const buyer = await factory.getBuyer(address, collectionAddress, +tokenId)
+    const publicKey = await buyer.initBuy()
     console.log('setTransferPublicKey', { tokenId, publicKey })
 
     const tx = await contract.setTransferPublicKey(
-      tokenIdBN,
-      `0x${buf2Hex(publicKey)}`,
-      transferCountBN,
+      BigNumber.from(tokenId),
+      bufferToEtherHex(publicKey),
+      BigNumber.from(dealNumber),
       { gasPrice: mark3dConfig.gasPrice }
     )
 

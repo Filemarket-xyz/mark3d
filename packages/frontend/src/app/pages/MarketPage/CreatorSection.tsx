@@ -1,8 +1,9 @@
 import React from 'react'
-import userImg from './img/largerUserImg.jpg'
-import { CardsContainer } from './NftSection'
+
 import CreatorCard, { CreatorCardProps } from '../../components/MarketCard/CreatorCard'
 import bg from './img/bg.jpg'
+import userImg from './img/largerUserImg.jpg'
+import { CardsContainer } from './NftSection'
 
 const card: CreatorCardProps = {
   bgImageUrl: bg,

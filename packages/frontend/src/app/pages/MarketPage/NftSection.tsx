@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import React from 'react'
+
 import { styled } from '../../../styles'
 import NFTCard from '../../components/MarketCard/NFTCard'
 import { useOpenOrderListStore } from '../../hooks/useOrdersListStore'
@@ -27,6 +28,7 @@ const NftSection = observer(() => {
       {nftCards.map((card, index) => (
         <NFTCard {...card} key={index} />
       ))}
+      {nftCards.length <= 0 && 'Нету пока NFT иди уроки учи'}
     </CardsContainer>
   )
 })

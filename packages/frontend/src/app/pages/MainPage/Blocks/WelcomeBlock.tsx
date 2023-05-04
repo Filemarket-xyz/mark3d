@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { styled } from '../../../../styles'
 import { Container, LinkButton, NavButton, textVariant, ToolCard } from '../../../UIkit'
 import { TechnologyStack } from '../components/TechnologyStack'
@@ -169,7 +170,7 @@ export default function WelcomeBlock() {
             </ToolCardContent>
           </ToolCardNarrow>
         </ToolsContainer>
-        <TechnologyStack/>
+        <TechnologyStack />
       </WelcomeInfo>
     </WelcomeScreenWrapper>
   )

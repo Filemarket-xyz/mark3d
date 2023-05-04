@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+
 import { useSeedProvider } from './useSeedProvider'
 
 export function useCanUnlock(account: string | undefined): boolean {

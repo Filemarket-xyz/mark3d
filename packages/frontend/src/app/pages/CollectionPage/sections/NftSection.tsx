@@ -1,11 +1,12 @@
 import { observer } from 'mobx-react-lite'
 import { useAccount } from 'wagmi'
+
 import { styled } from '../../../../styles'
-import { CardsPlaceholder } from '../../../UIkit/CardsPlaceholder/CardsPlaceholder'
 import NFTCard from '../../../components/MarketCard/NFTCard'
 import { useCollectionTokenListStore } from '../../../hooks/useCollectionTokenListStore'
 import { textVariant } from '../../../UIkit'
 import { NavButton } from '../../../UIkit/Button/NavButton'
+import { CardsPlaceholder } from '../../../UIkit/CardsPlaceholder/CardsPlaceholder'
 
 export const CardsContainer = styled('div', {
   display: 'flex',

@@ -1,9 +1,8 @@
 /* eslint-disable multiline-ternary */
-import * as React from 'react'
 import { useAutocomplete } from '@mui/base/AutocompleteUnstyled'
-import { styled } from '../../../styles'
-import PostfixedInput from './PostfixedInput'
-import bottomArrow from './img/arrow-bottom.svg'
+import { AutocompleteChangeReason } from '@mui/material'
+import { Loading } from '@nextui-org/react'
+import * as React from 'react'
 import {
   Control,
   Controller,
@@ -11,9 +10,10 @@ import {
   FieldValues,
   Path
 } from 'react-hook-form'
-import { AutocompleteChangeReason } from '@mui/material'
-import { Loading } from '@nextui-org/react'
-import {ChangeEvent, useRef} from "react";
+
+import { styled } from '../../../styles'
+import bottomArrow from './img/arrow-bottom.svg'
+import PostfixedInput from './PostfixedInput'
 
 const Listbox = styled('ul', {
   maxWidth: '600px',
@@ -71,14 +71,13 @@ interface ComboboxProps<T extends FieldValues> {
 }
 
 function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
-
   const {
     getRootProps,
     getInputProps,
     getListboxProps,
     getOptionProps,
     groupedOptions,
-      inputValue
+    inputValue
   } = useAutocomplete({
     options: props.options,
     getOptionLabel: (option) => option.title,
@@ -117,7 +116,7 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && inputValue) {
       props.onEnter?.(inputValue as string)
-      event.preventDefault();
+      event.preventDefault()
       return false
     }
   }
@@ -130,7 +129,7 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
           postfix={<img width={24} height={24} src={bottomArrow} />}
           inputProps={{
             ...getInputProps(),
-            onKeyDown: handleKeyDown,
+            onKeyDown: handleKeyDown
           }}
         />
       </div>

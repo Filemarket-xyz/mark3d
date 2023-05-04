@@ -10,7 +10,8 @@ export class DialogRef {
   // eslint-disable-next-line no-useless-constructor
   constructor(
     private readonly dialogCallId: number,
-    public dialogStore: DialogStore
+    public dialogStore: DialogStore,
+    public readonly name?: string
   ) {
   }
 
@@ -54,13 +55,20 @@ export class DialogStore {
       const instance = this.instances[index]
       instance.open = false
       instance.onClosed?.()
-      setTimeout(action(() => this.instances.splice(index, 1)), 1000)
+      setTimeout(action(() => {
+        this.instances = this.instances.filter(({ id }) => id !== instance.id)
+      }), 1000)
     }
   }
 
   closeDialogById(id: number): void {
     const openIndex = this.instances.findIndex((instance) => instance.id === id)
     this.closeDialogByOpenIndex(openIndex)
+  }
+
+  closeDialogByName(name: string): void {
+    const openIndex = this.instances.findIndex((instance) => instance.props.name === name)
+    openIndex > -1 && this.closeDialogByOpenIndex(openIndex)
   }
 
   closeDialog(component: ComponentType): void {

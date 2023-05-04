@@ -1,45 +1,46 @@
-import React from 'react';
-import {Badge, gradientPlaceholderImg, NavLink, textVariant} from "../../../../UIkit";
-import {getProfileImageUrl} from "../../../../utils/nfts/getProfileImageUrl";
-import {reduceAddress} from "../../../../utils/nfts/reduceAddress";
-import {getHttpLinkFromIpfsString} from "../../../../utils/nfts/getHttpLinkFromIpfsString";
-import {styled} from "../../../../../styles";
-import {useCollectionStore} from "../../../../hooks/useCollectionStore";
-import {useParams} from "react-router-dom";
-import {Params} from "../../../../utils/router/Params";
-import {useTokenStore} from "../../../../hooks/useTokenStore";
-import { GridBlock } from '../../helper/styles/style';
+import React from 'react'
+import { useParams } from 'react-router-dom'
+
+import { styled } from '../../../../../styles'
+import { useCollectionStore } from '../../../../hooks/useCollectionStore'
+import { useTokenStore } from '../../../../hooks/useTokenStore'
+import { Badge, gradientPlaceholderImg, NavLink } from '../../../../UIkit'
+import { getHttpLinkFromIpfsString } from '../../../../utils/nfts/getHttpLinkFromIpfsString'
+import { getProfileImageUrl } from '../../../../utils/nfts/getProfileImageUrl'
+import { reduceAddress } from '../../../../utils/nfts/reduceAddress'
+import { Params } from '../../../../utils/router/Params'
+import { GridBlock } from '../../helper/styles/style'
 
 const BadgesContainer = styled('div', {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '$3',
-    '@sm': {
-        flexDirection: 'column-reverse',
-        gap: '$2'
-    }
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '$3',
+  '@sm': {
+    flexDirection: 'column-reverse',
+    gap: '$2'
+  }
 })
 
 const HomeLandSection = () => {
-    const { collectionAddress, tokenId } = useParams<Params>()
-    const { data: token } = useTokenStore(collectionAddress, tokenId)
-    const { collection } = useCollectionStore(collectionAddress)
-    return (
+  const { collectionAddress, tokenId } = useParams<Params>()
+  const { data: token } = useTokenStore(collectionAddress, tokenId)
+  const { collection } = useCollectionStore(collectionAddress)
+  return (
         <GridBlock>
             <BadgesContainer>
                 <NavLink
                     to={
                         collection?.address
-                            ? `/collection/${collection?.address}`
-                            : location.pathname
+                          ? `/collection/${collection?.address}`
+                          : location.pathname
                     }
                 >
                     <Badge
                         image={{
-                            url: collection?.image
-                                ? getHttpLinkFromIpfsString(collection.image)
-                                : gradientPlaceholderImg,
-                            borderRadius: 'roundedSquare'
+                          url: collection?.image
+                            ? getHttpLinkFromIpfsString(collection.image)
+                            : gradientPlaceholderImg,
+                          borderRadius: 'roundedSquare'
                         }}
                         content={{ title: 'Collection', value: collection?.name ?? '' }}
                     />
@@ -49,12 +50,12 @@ const HomeLandSection = () => {
                 >
                     <Badge
                         image={{
-                            borderRadius: 'circle',
-                            url: getProfileImageUrl(collection?.creator ?? '')
+                          borderRadius: 'circle',
+                          url: getProfileImageUrl(collection?.creator ?? '')
                         }}
                         content={{
-                            title: 'Creator',
-                            value: reduceAddress(collection?.creator ?? '')
+                          title: 'Creator',
+                          value: reduceAddress(collection?.creator ?? '')
                         }}
                     />
                 </NavLink>
@@ -63,18 +64,18 @@ const HomeLandSection = () => {
                 >
                     <Badge
                         image={{
-                            borderRadius: 'circle',
-                            url: getProfileImageUrl(token?.owner ?? '')
+                          borderRadius: 'circle',
+                          url: getProfileImageUrl(token?.owner ?? '')
                         }}
                         content={{
-                            title: 'Owner',
-                            value: reduceAddress(token?.owner ?? '')
+                          title: 'Owner',
+                          value: reduceAddress(token?.owner ?? '')
                         }}
                     />
                 </NavLink>
             </BadgesContainer>
         </GridBlock>
-    );
-};
+  )
+}
 
-export default HomeLandSection;
+export default HomeLandSection

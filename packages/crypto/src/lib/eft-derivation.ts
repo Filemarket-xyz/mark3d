@@ -2,7 +2,7 @@
 
 import {AesKeyAndIv, EftAesDerivationFunction, EftRsaDerivationFunction, HkdfFunction, RsaKeyPair} from './types';
 import {aesIVLength, aesKeyLength, aesKeyType, rsaKeyType, rsaModulusLength} from './config';
-import {num2Buf} from './utils';
+import {numberToBuffer} from './utils';
 import {hkdfSha512, hkdfSha512Native} from './hkdf-sha512';
 import {rsaGenerateKeyPair} from './rsa';
 
@@ -31,7 +31,7 @@ const eftAesDerivationAux = async (
     Buffer.concat([
       aesKeyType,
       Buffer.from(collectionAddress),
-      num2Buf(tokenId)]),
+      numberToBuffer(tokenId)]),
     aesKeyLength + aesIVLength
   )
   return {
@@ -54,8 +54,8 @@ const eftRsaDerivationAux = async (
     Buffer.concat([
       rsaKeyType,
       Buffer.from(collectionAddress),
-      num2Buf(tokenId),
-      num2Buf(dealNumber)]),
+      numberToBuffer(tokenId),
+      numberToBuffer(dealNumber)]),
     rsaModulusLength,
   )
   return rsaGenerateKeyPair(OKM)

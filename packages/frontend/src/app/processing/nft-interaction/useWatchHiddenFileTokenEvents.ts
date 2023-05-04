@@ -1,7 +1,8 @@
 import { useContractEvent } from 'wagmi'
+
 import { mark3dConfig } from '../../config/mark3d'
-import { HiddenFilesTokenEventNames } from '../types'
 import { IHiddenFilesTokenEventsListener } from '../HiddenFilesTokenEventsListener'
+import { HiddenFilesTokenEventNames } from '../types'
 import { ensureAddress } from '../utils/address'
 
 /**

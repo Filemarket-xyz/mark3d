@@ -1,8 +1,9 @@
-import { TokenFullId } from '../../../../../processing/types'
 import { FC } from 'react'
-import { useFinalizeTransfer } from '../../../../../processing'
-import { Button } from '../../../../../UIkit'
+
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
+import { useFinalizeTransfer } from '../../../../../processing'
+import { TokenFullId } from '../../../../../processing/types'
+import { Button } from '../../../../../UIkit'
 import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonFinalizeTransferProps {
@@ -20,7 +21,7 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
   })
   return (
     <>
-      <MintModal {...modalProps}/>
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth

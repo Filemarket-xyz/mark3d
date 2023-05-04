@@ -1,4 +1,5 @@
-import { RouteObject, Navigate } from 'react-router-dom'
+import { Navigate, RouteObject } from 'react-router-dom'
+
 import CollectionSection from './CollectionSection'
 import CreatorSection from './CreatorSection'
 import NamespaceSection from './NamespaceSection'

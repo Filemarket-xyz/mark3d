@@ -1,9 +1,10 @@
 import { ReactNode } from 'react'
+
 import {
-  TableBuilder,
   ITableBuilder,
+  ITableRowCell,
   ITransformedRow,
-  ITableRowCell
+  TableBuilder
 } from '../../../../components/Table/TableBuilder'
 import { CheckIcon, CrossIcon, RowCell, TableRow } from '../TableRow/TableRow'
 import { HeadItem } from './Table'

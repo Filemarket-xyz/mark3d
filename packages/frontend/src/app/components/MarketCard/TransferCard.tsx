@@ -1,5 +1,6 @@
 import React from 'react'
-import { NavButton, Txt, gradientPlaceholderImg } from '../../UIkit'
+
+import { gradientPlaceholderImg, NavButton, Txt } from '../../UIkit'
 import { BasicCardSquareImg } from './BasicCard'
 import {
   BorderLayout,

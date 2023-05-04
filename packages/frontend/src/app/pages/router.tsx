@@ -1,16 +1,17 @@
 import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom'
-import ExplorerPage from './ExplorerPage/ExplorerPage'
+
 import { AppLayout } from '../components/App'
-import MainPage from './MainPage/MainPage'
-import MarketPage from './MarketPage/MarketPage'
-import { createRoutes } from './CreatePage/routes'
-import { marketRoutes } from './MarketPage/routes'
-import ProfilePage from './ProfilePage/ProfilePage'
-import { profileRoutes } from './ProfilePage/routes'
-import NFTPage from './NFTPage/NFTPage'
+import { Params } from '../utils/router/Params'
 import CollectionPage from './CollectionPage/CollectionPage'
 import { collectionPageRoutes } from './CollectionPage/routes'
-import { Params } from '../utils/router/Params'
+import { createRoutes } from './CreatePage/routes'
+import ExplorerPage from './ExplorerPage/ExplorerPage'
+import MainPage from './MainPage/MainPage'
+import MarketPage from './MarketPage/MarketPage'
+import { marketRoutes } from './MarketPage/routes'
+import NFTPage from './NFTPage/NFTPage'
+import ProfilePage from './ProfilePage/ProfilePage'
+import { profileRoutes } from './ProfilePage/routes'
 
 const routes: RouteObject[] = [
   {

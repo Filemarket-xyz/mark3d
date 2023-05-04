@@ -42,7 +42,7 @@ func (s *service) GetTokenEncryptedPassword(
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	pwd, err := s.repository.GetTokenEncryptedPassword(ctx, tx, address, tokenId)
+	pwd, number, err := s.repository.GetTokenEncryptedPassword(ctx, tx, address, tokenId)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, nil
@@ -53,6 +53,7 @@ func (s *service) GetTokenEncryptedPassword(
 
 	res := models.EncryptedPasswordResponse{
 		EncryptedPassword: pwd,
+		DealNumber:        number,
 	}
 
 	return &res, nil

@@ -1,5 +1,6 @@
 import { Tooltip } from '@nextui-org/react'
 import React from 'react'
+
 import { styled } from '../../../styles'
 import { Button, Container, Txt } from '../../UIkit'
 import FakeMintNftSection from './FakeMintNftSection/FakeMintNftSection'
@@ -70,7 +71,7 @@ const FakeMint = () => {
             <div className="topText">
                 <Txt h1><a href={'/'}>FileBunnies</a> Minting</Txt>
             </div>
-            <FakeMintNftSection/>
+            <FakeMintNftSection />
             <div className="buttons">
                 <Tooltip content={'Все подписываемся на канал демона и андроида!!!'} rounded color="primary" className={'tooltip'}>
                     <Button>How NFT with EFT works?</Button>

@@ -1,7 +1,8 @@
-import { useGetApproved } from './useGetApproved'
-import { TokenFullId } from '../types'
-import { mark3dConfig } from '../../config/mark3d'
 import { utils } from 'ethers'
+
+import { mark3dConfig } from '../../config/mark3d'
+import { TokenFullId } from '../types'
+import { useGetApproved } from './useGetApproved'
 
 export function useIsApprovedExchange(tokenFullId: Partial<TokenFullId> = {}) {
   const { data, ...statuses } = useGetApproved(tokenFullId)

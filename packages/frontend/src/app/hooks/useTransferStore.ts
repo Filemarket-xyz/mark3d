@@ -1,5 +1,5 @@
-import { useStores } from './useStores'
 import { useActivateDeactivateRequireParams } from './useActivateDeactivateStore'
+import { useStores } from './useStores'
 
 /**
  * Component, using this hook, MUST be wrapped into observer.
