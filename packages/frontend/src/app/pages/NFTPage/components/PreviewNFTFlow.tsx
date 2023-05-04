@@ -73,6 +73,8 @@ export const PreviewNFTFlow = ({
     data?: string
   }>()
 
+  const [is3D, setIs3D] = useState<boolean | undefined>(undefined)
+
   const handleLoadClick = async () => {
     if (!getFile) return
 
@@ -112,8 +114,14 @@ export const PreviewNFTFlow = ({
       })
 
     const fileExtension = getFileExtension(model.result)
-    if (fileExtension === 'glb' || fileExtension === 'gltf') {
+    const availableExtensions3D: string[] = ['glb', 'gltf']
+    const availableExtensionsImage: string[] = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tif', 'tiff', 'psd', 'ai', 'eps']
+    if (availableExtensions3D.includes(fileExtension)) {
       fr.readAsDataURL(model.result)
+      setIs3D(true)
+    } else if (availableExtensionsImage.includes(fileExtension)) {
+      fr.readAsDataURL(model.result)
+      setIs3D(false)
     } else {
       setPreviewState({
         state: PreviewState.EXTENSION_ERROR,
@@ -138,7 +146,7 @@ export const PreviewNFTFlow = ({
         {canViewFile && (
           <SwiperSlide>
             {previewState?.state === PreviewState.LOADED ? (
-              <model-viewer
+              is3D ? <model-viewer
                 src={previewState.data}
                 ar
                 shadow-intensity='1'
@@ -146,6 +154,7 @@ export const PreviewNFTFlow = ({
                 touch-action='pan-y'
                 style={{ width: '100%', height: '100%' }}
               ></model-viewer>
+                : <img src={previewState.data} />
             ) : previewState?.state === PreviewState.LOADING ? (
               <Loading size='xl' color={'white'} />
             ) : previewState?.state === PreviewState.LOADING_ERROR ? (
