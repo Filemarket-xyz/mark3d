@@ -1,4 +1,5 @@
 import { ComponentProps, FC, useMemo } from 'react'
+
 import { NavLinkStyled } from '../NavBarItem'
 
 const transitionDelay = 0

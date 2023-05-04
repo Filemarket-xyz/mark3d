@@ -1,8 +1,9 @@
-import { TokenFullId } from '../../../../../processing/types'
 import { FC } from 'react'
-import { Button } from '../../../../../UIkit'
-import { useApproveExchange } from '../../../../../processing/hooks'
+
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
+import { useApproveExchange } from '../../../../../processing'
+import { TokenFullId } from '../../../../../processing/types'
+import { Button } from '../../../../../UIkit'
 import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonApproveExchangeProps {
@@ -20,10 +21,11 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
   })
   return (
     <>
-      <MintModal {...modalProps}/>
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth
+        borderRadiusSecond
         onPress={async () => {
           await approveExchange()
           callback?.()

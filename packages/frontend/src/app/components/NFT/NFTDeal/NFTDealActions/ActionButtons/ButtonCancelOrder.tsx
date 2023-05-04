@@ -1,8 +1,9 @@
-import { TokenFullId } from '../../../../../processing/types'
 import { FC } from 'react'
-import { useCancelOrder } from '../../../../../processing/hooks'
-import { Button } from '../../../../../UIkit'
+
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
+import { useCancelOrder } from '../../../../../processing'
+import { TokenFullId } from '../../../../../processing/types'
+import { Button } from '../../../../../UIkit'
 import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonCancelOrderProps {
@@ -20,10 +21,11 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, cal
   })
   return (
     <>
-      <MintModal {...modalProps}/>
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth
+        borderRadiusSecond
         onPress={async () => {
           await cancelOrder()
           callback?.()

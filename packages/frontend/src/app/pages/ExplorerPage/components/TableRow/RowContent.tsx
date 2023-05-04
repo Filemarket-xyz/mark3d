@@ -1,8 +1,9 @@
 import { ReactNode } from 'react'
+
 import { styled } from '../../../../../styles'
+import Carousel from '../../../../components/Swiper/Swiper'
 import { Button, textVariant, Txt } from '../../../../UIkit'
 import { Hr } from '../../../../UIkit/Hr/Hr'
-import Carousel from '../../../../components/Swiper/Swiper'
 import { IRowContent } from './TableRow'
 
 const ContentWrapper = styled('div', {

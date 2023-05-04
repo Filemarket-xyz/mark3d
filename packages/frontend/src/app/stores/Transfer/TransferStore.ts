@@ -1,12 +1,13 @@
-import { ErrorStore } from '../Error/ErrorStore'
-import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
-import { Transfer, TransferStatus } from '../../../swagger/Api'
+import { BigNumber } from 'ethers'
 import { makeAutoObservable } from 'mobx'
+
+import { Transfer, TransferStatus } from '../../../swagger/Api'
 import { api } from '../../config/api'
+import { IHiddenFilesTokenEventsListener } from '../../processing'
 import { TokenFullId } from '../../processing/types'
 import { normalizeCounterId } from '../../processing/utils/id'
-import { IHiddenFilesTokenEventsListener } from '../../processing'
-import { BigNumber } from 'ethers'
+import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { ErrorStore } from '../Error/ErrorStore'
 
 /**
  * Stores only ACTIVE (i.e. created and not finished/cancelled) transfer state

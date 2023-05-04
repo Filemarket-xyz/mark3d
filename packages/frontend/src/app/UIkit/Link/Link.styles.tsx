@@ -1,5 +1,7 @@
-import React from 'react'
 import * as Util from '@stitches/react/types/util'
+import React from 'react'
+
+import RedirectImg from '../../../assets/img/Redirect.svg'
 import { styled } from '../../../styles'
 import { textVariant } from '../Txt'
 
@@ -46,9 +48,11 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
         },
         footer: {
           true: {
-            color: '$white',
-            fill: '$white',
-            ...textVariant('primary2').true
+            color: '$gray300',
+            fill: '$gray300',
+            ...textVariant('primary2').true,
+              fontSize: '14px',
+              fontWeight: '400'
           }
         },
         small: {
@@ -57,6 +61,17 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
         underlined: {
           true: {
             textDecoration: 'underline'
+          }
+        },
+        iconRedirect: {
+          true: {
+            position: 'relative',
+            '&:after': {
+              content: `url(${RedirectImg})`,
+              position: 'absolute',
+              top: 0,
+              right: '-20px'
+            }
           }
         }
       }

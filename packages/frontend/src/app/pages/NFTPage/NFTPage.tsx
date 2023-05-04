@@ -1,30 +1,27 @@
-import React, { useMemo } from 'react'
-import { styled } from '../../../styles'
-import { PageLayout, textVariant, NavLink, Badge, gradientPlaceholderImg } from '../../UIkit'
-import { Hr } from '../../UIkit/Hr/Hr'
-import { NFTDeal } from '../../components/NFT'
 import { observer } from 'mobx-react-lite'
-import { useLocation, useParams } from 'react-router-dom'
-import { Params } from '../../utils/router/Params'
-import { makeTokenFullId } from '../../processing/utils/id'
-import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
-import { useOrderStore } from '../../hooks/useOrderStore'
-import { useCollectionStore } from '../../hooks/useCollectionStore'
-import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
-import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
-import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
+import React, { useMemo } from 'react'
+import { useParams } from 'react-router-dom'
+
+import { styled } from '../../../styles'
 import { useStores } from '../../hooks'
-import { useTokenStore } from '../../hooks/useTokenStore'
+import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
-import { formatFileSize } from '../../utils/nfts/formatFileSize'
-import { useIsOwner } from '../../processing/hooks'
+import { useTokenStore } from '../../hooks/useTokenStore'
+import { useTransferStoreWatchEvents } from '../../hooks/useTransferStoreWatchEvents'
+import { useIsBuyer, useIsOwner } from '../../processing'
+import { makeTokenFullId } from '../../processing/utils/id'
+import { PageLayout } from '../../UIkit'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
+import { Params } from '../../utils/router/Params'
 import { transferPermissions } from '../../utils/transfer/status'
-import '@google/model-viewer'
 import { PreviewNFTFlow } from './components/PreviewNFTFlow'
-import { FileButton } from '../../components/NFT/FileButton'
-import { ProtectedStamp } from '../../components/NFT/FileButton/ProtectedStamp'
-import { useIsBuyer } from '../../processing/hooks/useIsBuyer'
+import { GridBlock } from './helper/styles/style'
+import BaseInfoSection from './section/BaseInfo/BaseInfoSection'
+import ControlSection from './section/Contol/ControlSection'
+import DescriptionSection from './section/Description/DescriptionSection'
+import FileInfoSection from './section/FileInfo/FileInfoSection'
+import HomeLandSection from './section/HomeLand/HomeLandSection'
+import TagsSection from './section/Tags/TagsSection'
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',
@@ -38,96 +35,70 @@ const NFTPreviewContainer = styled('div', {
   boxSizing: 'content-box'
 })
 
-const NftName = styled('h1', {
-  ...textVariant('h3').true,
-  fontWeight: '600',
-  color: '$gray800',
-  marginBottom: '$4'
-})
-
-const BadgesContainer = styled('div', {
-  display: 'flex',
-  gap: '$3',
-  '@sm': {
-    flexDirection: 'column-reverse',
-    gap: '$2'
-  }
-})
-
-const GridLayout = styled(PageLayout, {
+const MainInfo = styled(PageLayout, {
   paddingTB: 48,
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
+  fontSize: '16px',
+  gridTemplateColumns: '3fr 1fr',
   gridTemplateRows: 'max-content',
   columnGap: '$4',
   minHeight: '100%',
-  gap: '48px',
   borderRadius: '$6 $6 0 0',
-  position: 'relative',
   top: '-$6',
-  '&:after': {
-    display: 'block',
-    content: '',
-    position: 'absolute',
-    bottom: '-$6',
-    left: 0,
-    right: 0,
-    height: '$space$6',
-    backgroundColor: '$gray100'
-  },
-  boxShadow: '$footer',
-  '@md': {
-    borderRadius: '$4 $4',
-    gridTemplateRows: 'max-content',
-    gap: '$5',
-    gridTemplateColumns: '1fr'
+  boxShadow: '$footer'
+})
+
+const GridLayout = styled('div', {
+  display: 'grid',
+  gap: '3rem',
+  position: 'relative',
+  gridTemplateColumns: '3fr 1fr',
+  gridTemplateRows: 'max-content',
+  columnGap: '$4',
+  minHeight: '100%',
+  '@mdx': {
+    display: 'flex'
   }
 })
 
-const GridBlock = styled('div')
-
-const PropertyTitle = styled('h2', {
-  ...textVariant('h5').true,
-  color: '$gray800',
-  marginBottom: '$3'
+const GridBlockSection = styled(GridBlock, {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '48px'
 })
 
-const P = styled('p', {
-  ...textVariant('body4').true,
-  color: '$gray800',
-  fontWeight: 400
-})
-
-const StyledHr = styled(Hr, {
-  marginBottom: '$3'
-})
-
-const FileList = styled('div', {
-  '& li:not(:last-child)': {
-    marginBottom: '$2'
+const GridBlockSectionRow = styled(GridBlockSection, {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  gap: '12px',
+  '@mdx': {
+    flexDirection: 'column'
   }
+})
+
+const DisplayLayout = styled('div', {
+  display: 'flex',
+  gap: '32px',
+  marginTop: '32px',
+  flexDirection: 'column'
 })
 
 const NFTPage = observer(() => {
   const { collectionAddress, tokenId } = useParams<Params>()
+  const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
+  const tokenStore = useTokenStore(collectionAddress, tokenId)
+  const tokenMetaStore = useTokenMetaStore(tokenStore.data?.metaUri)
+  const { errorStore } = useStores()
+  const files = useHiddenFileDownload(tokenMetaStore, errorStore, tokenStore.data)
   const tokenFullId = useMemo(
     () => makeTokenFullId(collectionAddress, tokenId),
     [collectionAddress, tokenId]
   )
-  const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
-  const orderStore = useOrderStore(collectionAddress, tokenId)
-  const { data: token } = useTokenStore(collectionAddress, tokenId)
-  const tokenMetaStore = useTokenMetaStore(token?.metaUri)
-  const { errorStore } = useStores()
-  const files = useHiddenFileDownload(tokenMetaStore, errorStore, token)
   const { isOwner } = useIsOwner(tokenFullId)
   const isBuyer = useIsBuyer(transferStore.data)
   const canViewHiddenFiles = isBuyer && transferPermissions.buyer.canViewHiddenFiles(
     transferStore.data
   )
-
-  const { collection } = useCollectionStore(collectionAddress)
-  const location = useLocation()
+  const { data: token } = useTokenStore(collectionAddress, tokenId)
 
   return (
     <>
@@ -136,111 +107,32 @@ const NFTPage = observer(() => {
           <PreviewNFTFlow
             getFile={files[0]?.getFile}
             canViewFile={isOwner || canViewHiddenFiles}
-            imageURL={getHttpLinkFromIpfsString(token?.image ?? '')}
+            imageURL={getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')}
           />
         }
       </NFTPreviewContainer>
+      <MainInfo>
+        <GridLayout>
+          <GridBlockSection>
+            <BaseInfoSection />
+            {window.innerWidth <= 900 && <GridBlockSectionRow>
+              <ControlSection />
+              <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files} />
+            </GridBlockSectionRow>}
+            <HomeLandSection />
+             <TagsSection categories={[...Array.from(token?.categories ?? []), ...Array.from(token?.subcategories ?? [])]} tags={token?.tags} />
+            {window.innerWidth > 1200 && <><DescriptionSection /></>}
+          </GridBlockSection>
 
-      <GridLayout>
-        <GridBlock>
-          <NftName>{token?.name}</NftName>
-          <BadgesContainer>
-            <NavLink
-              to={collection?.creator ? `/profile/${collection?.creator}` : location.pathname}
-            >
-              <Badge
-                image={{
-                  borderRadius: 'circle',
-                  url: getProfileImageUrl(collection?.creator ?? '')
-                }}
-                content={{
-                  title: 'Creator',
-                  value: reduceAddress(collection?.creator ?? '')
-                }}
-              />
-            </NavLink>
+          {window.innerWidth > 900 && <GridBlockSection>
+            <ControlSection />
+            <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files} />
+          </GridBlockSection>}
+        </GridLayout>
 
-            <NavLink
-              to={
-                collection?.address
-                  ? `/collection/${collection?.address}`
-                  : location.pathname
-              }
-            >
-              <Badge
-                image={{
-                  url: collection?.image
-                    ? getHttpLinkFromIpfsString(collection.image)
-                    : gradientPlaceholderImg,
-                  borderRadius: 'roundedSquare'
-                }}
-                content={{ title: 'Collection', value: collection?.name ?? '' }}
-              />
-            </NavLink>
-          </BadgesContainer>
-        </GridBlock>
-
-        <GridBlock>
-          {tokenFullId && (
-            <NFTDeal
-              transfer={transferStore.data}
-              order={orderStore.data}
-              tokenFullId={tokenFullId}
-              reFetchOrder={() => {
-                orderStore.reload()
-                transferStore.reload()
-              }}
-            >
-              <NavLink
-                to={token?.owner ? `/profile/${token?.owner}` : location.pathname}
-              >
-                <Badge
-                  image={{
-                    borderRadius: 'circle',
-                    url: getProfileImageUrl(token?.owner ?? '')
-                  }}
-                  content={{
-                    title: 'Owner',
-                    value: reduceAddress(token?.owner ?? '')
-                  }}
-                />
-              </NavLink>
-            </NFTDeal>
-          )}
-        </GridBlock>
-
-        <GridBlock>
-          <PropertyTitle>Description</PropertyTitle>
-          <StyledHr />
-          <P>{token?.description}</P>
-        </GridBlock>
-
-        <GridBlock>
-          <PropertyTitle>Hidden files</PropertyTitle>
-          <StyledHr />
-          <FileList>
-            {isOwner || canViewHiddenFiles ? (
-              files.map(({ cid, name, size, download }) => (
-                <ProtectedStamp key={cid}>
-                  <FileButton
-                    name={name}
-                    caption={`download (${formatFileSize(size)})`}
-                    onPress={download}
-                  />
-                </ProtectedStamp>
-              ))
-            ) : (
-              <ProtectedStamp>
-                <FileButton
-                  name="Available only"
-                  caption="to the owner"
-                  isDisabled={true}
-                />
-              </ProtectedStamp>
-            )}
-          </FileList>
-        </GridBlock>
-      </GridLayout>
+        {window.innerWidth <= 1200 && <DisplayLayout><DescriptionSection />
+    </DisplayLayout>}
+      </MainInfo>
     </>
   )
 })

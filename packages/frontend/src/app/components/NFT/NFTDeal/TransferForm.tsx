@@ -1,10 +1,11 @@
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
-import { Input } from '../../../UIkit/Form/Input'
-import { FormControl } from '../../../UIkit/Form/FormControl'
-import { Label } from '../../../pages/CreatePage/CreateCollectionPage'
+
 import { styled } from '../../../../styles'
+import { Label } from '../../../pages/CreatePage/CreateCollectionPage'
 import { Button } from '../../../UIkit'
+import { FormControl } from '../../../UIkit/Form/FormControl'
+import { Input } from '../../../UIkit/Form/Input'
 
 export interface TransferFormValue {
   address: string

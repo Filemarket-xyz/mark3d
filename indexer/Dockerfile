@@ -25,6 +25,6 @@ COPY --from=build-deps /usr/src/backend/main main
 COPY --from=build-deps /usr/src/backend/.env .env
 COPY --from=build-deps /usr/src/backend/configs/$env.json config.json
 
-ENV LOG_PATH=/logs/mark3d-indexer.log
+ENV LOG_PATH=/logs/file-market-indexer.log
 
 ENTRYPOINT ["./run.sh"]

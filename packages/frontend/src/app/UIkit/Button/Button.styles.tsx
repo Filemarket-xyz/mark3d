@@ -1,5 +1,6 @@
-import React from 'react'
 import * as Util from '@stitches/react/types/util'
+import React from 'react'
+
 import { styled } from '../../../styles'
 import { textVariant } from '../Txt'
 
@@ -80,6 +81,20 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             }
           }
         },
+        input: {
+          true: {
+            color: 'white',
+            background: '$blue300',
+            '&[data-focus-ring=true]': {
+              focusRing: '$blue500'
+            },
+            '&[data-disabled=true]': {
+              color: 'white',
+              background: '$gray600',
+              cursor: 'not-allowed'
+            }
+          }
+        },
         small: {
           true: {
             height: '36px',
@@ -114,6 +129,11 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             }
           }
         },
+        borderRadiusSecond: {
+          true: {
+            borderRadius: '$2'
+          }
+        },
         iconCover: {
           true: {
             '& > *': {
@@ -121,6 +141,35 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
               size: 'calc(100% - 4px)',
               objectFit: 'cover'
             }
+          }
+        },
+        fakeNft: {
+          true: {
+            width: '252px',
+            height: '56px',
+            borderRadius: '32px'
+          }
+        },
+        fakeNftRarity: {
+          common: {
+            background: 'linear-gradient(90deg, #ACCBEE 0%, #77AFFF 100%)'
+          },
+          uncommon: {
+            background: 'linear-gradient(90deg, #4481EB 0%, #04BEFE 100%)'
+          },
+          rare: {
+            background: 'linear-gradient(90deg, #37ECBA 0%, #72AFD3 100%)'
+          },
+          legendary: {
+            background: 'linear-gradient(90deg, #B224EF 0%, #7579FF 100%)'
+          },
+          mythical: {
+            background: 'linear-gradient(90deg, #FC6076 0%, #FF9A44 100%)'
+          }
+        },
+        mediumHg: {
+          true: {
+            height: '56px'
           }
         }
       },

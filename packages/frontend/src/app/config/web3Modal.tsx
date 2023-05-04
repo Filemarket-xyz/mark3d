@@ -1,9 +1,10 @@
-import { configureChains, createClient } from 'wagmi'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
-import { FC } from 'react'
 import { Web3Modal } from '@web3modal/react'
-import { mark3dConfig } from './mark3d'
+import { FC } from 'react'
+import { configureChains, createClient } from 'wagmi'
+
 import { theme } from '../../styles'
+import { mark3dConfig } from './mark3d'
 
 const chains = [mark3dConfig.chain]
 

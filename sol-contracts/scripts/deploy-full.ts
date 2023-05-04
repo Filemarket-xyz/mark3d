@@ -10,10 +10,16 @@ const genRanHex = (size: number) =>
     .join("");
 
 async function callRpc(method: string, params: string) {
+  const network = process.env.HARDHAT_NETWORK;
+  let url: string;
+  if (network === 'filecoin') {
+    url = 'https://filecoin-mainnet.chainstacklabs.com/rpc/v1';
+  } else {
+    url = 'https://api.hyperspace.node.glif.io/rpc/v1';
+  }
   const options = {
     method: "POST",
-    url: "https://api.hyperspace.node.glif.io/rpc/v1",
-    // url: "http://localhost:1234/rpc/v0",
+    url: url,
     headers: {
       "Content-Type": "application/json",
     },
@@ -48,8 +54,10 @@ async function main() {
     maxPriorityFeePerGas: priorityFee,
   });
   console.log("fraud decider address: ", fraudDecider.address);
-  let accessToken = await accessTokenFactory.deploy("Mark3D Access Token", "MARK3D", "",
-    collectionToClone.address, true, fraudDecider.address, {
+  const globalSalt = genRanHex(128);
+  console.log("global salt", globalSalt);
+  let accessToken = await accessTokenFactory.deploy("FileMarket Access Token", "FileMarket", "",
+    "0x" + globalSalt, collectionToClone.address, true, fraudDecider.address, {
         maxPriorityFeePerGas: priorityFee,
       });
   console.log("access token address: ", accessToken.address);
@@ -57,16 +65,6 @@ async function main() {
     maxPriorityFeePerGas: priorityFee,
   });
   console.log("exchange address: ", exchange.address);
-  const salt = genRanHex(64);
-  const collectionAddress = await accessToken.predictDeterministicAddress("0x" + salt);
-  console.log("predicted address: ", collectionAddress);
-  await accessToken.connect(accounts[0]).createCollection("0x" + salt,
-    "TEST", "TEST", "", "", "0x",
-      {
-        maxPriorityFeePerGas: priorityFee,
-      });
-  let collectionInstance = collectionFactory.attach(collectionAddress);
-  console.log("collection address: ", collectionInstance.address);
 }
 
 main().catch((error) => {

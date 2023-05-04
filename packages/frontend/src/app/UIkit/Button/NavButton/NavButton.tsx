@@ -5,10 +5,11 @@ import {
 import {
   AriaButtonProps
 } from 'react-aria'
-import { Drip } from '../../Drip'
-import { useButton } from '../useButton'
-import { buttonStyled } from '../Button.styles'
 import { Link } from 'react-router-dom'
+
+import { Drip } from '../../Drip'
+import { buttonStyled } from '../Button.styles'
+import { useButton } from '../useButton'
 
 const NavButtonStyled = buttonStyled(Link)
 export type NavButtonProps = AriaButtonProps & ComponentProps<typeof NavButtonStyled>
@@ -28,7 +29,7 @@ export const NavButton = forwardRef<HTMLAnchorElement, NavButtonProps>(
         ref={buttonRef}
       >
         {children}
-        <Drip {...dripProps} color='white'/>
+        <Drip {...dripProps} color='white' />
       </NavButtonStyled>
     )
   }

@@ -1,5 +1,7 @@
-import { FC, PropsWithChildren } from 'react'
 import 'reseter.css/css/minireseter.css'
+
+import { FC, PropsWithChildren } from 'react'
+
 import { globalStyles } from './global'
 
 export const StitchesProvider: FC<PropsWithChildren> = ({ children }) => {

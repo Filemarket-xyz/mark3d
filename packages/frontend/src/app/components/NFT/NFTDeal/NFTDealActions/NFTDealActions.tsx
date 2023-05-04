@@ -1,12 +1,13 @@
 import { observer } from 'mobx-react-lite'
-import { Order, Transfer } from '../../../../../swagger/Api'
 import { FC } from 'react'
+
+import { Order, Transfer } from '../../../../../swagger/Api'
+import { useIsOwner } from '../../../../processing'
 import { TokenFullId } from '../../../../processing/types'
-import { NFTDealActionOwner } from './NFTDealActionsOwner'
-import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
 import { Txt } from '../../../../UIkit'
 import { stringifyError } from '../../../../utils/error'
-import { useIsOwner } from '../../../../processing/hooks'
+import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
+import { NFTDealActionOwner } from './NFTDealActionsOwner'
 
 export interface NFTDealActionsProps {
   tokenFullId: TokenFullId
@@ -22,9 +23,11 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   reFetchOrder
 }) => {
   const { isOwner, error, refetch } = useIsOwner(tokenFullId)
+
   if (error) {
     return <Txt color="red">{stringifyError(error)}</Txt>
   }
+
   if (isOwner) {
     return (
       <NFTDealActionOwner
@@ -34,15 +37,15 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
         reFetchOrder={reFetchOrder}
       />
     )
-  } else {
-    return (
-      <NFTDealActionsBuyer
-        transfer={transfer}
-        order={order}
-        tokenFullId={tokenFullId}
-        ownerStatusChanged={refetch}
-        reFetchOrder={reFetchOrder}
-      />
-    )
   }
+
+  return (
+    <NFTDealActionsBuyer
+      transfer={transfer}
+      order={order}
+      tokenFullId={tokenFullId}
+      ownerStatusChanged={refetch}
+      reFetchOrder={reFetchOrder}
+    />
+  )
 })

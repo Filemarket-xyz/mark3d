@@ -880,14 +880,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts-upgradeable@npm:^4.8.0-rc.1":
+"@openzeppelin/contracts-upgradeable@npm:4.8.0-rc.1":
   version: 4.8.0-rc.1
   resolution: "@openzeppelin/contracts-upgradeable@npm:4.8.0-rc.1"
   checksum: c8a7c4b9a2b0895e51d37ba5439602538c05697b232c89b5fe1052a0bc09436110eef6b004070d8556319bd2b7b7e2e30605771ff71c502bc077d17e8b0e003e
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:^4.7.3":
+"@openzeppelin/contracts@npm:4.7.3":
   version: 4.7.3
   resolution: "@openzeppelin/contracts@npm:4.7.3"
   checksum: 18382fcacf7cfd652f5dd0e70c08f08ea74eaa8ff11e9f9850639ada70198ae01a3f9493d89a52d724f2db394e9616bf6258017804612ba273167cf657fbb073
@@ -5958,8 +5958,8 @@ __metadata:
     "@nomicfoundation/hardhat-toolbox": ^2.0.0
     "@nomiclabs/hardhat-ethers": ^2.0.0
     "@nomiclabs/hardhat-etherscan": ^3.0.0
-    "@openzeppelin/contracts": ^4.7.3
-    "@openzeppelin/contracts-upgradeable": ^4.8.0-rc.1
+    "@openzeppelin/contracts": 4.7.3
+    "@openzeppelin/contracts-upgradeable": 4.8.0-rc.1
     "@typechain/ethers-v5": ^10.1.0
     "@typechain/hardhat": ^6.1.2
     "@types/chai": ^4.2.0

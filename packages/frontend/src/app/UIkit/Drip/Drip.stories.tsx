@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import React, { useRef } from 'react'
+
 import { Drip } from './Drip'
 import { useDrip } from './Drip.hooks'
 
@@ -15,7 +16,7 @@ const Template: ComponentStory<typeof Drip> = () => {
   const { onClick: onDripClickHandler, ...dripBindings } = useDrip(ref, false)
   return (
     <div style={{ width: 150, height: 60, backgroundColor: '#7D9EFF' }} ref={ref} onClick={onDripClickHandler}>
-      <Drip {...dripBindings} color="white"/>
+      <Drip {...dripBindings} color="white" />
     </div>
   )
 }

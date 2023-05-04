@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
+
 import { styled } from '../../../../styles'
-import arrowLeft from '../img/arrow-left.svg'
 import { Button, textVariant } from '../../../UIkit'
+import arrowLeft from '../img/arrow-left.svg'
 
 const SliderContainer = styled('div', {
   width: '100%',

@@ -1,6 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { AppLogoButton } from './AppLogoButton'
 import { BrowserRouter } from 'react-router-dom'
+
+import { AppLogoButton } from './AppLogoButton'
 
 const story: ComponentMeta<typeof AppLogoButton> = {
   component: AppLogoButton,
@@ -11,7 +12,7 @@ export default story
 
 const Template: ComponentStory<typeof AppLogoButton> = () => (
   <BrowserRouter>
-    <AppLogoButton to={'/'}/>
+    <AppLogoButton to={'/'} />
   </BrowserRouter>
 )
 

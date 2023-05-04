@@ -6,6 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"log"
+	"math/big"
+	"net/http"
+	"strings"
+	"time"
+
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -20,13 +27,8 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/internal/repository"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 	ethclient2 "github.com/mark3d-xyz/mark3d/indexer/pkg/ethclient"
+	healthnotifier "github.com/mark3d-xyz/mark3d/indexer/pkg/health_notifier"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/now"
-	"io"
-	"log"
-	"math/big"
-	"net/http"
-	"strings"
-	"time"
 )
 
 var (
@@ -37,13 +39,6 @@ const (
 	zeroAddress = "0x0000000000000000000000000000000000000000"
 )
 
-type metaData struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Image       string `json:"image"`
-	HiddenFile  string `json:"hidden_file"`
-}
-
 type Service interface {
 	Collections
 	Tokens
@@ -51,6 +46,8 @@ type Service interface {
 	Orders
 	ListenBlockchain() error
 	Shutdown()
+
+	HealthCheck(context.Context) (*models.HealthStatusResponse, *models.ErrorResponse)
 }
 
 type EthClient interface {
@@ -66,6 +63,7 @@ type Collections interface {
 
 type Tokens interface {
 	GetToken(ctx context.Context, address common.Address, tokenId *big.Int) (*models.Token, *models.ErrorResponse)
+	GetTokenEncryptedPassword(ctx context.Context, address common.Address, tokenId *big.Int) (*models.EncryptedPasswordResponse, *models.ErrorResponse)
 	GetCollectionTokens(ctx context.Context, address common.Address) ([]*models.Token, *models.ErrorResponse)
 	GetTokensByAddress(ctx context.Context, address common.Address) (*models.TokensResponse, *models.ErrorResponse)
 }
@@ -88,6 +86,7 @@ type Orders interface {
 
 type service struct {
 	repository          repository.Repository
+	healthNotifier      healthnotifier.HealthNotifyer
 	cfg                 *config.ServiceConfig
 	ethClient           ethclient2.EthClient
 	accessTokenAddress  common.Address
@@ -97,25 +96,69 @@ type service struct {
 	closeCh             chan struct{}
 }
 
-func NewService(repo repository.Repository, ethClient ethclient2.EthClient,
-	cfg *config.ServiceConfig) (Service, error) {
+func NewService(
+	repo repository.Repository,
+	ethClient ethclient2.EthClient,
+	healthNotifier healthnotifier.HealthNotifyer,
+	cfg *config.ServiceConfig,
+) (Service, error) {
 	accessTokenInstance, err := access_token.NewMark3dAccessToken(cfg.AccessTokenAddress, nil)
 	if err != nil {
 		return nil, err
 	}
+
 	exchangeInstance, err := exchange.NewMark3dExchange(cfg.ExchangeAddress, nil)
 	if err != nil {
 		return nil, err
 	}
+
 	return &service{
 		ethClient:           ethClient,
 		repository:          repo,
+		healthNotifier:      healthNotifier,
 		cfg:                 cfg,
 		accessTokenAddress:  cfg.AccessTokenAddress,
 		accessTokenInstance: accessTokenInstance,
 		exchangeAddress:     cfg.ExchangeAddress,
 		exchangeInstance:    exchangeInstance,
 		closeCh:             make(chan struct{}),
+	}, nil
+}
+
+func (s *service) HealthCheck(ctx context.Context) (*models.HealthStatusResponse, *models.ErrorResponse) {
+	lastBlockNumber, err := s.repository.GetLastBlock(ctx)
+	if err != nil {
+		return nil, &models.ErrorResponse{
+			Code:    500,
+			Detail:  err.Error(),
+			Message: "Failed to get last block in indexer",
+		}
+	}
+	headBlockNumber, err := s.ethClient.GetLatestBlockNumber(ctx)
+	if err != nil {
+		return nil, &models.ErrorResponse{
+			Code:    500,
+			Detail:  err.Error(),
+			Message: "Failed to get head block from blockchain",
+		}
+	}
+
+	status := models.HealthStatusHealthy
+	backlog := big.NewInt(0).Sub(headBlockNumber, lastBlockNumber).Int64()
+	if backlog < 0 {
+		return nil, &models.ErrorResponse{
+			Code:    500,
+			Detail:  fmt.Sprintf("Somehow headBlockNumber - lastBlockNumber = %d", backlog),
+			Message: "Head block number is smaller than our last block number",
+		}
+	}
+	if backlog > s.cfg.AllowedBlockNumberDifference {
+		status = models.HealthStatusUnhealthy
+	}
+
+	return &models.HealthStatusResponse{
+		Status:       status,
+		BlockBacklog: backlog,
 	}, nil
 }
 
@@ -227,35 +270,41 @@ func (s *service) isCollection(ctx context.Context, tx pgx.Tx, address common.Ad
 	return true, nil
 }
 
-func (s *service) loadTokenParams(ctx context.Context, cid string) metaData {
+func (s *service) loadTokenParams(ctx context.Context, cid string) domain.TokenMetadata {
 	cid = strings.TrimPrefix(cid, "ipfs://")
 	if cid == "" {
-		return metaData{}
+		return domain.TokenMetadata{}
 	}
 	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://gateway.lighthouse.storage/ipfs/%s", cid), nil)
 	if err != nil {
-		return metaData{}
+		return domain.TokenMetadata{}
 	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return metaData{}
+		return domain.TokenMetadata{}
 	}
 	defer resp.Body.Close()
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return metaData{}
+		return domain.TokenMetadata{}
 	}
-	var meta metaData
+
+	var meta domain.TokenMetadataIpfs
 	if err := json.Unmarshal(data, &meta); err != nil {
-		return metaData{}
+		return domain.TokenMetadata{}
 	}
-	return meta
+	return domain.IpfsMetadataToDomain(meta)
 }
 
-func (s *service) processCollectionCreation(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, blockNumber uint64, ev *access_token.Mark3dAccessTokenCollectionCreation) error {
+func (s *service) processCollectionCreation(
+	ctx context.Context,
+	tx pgx.Tx,
+	t *types.Transaction,
+	blockNumber uint64,
+	ev *access_token.Mark3dAccessTokenCollectionCreation,
+) error {
 	from, err := types.Sender(types.LatestSignerForChainID(t.ChainId()), t)
 	if err != nil {
 		return err
@@ -355,8 +404,14 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 	return nil
 }
 
-func (s *service) tryProcessCollectionTransferEvent(ctx context.Context, tx pgx.Tx,
-	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
+func (s *service) tryProcessCollectionTransferEvent(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *collection.Mark3dCollection,
+	t *types.Transaction,
+	l *types.Log,
+	blockNumber *big.Int,
+) error {
 	transfer, err := instance.ParseTransfer(*l)
 	if err != nil {
 		return nil
@@ -364,27 +419,34 @@ func (s *service) tryProcessCollectionTransferEvent(ctx context.Context, tx pgx.
 	if transfer.From != common.HexToAddress(zeroAddress) {
 		return nil
 	}
+
+	block, err := s.ethClient.BlockByNumber(ctx, blockNumber)
+	if err != nil {
+		return nil
+	}
+
 	metaUri, err := s.collectionTokenURI(ctx, l.Address, transfer.TokenId)
 	if err != nil {
 		return err
 	}
+
 	meta := s.loadTokenParams(ctx, metaUri)
 	token := &domain.Token{
 		CollectionAddress: *t.To(),
 		TokenId:           transfer.TokenId,
 		Owner:             transfer.To,
-		MetaUri:           metaUri,
-		Name:              meta.Name,
-		Description:       meta.Description,
-		Image:             meta.Image,
-		HiddenFile:        meta.HiddenFile,
 		Creator:           transfer.To,
+		MintTxTimestamp:   block.Time(),
+		MintTxHash:        t.Hash(),
+		MetaUri:           metaUri,
+		Metadata:          &meta,
 	}
+
 	if err := s.repository.InsertToken(ctx, tx, token); err != nil {
 		return err
 	}
 	log.Println("token inserted", token.CollectionAddress.String(), token.TokenId.String(), token.Owner.String(),
-		token.MetaUri, token.Description, token.Image, token.HiddenFile)
+		token.MetaUri, token.Metadata)
 	return nil
 }
 
@@ -413,6 +475,7 @@ func (s *service) tryProcessTransferInit(ctx context.Context, tx pgx.Tx,
 		TokenId:           initEv.TokenId,
 		FromAddress:       initEv.From,
 		ToAddress:         initEv.To,
+		Number:            initEv.TransferNumber,
 	}
 	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
 	if err != nil {
@@ -457,6 +520,7 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 		CollectionAddress: l.Address,
 		TokenId:           initEv.TokenId,
 		FromAddress:       initEv.From,
+		Number:            initEv.TransferNumber,
 	}
 	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
 	if err != nil {
@@ -817,40 +881,41 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 	if err != nil {
 		return err
 	}
+
 	for _, l := range receipt.Logs {
 		instance, err := collection.NewMark3dCollection(l.Address, nil)
 		if err != nil {
 			return err
 		}
-		if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l); err != nil {
-			return err
+		if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l, receipt.BlockNumber); err != nil {
+			return fmt.Errorf("process collection transfer: %w", err)
 		}
 		if err := s.tryProcessTransferInit(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process transfer init: %w", err)
 		}
 		if err := s.tryProcessTransferDraft(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process transfer draft: %w", err)
 		}
 		if err := s.tryProcessTransferDraftCompletion(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process draft completion: %w", err)
 		}
 		if err := s.tryProcessPublicKeySet(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process public key set: %w", err)
 		}
 		if err := s.tryProcessPasswordSet(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process password set: %w", err)
 		}
 		if err := s.tryProcessTransferFinish(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process transfer finish: %w", err)
 		}
 		if err := s.tryProcessTransferFraudReported(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process fraud reported: %w", err)
 		}
 		if err := s.tryProcessTransferFraudDecided(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process fraud decided: %w", err)
 		}
 		if err := s.tryProcessTransferCancel(ctx, tx, instance, t, l); err != nil {
-			return err
+			return fmt.Errorf("process transfer cancel: %w", err)
 		}
 	}
 	return nil
@@ -904,12 +969,24 @@ func (s *service) ListenBlockchain() error {
 			return err
 		}
 	}
+
+	lastNotificationTime := time.Now().Add(-1 * time.Hour)
 	for {
 		select {
 		case <-time.After(100 * time.Millisecond):
 			current, err := s.checkBlock(lastBlock)
 			if err != nil {
-				log.Println("process block failed", err)
+				err = fmt.Errorf("process block failed: %w", err)
+				log.Println(err)
+
+				// Send telegram notification if at least 120 seconds passed since last notification
+				elapsedTime := time.Now().Sub(lastNotificationTime)
+				if elapsedTime >= 120*time.Second {
+					err := s.healthNotifier.Notify(context.Background(), fmt.Sprintf("ListenBlockchain %s: %s", s.cfg.Mode, err.Error()))
+					if err != nil {
+						log.Printf("Failed to send error notification %v", err)
+					}
+				}
 			}
 			lastBlock = current
 		case <-s.closeCh:

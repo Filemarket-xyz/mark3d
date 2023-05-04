@@ -1,4 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+
 import { Link } from './Link'
 
 const story: ComponentMeta<typeof Link> = {

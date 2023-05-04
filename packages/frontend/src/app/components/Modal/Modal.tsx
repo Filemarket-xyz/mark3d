@@ -1,5 +1,6 @@
 import { Loading, Modal } from '@nextui-org/react'
 import React, { FC, ReactNode } from 'react'
+
 import { styled } from '../../../styles'
 import { Button, NavLink, textVariant } from '../../UIkit'
 import { stringifyError } from '../../utils/error'

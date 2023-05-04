@@ -1,8 +1,9 @@
-import { TokenFullId } from '../../../../../processing/types'
 import { FC } from 'react'
-import { useReportFraud } from '../../../../../processing/hooks'
-import { Button } from '../../../../../UIkit'
+
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
+import { useReportFraud } from '../../../../../processing'
+import { TokenFullId } from '../../../../../processing/types'
+import { Button } from '../../../../../UIkit'
 import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonReportFraudTransferProps {
@@ -20,10 +21,11 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ 
   })
   return (
     <>
-      <MintModal {...modalProps}/>
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth
+        borderRadiusSecond
         onPress={async () => {
           await reportFraud()
           callback?.()

@@ -31,8 +31,19 @@ describe("Success transfer", async () => {
 
     const collectionToClone = await collectionFactory.deploy();
     fraudDecider = await fraudDeciderFactory.deploy();
-    accessToken = await accessTokenFactory.deploy("Mark3D Access Token", "MARK3D", "",
-      collectionToClone.address, true, fraudDecider.address);
+
+    const encoder = new TextEncoder();
+    const globalSalt = ethers.utils.hexlify(encoder.encode("Global Salt"));
+
+    accessToken = await accessTokenFactory.deploy(
+      "Mark3D Access Token",
+      "MARK3D",
+      "",
+      globalSalt,
+      collectionToClone.address,
+      true,
+      fraudDecider.address
+    );
     const salt = genRanHex(64);
     await accessToken.connect(accounts[1]).createCollection("0x" + salt,
       "TEST", "TEST", "", "", "0x");
@@ -45,18 +56,29 @@ describe("Success transfer", async () => {
   });
 
   it("init transfer", async () => {
-    const tx = await collectionInstance.connect(accounts[1])
-      .initTransfer(BN.from(0),
-      accounts[2].getAddress(), "0x", ethers.constants.AddressZero);
+    const tokenId = BN.from(0);
+    let transfernNumber = await collectionInstance.transferCounts(tokenId);
+    transfernNumber = transfernNumber.add(1); // count increments in initTransfer and before emitting
+
+    const tx = await collectionInstance
+      .connect(accounts[1])
+      .initTransfer(
+        tokenId,
+        accounts[2].getAddress(),
+        "0x",
+        ethers.constants.AddressZero
+      );
     await expect(tx)
       .to
       .emit(collectionInstance, "TransferInit")
-      .withArgs(BN.from(0), await accounts[1].getAddress(), await accounts[2].getAddress());
+      .withArgs(BN.from(0), await accounts[1].getAddress(), await accounts[2].getAddress(), transfernNumber);
   });
 
   it("set public key", async () => {
+    const tokenId = BN.from(0);
+    const transferNumber = await collectionInstance.transferCounts(tokenId);
     const tx = await collectionInstance.connect(accounts[2])
-      .setTransferPublicKey(BN.from(0), "0x12");
+      .setTransferPublicKey(tokenId, "0x12", transferNumber);
     await expect(tx)
       .to
       .emit(collectionInstance, "TransferPublicKeySet")
@@ -128,8 +150,19 @@ describe("Transfer with fraud", async () => {
 
     const collectionToClone = await collectionFactory.deploy();
     fraudDecider = await fraudDeciderFactory.deploy();
-    accessToken = await accessTokenFactory.deploy("Mark3D Access Token", "MARK3D", "",
-      collectionToClone.address, true, fraudDecider.address);
+    
+    const encoder = new TextEncoder();
+    const globalSalt = ethers.utils.hexlify(encoder.encode("Global Salt"));
+
+    accessToken = await accessTokenFactory.deploy(
+      "Mark3D Access Token",
+      "MARK3D",
+      "",
+      globalSalt,
+      collectionToClone.address,
+      true,
+      fraudDecider.address
+    );
     const salt = genRanHex(64);
     await accessToken.connect(accounts[1]).createCollection("0x" + salt,
       "TEST", "TEST", "", "", "0x");
@@ -142,18 +175,24 @@ describe("Transfer with fraud", async () => {
   });
 
   it("init transfer", async () => {
+    const tokenId = BN.from(0);
+    let transfernNumber = await collectionInstance.transferCounts(tokenId);
+    transfernNumber = transfernNumber.add(1); // count increments in initTransfer and before emitting
+
     const tx = await collectionInstance.connect(accounts[1])
       .initTransfer(BN.from(0),
         accounts[2].getAddress(), "0x", ethers.constants.AddressZero);
     await expect(tx)
       .to
       .emit(collectionInstance, "TransferInit")
-      .withArgs(BN.from(0), await accounts[1].getAddress(), await accounts[2].getAddress());
+      .withArgs(BN.from(0), await accounts[1].getAddress(), await accounts[2].getAddress(), transfernNumber);
   });
 
   it("set public key", async () => {
+    const tokenId = BN.from(0);
+    const transferNumber = await collectionInstance.transferCounts(tokenId);
     const tx = await collectionInstance.connect(accounts[2])
-      .setTransferPublicKey(BN.from(0), "0x1234");
+      .setTransferPublicKey(tokenId, "0x1234", transferNumber);
     await expect(tx)
       .to
       .emit(collectionInstance, "TransferPublicKeySet")

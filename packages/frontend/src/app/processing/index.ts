@@ -18,14 +18,17 @@
  * - Обработка случаев недобросовестного поведения при передаче nft через аукцион или нет.
  */
 
-export * from './utils'
+export * from './contracts'
 export * from './HiddenFileBase'
 export * from './HiddenFileBuyer'
 export * from './HiddenFileOwner'
 export * from './HiddenFileProcessorFactory'
 export * from './HiddenFilesTokenEventsListener'
+export * from './nft-interaction'
 export * from './SecureStorage'
-export * from './StatefulCryptoProvider'
+export * from './SeedProvider'
+export * from './SeedProviderFactory'
+export * from './StorageFactory'
 export * from './StorageProvider'
 export * from './StorageSecurityProvider'
-export * from './TokenIdStorage'
+export * from './utils'

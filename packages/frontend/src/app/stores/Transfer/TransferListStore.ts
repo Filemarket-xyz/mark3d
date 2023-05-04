@@ -1,9 +1,10 @@
+import { makeAutoObservable } from 'mobx'
+
+import { Transfer, TransfersResponse } from '../../../swagger/Api'
+import { api } from '../../config/api'
+import { stringifyTokenFullId } from '../../processing/utils/id'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
-import { Transfer, TransfersResponse } from '../../../swagger/Api'
-import { makeAutoObservable } from 'mobx'
-import { stringifyTokenFullId } from '../../processing/utils/id'
-import { api } from '../../config/api'
 
 export class TransferListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore

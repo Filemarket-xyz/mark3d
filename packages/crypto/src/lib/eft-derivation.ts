@@ -2,25 +2,25 @@
 
 import {AesKeyAndIv, EftAesDerivationFunction, EftRsaDerivationFunction, HkdfFunction, RsaKeyPair} from './types';
 import {aesIVLength, aesKeyLength, aesKeyType, rsaKeyType, rsaModulusLength} from './config';
-import {num2Buf} from './utils';
+import {numberToBuffer} from './utils';
 import {hkdfSha512, hkdfSha512Native} from './hkdf-sha512';
 import {rsaGenerateKeyPair} from './rsa';
 
 export const eftAesDerivationNative = (crypto: Crypto): EftAesDerivationFunction =>
   async (seed, globalSalt, collectionAddress, tokenId) =>
-    await eftAesDerivationAux(hkdfSha512Native(crypto), seed, globalSalt, collectionAddress, tokenId)
+    eftAesDerivationAux(hkdfSha512Native(crypto), seed, globalSalt, collectionAddress, tokenId)
 
 export const eftAesDerivation: EftAesDerivationFunction =
   async (seed, globalSalt, collectionAddress, tokenId) =>
-    await eftAesDerivationAux(hkdfSha512, seed, globalSalt, collectionAddress, tokenId)
+    eftAesDerivationAux(hkdfSha512, seed, globalSalt, collectionAddress, tokenId)
 
 export const eftRsaDerivationNative = (crypto: Crypto): EftRsaDerivationFunction =>
-  async (seed, globalSalt, collectionAddress, dealNumber) =>
-    await eftRsaDerivationAux(hkdfSha512Native(crypto), seed, globalSalt, collectionAddress, dealNumber)
+  async (seed, globalSalt, collectionAddress, tokenId, dealNumber) =>
+    eftRsaDerivationAux(hkdfSha512Native(crypto), seed, globalSalt, collectionAddress, tokenId, dealNumber)
 
 export const eftRsaDerivation: EftRsaDerivationFunction =
-  async (seed, globalSalt, collectionAddress, dealNumber) =>
-    await eftRsaDerivationAux(hkdfSha512, seed, globalSalt, collectionAddress, dealNumber)
+  async (seed, globalSalt, collectionAddress, tokenId, dealNumber) =>
+    eftRsaDerivationAux(hkdfSha512, seed, globalSalt, collectionAddress, tokenId, dealNumber)
 
 const eftAesDerivationAux = async (
   hkdf: HkdfFunction, seed: ArrayBuffer, globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, tokenId: number
@@ -31,7 +31,7 @@ const eftAesDerivationAux = async (
     Buffer.concat([
       aesKeyType,
       Buffer.from(collectionAddress),
-      num2Buf(tokenId)]),
+      numberToBuffer(tokenId)]),
     aesKeyLength + aesIVLength
   )
   return {
@@ -41,7 +41,12 @@ const eftAesDerivationAux = async (
 }
 
 const eftRsaDerivationAux = async (
-  hkdf: HkdfFunction, seed: ArrayBuffer, globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, dealNumber: number
+  hkdf: HkdfFunction,
+  seed: ArrayBuffer,
+  globalSalt: ArrayBuffer,
+  collectionAddress: ArrayBuffer,
+  tokenId: number,
+  dealNumber: number
 ): Promise<RsaKeyPair> => {
   const OKM = await hkdf(
     globalSalt,
@@ -49,9 +54,10 @@ const eftRsaDerivationAux = async (
     Buffer.concat([
       rsaKeyType,
       Buffer.from(collectionAddress),
-      num2Buf(dealNumber)]),
+      numberToBuffer(tokenId),
+      numberToBuffer(dealNumber)]),
     rsaModulusLength,
   )
-  return await rsaGenerateKeyPair(OKM)
+  return rsaGenerateKeyPair(OKM)
 }
 

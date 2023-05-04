@@ -1,35 +1,42 @@
+
+import { FileMarketCrypto } from '../../../../../crypto/src'
+import { IBlockchainDataProvider } from '../BlockchainDataProvider'
+import { ISeedProvider } from '../SeedProvider'
+import { PersistentDerivationArgs } from '../types'
+import { assertSeed } from '../utils'
 import { IHiddenFileBuyer } from './IHiddenFileBuyer'
-import { IStatefulCryptoProvider } from '../StatefulCryptoProvider'
-import { AESEncoding, CryptoMessage, DecryptResult, RSAPrivateKey, RSAPublicKey } from '../types'
-import { NoRSAPrivateKeyToRevealError } from './errors'
 
 export class HiddenFileBuyer implements IHiddenFileBuyer {
+  #tokenFullIdArgs: [ArrayBuffer, number]
+  #persistentArgs: PersistentDerivationArgs
+
   constructor(
-    public readonly cryptoProvider: IStatefulCryptoProvider,
-    public readonly surrogateId: string
+    public readonly crypto: FileMarketCrypto,
+    public readonly blockchainDataProvider: IBlockchainDataProvider,
+    public readonly seedProvider: ISeedProvider,
+    public readonly globalSalt: ArrayBuffer,
+    public readonly collectionAddress: ArrayBuffer,
+    public readonly tokenId: number
   ) {
+    this.#tokenFullIdArgs = [this.collectionAddress, this.tokenId]
+    this.#persistentArgs = [this.globalSalt, ...this.#tokenFullIdArgs]
   }
 
-  async initBuy(): Promise<RSAPublicKey> {
-    const pair = await this.cryptoProvider.genRSAKeyPair()
-    return pair.pub
+  async initBuy(): Promise<ArrayBuffer> {
+    assertSeed(this.seedProvider.seed)
+
+    const dealNumber = await this.blockchainDataProvider.getTransferCount(...this.#tokenFullIdArgs)
+    const { pub } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
+
+    return pub
   }
 
-  async revealFraudReportRSAPrivateKey(): Promise<RSAPrivateKey> {
-    const key = await this.cryptoProvider.getRSAPrivateKey()
-    if (!key) {
-      throw new NoRSAPrivateKeyToRevealError(this.surrogateId)
-    }
-    return key
-  }
+  async revealRsaPrivateKey(): Promise<ArrayBuffer> {
+    assertSeed(this.seedProvider.seed)
 
-  async saveFileAESKey(encryptedKey: CryptoMessage): Promise<DecryptResult> {
-    const decryptResult = await this.cryptoProvider.decryptRSA(encryptedKey)
-    if (decryptResult.ok) {
-      await this.cryptoProvider.setAESKey(
-        Buffer.from(decryptResult.result).toString(AESEncoding)
-      )
-    }
-    return decryptResult
+    const dealNumber = await this.blockchainDataProvider.getTransferCount(...this.#tokenFullIdArgs)
+    const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
+
+    return priv
   }
 }

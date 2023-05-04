@@ -1,5 +1,5 @@
-import { IStorageSecurityProvider } from '../StorageSecurityProvider'
 import { IStorageProvider } from '../StorageProvider'
+import { IStorageSecurityProvider } from '../StorageSecurityProvider'
 
 export interface ISecureStorage<Value = string> {
 
@@ -33,4 +33,6 @@ export interface ISecureStorage<Value = string> {
    * @param value
    */
   set: (id: string, value: Value | undefined) => Promise<void>
+
+  ids: (id: string, value: Value | undefined) => Promise<string[]>
 }

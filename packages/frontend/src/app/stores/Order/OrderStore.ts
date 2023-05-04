@@ -1,9 +1,10 @@
+import { makeAutoObservable } from 'mobx'
+
+import { Order } from '../../../swagger/Api'
+import { api } from '../../config/api'
+import { TokenFullId } from '../../processing/types'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
-import { Order } from '../../../swagger/Api'
-import { TokenFullId } from '../../processing/types'
-import { makeAutoObservable } from 'mobx'
-import { api } from '../../config/api'
 
 /**
  * Stores only ACTIVE order state.

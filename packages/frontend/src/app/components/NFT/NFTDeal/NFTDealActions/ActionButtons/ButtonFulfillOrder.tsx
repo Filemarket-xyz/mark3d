@@ -1,11 +1,12 @@
-import { TokenFullId } from '../../../../../processing/types'
-import { FC } from 'react'
-import { useFulfillOrder } from '../../../../../processing/hooks'
-import { Button } from '../../../../../UIkit'
-import { useStatusModal } from '../../../../../hooks/useStatusModal'
-import MintModal from '../../../../Modal/Modal'
-import { Order } from '../../../../../../swagger/Api'
 import { observer } from 'mobx-react-lite'
+import { FC } from 'react'
+
+import { Order } from '../../../../../../swagger/Api'
+import { useStatusModal } from '../../../../../hooks/useStatusModal'
+import { useFulfillOrder } from '../../../../../processing'
+import { TokenFullId } from '../../../../../processing/types'
+import { Button } from '../../../../../UIkit'
+import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonFulfillOrderProps {
   tokenFullId: TokenFullId
@@ -13,7 +14,11 @@ export interface ButtonFulfillOrderProps {
   callback?: () => void
 }
 
-export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({ tokenFullId, order, callback }) => {
+export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
+  tokenFullId,
+  order,
+  callback
+}) => {
   const { fulfillOrder, ...statuses } = useFulfillOrder(tokenFullId, order?.price)
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -22,19 +27,23 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({ token
       'After that, check the hidden files and finalize the transfer',
     loadingMsg: 'Fulfilling order'
   })
+
+  const onPress = async () => {
+    await fulfillOrder()
+    callback?.()
+  }
+
   return (
     <>
-      <MintModal {...modalProps}/>
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth
-        onPress={async () => {
-          await fulfillOrder()
-          callback?.()
-        }}
+        borderRadiusSecond
+        onPress={onPress}
         isDisabled={isLoading}
       >
-        Buy
+        Buy now
       </Button>
     </>
   )

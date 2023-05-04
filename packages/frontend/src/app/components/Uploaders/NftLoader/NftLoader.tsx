@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { UseFormRegisterReturn, UseFormResetField } from 'react-hook-form'
+
 import { styled } from '../../../../styles'
+import { CreateNFTForm } from '../../../pages/CreatePage/CreateNFTPage'
 import { Button, textVariant } from '../../../UIkit'
 import BoxImage from './img/box.svg'
-import SuccessImage from './img/Success.svg'
 import CrossImage from './img/cross.svg'
-import { CreateNFTForm } from '../../../pages/CreatePage/CreateNFTPage'
+import SuccessImage from './img/Success.svg'
 
 const Box = styled('img', {
   width: 80,

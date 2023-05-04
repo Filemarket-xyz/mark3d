@@ -1,7 +1,8 @@
 import { FC, forwardRef } from 'react'
-import { Card, Drip, Txt, useButton } from '../../../UIkit'
-import { styled } from '../../../../styles'
 import { AriaButtonProps } from 'react-aria'
+
+import { styled } from '../../../../styles'
+import { Card, Drip, Txt, useButton } from '../../../UIkit'
 import downloadIcon from './img/Download.svg'
 import downloadDisabled from './img/DownloadDisabled.svg'
 
@@ -11,7 +12,7 @@ export type FileButtonProps = AriaButtonProps & {
 }
 
 const CardStyled = styled(Card, {
-  width: 300,
+  width: 368,
   '@md': {
     width: '100%'
   },
@@ -63,11 +64,11 @@ const DownloadInfoStyled = styled('div', {
 })
 
 const NameStyled = styled('div', {
-  width: '100%',
   overflow: 'hidden',
-  textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   color: '$gray800',
+  width: '278px',
+  textOverflow: 'ellipsis',
   variants: {
     disabled: {
       true: {
@@ -127,7 +128,7 @@ export const FileButton: FC<FileButtonProps> = forwardRef<HTMLDivElement, FileBu
           </DownloadTextStyled>
         </DownloadInfoStyled>
       </ContentStyled>
-      <Drip {...dripProps} color='white'/>
+      <Drip {...dripProps} color='white' />
     </CardStyled>
   )
 })

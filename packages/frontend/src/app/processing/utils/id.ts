@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers'
+
 import { TokenFullId } from '../types'
 
 /**

@@ -1,9 +1,9 @@
-import { globalCss } from './stitches.config'
+import interRegular from '../assets/fonts/Inter-Regular.ttf'
+import montserratBold from '../assets/fonts/Montserrat-Bold.ttf'
 import montserratRegular from '../assets/fonts/Montserrat-Regular.ttf'
 import montserratSemiBold from '../assets/fonts/Montserrat-SemiBold.ttf'
-import montserratBold from '../assets/fonts/Montserrat-Bold.ttf'
 import soraBold from '../assets/fonts/Sora-Bold.ttf'
-import interRegular from '../assets/fonts/Inter-Regular.ttf'
+import { globalCss } from './stitches.config'
 
 export const globalStyles = globalCss({
   '@font-face': [
@@ -48,9 +48,24 @@ export const globalStyles = globalCss({
     // overflowY: 'hidden'
   },
   body: {
-    overflowY: 'auto',
-    scrollbarGutter: 'stable'
+    overflow: 'overlay'
   },
+  '*::-webkit-scrollbar, html *::-webkit-scrollbar': {
+    width: '5px'
+  },
+  '*::-webkit-scrollbar-track, html *::-webkit-scrollbar-track': {
+    background: 'none',
+    boxShadow: 'inset 0 0 5px 5px #80C8FF',
+    border: 'solid 3px transparent'
+  },
+
+  '*::-webkit-scrollbar-thumb, html *::-webkit-scrollbar-thumb': {
+    background: '#80C8FF',
+    borderRadius: '5px',
+    boxShadow: 'inset 0 0 5px 5px #80C8FF',
+    border: 'solid 3px transparent'
+  },
+
   '#root': {
     height: '100%'
   }

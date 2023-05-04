@@ -1,33 +1,51 @@
 package domain
 
 import (
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
-	"math/big"
 )
 
 type Token struct {
 	CollectionAddress common.Address
+	CollectionName    string
 	TokenId           *big.Int
 	Owner             common.Address
 	Creator           common.Address
+	MintTxTimestamp   uint64
+	MintTxHash        common.Hash
 	MetaUri           string
-	Name              string
-	Description       string
-	Image             string
-	HiddenFile        string
+	Metadata          *TokenMetadata
 }
 
 func TokenToModel(t *Token) *models.Token {
 	return &models.Token{
-		Collection:  t.CollectionAddress.String(),
-		Description: t.Description,
-		HiddenFile:  t.HiddenFile,
-		Image:       t.Image,
-		MetaURI:     t.MetaUri,
-		Name:        t.Name,
-		Owner:       t.Owner.String(),
-		Creator:     t.Creator.String(),
-		TokenID:     t.TokenId.String(),
+		Categories:        t.Metadata.Categories,
+		CollectionAddress: t.CollectionAddress.String(),
+		CollectionName:    t.CollectionName,
+		Creator:           t.Creator.String(),
+		Description:       t.Metadata.Description,
+		ExternalLink:      t.Metadata.ExternalLink,
+		HiddenFile:        t.Metadata.HiddenFile,
+		HiddenFileMeta: &models.HiddenFileMetaData{
+			Name: t.Metadata.HiddenFileMeta.Name,
+			Size: t.Metadata.HiddenFileMeta.Size,
+			Type: t.Metadata.HiddenFileMeta.Type,
+		},
+		Image:           t.Metadata.Image,
+		License:         t.Metadata.License,
+		LicenseURL:      t.Metadata.LicenseUrl,
+		MintTxTimestamp: t.MintTxTimestamp,
+		MintTxHash:      t.MintTxHash.String(),
+		MetaURI:         t.MetaUri,
+		Name:            t.Metadata.Name,
+		Owner:           t.Owner.String(),
+		Properties:      MapSlice(t.Metadata.Properties, MetadataPropertyToModel),
+		Rankings:        MapSlice(t.Metadata.Rankings, MetadataPropertyToModel),
+		Stats:           MapSlice(t.Metadata.Stats, MetadataPropertyToModel),
+		Subcategories:   t.Metadata.Subcategories,
+		Tags:            t.Metadata.Tags,
+		TokenID:         t.TokenId.String(),
 	}
 }

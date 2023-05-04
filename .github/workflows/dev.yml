@@ -1,0 +1,151 @@
+name: DEV CI
+on:
+  push:
+    branches:
+      - "dev"
+jobs:
+  check-changes:
+    runs-on: [ self-hosted, dev ]
+    outputs:
+      swagger_changes: ${{ steps.check_changes.outputs.swagger_changed }}
+      backend_changes: ${{ steps.check_changes.outputs.backend_changed }}
+      indexer_changes: ${{ steps.check_changes.outputs.indexer_changed }}
+      healthcheck_changes: ${{ steps.check_changes.outputs.healthcheck_changed }}
+      frontend_changes: ${{ steps.check_changes.outputs.frontend_changed }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: save changes
+        id: check_changes
+        run: |
+          echo "swagger_changed=$(./is_changed.sh fm_swagger indexer/swagger.yaml)" >> $GITHUB_OUTPUT
+          echo "frontend_changed=$(./is_changed.sh fm_frontend packages)" >> $GITHUB_OUTPUT
+          echo "$(find packages -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"
+          echo "backend_changed=$(./is_changed.sh fm_backend backend)" >> $GITHUB_OUTPUT
+          echo "indexer_changed=$(./is_changed.sh fm_indexer indexer)" >> $GITHUB_OUTPUT
+          echo "healthcheck_changed=$(./is_changed.sh fm_healthcheck healthcheck-tg)" >> $GITHUB_OUTPUT
+  build-frontend:
+    runs-on: [self-hosted, dev]
+    needs: [ check-changes ]
+    if: ${{ !failure() && !cancelled() }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache node_modules
+        if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
+        uses: actions/cache@v2
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-dev-node-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-dev-node
+      - name: Install dependencies
+        if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
+        run: yarn --immutable
+      - name: Build crypto
+        if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
+        run: |
+          yarn --immutable
+          yarn build
+        working-directory: packages/crypto
+      - name: Build frontend
+        if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
+        run: |
+          yarn --immutable
+          yarn prepare
+          yarn build
+          zip -r frontend.zip dist
+        working-directory: packages/frontend
+      - name: Save artifacts
+        if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: dev-frontend
+          path: packages/frontend/frontend.zip
+  build-oracle:
+    runs-on: [self-hosted, dev]
+    needs: [ check-changes ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Copy .env from host
+        if: ${{ needs.check-changes.outputs.backend_changes == 'true' }}
+        run: cp ~/.oracle_dev_env backend/.env
+      - name: Build contracts
+        if: ${{ needs.check-changes.outputs.backend_changes == 'true' }}
+        run: make build-contracts
+        working-directory: backend/
+      - name: Build oracle container
+        if: ${{ needs.check-changes.outputs.backend_changes == 'true' }}
+        run: docker build -t file-market-oracle-service:latest -f backend/Dockerfile .
+  build-indexer:
+    runs-on: [self-hosted, dev]
+    needs: [ check-changes ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Copy .env from host
+        if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' }}
+        run: cp ~/.indexer_dev_env indexer/.env
+      - name: Build contracts
+        if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' }}
+        run: make build-contracts
+        working-directory: indexer/
+      - name: Build models
+        if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' }}
+        run: make build-models
+        working-directory: indexer/
+      - name: Build indexer container
+        if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' }}
+        run: docker build --build-arg env=dev -t file-market-indexer-service:latest .
+        working-directory: indexer/
+  build-healthcheck:
+    runs-on: [ self-hosted, dev ]
+    needs: [ check-changes ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Copy .env from host
+        if: ${{ needs.check-changes.outputs.healthcheck_changes == 'true' }}
+        run: cp ~/.healthcheck_dev_env healthcheck-tg/.env
+      - name: Build healthcheck container
+        if: ${{ needs.check-changes.outputs.healthcheck_changes == 'true' }}
+        run: docker build -t file-market-healthcheck-service:latest .
+        working-directory: healthcheck-tg/
+  update:
+    runs-on: [self-hosted, dev]
+    needs: [ check-changes, build-frontend, build-oracle, build-indexer, build-healthcheck ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Load frontend artifacts
+        if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
+        uses: actions/download-artifact@v3
+        with:
+          name: dev-frontend
+      - name: Update frontend
+        if: ${{ needs.check-changes.outputs.frontend_changes == 'true' }}
+        run: |
+          unzip frontend.zip
+          sudo rm -r /usr/share/nginx/dev.filemarket.xyz/*
+          sudo mv dist/* /usr/share/nginx/dev.filemarket.xyz/
+          rm frontend.zip
+      - name: Update swagger
+        if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' }}
+        run: |
+          cp indexer/swagger.yaml ~/indexer-swagger/
+          sed -i 's/filemarket.xyz/dev.filemarket.xyz/g' ~/indexer-swagger/swagger.yaml
+      - name: Up migration
+        if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' }}
+        run: docker-compose -f docker-compose.dev.yml up -d --build indexer-postgres-migration
+      - name: Check migration status
+        if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' }}
+        run: ./check_migration.sh
+      - name: Update compose
+        if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' || needs.check-changes.outputs.backend_changes == 'true' || needs.check-changes.outputs.healthcheck_changes == 'true' }}
+        run: docker-compose -f docker-compose.dev.yml up -d indexer-swagger indexer-postgres indexer-redis oracle-redis indexer-service oracle-service healthcheck-service
+      - name: update nginx
+        run: |
+          sudo mv filemarket.dev.conf /etc/nginx/conf.d/filemarket.dev.conf
+          sudo nginx -s reload
+      - name: Set changes
+        run: |
+          redis-cli set fm_swagger_hash "$(find indexer/swagger.yaml -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"
+          redis-cli set fm_backend_hash "$(find backend -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"
+          redis-cli set fm_indexer_hash "$(find indexer -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"
+          redis-cli set fm_frontend_hash "$(find packages -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"
+          redis-cli set fm_healthcheck_hash "$(find healthcheck-tg -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"

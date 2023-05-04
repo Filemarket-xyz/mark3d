@@ -1,16 +1,17 @@
 import { observer } from 'mobx-react-lite'
-import { Order, Transfer } from '../../../../../swagger/Api'
-import { TokenFullId } from '../../../../processing/types'
 import { FC } from 'react'
-import { transferPermissions } from '../../../../utils/transfer/status'
-import { ButtonFulfillOrder } from './ActionButtons/ButtonFulfillOrder'
-import { ButtonSetPublicKeyTransfer } from './ActionButtons/ButtonSetPublicKeyTransfer'
-import { ButtonFinalizeTransfer } from './ActionButtons/ButtonFinalizeTransfer'
-import { ButtonReportFraudTransfer } from './ActionButtons/ButtonReportFraudTransfer'
-import { ButtonCancelTransfer } from './ActionButtons/ButtonCancelTransfer'
+
+import { Order, Transfer } from '../../../../../swagger/Api'
+import { useIsBuyer } from '../../../../processing'
+import { TokenFullId } from '../../../../processing/types'
 import { Button } from '../../../../UIkit'
+import { transferPermissions } from '../../../../utils/transfer/status'
+import { ButtonCancelTransfer } from './ActionButtons/ButtonCancelTransfer'
+import { ButtonFinalizeTransfer } from './ActionButtons/ButtonFinalizeTransfer'
+import { ButtonFulfillOrder } from './ActionButtons/ButtonFulfillOrder'
+import { ButtonReportFraudTransfer } from './ActionButtons/ButtonReportFraudTransfer'
+import { ButtonSetPublicKeyTransfer } from './ActionButtons/ButtonSetPublicKeyTransfer'
 import { HideAction } from './HideAction'
-import { useIsBuyer } from '../../../../processing/hooks/useIsBuyer'
 
 export interface NFTDealActionsBuyerProps {
   tokenFullId: TokenFullId
@@ -30,31 +31,33 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
   reFetchOrder
 }) => {
   const isBuyer = useIsBuyer(transfer)
+
   return (
       <>
         <HideAction hide={!transfer || !permissions.canFulfillOrder(transfer)}>
-          <ButtonFulfillOrder tokenFullId={tokenFullId} order={order}/>
+          <ButtonFulfillOrder tokenFullId={tokenFullId} order={order} />
         </HideAction>
         <HideAction hide={!isBuyer || !transfer || !permissions.canSetPublicKey(transfer)}>
-          <ButtonSetPublicKeyTransfer tokenFullId={tokenFullId}/>
+          <ButtonSetPublicKeyTransfer tokenFullId={tokenFullId} />
         </HideAction>
         <HideAction hide={!isBuyer || !transfer || !permissions.canFinalize(transfer)}>
           <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={() => {
             ownerStatusChanged?.()
             reFetchOrder?.()
-          }}/>
+          }} />
         </HideAction>
         <HideAction hide={!isBuyer || !transfer || !permissions.canReportFraud(transfer)}>
-          <ButtonReportFraudTransfer tokenFullId={tokenFullId}/>
+          <ButtonReportFraudTransfer tokenFullId={tokenFullId} />
         </HideAction>
         <HideAction hide={!isBuyer || !transfer || !permissions.canCancel(transfer)}>
-          <ButtonCancelTransfer tokenFullId={tokenFullId} callback={reFetchOrder}/>
+          <ButtonCancelTransfer tokenFullId={tokenFullId} callback={reFetchOrder} />
         </HideAction>
         <HideAction hide={!!transfer}>
           <Button
             secondary
             isDisabled
             fullWidth
+            borderRadiusSecond
           >
             NFT is not listed
           </Button>

@@ -1,8 +1,9 @@
-import { FC } from 'react'
-import { Link } from '../../../UIkit'
-import { useSwitchNetwork } from 'wagmi'
-import { mark3dConfig } from '../../../config/mark3d'
 import { PressEvent } from '@react-types/shared/src/events'
+import { FC } from 'react'
+import { useSwitchNetwork } from 'wagmi'
+
+import { mark3dConfig } from '../../../config/mark3d'
+import { Link } from '../../../UIkit'
 
 export interface SwitchNetworkButtonProps {
   onPress?: (e: PressEvent) => void

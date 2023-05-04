@@ -105,10 +105,10 @@ interface IEncryptedFileTokenCallbackReceiver {
 
 interface IEncryptedFileToken is IERC721 {
     /// @dev Event emitted after transfer creation
-    event TransferInit(uint256 indexed tokenId, address from, address to);
+    event TransferInit(uint256 indexed tokenId, address from, address to, uint256 transferNumber);
 
     /// @dev Event emitted after transfer draft creation
-    event TransferDraft(uint256 indexed tokenId, address from);
+    event TransferDraft(uint256 indexed tokenId, address from, uint256 transferNumber);
 
     /// @dev Event emitted after transfer draft completion
     event TransferDraftCompletion(uint256 indexed tokenId, address to);
@@ -142,6 +142,7 @@ interface IEncryptedFileToken is IERC721 {
     /// @dev Init token transfer. Shortcut for draftTransfer+completeTransferDraft
     /// @notice MUST revert if the caller is not owner of token or approved address
     /// @notice MUST revert if transfer process for token has been initiated already
+    /// @notice MUST revert if non-owner tries transfer before salesStartTimestamp
     /// @param tokenId is id for token to transfer
     /// @param to token receiver
     /// @param data transfer data
@@ -156,6 +157,7 @@ interface IEncryptedFileToken is IERC721 {
     /// @dev Draft transfer. This method is useful if some third party need to lock NFT before receiver will be defined
     /// @notice MUST revert if the caller is not owner of token or approved address
     /// @notice MUST revert if transfer process for token has been initiated already
+    /// @notice MUST revert if non-owner tries transfer before salesStartTimestamp
     /// @param tokenId is id for token to transfer
     /// @param callbackReceiver is contract on which callbacks will be called. zero address if not needed
     function draftTransfer(
@@ -183,9 +185,11 @@ interface IEncryptedFileToken is IERC721 {
     /// @notice publicKey here doesn't relate to account private/public. It is some external key from asymmetric encryption key-pair
     /// @param tokenId is id for token to transfer
     /// @param publicKey is receiver public key
+    /// @param transferNumber is token's transfer number 
     function setTransferPublicKey(
         uint256 tokenId,
-        bytes calldata publicKey
+        bytes calldata publicKey,
+        uint256 transferNumber
     ) external;
 
     /// @dev Approve transfer and save encrypted password

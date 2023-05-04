@@ -1,13 +1,14 @@
-import { FC } from 'react'
-import { usePlaceOrder } from '../../../../../processing/hooks'
-import { TokenFullId } from '../../../../../processing/types'
-import { Button } from '../../../../../UIkit'
-import { useStatusModal } from '../../../../../hooks/useStatusModal'
-import MintModal, { ModalTitle } from '../../../../Modal/Modal'
 import { Modal } from '@nextui-org/react'
-import { OrderForm } from '../../OrderForm'
+import { FC } from 'react'
+
 import { useHookToCallback } from '../../../../../hooks/useHookToCallback'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
+import { useStatusModal } from '../../../../../hooks/useStatusModal'
+import { usePlaceOrder } from '../../../../../processing'
+import { TokenFullId } from '../../../../../processing/types'
+import { Button } from '../../../../../UIkit'
+import MintModal, { ModalTitle } from '../../../../Modal/Modal'
+import { OrderForm } from '../../OrderForm'
 
 export interface ButtonPlaceOrderProps {
   tokenFullId: TokenFullId
@@ -40,10 +41,11 @@ export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callb
           />
         </Modal.Body>
       </Modal>
-      <MintModal {...modalProps}/>
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth
+        borderRadiusSecond
         onPress={openModal}
         isDisabled={isLoading}
       >

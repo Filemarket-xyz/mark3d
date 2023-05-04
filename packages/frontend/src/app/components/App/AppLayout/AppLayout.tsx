@@ -1,15 +1,16 @@
 import { FC } from 'react'
-import { AppNav } from '../AppNav'
 import { Outlet } from 'react-router-dom'
-import Footer from '../Footer/Footer'
+
 import { useScrollTop } from '../../../hooks/useScrollTop'
+import { AppNav } from '../AppNav'
+import Footer from '../Footer/Footer'
 
 export const AppLayout: FC = () => {
   useScrollTop()
   return (
     <>
-      <AppNav/>
-      <Outlet/>
+      <AppNav />
+      <Outlet />
       <Footer />
     </>
   )
