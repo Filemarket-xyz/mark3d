@@ -73,7 +73,7 @@ func main() {
 
 	// goroutine in which server running
 	go func() {
-		if err = srv.ListenAndServe(); err != http.ErrServerClosed {
+		if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Panicln(err)
 		}
 	}()

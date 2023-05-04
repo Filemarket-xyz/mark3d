@@ -181,9 +181,14 @@ func (s *service) tokenURI(ctx context.Context,
 		}, tokenId)
 		if err != nil {
 			log.Println("token uri access token failed", tokenId, err)
+		} else if metaUri == "" {
+			log.Println("token uri access token empty", tokenId)
 		} else {
 			return metaUri, nil
 		}
+	}
+	if err == nil {
+		return "", fmt.Errorf("empty metadata")
 	}
 	return "", err
 }
@@ -202,9 +207,14 @@ func (s *service) collectionTokenURI(ctx context.Context,
 		}, tokenId)
 		if err != nil {
 			log.Println("token uri collection failed", address, tokenId, err)
+		} else if metaUri == "" {
+			log.Println("token uri collection empty", address, tokenId)
 		} else {
 			return metaUri, nil
 		}
+	}
+	if err == nil {
+		return "", fmt.Errorf("empty metadata")
 	}
 	return "", err
 }
