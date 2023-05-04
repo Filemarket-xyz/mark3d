@@ -20,15 +20,10 @@ const BaseInfoSection = () => {
   const { collectionAddress, tokenId } = useParams<Params>()
   const { data: token } = useTokenStore(collectionAddress, tokenId)
   return (
-        // <GridBlock>
-        //     <NftName>{token?.name}</NftName>
-        //     {token?.date && <Link href={token?.mintSrc ?? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'} target="_blank">Minted on {new Date(token?.date).toDateString().substring(4)}</Link>}
-        //     {token?.license && <NftLicence>License: <Link href={token?.licenseUrl ?? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'} target="_blank">{token?.license}</Link></NftLicence>}
-        // </GridBlock>
         <GridBlock>
-            <NftName>{'Waiting'}</NftName>
-            <Link href={'https://www.youtube.com/watch?v=dQw4w9WgXcQ'} target="_blank">Minted on {'Waiting'}</Link>
-            <NftLicence>License: <Link href={'https://www.youtube.com/watch?v=dQw4w9WgXcQ'} target="_blank">{'Waiting'}</Link></NftLicence>
+            <NftName>{token?.name}</NftName>
+            {/* {token?.date && <Link href={token?.mintSrc ?? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'} target="_blank">Minted on {new Date(token?.date).toDateString().substring(4)}</Link>} */}
+            {token?.license && <NftLicence>License: <Link href={'https://creativecommons.org/licenses/'} target="_blank">{token?.license}</Link></NftLicence>}
         </GridBlock>
   )
 }

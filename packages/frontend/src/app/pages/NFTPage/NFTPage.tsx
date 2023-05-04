@@ -21,8 +21,6 @@ import ControlSection from './section/Contol/ControlSection'
 import DescriptionSection from './section/Description/DescriptionSection'
 import FileInfoSection from './section/FileInfo/FileInfoSection'
 import HomeLandSection from './section/HomeLand/HomeLandSection'
-import { PropertiesCardProps } from './section/Properties/PropertiesCard/PropertiesCard'
-import PropertiesSection from './section/Properties/PropertiesSection'
 import TagsSection from './section/Tags/TagsSection'
 
 const NFTPreviewContainer = styled('div', {
@@ -100,44 +98,7 @@ const NFTPage = observer(() => {
   const canViewHiddenFiles = isBuyer && transferPermissions.buyer.canViewHiddenFiles(
     transferStore.data
   )
-
-  const properties: PropertiesCardProps[] = [
-    {
-      type: 'Background',
-      rare: 'Rare Gradient Background',
-      chance: '7'
-    },
-    {
-      type: 'Pattern',
-      rare: 'Rare Property',
-      chance: '7'
-    },
-    {
-      type: 'Body',
-      rare: 'Rare Property',
-      chance: '7'
-    },
-    {
-      type: 'Logo',
-      rare: 'Rare Property',
-      chance: '7'
-    },
-    {
-      type: 'Accessories',
-      rare: 'Rare Property',
-      chance: '7'
-    },
-    {
-      type: 'Foots',
-      rare: 'Rare Property',
-      chance: '7'
-    },
-    {
-      type: 'Pet',
-      rare: 'Rare Gradient Background',
-      chance: '7'
-    }
-  ]
+  const { data: token } = useTokenStore(collectionAddress, tokenId)
 
   return (
     <>
@@ -159,10 +120,8 @@ const NFTPage = observer(() => {
               <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files} />
             </GridBlockSectionRow>}
             <HomeLandSection />
-            {/* <TagsSection categories={[...Array.from(token?.categories ?? []), ...Array.from(token?.subcategories ?? [])]} tags={token?.tags}/> */}
-            <TagsSection categories={[]} tags={[]} />
-            {window.innerWidth > 1200 && <><DescriptionSection />
-              <PropertiesSection properties={properties} /></>}
+             <TagsSection categories={[...Array.from(token?.categories ?? []), ...Array.from(token?.subcategories ?? [])]} tags={token?.tags} />
+            {window.innerWidth > 1200 && <><DescriptionSection /></>}
           </GridBlockSection>
 
           {window.innerWidth > 900 && <GridBlockSection>
@@ -172,7 +131,7 @@ const NFTPage = observer(() => {
         </GridLayout>
 
         {window.innerWidth <= 1200 && <DisplayLayout><DescriptionSection />
-        <PropertiesSection properties={properties} /></DisplayLayout>}
+    </DisplayLayout>}
       </MainInfo>
     </>
   )
