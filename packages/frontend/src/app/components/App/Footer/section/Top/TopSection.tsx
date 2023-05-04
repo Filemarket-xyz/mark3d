@@ -30,7 +30,7 @@ const TopSectionStyle = styled('div', {
       height: '30px'
     },
     '& h5': {
-      fontWeight: '400 !important',
+      fontWeight: '500 !important',
       fontSize: '16px !important'
     }
   },
