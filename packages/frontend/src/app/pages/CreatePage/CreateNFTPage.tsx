@@ -22,7 +22,7 @@ import { FormControl } from '../../UIkit/Form/FormControl'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
 import TagsSection from '../NFTPage/section/Tags/TagsSection'
-import { Form, Label, LabelWithCounter, LetterCounter, TextBold, TextGray } from './CreateCollectionPage'
+import { Form, Label, LabelWithCounter, TextBold, TextGray } from './CreateCollectionPage'
 import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory } from './helper/data/data'
 import { useCreateNft } from './hooks/useCreateNft'
 import { useModalProperties } from './hooks/useModalProperties'
@@ -222,6 +222,7 @@ const CreateNftPage = observer(() => {
   const chosenCategory = watch('category')
   const license = watch('license')
   const category = watch('category')
+  const description = watch('description')
 
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
     createNft({ ...data, tagsValue: chosenTags, licenseUrl })
@@ -339,12 +340,12 @@ const CreateNftPage = observer(() => {
               <Label>
                 Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
               </Label>
-              <LetterCounter>0/1000</LetterCounter>
+              {/* <LetterCounter>{description?.length}/1000</LetterCounter> */}
             </LabelWithCounter>
 
             <TextArea
               placeholder='Description of your item'
-              {...register('description')}
+              {...register('description', { maxLength: { value: 1000, message: 'Aboba' } })}
             />
           </FormControl>
 
