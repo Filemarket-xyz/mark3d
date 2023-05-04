@@ -255,9 +255,14 @@ func (s *service) getExchangeOrder(ctx context.Context, blockNum *big.Int,
 		}, address, tokenId)
 		if err != nil {
 			log.Println("get exchange order failed", address, tokenId, err)
+		} else if order.Token == common.HexToAddress(zeroAddress) {
+			log.Println("get exchange order empty", address, tokenId)
 		} else {
 			return order, nil
 		}
+	}
+	if err == nil {
+		err = fmt.Errorf("empty order")
 	}
 	return struct {
 		Token     common.Address
