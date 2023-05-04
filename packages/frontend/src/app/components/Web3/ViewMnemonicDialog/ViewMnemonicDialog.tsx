@@ -23,23 +23,32 @@ export function ViewMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX.E
   const [canWatch, setCanWatch] = useState<boolean>(false)
   const { seedProvider } = useSeedProvider(address)
   return (
-        <Modal
-            closeButton
-            aria-labelledby='modal-title'
-            open={open}
-            onClose={onClose}
-            width={adaptive({
-              sm: !canWatch ? '300px' : '400px',
-              md: !canWatch ? '300px' : '650px',
-              lg: !canWatch ? '400px' : '950px',
-              defaultValue: !canWatch ? '500px' : '950px'
-            })}
-        >
-            <ModalTitle>{canWatch && 'Your seed-phrases'}</ModalTitle>
-            <Modal.Body>{canWatch ? <MnemonicStyle><Txt h5>{seedProvider?.mnemonic}</Txt></MnemonicStyle> : <UnlockSection onSuccess={() => {
-              console.log('SUCCESS')
+    <Modal
+      closeButton
+      aria-labelledby='modal-title'
+      open={open}
+      onClose={onClose}
+      width={adaptive({
+        sm: !canWatch ? '300px' : '400px',
+        md: !canWatch ? '300px' : '650px',
+        lg: !canWatch ? '400px' : '950px',
+        defaultValue: !canWatch ? '500px' : '950px'
+      })}
+    >
+      <ModalTitle>{canWatch && 'Your FileWallet seed phrases'}</ModalTitle>
+      <Modal.Body>
+        {canWatch
+          ? (
+            <MnemonicStyle>
+              <Txt h5>{seedProvider?.mnemonic}</Txt>
+            </MnemonicStyle>
+            ) : (
+            <UnlockSection onSuccess={() => {
               setCanWatch(true)
-            }} />}</Modal.Body>
-        </Modal>
+            }} />
+            )
+        }
+      </Modal.Body>
+    </Modal>
   )
 };

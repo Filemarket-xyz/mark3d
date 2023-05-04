@@ -1,8 +1,9 @@
 import React from 'react'
+
 import { styled } from '../../../../styles'
-import { OurPartnersOptions } from '../helper/CardPartners/data'
-import CardPartner from '../components/Card/CardPartner'
 import { Container, Txt } from '../../../UIkit'
+import CardPartner from '../components/Card/CardPartner'
+import { OurPartnersOptions } from '../helper/CardPartners/data'
 
 const OurPartnersContainer = styled(Container, {
   paddingTB: '160px',
@@ -22,7 +23,7 @@ const OurPartners = () => {
     <OurPartnersContainer>
       <Txt h1 style={{ fontSize: '56px', lineHeight: '56px' } }>Our Partners</Txt>
       <OurPartnersStyle>
-        {OurPartnersOptions.map((item, index) => <CardPartner img={item.img} url={item.url} partners={true} key={index}/>)}
+        {OurPartnersOptions.map((item, index) => <CardPartner img={item.img} url={item.url} partners={true} key={index} />)}
       </OurPartnersStyle>
     </OurPartnersContainer>
   )

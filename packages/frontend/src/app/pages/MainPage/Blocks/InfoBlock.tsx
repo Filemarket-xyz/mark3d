@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { styled } from '../../../../styles'
 import KeepUpDate from '../components/KeepUpDate/KeepUpDate'
 
@@ -25,7 +26,7 @@ const InfoBlockContainer = styled('div', {
 const InfoBlock = () => {
   return (
     <InfoBlockContainer>
-      <KeepUpDate/>
+      <KeepUpDate />
     </InfoBlockContainer>
   )
 }

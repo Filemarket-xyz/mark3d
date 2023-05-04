@@ -120,7 +120,13 @@ const NFTPage = observer(() => {
               <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files} />
             </GridBlockSectionRow>}
             <HomeLandSection />
-             <TagsSection categories={[...Array.from(token?.categories ?? []), ...Array.from(token?.subcategories ?? [])]} tags={token?.tags} />
+             <TagsSection
+               categories={[
+                 ...Array.from(token?.categories ?? []),
+                 ...Array.from(token?.subcategories ?? [])
+               ]}
+               tags={token?.tags}
+             />
             {window.innerWidth > 1200 && <><DescriptionSection /></>}
           </GridBlockSection>
 

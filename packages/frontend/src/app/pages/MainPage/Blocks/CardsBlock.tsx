@@ -1,8 +1,9 @@
 import React from 'react'
-import { CardWhiteOptions, CardBlackOptions } from '../helper/Card/data'
-import Card from '../components/Card/Card'
+
 import { styled } from '../../../../styles'
 import { Container } from '../../../UIkit'
+import Card from '../components/Card/Card'
+import { CardBlackOptions, CardWhiteOptions } from '../helper/Card/data'
 
 const CardsBlockContainer = styled(Container, {
   paddingTB: '160px'

@@ -132,18 +132,18 @@ const TopSection = () => {
   //   text: 'About',
   //   url: ''
   // },
-  // {
-  //   text: 'Ambassador program',
-  //   url: ''
-  // },
-  // {
-  //   text: 'Become a partner',
-  //   url: ''
-  // },
-  // {
-  //   text: 'Branding',
-  //   url: ''
-  // },
+    {
+      text: 'Ambassador program',
+      url: 'https://filemarket.typeform.com/to/MTwDOB1J'
+    },
+    {
+      text: 'Become a partner',
+      url: 'https://filemarket.typeform.com/to/BqkdzJQM'
+    },
+    // {
+    //   text: 'Branding',
+    //   url: ''
+    // },
     {
       text: 'Calendly',
       url: 'http://calendly.com/filemarket'
@@ -189,15 +189,15 @@ const TopSection = () => {
             </div>
             <div className="section second">
                 <HeaderText>Marketplace</HeaderText>
-                <SecondContent>{MarketPlaceItems.map((item, index) => <Text href={item.url} key={index}>{item.text}</Text>)}</SecondContent>
+                <SecondContent>{MarketPlaceItems.map((item, index) => <Text href={item.url} target={'_blank'} key={index}>{item.text}</Text>)}</SecondContent>
             </div>
             <div className="section second">
                 <HeaderText>Links</HeaderText>
-                <SecondContent>{Links.map((item, index) => <Text href={item.url} key={index}>{item.text}</Text>)}</SecondContent>
+                <SecondContent>{Links.map((item, index) => <Text href={item.url} target={'_blank'} key={index}>{item.text}</Text>)}</SecondContent>
             </div>
             <div className="section second">
                 <HeaderText>Company</HeaderText>
-                <SecondContent>{Company.map((item, index) => <Text href={item.url} key={index}>{item.text}</Text>)}</SecondContent>
+                <SecondContent>{Company.map((item, index) => <Text href={item.url} target={'_blank'} key={index}>{item.text}</Text>)}</SecondContent>
             </div>
             <div className="section third">
                 <HeaderText>Join our community</HeaderText>

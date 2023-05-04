@@ -1,5 +1,6 @@
 import { ComponentProps } from '@stitches/react'
 import React, { FC, ReactNode } from 'react'
+
 import { styled } from '../../../../../styles'
 import { textVariant } from '../../../../UIkit'
 
@@ -148,10 +149,10 @@ const Card: FC<CardProps> = ({ headerText, img, imgHref, text, rightBottomConten
               <Text cardType={cardType}>{text}</Text>
               <RightBottomContent cardType={cardType}>{rightBottomContent}</RightBottomContent>
             </Info>
-            {imgHref ? <a href={imgHref}><img src={img}/></a> : <ImgBlock cardType={cardType} style={{ backgroundImage: `url(${img}` }}/>}
+            {imgHref ? <a href={imgHref}><img src={img} /></a> : <ImgBlock cardType={cardType} style={{ backgroundImage: `url(${img}` }} />}
         </>
           : <>
-            {imgHref ? <a href={imgHref}><img src={img}/></a> : <ImgBlock cardType={cardType} style={{ backgroundImage: `url(${img}` }}/>}
+            {imgHref ? <a href={imgHref}><img src={img} /></a> : <ImgBlock cardType={cardType} style={{ backgroundImage: `url(${img}` }} />}
             <Info cardType={cardType}>
               <Header linear={linear}>{headerText}</Header>
               <Text cardType={cardType}>{text}</Text>

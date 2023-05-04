@@ -5,11 +5,11 @@ import { useStores } from '../../../hooks'
 import { Link } from '../../../UIkit'
 import { EnterSeedPhraseDialog } from '../EnterSeedPhraseDialog'
 
-export interface ChangeMnemonicButton {
+export interface ChangeMnemonicButtonProps {
   onPress?: (e: PressEvent) => void
 }
 
-export const ChangeMnemonicButton: FC<ChangeMnemonicButton> = ({ onPress }) => {
+export const ChangeMnemonicButton: FC<ChangeMnemonicButtonProps> = ({ onPress }) => {
   const { dialogStore } = useStores()
 
   const openDialog = () => {

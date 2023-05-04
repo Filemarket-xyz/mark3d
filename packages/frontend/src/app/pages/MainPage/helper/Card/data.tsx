@@ -1,8 +1,8 @@
-import { CardProps } from '../../components/Card/Card'
-import EFTImg from '../../../../../assets/img/MainPage/EFT.jpg'
 import EarnCryptoImg from '../../../../../assets/img/MainPage/EarnCryptocurrency.jpg'
+import EFTImg from '../../../../../assets/img/MainPage/EFT.jpg'
 import JoinTheSaleImg from '../../../../../assets/img/MainPage/JoinTheSale.jpg'
 import { Button } from '../../../../UIkit'
+import { CardProps } from '../../components/Card/Card'
 
 export const CardWhiteOptions: CardProps[] = [
   {

@@ -9,7 +9,7 @@ import { Input } from '../../../../UIkit/Form/Input'
 import { validatePassword } from '../../ConnectFileWalletDialog/utils/validate'
 
 const CreatePasswordStyle = styled('form', {
-  paddingTop: '2rem',
+  paddingTop: '$2',
   width: '100%',
   margin: '0 auto'
 })
@@ -28,6 +28,13 @@ const ButtonContainer = styled('div', {
   justifyContent: 'end'
 })
 
+const Description = styled('div', {
+  display: 'flex',
+  justifyContent: 'center',
+  marginBottom: '$4',
+  color: '$gray600'
+})
+
 export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
   const { register, handleSubmit, formState: { errors }, watch } = useForm<CreatePasswordValue>()
 
@@ -36,6 +43,7 @@ export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
 
   return (
         <CreatePasswordStyle onSubmit={handleSubmit(onSubmit)}>
+          <Description><Txt body3>This password will be used to protect your seed phrase.</Txt></Description>
             <FormControl>
                 <Input
                     type="password"
