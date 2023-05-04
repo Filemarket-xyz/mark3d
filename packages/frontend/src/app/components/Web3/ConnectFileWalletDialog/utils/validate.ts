@@ -1,5 +1,7 @@
-import { SupportedLocale } from './locale'
 import { validateMnemonic, wordlists } from 'bip39'
+
+import { SupportedLocale } from './locale'
+
 export const validateImportMnemonic = (str: string): string | undefined => {
   if (!(validateMnemonic(str ?? '', wordlists.english))) {
     return error.en.INVALID_BET

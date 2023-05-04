@@ -1,13 +1,14 @@
+import { Modal } from '@nextui-org/react'
 import { FC } from 'react'
+
+import { useHookToCallback } from '../../../../../hooks/useHookToCallback'
+import { useModalOpen } from '../../../../../hooks/useModalOpen'
+import { useStatusModal } from '../../../../../hooks/useStatusModal'
+import { useInitTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
-import { useHookToCallback } from '../../../../../hooks/useHookToCallback'
-import { useInitTransfer } from '../../../../../processing'
-import { useModalOpen } from '../../../../../hooks/useModalOpen'
-import { Modal } from '@nextui-org/react'
 import MintModal, { ModalTitle } from '../../../../Modal/Modal'
 import { TransferForm } from '../../TransferForm'
-import { useStatusModal } from '../../../../../hooks/useStatusModal'
 
 export interface ButtonInitTransferProps {
   tokenFullId: TokenFullId

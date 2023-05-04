@@ -1,77 +1,96 @@
-import { IHiddenFileProcessorFactory } from './IHiddenFileProcessorFactory'
-import { HiddenFileBuyer, IHiddenFileBuyer } from '../HiddenFileBuyer'
+
+import { utils } from 'ethers'
+
+import { FileMarketCrypto } from '../../../../../crypto/src'
+import { blockchainDataProvider, IBlockchainDataProvider } from '../BlockchainDataProvider'
+import { fileMarketCrypto } from '../FileMarketCrypto'
+import { HiddenFileBuyer } from '../HiddenFileBuyer'
 import { HiddenFileOwner } from '../HiddenFileOwner'
-import { TokenFullId } from '../types'
-import { IHiddenFileBase } from '../HiddenFileBase'
-import { StatefulCryptoProvider } from '../StatefulCryptoProvider'
-import { utils } from 'ethers/lib.esm'
-import { IStorageFactory, storageFactory } from '../StorageFactory'
+import { ISeedProviderFactory, seedProviderFactory } from '../SeedProviderFactory'
+import { hexToBuffer } from '../utils'
+import { IHiddenFileProcessorFactory } from './IHiddenFileProcessorFactory'
 
 export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
   private readonly owners: Record<string, Record<string, HiddenFileOwner>> = Object.create(null)
   private readonly buyers: Record<string, Record<string, HiddenFileBuyer>> = Object.create(null)
 
-  constructor(private readonly storageFactory: IStorageFactory) {
+  #globalSalt?: ArrayBuffer
+
+  constructor(
+    private readonly seedProviderFactory: ISeedProviderFactory,
+    private readonly crypto: FileMarketCrypto,
+    private readonly blockchainDataProvider: IBlockchainDataProvider
+  ) {}
+
+  #tokenFullIdKey(collectionAddress: string, tokenId: number) {
+    return `${collectionAddress}/${tokenId}`
   }
 
-  async buyerToOwner(buyer: IHiddenFileBuyer): Promise<HiddenFileOwner> {
-    return new HiddenFileOwner(
-      buyer.cryptoProvider,
-      buyer.surrogateId
-    )
-  }
-
-  async getBuyer(account: string, tokenFullId: TokenFullId): Promise<HiddenFileBuyer> {
+  async getBuyer(account: string, collectionAddress: string, tokenId: number): Promise<HiddenFileBuyer> {
     account = utils.getAddress(account)
-    const { tokenIdStorage, secureStorage } = await this.storageFactory.getStorages(account)
-    const surrogateId = await tokenIdStorage.getSurrogateIdOrCreate(tokenFullId)
+    const key = this.#tokenFullIdKey(collectionAddress, tokenId)
+
     const accountBuyers = this.buyers[account]
-    const existing = accountBuyers?.[surrogateId]
-    if (existing) {
-      return existing
-    } else {
-      const buyer = new HiddenFileBuyer(
-        new StatefulCryptoProvider(surrogateId, secureStorage),
-        surrogateId
-      )
-      this.buyers[account] = {
-        ...accountBuyers,
-        [surrogateId]: buyer
-      }
-      return buyer
+    const existing = accountBuyers?.[key]
+    if (existing) return existing
+
+    if (!this.#globalSalt) {
+      this.#globalSalt = await this.blockchainDataProvider.getGlobalSalt()
     }
+
+    const seedProvider = await this.seedProviderFactory.getSeedProvider(account)
+    const buyer = new HiddenFileBuyer(
+      this.crypto,
+      this.blockchainDataProvider,
+      seedProvider,
+      this.#globalSalt,
+      hexToBuffer(collectionAddress),
+      tokenId
+    )
+    this.buyers[account] = {
+      ...accountBuyers,
+      [key]: buyer
+    }
+
+    return buyer
   }
 
-  async getOwner(account: string, tokenFullId: TokenFullId | undefined): Promise<HiddenFileOwner> {
+  async getOwner(account: string, collectionAddress: string, tokenId: number): Promise<HiddenFileOwner> {
     account = utils.getAddress(account)
-    const { tokenIdStorage, secureStorage } = await this.storageFactory.getStorages(account)
-    const surrogateId = await tokenIdStorage.getSurrogateIdOrCreate(tokenFullId)
-    const accountOwners = this.owners[account]
-    const existing = accountOwners?.[surrogateId]
-    if (existing) {
-      return existing
-    } else {
-      const owner = new HiddenFileOwner(
-        new StatefulCryptoProvider(surrogateId, secureStorage),
-        surrogateId
-      )
-      this.owners[account] = {
-        ...accountOwners,
-        [surrogateId]: owner
-      }
-      return owner
-    }
-  }
+    const key = this.#tokenFullIdKey(collectionAddress, tokenId)
 
-  async registerTokenFullId(
-    account: string, hiddenFileProcessor: IHiddenFileBase, tokenFullId: TokenFullId
-  ): Promise<void> {
-    const { tokenIdStorage } = await this.storageFactory.getStorages(account)
-    await tokenIdStorage.setTokenFullId(hiddenFileProcessor.surrogateId, tokenFullId)
+    const accountOwners = this.owners[account]
+    const existing = accountOwners?.[key]
+    if (existing) return existing
+
+    if (!this.#globalSalt) {
+      this.#globalSalt = await this.blockchainDataProvider.getGlobalSalt()
+    }
+
+    const seedProvider = await this.seedProviderFactory.getSeedProvider(account)
+    const owner = new HiddenFileOwner(
+      account,
+      this.crypto,
+      this.blockchainDataProvider,
+      seedProvider,
+      this.#globalSalt,
+      hexToBuffer(collectionAddress),
+      tokenId
+    )
+    this.owners[account] = {
+      ...accountOwners,
+      [key]: owner
+    }
+
+    return owner
   }
 }
 
 /**
  * Exists as singleton
  */
-export const hiddenFileProcessorFactory = new HiddenFileProcessorFactory(storageFactory)
+export const hiddenFileProcessorFactory = new HiddenFileProcessorFactory(
+  seedProviderFactory,
+  fileMarketCrypto,
+  blockchainDataProvider
+)

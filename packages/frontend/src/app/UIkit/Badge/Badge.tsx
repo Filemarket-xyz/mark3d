@@ -1,4 +1,5 @@
 import React, { ComponentProps, FC } from 'react'
+
 import { styled } from '../../../styles'
 import { gradientPlaceholderImg } from '../Placeholder'
 import { textVariant } from '../Txt'
@@ -22,7 +23,7 @@ const Title = styled('p', {
 const Value = styled('p', {
   ...textVariant('primary1').true,
   color: '$blue500',
-  textOverflow:'ellipsis',
+  textOverflow: 'ellipsis',
   overflow: 'hidden',
   whiteSpace: 'nowrap',
   width: '100%'

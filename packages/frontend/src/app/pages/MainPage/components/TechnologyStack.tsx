@@ -1,16 +1,14 @@
 import React from 'react'
+
 import { styled } from '../../../../styles'
 import { textVariant } from '../../../UIkit'
-
 // technology icons
-import item1 from '../img/TechnologyStack/1.svg'
-import item2 from '../img/TechnologyStack/2.svg'
-import item3 from '../img/TechnologyStack/3.svg'
-import item4 from '../img/TechnologyStack/4.png'
-import item5 from '../img/TechnologyStack/5.svg'
-import item6 from '../img/TechnologyStack/6.svg'
-import item7 from '../img/TechnologyStack/7.svg'
-import item8 from '../img/TechnologyStack/8.svg'
+import item1 from '../img/TechnologyStack/item1.svg'
+import item2 from '../img/TechnologyStack/item2.svg'
+import item3 from '../img/TechnologyStack/item3.svg'
+import item4 from '../img/TechnologyStack/item4.svg'
+import item6 from '../img/TechnologyStack/item6.svg'
+import item7 from '../img/TechnologyStack/item7.svg'
 
 const ToolCardWide = styled('div', {
   maxWidth: 730,
@@ -86,20 +84,12 @@ const items: ItemData[] = [
     href: 'https://fvm.filecoin.io/'
   },
   {
-    src: item5,
-    href: 'https://ipfs.tech/'
-  },
-  {
     src: item6,
     href: 'https://ipld.io/'
   },
   {
     src: item7,
     href: 'https://www.lighthouse.storage/'
-  },
-  {
-    src: item8,
-    href: 'https://peeranha.io/'
   }
 ]
 
@@ -111,7 +101,7 @@ export const TechnologyStack = () => {
         <ItemsContainer>
           {items.map(({ src, href }) => (
             <Item key={src} href={href} target='_blank'>
-              <ItemImg src={src}/>
+              <ItemImg src={src} />
             </Item>
           ))}
         </ItemsContainer>

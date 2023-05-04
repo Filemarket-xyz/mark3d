@@ -1,5 +1,6 @@
-import React from 'react'
 import * as Util from '@stitches/react/types/util'
+import React from 'react'
+
 import { styled } from '../../../styles'
 import { textVariant } from '../Txt'
 

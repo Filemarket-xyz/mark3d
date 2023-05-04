@@ -1,5 +1,6 @@
 import React from 'react'
-import { NavButton, Txt, gradientPlaceholderImg } from '../../UIkit'
+
+import { gradientPlaceholderImg, NavButton, Txt } from '../../UIkit'
 import { BasicCardSquareImg } from './BasicCard'
 import {
   BorderLayout,
@@ -45,7 +46,7 @@ export const TransferCard = (props: TransferCardProps) => {
         <CardControls css={{ height: 172 }}>
           <CardTitle title={props.title}>{props.title}</CardTitle>
           <CardCollection>{props.collection}</CardCollection>
-          <PriceInfo css={{ marginBottom: '$2' }}>
+          <PriceInfo css={{ marginBottom: '4px' }}>
             <UserContainer>
               <UserImg src={props.user.img} />
               <UserName>{props.user.username}</UserName>
@@ -54,7 +55,7 @@ export const TransferCard = (props: TransferCardProps) => {
               <Price>{props.price}</Price>
             )}
           </PriceInfo>
-          <PriceInfo css={{ marginBottom: '$3' }}>
+          <PriceInfo css={{ marginBottom: '4px', marginTop: '0' }}>
             <Txt css={{ fontWeight: 600, color: '$gray500' }} primary3>
               Status
             </Txt>
@@ -70,7 +71,8 @@ export const TransferCard = (props: TransferCardProps) => {
               css={{
                 textDecoration: 'none',
                 marginLeft: 'auto',
-                marginRight: 'auto'
+                marginRight: 'auto',
+                height: '32px'
               }}
             >
               <Txt primary3>{props.button.text}</Txt>

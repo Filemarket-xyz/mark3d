@@ -1,11 +1,12 @@
 import { FC, ReactNode, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+
 import { BreakpointsOptions, cssShowHideIn, styled } from '../../../../styles'
 import { Container } from '../../Container'
 import { NavBarCollapse } from '../NavBarCollapse'
-import { NavBarToggle } from '../NavBarToggle'
-import { NavBarItem, NavBarItemLink } from '../NavBarItem'
 import { NavBarCollapseItem } from '../NavBarCollapseItem'
-import { useLocation } from 'react-router-dom'
+import { NavBarItem, NavBarItemLink } from '../NavBarItem'
+import { NavBarToggle } from '../NavBarToggle'
 
 export interface NavBarItemData {
   to: string

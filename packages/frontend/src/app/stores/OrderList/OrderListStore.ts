@@ -1,3 +1,12 @@
+import { makeAutoObservable } from 'mobx'
+
+import { OrderStatus, OrderWithToken } from '../../../swagger/Api'
+import { NFTCardProps } from '../../components/MarketCard/NFTCard'
+import { api } from '../../config/api'
+import { gradientPlaceholderImg } from '../../UIkit'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
+import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import {
   IActivateDeactivate,
   IStoreRequester,
@@ -6,14 +15,6 @@ import {
   storeReset
 } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
-import { OrderStatus, OrderWithToken } from '../../../swagger/Api'
-import { makeAutoObservable } from 'mobx'
-import { api } from '../../config/api'
-import { NFTCardProps } from '../../components/MarketCard/NFTCard'
-import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
-import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
-import { gradientPlaceholderImg } from '../../UIkit'
 
 /**
  * Stores only ACTIVE order state.
@@ -68,8 +69,8 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
       .filter(({ order }) => order?.statuses?.[0]?.status === OrderStatus.Created)
       .map(
         ({ token, order }): NFTCardProps => ({
-          collection: token?.collection ?? '',
-          hiddenFile: token?.hiddenFile,
+          collection: token?.collectionAddress ?? '',
+          hiddenFile: token?.hiddenFileMeta,
           imageURL: token?.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
           title: token?.name ?? '—',
           user: {
@@ -77,7 +78,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
             username: reduceAddress(token?.owner ?? '')
           },
           button: {
-            link: `/collection/${token?.collection}/${token?.tokenId}`,
+            link: `/collection/${token?.collectionAddress}/${token?.tokenId}`,
             text: 'View & Buy'
           },
           price: order?.price

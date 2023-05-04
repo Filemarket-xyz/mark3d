@@ -1,22 +1,4 @@
-
-// AES key is base64 encoded
-
-export const AESEncoding = 'base64' as const
-export type AESKey = string
-
-// We are not using higher abstractions specific to the libraries, cos libraries might change
-// RSA key is encoded as hex string, obtained by hex encoding result of pkcs8 or spki key export
-export type RSAPublicKey = string // 0x12...
-export type RSAPrivateKey = string // 0x12...
-
-export interface RSAKeyPair {
-  pub: RSAPublicKey // public is reserved keyword
-  priv: RSAPrivateKey // private is reserved keyword
-}
-
-// Word crypto just to make it differ from a lot of 'Message' types
-export type CryptoMessage = Uint8Array
-
+/* eslint-disable max-len */
 /**
  * Global NFT identifier
  */
@@ -41,7 +23,7 @@ export interface DecryptResultError {
   error: string
 }
 
-export type DecryptResult<ResultType = CryptoMessage> = DecryptResultOk<ResultType> | DecryptResultError
+export type DecryptResult<ResultType = ArrayBuffer> = DecryptResultOk<ResultType> | DecryptResultError
 
 export interface Attribute {
   trait_type: string
@@ -132,3 +114,5 @@ export enum ERC721TokenEventSignatures {
   ApprovalForAll = 'ApprovalForAll(address,address,bool)',
   Transfer = 'Transfer(address,address,uint256)',
 }
+
+export type PersistentDerivationArgs = [globalSalt: ArrayBuffer, collectionAddress: ArrayBuffer, tokenId: number]

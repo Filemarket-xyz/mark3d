@@ -6,7 +6,7 @@ info:
   version: 1.0.0
 schemes:
   - https
-host: mark3d.xyz
+host: filemarket.xyz
 basePath: /api
 paths:
   /collections/{address}:
@@ -426,6 +426,9 @@ definitions:
     type: object
     description: Ответ на запрос зашифрованного пароля из последней передачи токена
     properties:
+      dealNumber:
+        type: string
+        description: Номер последнего трансфера токена
       encryptedPassword:
         type: string
         description: Зашифрованный пароль из последней передачи токена
@@ -565,16 +568,62 @@ definitions:
         description: uri метаданных токена
       name:
         type: string
-        description: Имя токена из метаданных
+        description: Метаданные - Имя токена из метаданных
       description:
         type: string
-        description: Описание токена из метаданных
+        description: Метаданные - Описание токена из метаданных
       image:
         type: string
-        description: Ссылка на пикчу из метаданных
+        description: Метаданные - Ссылка на пикчу из метаданных
+      externalLink:
+        type: string
+        description: не интернал не амнистия
       hiddenFile:
         type: string
-        description: Ссылка на зашифрованный файл из метаданных
+        description: Метаданные - Ссылка на зашифрованный файл из метаданных
+      license:
+        type: string
+      licenseUrl:
+        type: string
+      mintTxHash:
+        type: string
+        description: Хэш транзакции минта
+      mintTxTimestamp:
+        type: number
+        description: Время транзакции минта
+        format: uint64
+      hiddenFileMeta:
+        $ref: "#/definitions/HiddenFileMetaData"
+      categories:
+        type: array
+        description: Метаданные - Категории
+        items:
+          type: string
+      subcategories:
+        type: array
+        description: Метаданные - Подкатегории
+        items:
+          type: string
+      tags:
+        type: array
+        items:
+          type: string
+        description: Метаданные - Тэги
+      properties:
+        type: array
+        items:
+          $ref: "#/definitions/MetadataProperty"
+        description: Метаданные - Аттрибуты
+      rankings:
+        type: array
+        items:
+          $ref: "#/definitions/MetadataProperty"
+        description: Метаданные - Ранкинги
+      stats:
+        type: array
+        items:
+          $ref: "#/definitions/MetadataProperty"
+        description: Метаданные - Статы
       pendingTransferId:
         type: integer
         format: int64
@@ -739,6 +788,43 @@ definitions:
     enum:
       - Healthy
       - Unhealthy
+  MetadataProperty:
+    type: object
+    description: Структура для свойств в метаданных
+    properties:
+      traitType:
+        type: string
+        description: Название свойства
+      displayType:
+        type: string
+        description: Тип данных значения
+      value:
+        type: string
+        description: Значение свойства
+      max_value:
+        type: string
+      min_value:
+        type: string
+      traitValueCount:
+        type: integer
+        description: Количество таких же value в заданном trait_type
+      traitTotal:
+        type: integer
+        description: Общее количество записей с таким trait_type
+  HiddenFileMetaData:
+    type: object
+    description: Метаданные скрытого файла
+    properties:
+      name:
+        type: string
+        description: Имя файла
+      type:
+        type: string
+        description: Тип файла
+      size:
+        type: number
+        format: int64
+        description: Размер данных
 tags:
   - name: tokens
   - name: transfers

@@ -1,19 +1,20 @@
+import { makeAutoObservable } from 'mobx'
+
+import { TransfersResponseV2, TransferWithData } from '../../../swagger/Api'
+import { TransferCardProps } from '../../components/MarketCard/TransferCard'
+import { api } from '../../config/api'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
+import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import {
   IActivateDeactivate,
-  storeRequest,
   IStoreRequester,
-  storeReset,
-  RequestContext
+  RequestContext,
+  storeRequest,
+  storeReset
 } from '../../utils/store'
-import { ErrorStore } from '../Error/ErrorStore'
-import { makeAutoObservable } from 'mobx'
-import { TransfersResponseV2, TransferWithData } from '../../../swagger/Api'
-import { api } from '../../config/api'
-import { TransferCardProps } from '../../components/MarketCard/TransferCard'
-import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
-import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { formatCurrency } from '../../utils/web3/currency'
+import { ErrorStore } from '../Error/ErrorStore'
 
 const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
   const eventOptions =

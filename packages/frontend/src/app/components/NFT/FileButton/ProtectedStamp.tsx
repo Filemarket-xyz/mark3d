@@ -1,9 +1,10 @@
+import { Tooltip } from '@nextui-org/react'
 import React, { FC, PropsWithChildren } from 'react'
-import { styled } from '../../../../styles'
-import {Tooltip} from "@nextui-org/react";
-import {Button} from "../../../UIkit";
+
 import Protected from '../../../../assets/img/Protected.svg'
 import QuestionMark from '../../../../assets/img/QuestionMark.svg'
+import { styled } from '../../../../styles'
+import { Button } from '../../../UIkit'
 
 const LayoutStyled = styled('div', {
   display: 'flex',
@@ -57,14 +58,13 @@ const LayoutStyled = styled('div', {
   }
 })
 
-
 export const ProtectedStamp: FC<PropsWithChildren> = ({ children }) => {
   return (
     <LayoutStyled>
       {children}
-      <Tooltip content={"Девочка вендздей с последней парты..."} rounded color="primary" className={'tooltip'}>
+      <Tooltip content={'Девочка вендздей с последней парты...'} rounded color="primary" className={'tooltip'}>
         <div className="buttons">
-          <Button className={'buttons'}><span><img src={Protected} className={'firstImg'}/>Protected by EFT techology <img src={QuestionMark} className={'secondImg'}/></span></Button>
+          <Button className={'buttons'}><span><img src={Protected} className={'firstImg'} />Protected by EFT techology <img src={QuestionMark} className={'secondImg'} /></span></Button>
         </div>
       </Tooltip>
     </LayoutStyled>

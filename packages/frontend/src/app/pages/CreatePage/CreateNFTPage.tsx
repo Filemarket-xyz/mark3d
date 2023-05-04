@@ -1,31 +1,32 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
-import { styled } from '../../../styles'
-import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
-import { Button, Link, PageLayout, Txt } from '../../UIkit'
-import { ComboBoxOption, ControlledComboBox } from '../../UIkit/Form/Combobox'
-import { Input } from '../../UIkit/Form/Input'
-import { TextArea } from '../../UIkit/Form/Textarea'
-import { Form, Label, LabelWithCounter, LetterCounter, TextBold, TextGray } from './CreateCollectionPage'
-import PlusIcon from './img/plus-icon.svg'
-import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { Tooltip } from '@nextui-org/react'
 import { observer } from 'mobx-react-lite'
-import { useCollectionAndTokenListStore } from '../../hooks'
+import React, { useEffect, useMemo, useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { NavLink, useLocation } from 'react-router-dom'
 import { useAccount } from 'wagmi'
-import { useCreateNft } from './hooks/useCreateNft'
-import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
+
+import { styled } from '../../../styles'
 import MintModal, {
   ErrorBody,
   extractMessageFromError,
   InProgressBody,
   SuccessNavBody
 } from '../../components/Modal/Modal'
+import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
+import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
+import { useCollectionAndTokenListStore } from '../../hooks'
+import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
+import { Button, Link, PageLayout, Txt } from '../../UIkit'
+import { ComboBoxOption, ControlledComboBox } from '../../UIkit/Form/Combobox'
 import { FormControl } from '../../UIkit/Form/FormControl'
-import { useModalProperties } from './hooks/useModalProperties'
-import { Tooltip } from '@nextui-org/react'
+import { Input } from '../../UIkit/Form/Input'
+import { TextArea } from '../../UIkit/Form/Textarea'
 import TagsSection from '../NFTPage/section/Tags/TagsSection'
+import { Form, Label, LabelWithCounter, TextBold, TextGray } from './CreateCollectionPage'
 import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory } from './helper/data/data'
+import { useCreateNft } from './hooks/useCreateNft'
+import { useModalProperties } from './hooks/useModalProperties'
+import PlusIcon from './img/plus-icon.svg'
 
 const Description = styled('p', {
   fontSize: '12px',
@@ -181,6 +182,7 @@ const CreateNftPage = observer(() => {
       title: 'RockPaper',
       id: '5'
     }
+
   ]
 
   const {
@@ -220,6 +222,7 @@ const CreateNftPage = observer(() => {
   const chosenCategory = watch('category')
   const license = watch('license')
   const category = watch('category')
+  const description = watch('description')
 
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
     createNft({ ...data, tagsValue: chosenTags, licenseUrl })
@@ -232,10 +235,10 @@ const CreateNftPage = observer(() => {
   useAfterDidMountEffect(() => {
     if (isNftLoading) {
       setModalOpen(true)
-      setModalBody(<InProgressBody text='NFT is being minted'/>)
+      setModalBody(<InProgressBody text='NFT is being minted' />)
     } else if (nftError) {
       setModalOpen(true)
-      setModalBody(<ErrorBody message={extractMessageFromError(nftError)}/>)
+      setModalBody(<ErrorBody message={extractMessageFromError(nftError)} />)
     } else if (nftResult) {
       setModalOpen(true)
       setModalBody(
@@ -326,7 +329,7 @@ const CreateNftPage = observer(() => {
               />
               <NavLink to={'../collection'}>
                 <AddCollectionButton>
-                  <Icon src={PlusIcon}/>
+                  <Icon src={PlusIcon} />
                 </AddCollectionButton>
               </NavLink>
             </CollectionPickerContainer>
@@ -337,12 +340,12 @@ const CreateNftPage = observer(() => {
               <Label>
                 Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
               </Label>
-              <LetterCounter>0/1000</LetterCounter>
+              {/* <LetterCounter>{description?.length}/1000</LetterCounter> */}
             </LabelWithCounter>
 
             <TextArea
               placeholder='Description of your item'
-              {...register('description')}
+              {...register('description', { maxLength: { value: 1000, message: 'Aboba' } })}
             />
           </FormControl>
 
@@ -351,13 +354,13 @@ const CreateNftPage = observer(() => {
               <Label>Category</Label>
               <CollectionPickerContainer>
                 <ControlledComboBox<CreateNFTForm>
-                    name='category'
-                    control={control}
-                    placeholder={'Select a category'}
-                    comboboxProps={{
-                      options: categoryOptions
-                    }}
-                    rules={{ required: true }}
+                  name='category'
+                  control={control}
+                  placeholder={'Select a category'}
+                  comboboxProps={{
+                    options: categoryOptions
+                  }}
+                  rules={{ required: true }}
                 />
               </CollectionPickerContainer>
             </FormControl>
@@ -366,14 +369,14 @@ const CreateNftPage = observer(() => {
               <Label>Subcategory&nbsp;&nbsp;<TextGray>(Optional)</TextGray></Label>
               <CollectionPickerContainer>
                 <ControlledComboBox<CreateNFTForm>
-                    name='subcategory'
-                    control={control}
-                    placeholder={'Select a subcategory'}
-                    comboboxProps={{
-                      options: subcategoryOptions
-                    }}
-                    rules={{ required: false }}
-                    isDisabled={!category}
+                  name='subcategory'
+                  control={control}
+                  placeholder={'Select a subcategory'}
+                  comboboxProps={{
+                    options: subcategoryOptions
+                  }}
+                  rules={{ required: false }}
+                  isDisabled={!category}
                 />
               </CollectionPickerContainer>
             </FormControl>
@@ -383,17 +386,17 @@ const CreateNftPage = observer(() => {
             <Label>Tags&nbsp;&nbsp;<TextGray>(Optional)</TextGray></Label>
             <ContentField>
               <ControlledComboBox<CreateNFTForm>
-                  name='tags'
-                  control={control}
-                  placeholder={'Content tags'}
-                  comboboxProps={{
-                    options: tags?.filter((tag) => !chosenTags.includes(tag.title))
-                  }}
-                  rules={{ required: false }}
-                  onEnter={(value) => {
-                    if (value && !chosenTags.includes(value)) setChosenTags([...chosenTags, value])
-                    console.log(value)
-                  }}
+                name='tags'
+                control={control}
+                placeholder={'Content tags'}
+                comboboxProps={{
+                  options: tags?.filter((tag) => !chosenTags.includes(tag.title))
+                }}
+                rules={{ required: false }}
+                onEnter={(value) => {
+                  if (value && !chosenTags.includes(value)) setChosenTags([...chosenTags, value])
+                  console.log(value)
+                }}
               />
               {chosenTags.length > 0 && <TagsSection tags={chosenTags} tagOptions={{
                 isCanDelete: true,
@@ -405,7 +408,7 @@ const CreateNftPage = observer(() => {
                     return tag !== value
                   })])
                 }
-              }}/>}
+              }} />}
               {chosenTags.length <= 0 && <Description secondary>
                 Tags make it easier to find the right content
               </Description>}
@@ -416,13 +419,13 @@ const CreateNftPage = observer(() => {
             <Label>License</Label>
             <ContentField>
               <ControlledComboBox<CreateNFTForm>
-                  name='license'
-                  control={control}
-                  placeholder={'License'}
-                  comboboxProps={{
-                    options: licenseOptions
-                  }}
-                  rules={{ required: true }}
+                name='license'
+                control={control}
+                placeholder={'License'}
+                comboboxProps={{
+                  options: licenseOptions
+                }}
+                rules={{ required: true }}
               />
               <Description secondary>
                 {licenseDescription}

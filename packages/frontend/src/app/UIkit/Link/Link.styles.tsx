@@ -1,8 +1,9 @@
-import React from 'react'
 import * as Util from '@stitches/react/types/util'
+import React from 'react'
+
+import RedirectImg from '../../../assets/img/Redirect.svg'
 import { styled } from '../../../styles'
 import { textVariant } from '../Txt'
-import RedirectImg from '../../../assets/img/Redirect.svg'
 
 export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.ComponentType<any> | Util.Function,
   >(type: Type) =>
@@ -62,16 +63,16 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
             textDecoration: 'underline'
           }
         },
-          iconRedirect: {
-              true:{
-                  position: 'relative',
-                  '&:after': {
-                      content: `url(${RedirectImg})`,
-                      position: 'absolute',
-                      top: 0,
-                      right: '-20px'
-                  }
-              }
+        iconRedirect: {
+          true: {
+            position: 'relative',
+            '&:after': {
+              content: `url(${RedirectImg})`,
+              position: 'absolute',
+              top: 0,
+              right: '-20px'
+            }
           }
+        }
       }
     })

@@ -1,17 +1,16 @@
 import React from 'react'
+
 import { styled } from '../../../../styles'
-import { Container, Link, Txt } from '../../../UIkit'
-import Telegram from './img/Telegram.svg'
-import Twitter from './img/Twitter.svg'
-import BottomSection from "./section/Bottom/BottomSection";
-import TopSection from "./section/Top/TopSection";
+import { Container } from '../../../UIkit'
+import BottomSection from './section/Bottom/BottomSection'
+import TopSection from './section/Top/TopSection'
 
 const FooterWrapper = styled('footer', {
   width: '100%',
   backdropFilter: 'blur(12.5px)',
   boxShadow: '$footer',
   color: '$blue900',
-  background: '$colors$black',
+  background: '#131416'
 })
 
 const FooterContainer = styled(Container, {
@@ -39,14 +38,13 @@ const Line = styled('div', {
   margin: '32px 0'
 })
 
-
 export default function Footer() {
   return (
     <FooterWrapper>
       <FooterContainer>
-        <TopSection/>
-        <Line/>
-        <BottomSection/>
+        <TopSection />
+        <Line />
+        <BottomSection />
       </FooterContainer>
     </FooterWrapper>
   )

@@ -1,4 +1,12 @@
-import { ErrorStore } from '../Error/ErrorStore'
+import { makeAutoObservable } from 'mobx'
+
+import { CollectionData } from '../../../swagger/Api'
+import { NFTCardProps } from '../../components/MarketCard/NFTCard'
+import { api } from '../../config/api'
+import { gradientPlaceholderImg } from '../../UIkit'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
+import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import {
   IActivateDeactivate,
   IStoreRequester,
@@ -6,14 +14,7 @@ import {
   storeRequest,
   storeReset
 } from '../../utils/store'
-import { CollectionData } from '../../../swagger/Api'
-import { makeAutoObservable } from 'mobx'
-import { api } from '../../config/api'
-import { NFTCardProps } from '../../components/MarketCard/NFTCard'
-import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
-import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
-import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { gradientPlaceholderImg } from '../../UIkit'
+import { ErrorStore } from '../Error/ErrorStore'
 
 export class CollectionTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
@@ -67,7 +68,6 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
   get nftCards(): NFTCardProps[] {
     const tokens = this.data.tokens ?? []
     const collection = this.data.collection
-
     return tokens.map((token) => ({
       collection: collection?.name ?? '',
       imageURL: token.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
@@ -77,9 +77,10 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
         username: reduceAddress(collection?.owner ?? '')
       },
       button: {
-        link: `/collection/${token.collection}/${token.tokenId}`,
+        link: `/collection/${token.collectionAddress}/${token.tokenId}`,
         text: 'Go to page'
-      }
+      },
+      hiddenFile: token.hiddenFileMeta
     }))
   }
 }

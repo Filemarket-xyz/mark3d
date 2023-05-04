@@ -1,8 +1,9 @@
-import { styled } from '../../../../../styles'
-import { textVariant } from '../../../../UIkit'
-import { ITableColumn, ITableRow } from '../../../../components/Table/TableBuilder'
-import { ExplorerTableBuilder } from './ExplorerTableBuilder'
 import { ComponentProps } from 'react'
+
+import { styled } from '../../../../../styles'
+import { ITableColumn, ITableRow } from '../../../../components/Table/TableBuilder'
+import { textVariant } from '../../../../UIkit'
+import { ExplorerTableBuilder } from './ExplorerTableBuilder'
 
 const TableWrapper = styled('div', {
   paddingTop: '$4',

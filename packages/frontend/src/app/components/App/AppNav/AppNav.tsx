@@ -1,9 +1,10 @@
 import { FC } from 'react'
-import { NavBar } from '../../../UIkit'
-import { paths } from './paths'
-import { AppLogoButton } from '../AppLogoButton'
+
 import { BreakpointsOptions } from '../../../../styles'
+import { NavBar } from '../../../UIkit'
 import { AppConnectWidget } from '../AppConnectWidget'
+import { AppLogoButton } from '../AppLogoButton'
+import { paths } from './paths'
 
 const mobileBp: BreakpointsOptions = 'lg'
 
@@ -13,7 +14,7 @@ export const AppNav: FC = () => (
       mobileBp={mobileBp}
       brand={<AppLogoButton to='/' hideNameIn={mobileBp} />}
       items={paths}
-      actions={<AppConnectWidget/>}
+      actions={<AppConnectWidget />}
     />
   </>
 )

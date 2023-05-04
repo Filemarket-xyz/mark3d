@@ -1,5 +1,6 @@
-import { styled } from '../../../../styles'
 import { ComponentProps } from 'react'
+
+import { styled } from '../../../../styles'
 
 export const StyledNavBarToggleIconContainer = styled('div', {
   dflex: 'center',

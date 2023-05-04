@@ -1,14 +1,15 @@
+import { observer } from 'mobx-react-lite'
 import { Outlet, useLocation, useParams } from 'react-router'
+
 import { styled } from '../../../styles'
+import { mark3dConfig } from '../../config/mark3d'
+import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
 import { Badge, Container, gradientPlaceholderImg, Link, NavLink, textVariant } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
-import { observer } from 'mobx-react-lite'
-import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
-import { Params } from '../../utils/router/Params'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
-import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
-import { mark3dConfig } from '../../config/mark3d'
+import { reduceAddress } from '../../utils/nfts/reduceAddress'
+import { Params } from '../../utils/router/Params'
 
 const Background = styled('div', {
   background: '$gradients$background',
@@ -102,7 +103,7 @@ const CollectionPage = observer(() => {
   return (
     <>
       <GrayOverlay>
-        <Background/>
+        <Background />
         {collectionAndNfts && (
           <StyledContainer>
             <Profile>
@@ -150,7 +151,7 @@ const CollectionPage = observer(() => {
                     target='_blank'
                     rel='noopener noreferrer'
                   >
-                    <Badge content={{ title: 'Etherscan.io', value: 'VRG' }}/>
+                    <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
                   </Link>
                 )}
               </Badges>
@@ -174,7 +175,7 @@ const CollectionPage = observer(() => {
               ]}
             />
           </TabsContainer>
-          <Outlet/>
+          <Outlet />
         </Inventory>
       </GrayOverlay>
     </>

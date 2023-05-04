@@ -1,14 +1,17 @@
+import { observer } from 'mobx-react-lite'
+import React from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+
 import { styled } from '../../../../styles'
+import Plug from '../../../components/Plug/Plug'
+import { ITableColumn } from '../../../components/Table/TableBuilder'
+import { useTransfersHistory } from '../../../hooks/useTransfersHistory'
+import { Button, NavButton, Txt } from '../../../UIkit'
+import { Params } from '../../../utils/router/Params'
 import { TableBody } from '../../ExplorerPage/components/Table/Table'
 import { RowCell } from '../../ExplorerPage/components/TableRow/TableRow'
-import { ITableColumn } from '../../../components/Table/TableBuilder'
-import { NavButton } from '../../../UIkit'
 import openLinkIcon from '../img/open-link-icon.svg'
 import { HistoryTableBuilder } from './HistoryTableBuilder'
-import { observer } from 'mobx-react-lite'
-import { useTransfersHistory } from '../../../hooks/useTransfersHistory'
-import { useParams } from 'react-router-dom'
-import { Params } from '../../../utils/router/Params'
 
 export const Wrapper = styled(TableBody, {
   gap: '$2',
@@ -53,7 +56,7 @@ const cols: ITableColumn[] = [
 ]
 
 export const EmptyTablePlaceholder = styled('div', {
-  dflex: 'center',
+  flex: 'center',
   justifyContent: 'center',
   color: '$gray500',
   paddingBottom: '$3'
@@ -62,7 +65,7 @@ export const EmptyTablePlaceholder = styled('div', {
 export const HistorySection = observer(() => {
   const { profileAddress } = useParams<Params>()
   const { tableRows, isLoading } = useTransfersHistory(profileAddress)
-
+  const navigate = useNavigate()
   const historyTableBuilder = new HistoryTableBuilder(cols, tableRows)
 
   return (
@@ -72,7 +75,14 @@ export const HistorySection = observer(() => {
       ) : tableRows.length ? (
         <Wrapper>{historyTableBuilder.renderRows()}</Wrapper>
       ) : (
-        <EmptyTablePlaceholder>History is empty</EmptyTablePlaceholder>
+        <Plug header={'You don`t have any NFTs '}
+              mainText={'Create your own NFT or go to the market to find something amazing'}
+              buttonsBlock={<>
+                <Button primary onClick={() => { navigate('/market') }}>
+                  <Txt primary1>3D Market</Txt></Button>
+                <Button primary onClick={() => { navigate('/create') }}>
+                  <Txt primary1>Create</Txt></Button></>}
+        />
       )}
     </>
   )

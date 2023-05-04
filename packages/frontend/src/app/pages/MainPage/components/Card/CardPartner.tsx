@@ -1,10 +1,10 @@
-import React, { FC, ComponentProps } from 'react'
+import React, { ComponentProps, FC } from 'react'
 
 import { styled } from '../../../../../styles'
 import { Txt } from '../../../../UIkit'
 
 const CardPartnerStyle = styled('a', {
-  width: '170px',
+  width: '171px',
   height: '160px',
   display: 'flex',
   justifyContent: 'center',
@@ -35,7 +35,7 @@ export type CardPartnerProps = ComponentProps<typeof CardPartnerStyle> & {
 const CardPartner: FC<CardPartnerProps> = ({ img, text, url, partners }) => {
   return (
     <CardPartnerStyle href={url} target={'_blank'} partners={partners}>
-      <img src={img}/>
+      <img src={img} />
       <Txt primary1>{text}</Txt>
     </CardPartnerStyle>
   )

@@ -1,15 +1,16 @@
-import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
-import { ErrorStore } from '../Error/ErrorStore'
+import { utils } from 'ethers/lib.esm'
 import { makeAutoObservable } from 'mobx'
+
 import { Collection, Token, TokensResponse } from '../../../swagger/Api'
-import { api } from '../../config/api'
 import { NFTCardProps } from '../../components/MarketCard/NFTCard'
-import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
-import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+import { api } from '../../config/api'
 import { gradientPlaceholderImg } from '../../UIkit'
 import { ComboBoxOption } from '../../UIkit/Form/Combobox'
-import { utils } from 'ethers/lib.esm'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
+import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
+import { reduceAddress } from '../../utils/nfts/reduceAddress'
+import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { ErrorStore } from '../Error/ErrorStore'
 
 export class CollectionAndTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
   errorStore: ErrorStore
@@ -68,7 +69,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
     const tokens = this.tokens ?? []
 
     return tokens.map((token) => ({
-      collection: reduceAddress(token.collection ?? ''),
+      collection: reduceAddress(token.collectionAddress ?? ''),
       imageURL: token.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
       title: token.name ?? '—',
       user: {
@@ -77,7 +78,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
       },
       button: {
         text: 'Go to page',
-        link: `/collection/${token.collection}/${token.tokenId}`
+        link: `/collection/${token.collectionAddress}/${token.tokenId}`
       }
     }))
   }

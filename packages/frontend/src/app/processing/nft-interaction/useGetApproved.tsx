@@ -1,7 +1,8 @@
-import { TokenFullId } from '../types'
-import { useContractRead } from 'wagmi'
-import { mark3dConfig } from '../../config/mark3d'
 import { BigNumber } from 'ethers'
+import { useContractRead } from 'wagmi'
+
+import { mark3dConfig } from '../../config/mark3d'
+import { TokenFullId } from '../types'
 import { ensureAddress } from '../utils/address'
 
 export function useGetApproved({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {

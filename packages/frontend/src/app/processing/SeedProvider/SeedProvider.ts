@@ -1,7 +1,9 @@
-import { ISeedProvider } from './ISeedProvider'
-import { IStorageProvider } from '../StorageProvider'
 import * as passworder from '@metamask/browser-passworder'
+import { entropyToMnemonic } from 'bip39'
 import { utils } from 'ethers'
+
+import { IStorageProvider } from '../StorageProvider'
+import { ISeedProvider } from './ISeedProvider'
 
 const seedStorageKey = 'seed'
 
@@ -44,11 +46,11 @@ export class SeedProvider implements ISeedProvider {
       throw new Error('Unable to unlock seed: cannot decrypt seed')
     }
     const seedBuf = Buffer.from(seed, 'hex')
-    if (seedBuf.byteLength !== seedByteLength) {
-      throw new Error(
-        `Unable to unlock seed: expected seed to be ${seedByteLength} bytes, but got ${seedBuf.byteLength}`
-      )
-    }
+    // if (seedBuf.byteLength !== seedByteLength) {
+    //   throw new Error(
+    //     `Unable to unlock seed: expected seed to be ${seedByteLength} bytes, but got ${seedBuf.byteLength}`
+    //   )
+    // }
     this.setSeed(seedBuf)
   }
 
@@ -59,6 +61,7 @@ export class SeedProvider implements ISeedProvider {
     }
     await this.storage.set(seedStorageKey, seedEncrypted)
     this.seedEncrypted = seedEncrypted
+
     this.setSeed(newSeed)
   }
 
@@ -84,5 +87,11 @@ export class SeedProvider implements ISeedProvider {
 
   removeOnInitListener(callback: () => void) {
     this.onInitListeners = this.onInitListeners.filter(fn => fn !== callback)
+  }
+
+  get mnemonic(): string | undefined {
+    if (this.seed) {
+      return entropyToMnemonic(Buffer.from(this.seed).toString('hex'))
+    }
   }
 }

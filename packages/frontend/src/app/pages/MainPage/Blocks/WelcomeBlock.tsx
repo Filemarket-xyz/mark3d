@@ -1,14 +1,9 @@
 import React from 'react'
-import { styled } from '../../../../styles'
-import { Button, Container, Link, textVariant, ToolCard, Txt } from '../../../UIkit'
-import lastUpdateImg from '../../../../assets/img/MainPage/LastUpdate.jpg'
-import bgStorage from '../img/bgStorage.svg'
-import Card from '../components/Card/Card'
 
-const BackgroundContainer = styled('section', {
-  background: 'linear-gradient(291.31deg, rgba(2, 145, 252, 0.25) 0%, rgba(74, 198, 209, 0.25) 100%), #FFFFFF;',
-  width: '100%'
-})
+import { styled } from '../../../../styles'
+import { Container, LinkButton, NavButton, textVariant, ToolCard } from '../../../UIkit'
+import { TechnologyStack } from '../components/TechnologyStack'
+import bgStorage from '../img/bgStorage.svg'
 
 const WelcomeScreenWrapper = styled('section', {
   background: `url(${bgStorage})`,
@@ -16,9 +11,9 @@ const WelcomeScreenWrapper = styled('section', {
   backgroundSize: 'auto 80%',
   backgroundRepeat: 'no-repeat',
   $$topPad: '128px',
-  backgroundPosition: 'top $$topPad right -2.7%',
+  backgroundPosition: 'top $$topPad right -5%',
   '@xl': {
-    backgroundPosition: 'top $$topPad right -3.1%'
+    backgroundPosition: 'top $$topPad right -15%'
   },
   '@lg': {
     background: 'none'
@@ -51,7 +46,6 @@ const Description = styled('p', {
   color: '$gray800',
   maxWidth: 730,
   marginTop: '$3',
-  paddingBottom: '48px',
   '@lg': {
     textAlign: 'center',
     marginLeft: 'auto',
@@ -120,30 +114,64 @@ const WelcomeInfo = styled(Container, {
   }
 })
 
+const ToolsContainer = styled('div', {
+  display: 'flex',
+  gap: '$4',
+  marginTop: 48,
+  '@lg': {
+    justifyContent: 'center'
+  },
+  '@sm': {
+    flexDirection: 'column',
+    alignItems: 'center'
+  }
+})
+
 export default function WelcomeBlock() {
   return (
-    <BackgroundContainer>
-      <WelcomeScreenWrapper>
-        <WelcomeInfo>
-          <Title>
-            Store, sell, buy or send any files as NFTs
-          </Title>
-          <Description>
-            Welcome to the leading market for tokenized files! Send your digital content into the future of decentralized finance, organizations, metaverses, and the Data Economy!
-          </Description>
-          <Button primary mediumHg style={{
-            marginBottom: '59px'
-          }}><Txt h5>Explore</Txt></Button>
-          <Card
-            cardType={'main'}
-            img={lastUpdateImg}
-            headerText={'Last update'}
-            imgHref={'#'}
-            text={<Txt primary1 style={{ fontSize: '20px', fontWeight: 400 }}>The FileMarket.xyz team has just successfully completed the FVM Mainnet cohort (Filecoin incubator) and deployed their product on the Mainnet.</Txt>}
-            rightBottomContent={<Link iconRedirect><Txt h5 style={{ fontWeight: 600 }}>All news</Txt></Link>}
-          />
-        </WelcomeInfo>
-      </WelcomeScreenWrapper>
-    </BackgroundContainer>
+    <WelcomeScreenWrapper>
+      <WelcomeInfo>
+        <Title>
+          Store, sell, buy or send any files as NFTs
+        </Title>
+        <Description>
+          Our new standard of NFT: Encrypted FileToken (EFT) using FVM allows perpetual storage of encrypted files on
+          decentralized network of Filecoin & IPFS
+        </Description>
+        <ToolsContainer>
+          <ToolCardNarrow>
+            <ToolCardContent>
+              <ToolCardInfo>
+                <ToolTitle>For Digital Content Creators</ToolTitle>
+                <ToolDescription>
+                  Secure tokenization of any files, decentralized notary and storage, new monetization with access to
+                  DeFi, DAO, Metaverse
+                </ToolDescription>
+              </ToolCardInfo>
+
+              <NavButton secondary to={'/create/nft'}>
+                Mint NFT File
+              </NavButton>
+            </ToolCardContent>
+          </ToolCardNarrow>
+
+          <ToolCardNarrow>
+            <ToolCardContent>
+              <ToolCardInfo>
+                <ToolTitle>Create your own files online shop</ToolTitle>
+                <ToolDescription>
+                  Create and customize your own unique storefront on your domain with only your digital content
+                </ToolDescription>
+              </ToolCardInfo>
+
+              <LinkButton target="_blank" secondary href="https://form.typeform.com/to/gulmhUKG">
+                Make order
+              </LinkButton>
+            </ToolCardContent>
+          </ToolCardNarrow>
+        </ToolsContainer>
+        <TechnologyStack />
+      </WelcomeInfo>
+    </WelcomeScreenWrapper>
   )
 }

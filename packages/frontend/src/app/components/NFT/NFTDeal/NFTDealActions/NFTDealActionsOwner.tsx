@@ -1,18 +1,19 @@
-import { Transfer } from '../../../../../swagger/Api'
-import { TokenFullId } from '../../../../processing/types'
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
-import { ButtonInitTransfer } from './ActionButtons/ButtonInitTransfer'
+
+import { Transfer } from '../../../../../swagger/Api'
 import { useIsApprovedExchange } from '../../../../processing'
+import { TokenFullId } from '../../../../processing/types'
 import { Txt } from '../../../../UIkit'
 import { stringifyError } from '../../../../utils/error'
-import { ButtonApproveExchange } from './ActionButtons/ButtonApproveExchange'
-import { ButtonPlaceOrder } from './ActionButtons/ButtonPlaceOrder'
 import { transferPermissions } from '../../../../utils/transfer/status'
-import { ButtonCancelTransfer } from './ActionButtons/ButtonCancelTransfer'
-import { ButtonFinalizeTransfer } from './ActionButtons/ButtonFinalizeTransfer'
+import { ButtonApproveExchange } from './ActionButtons/ButtonApproveExchange'
 import { ButtonApproveTransfer } from './ActionButtons/ButtonApproveTransfer'
 import { ButtonCancelOrder } from './ActionButtons/ButtonCancelOrder'
+import { ButtonCancelTransfer } from './ActionButtons/ButtonCancelTransfer'
+import { ButtonFinalizeTransfer } from './ActionButtons/ButtonFinalizeTransfer'
+import { ButtonInitTransfer } from './ActionButtons/ButtonInitTransfer'
+import { ButtonPlaceOrder } from './ActionButtons/ButtonPlaceOrder'
 import { HideAction } from './HideAction'
 
 export interface NFTDealActionsOwnerProps {
@@ -42,22 +43,22 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   return (
     <>
       <HideAction hide={!transfer || !permissions.canApprove(transfer)}>
-        <ButtonApproveTransfer tokenFullId={tokenFullId} transfer={transfer}/>
+        <ButtonApproveTransfer tokenFullId={tokenFullId} transfer={transfer} />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canFinalize(transfer)}>
-        <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={ownerStatusChanged}/>
+        <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={ownerStatusChanged} />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canCancelOrder(transfer)}>
-        <ButtonCancelOrder tokenFullId={tokenFullId} callback={reFetchOrder}/>
+        <ButtonCancelOrder tokenFullId={tokenFullId} callback={reFetchOrder} />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canCancel(transfer)}>
-        <ButtonCancelTransfer tokenFullId={tokenFullId}/>
+        <ButtonCancelTransfer tokenFullId={tokenFullId} />
       </HideAction>
       <HideAction hide={!!transfer}>
-        <ButtonInitTransfer tokenFullId={tokenFullId}/>
+        <ButtonInitTransfer tokenFullId={tokenFullId} />
       </HideAction>
       <HideAction hide={!!transfer || !isApprovedExchange}>
-        <ButtonPlaceOrder tokenFullId={tokenFullId} callback={reFetchOrder}/>
+        <ButtonPlaceOrder tokenFullId={tokenFullId} callback={reFetchOrder} />
       </HideAction>
       <HideAction hide={!!transfer || isApprovedExchange}>
         <ButtonApproveExchange

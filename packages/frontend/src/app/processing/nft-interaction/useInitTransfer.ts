@@ -1,12 +1,13 @@
-import { TokenFullId } from '../types'
-import { useStatusState } from '../../hooks'
+import assert from 'assert'
 import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
-import { assertContract, assertSigner } from '../utils/assert'
+
 import { mark3dConfig } from '../../config/mark3d'
+import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
-import assert from 'assert'
-import { nullAddress } from '../utils/id'
+import { TokenFullId } from '../types'
+import { nullAddress } from '../utils'
+import { assertContract, assertSigner } from '../utils/assert'
 
 export function useInitTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, to?: string) {
   const { contract, signer } = useCollectionContract(collectionAddress)
@@ -15,15 +16,17 @@ export function useInitTransfer({ collectionAddress, tokenId }: Partial<TokenFul
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     assert(to, 'receiver address ("to") is undefined')
-    console.log('init transfer', 'tokenId', tokenId, 'to', to, 'callbackReceiver', nullAddress)
-    const result = await contract.initTransfer(
+    console.log('init transfer', { tokenId, to, callbackReceiver: nullAddress })
+
+    const tx = await contract.initTransfer(
       BigNumber.from(tokenId),
       to as `0x${string}`,
       '0x00',
       nullAddress,
       { gasPrice: mark3dConfig.gasPrice }
     )
-    return await result.wait()
+
+    return tx.wait()
   }), [contract, signer, wrapPromise, collectionAddress, tokenId, to])
   return {
     ...statuses,

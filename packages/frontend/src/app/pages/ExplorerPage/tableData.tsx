@@ -1,5 +1,33 @@
 import { ITableColumn, ITableRow } from '../../components/Table/TableBuilder'
-
+// 3XR imgs
+import xr1 from './images/3XR/1.jpg'
+import xr2 from './images/3XR/2.jpg'
+import xr3 from './images/3XR/3.jpg'
+import xr4 from './images/3XR/4.jpg'
+// Arhead imgs
+import ah1 from './images/Arhead/1.jpg'
+import ah2 from './images/Arhead/2.jpg'
+import ah3 from './images/Arhead/3.jpg'
+import ah4 from './images/Arhead/4.jpg'
+// Decentraland imgs
+import dc1 from './images/Decentraland/1.jpg'
+import dc2 from './images/Decentraland/2.jpg'
+import dc3 from './images/Decentraland/3.jpg'
+import dc4 from './images/Decentraland/4.jpg'
+import dc5 from './images/Decentraland/5.jpg'
+import dc6 from './images/Decentraland/6.jpg'
+import dc7 from './images/Decentraland/7.jpg'
+import dc8 from './images/Decentraland/8.jpg'
+// OnCyber imgs
+import oc1 from './images/OnCyber/1.jpg'
+import oc2 from './images/OnCyber/2.jpg'
+// Sandbox imgs
+import sb1 from './images/Sandbox/1.jpg'
+import sb2 from './images/Sandbox/2.jpg'
+import sb3 from './images/Sandbox/3.jpg'
+import sb4 from './images/Sandbox/4.jpg'
+// Somnium imgs
+import sm1 from './images/Somnium/1.jpg'
 // Spatial imgs
 import sp1 from './images/Spatial/1.jpg'
 import sp2 from './images/Spatial/2.jpg'
@@ -11,48 +39,11 @@ import sp7 from './images/Spatial/7.jpg'
 import sp8 from './images/Spatial/8.jpg'
 import sp9 from './images/Spatial/9.jpg'
 import sp10 from './images/Spatial/10.jpg'
-
-// Somnium imgs
-import sm1 from './images/Somnium/1.jpg'
-
-// Decentraland imgs
-import dc1 from './images/Decentraland/1.jpg'
-import dc2 from './images/Decentraland/2.jpg'
-import dc3 from './images/Decentraland/3.jpg'
-import dc4 from './images/Decentraland/4.jpg'
-import dc5 from './images/Decentraland/5.jpg'
-import dc6 from './images/Decentraland/6.jpg'
-import dc7 from './images/Decentraland/7.jpg'
-import dc8 from './images/Decentraland/8.jpg'
-
-// OnCyber imgs
-import oc1 from './images/OnCyber/1.jpg'
-import oc2 from './images/OnCyber/2.jpg'
-
-// 3XR imgs
-import xr1 from './images/3XR/1.jpg'
-import xr2 from './images/3XR/2.jpg'
-import xr3 from './images/3XR/3.jpg'
-import xr4 from './images/3XR/4.jpg'
-
-// Arhead imgs
-import ah1 from './images/Arhead/1.jpg'
-import ah2 from './images/Arhead/2.jpg'
-import ah3 from './images/Arhead/3.jpg'
-import ah4 from './images/Arhead/4.jpg'
-
-// Sandbox imgs
-import sb1 from './images/Sandbox/1.jpg'
-import sb2 from './images/Sandbox/2.jpg'
-import sb3 from './images/Sandbox/3.jpg'
-import sb4 from './images/Sandbox/4.jpg'
-
 // Viverse imgs
 import vv1 from './images/Viverse/1.jpg'
 import vv2 from './images/Viverse/2.jpg'
 import vv3 from './images/Viverse/3.jpg'
 import vv4 from './images/Viverse/4.jpg'
-
 // Voxels imgs
 import vx1 from './images/Voxels/1.jpg'
 import vx2 from './images/Voxels/2.jpg'

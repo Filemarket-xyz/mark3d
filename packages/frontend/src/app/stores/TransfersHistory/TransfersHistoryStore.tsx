@@ -1,4 +1,18 @@
-import { ErrorStore } from '../Error/ErrorStore'
+import dayjs from 'dayjs'
+import { makeAutoObservable } from 'mobx'
+
+import { styled } from '../../../styles'
+import {
+  OrderStatusInfo,
+  TransfersResponseV2,
+  TransferWithData
+} from '../../../swagger/Api'
+import { ITableRow } from '../../components/Table/TableBuilder'
+import { api } from '../../config/api'
+import ethIcon from '../../pages/ProfilePage/img/eth-icon.svg'
+import { Badge } from '../../UIkit'
+import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
+import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import {
   IActivateDeactivate,
   IStoreRequester,
@@ -6,21 +20,8 @@ import {
   storeRequest,
   storeReset
 } from '../../utils/store'
-import {
-  OrderStatusInfo,
-  TransfersResponseV2,
-  TransferWithData
-} from '../../../swagger/Api'
-import { makeAutoObservable } from 'mobx'
-import { api } from '../../config/api'
-import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { ITableRow } from '../../components/Table/TableBuilder'
-import ethIcon from '../../pages/ProfilePage/img/eth-icon.svg'
-import { styled } from '../../../styles'
-import dayjs from 'dayjs'
 import { formatCurrency } from '../../utils/web3/currency'
-import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
-import { Badge } from '../../UIkit'
+import { ErrorStore } from '../Error/ErrorStore'
 
 const getLatestStatusTimestamp = (statuses?: OrderStatusInfo[]) => {
   if (!statuses) return 0

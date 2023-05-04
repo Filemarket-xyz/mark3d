@@ -1,11 +1,13 @@
 import { observer } from 'mobx-react-lite'
-import { useAccount } from 'wagmi'
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+
 import { styled } from '../../../../styles'
-import { CardsPlaceholder } from '../../../UIkit/CardsPlaceholder/CardsPlaceholder'
 import NFTCard from '../../../components/MarketCard/NFTCard'
+import Plug from '../../../components/Plug/Plug'
 import { useCollectionTokenListStore } from '../../../hooks/useCollectionTokenListStore'
-import { textVariant } from '../../../UIkit'
-import { NavButton } from '../../../UIkit/Button/NavButton'
+import { Button, Txt } from '../../../UIkit'
+import { CardsPlaceholder } from '../../../UIkit/CardsPlaceholder/CardsPlaceholder'
 
 export const CardsContainer = styled('div', {
   display: 'flex',
@@ -22,12 +24,6 @@ export const CardsContainer = styled('div', {
   paddingBottom: '$3'
 })
 
-const P = styled('p', {
-  color: '$gray500',
-  ...textVariant('primary1').true,
-  textAlign: 'center'
-})
-
 const NoNftContainer = styled('div', {
   gridColumn: '1/-1',
   display: 'flex',
@@ -41,36 +37,9 @@ const NoNftContainer = styled('div', {
 const NftSection = observer(() => {
   const {
     isLoading,
-    nftCards,
-    data: { collection }
+    nftCards
   } = useCollectionTokenListStore()
-
-  const { address: currentAddress } = useAccount()
-
-  const generateContentIfNoCards = () => {
-    if (currentAddress === collection?.owner) {
-      return (
-        <>
-          <P>There is no NFT yet, wish to add one?</P>
-          <NavButton
-            primary
-            to={'/create/nft'}
-            state={{
-              collection: {
-                address: collection?.address,
-                name: collection?.name
-              }
-            }}
-            css={{ textDecoration: 'none', marginBottom: '$3' }}
-          >
-            Create NFT
-          </NavButton>
-        </>
-      )
-    }
-
-    return <P>The NFT list is empty</P>
-  }
+  const navigate = useNavigate()
 
   return (
     <CardsContainer>
@@ -79,7 +48,12 @@ const NftSection = observer(() => {
       ) : nftCards.length ? (
         nftCards.map((card, index) => <NFTCard {...card} key={index} />)
       ) : (
-        <NoNftContainer>{generateContentIfNoCards()}</NoNftContainer>
+        <NoNftContainer> <Plug header={'There\'s not one thing'}
+                              mainText={'Be the first and create your first EFT'}
+                              buttonsBlock={<>
+                                <Button primary onClick={() => { navigate('/create') }}>
+                                  <Txt primary1>Create</Txt></Button></>} />
+         </NoNftContainer>
       )}
     </CardsContainer>
   )

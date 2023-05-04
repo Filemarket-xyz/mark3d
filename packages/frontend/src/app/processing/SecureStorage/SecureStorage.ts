@@ -1,15 +1,15 @@
-import { ISecureStorage } from './ISecureStorage'
 import { ensureCall } from '../../utils/error'
-import { IStorageSecurityProvider } from '../StorageSecurityProvider'
 import { IStorageProvider } from '../StorageProvider'
+import { IStorageSecurityProvider } from '../StorageSecurityProvider'
 import { CallbacksChangingError } from './errors'
+import { ISecureStorage } from './ISecureStorage'
 
 const encrypt = async (provider: IStorageSecurityProvider | undefined, data: string): Promise<string> => {
-  return await ensureCall('StorageSecurityProvider.encrypt', provider?.encrypt, data)
+  return ensureCall('StorageSecurityProvider.encrypt', provider?.encrypt, data)
 }
 
 const decrypt = async (provider: IStorageSecurityProvider | undefined, encryptedValue: string): Promise<string> => {
-  return await ensureCall('StorageSecurityProvider.decrypt', provider?.decrypt, encryptedValue)
+  return ensureCall('StorageSecurityProvider.decrypt', provider?.decrypt, encryptedValue)
 }
 
 export class SecureStorage implements ISecureStorage {
@@ -55,7 +55,7 @@ export class SecureStorage implements ISecureStorage {
     if (!encryptedValue) {
       return undefined
     }
-    return await decrypt(this.securityProvider, encryptedValue)
+    return decrypt(this.securityProvider, encryptedValue)
   }
 
   async set(id: string, value: string | undefined): Promise<void> {
@@ -67,6 +67,6 @@ export class SecureStorage implements ISecureStorage {
   }
 
   async ids(): Promise<string[]> {
-    return await this.storageProvider.ids()
+    return this.storageProvider.ids()
   }
 }
