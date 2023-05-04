@@ -7,8 +7,6 @@ import { ISeedProvider } from './ISeedProvider'
 
 const seedStorageKey = 'seed'
 
-const seedByteLength = 64
-
 export class SeedProvider implements ISeedProvider {
   seed: ArrayBuffer | undefined
   private seedEncrypted: string | undefined

@@ -23,7 +23,7 @@ export const ViewMnemonicButton: FC<ChangeMnemonicButton> = observer(({ onPress 
   return (
         <Link
             type="button"
-            onPress={(e) => {
+            onPress={() => {
               openWindow()
             }}
         >

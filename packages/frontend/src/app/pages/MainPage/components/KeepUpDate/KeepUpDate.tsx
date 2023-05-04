@@ -1,9 +1,10 @@
 import React from 'react'
-import { Header, InfoBlockCard } from '../../helper/InfoBlockCard/InfoBlockCard'
+import { SubmitHandler, useForm } from 'react-hook-form'
+
 import { styled } from '../../../../../styles'
 import { Button, Txt } from '../../../../UIkit'
-import { SubmitHandler, useForm } from 'react-hook-form'
 import { Input } from '../../../../UIkit/Form/Input'
+import { Header, InfoBlockCard } from '../../helper/InfoBlockCard/InfoBlockCard'
 
 const KeepUpDateStyle = styled('div', {
   display: 'grid',
@@ -63,7 +64,7 @@ const KeepUpDate = () => {
             <Button primary>Subscribe</Button>
           </InputForm>
         </div>
-      <Line/>
+      <Line />
         <div>
         <Header style={{ paddingBottom: '16px' }}>Join the community</Header>
         <CommunityBlock></CommunityBlock>
