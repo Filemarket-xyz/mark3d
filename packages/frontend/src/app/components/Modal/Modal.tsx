@@ -2,7 +2,7 @@ import { Loading, Modal } from '@nextui-org/react'
 import React, { FC, ReactNode } from 'react'
 
 import { styled } from '../../../styles'
-import { Button, NavLink, textVariant } from '../../UIkit'
+import { Button, NavButton, textVariant } from '../../UIkit'
 import { stringifyError } from '../../utils/error'
 
 export const ModalTitle = styled('h3', {
@@ -39,12 +39,9 @@ interface SuccessNavBodyProps {
 export const SuccessNavBody = ({ buttonText, link }: SuccessNavBodyProps) => (
   <>
     <ModalTitle css={{ marginBottom: '$4' }}>Success</ModalTitle>
-    <NavLink
-      to={link}
-      css={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-    >
-      <Button primary>{buttonText}</Button>
-    </NavLink>
+    <Center>
+      <NavButton to={link} primary type="button">{buttonText}</NavButton>
+    </Center>
   </>
 )
 

@@ -48,10 +48,11 @@ const NftSection = observer(() => {
       ) : nftCards.length ? (
         nftCards.map((card, index) => <NFTCard {...card} key={index} />)
       ) : (
-        <NoNftContainer> <Plug header={'There\'s not one thing'}
+        <NoNftContainer>
+          <Plug header={'There\'s not one thing'}
                               mainText={'Be the first and create your first EFT'}
                               buttonsBlock={<>
-                                <Button primary onClick={() => { navigate('/create') }}>
+                                <Button primary onClick={() => { navigate('/create/nft') }}>
                                   <Txt primary1>Create</Txt></Button></>} />
          </NoNftContainer>
       )}
