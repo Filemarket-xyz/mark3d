@@ -1,8 +1,7 @@
-import React, { FC, ReactNode, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { FC, ReactNode } from 'react'
 
 import { styled } from '../../../styles'
-import { Button, textVariant, Txt } from '../../UIkit'
+import { textVariant } from '../../UIkit'
 
 const PlugStyle = styled('div', {
   border: '2px solid #088DFA',
@@ -47,50 +46,18 @@ const ButtonsContainer = styled('div', {
   }
 })
 
-export type TypePlug = 'NFT' | 'Activity' | 'Nothing'
-
 interface PlugProps {
-  type: TypePlug
+  header: ReactNode
+  mainText: ReactNode
+  buttonsBlock: ReactNode
 }
 
-const PludHeader: Record<TypePlug, string> = {
-  NFT: 'You don`t have any NFTs ',
-  Activity: 'You don`t have any activity',
-  Nothing: 'Nothing found'
-}
-
-const PludText: Record<TypePlug, string> = {
-  NFT: 'Create your own NFT or go to the market to find something amazing',
-  Activity: 'Get started by creating your own NFT or go to the market to find something amazing',
-  Nothing: 'Try changing the search settings'
-}
-
-const Plug: FC<PlugProps> = ({ type }) => {
-  const navigate = useNavigate()
-
-  const PludButtons: Record<TypePlug, ReactNode> = {
-    NFT: <><Button primary onClick={() => { navigate('/market') }}><Txt primary1>3D Market</Txt></Button><Button onClick={() => { navigate('/create') }}><Txt primary1>Create</Txt></Button></>,
-    Activity: <><Button primary onClick={() => { navigate('/market') }}><Txt primary1>3D Market</Txt></Button><Button onClick={() => { navigate('/create') }}><Txt primary1>Create</Txt></Button></>,
-    Nothing: <></>
-  }
-
-  const header: string = useMemo(() => {
-    return PludHeader[type]
-  }, [type])
-
-  const text: string = useMemo(() => {
-    return PludText[type]
-  }, [type])
-
-  const buttons: ReactNode = useMemo(() => {
-    return PludButtons[type]
-  }, [type])
-
+const Plug: FC<PlugProps> = ({ header, mainText, buttonsBlock }) => {
   return (
     <PlugStyle>
         <Header>{header}</Header>
-        <MainText>{text}</MainText>
-      <ButtonsContainer>{buttons}</ButtonsContainer>
+        <MainText>{mainText}</MainText>
+      <ButtonsContainer>{buttonsBlock}</ButtonsContainer>
     </PlugStyle>
   )
 }

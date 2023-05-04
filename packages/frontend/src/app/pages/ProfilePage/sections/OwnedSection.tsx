@@ -1,12 +1,13 @@
 import { observer } from 'mobx-react-lite'
-import { useParams } from 'react-router-dom'
+import React from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../styles'
 import NFTCard from '../../../components/MarketCard/NFTCard'
 import Plug from '../../../components/Plug/Plug'
 import { useCollectionAndTokenListStore } from '../../../hooks'
-import { CardsPlaceholder, NavButton, textVariant } from '../../../UIkit'
+import { Button, CardsPlaceholder, NavButton, textVariant, Txt } from '../../../UIkit'
 import { Params } from '../../../utils/router/Params'
 import { CardsContainer } from '../../MarketPage/NftSection'
 
@@ -30,12 +31,20 @@ export const OwnedSection = observer(() => {
   const { isLoading, nftCards } = useCollectionAndTokenListStore()
   const { profileAddress } = useParams<Params>()
   const { address: currentAddress } = useAccount()
+  const navigate = useNavigate()
 
   const generateContentIfNoCards = () => {
     if (profileAddress === currentAddress) {
       return (
         <>
-          <Plug type={'NFT'} />
+          <Plug header={'You don`t have any NFTs '}
+                mainText={'Create your own NFT or go to the market to find something amazing'}
+                buttonsBlock={<>
+                  <Button primary onClick={() => { navigate('/market') }}>
+                    <Txt primary1>3D Market</Txt></Button>
+                  <Button onClick={() => { navigate('/create') }}>
+                    <Txt primary1>Create</Txt></Button></>}
+          />
           <NavButton
             primary
             to={'/create/nft'}
@@ -47,7 +56,14 @@ export const OwnedSection = observer(() => {
       )
     }
 
-    return <Plug type={'NFT'} />
+    return <Plug header={'You don`t have any NFTs '}
+                 mainText={'Create your own NFT or go to the market to find something amazing'}
+                 buttonsBlock={<>
+                   <Button primary onClick={() => { navigate('/market') }}>
+                     <Txt primary1>3D Market</Txt></Button>
+                   <Button onClick={() => { navigate('/create') }}>
+                     <Txt primary1>Create</Txt></Button></>}
+    />
   }
 
   return (
