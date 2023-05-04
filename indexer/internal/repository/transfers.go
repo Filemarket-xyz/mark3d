@@ -640,8 +640,7 @@ func (p *postgres) GetTokenEncryptedPassword(
 						FROM transfer_statuses AS ts2 
 						WHERE ts2.transfer_id = t.id
 					)
-			)= 'Finished'
-		ORDER BY number DESC
+			)= ANY('{Finished,PasswordSet}')
 	`
 
 	row := tx.QueryRow(
