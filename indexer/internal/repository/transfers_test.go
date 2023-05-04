@@ -59,14 +59,14 @@ func Test_postgres_GetTokenEncryptedPassword(t *testing.T) {
 	}
 
 	transferStatus1 := domain.TransferStatus{
-		Timestamp: 1,
+		Timestamp: 4,
 		Status:    "Finished",
 		TxId:      common.Hash{},
 	}
 
 	transferStatus2 := domain.TransferStatus{
-		Timestamp: 2,
-		Status:    "Something else",
+		Timestamp: 5,
+		Status:    "Finished",
 		TxId:      common.Hash{},
 	}
 
@@ -112,6 +112,6 @@ func Test_postgres_GetTokenEncryptedPassword(t *testing.T) {
 		t.Fatalf("%v", err)
 	}
 
-	assert.Equal(t, transfer1.Number.String(), num)
-	assert.Equal(t, transfer1.EncryptedPassword, pwd)
+	assert.Equal(t, transfer2.Number.String(), num)
+	assert.Equal(t, transfer2.EncryptedPassword, pwd)
 }

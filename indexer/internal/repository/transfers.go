@@ -627,20 +627,22 @@ func (p *postgres) GetTokenEncryptedPassword(
 ) (string, string, error) {
 	// language=PostgreSQL
 	query := `
+		WITH latest_transfer_statuses AS (
+			SELECT transfer_id, status, timestamp
+			FROM transfer_statuses
+			WHERE status = ANY('{Finished,PasswordSet}')
+				AND transfer_id IN (
+					SELECT id
+					FROM transfers
+					WHERE collection_address = $1
+						AND token_id = $2
+				)
+			ORDER BY timestamp DESC
+			LIMIT 1
+		)
 		SELECT t.number, t.encrypted_password
 		FROM transfers t
-		WHERE collection_address=$1
-		  AND token_id=$2
-		  AND (
-				SELECT ts.status 
-				FROM transfer_statuses AS ts 
-				WHERE ts.transfer_id = t.id
-					AND ts.timestamp =(
-						SELECT MAX(ts2.timestamp) 
-						FROM transfer_statuses AS ts2 
-						WHERE ts2.transfer_id = t.id
-					)
-			)= ANY('{Finished,PasswordSet}')
+		JOIN latest_transfer_statuses lts ON t.id = lts.transfer_id;
 	`
 
 	row := tx.QueryRow(
