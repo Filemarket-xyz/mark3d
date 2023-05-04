@@ -69,27 +69,27 @@ interface ItemData {
 const items: ItemData[] = [
   {
     src: item1,
-    href: 'https://ethereum.org/'
-  },
-  {
-    src: item2,
-    href: 'https://polygon.technology/'
-  },
-  {
-    src: item3,
     href: 'https://filecoin.io/'
   },
   {
-    src: item4,
+    src: item2,
     href: 'https://fvm.filecoin.io/'
   },
   {
-    src: item6,
+    src: item3,
+    href: 'https://ipfs.tech/'
+  },
+  {
+    src: item4,
     href: 'https://ipld.io/'
   },
   {
-    src: item7,
+    src: item6,
     href: 'https://www.lighthouse.storage/'
+  },
+  {
+    src: item7,
+    href: 'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34'
   }
 ]
 
