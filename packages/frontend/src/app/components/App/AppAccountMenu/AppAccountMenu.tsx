@@ -1,11 +1,14 @@
-import { FC, useCallback, useState } from 'react'
-import { Button, Popover, PopoverContent, PopoverTrigger } from '../../../UIkit'
-import { styled } from '../../../../styles'
-import { AddressIcon, DisconnectButton, SwitchNetworkButton } from '../../Web3'
-import { useNetwork } from 'wagmi'
-import { mark3dConfig } from '../../../config/mark3d'
-import { AccountButton } from './AccountButton'
 import { Warning } from '@mui/icons-material'
+import { FC, useCallback, useState } from 'react'
+import { useNetwork } from 'wagmi'
+
+import { styled } from '../../../../styles'
+import { mark3dConfig } from '../../../config/mark3d'
+import { Button, Popover, PopoverContent, PopoverTrigger } from '../../../UIkit'
+import { AddressIcon, DisconnectButton, SwitchNetworkButton } from '../../Web3'
+import { ChangeMnemonicButton } from '../../Web3/ChangeMnemonicButton/ChangeMnemonicButton'
+import { ViewMnemonicButton } from '../../Web3/ViewMnemonicButton/ViewMnemonicButton'
+import { AccountButton } from './AccountButton'
 
 const Spacer = styled('div', {
   display: 'flex',
@@ -51,10 +54,12 @@ export const AppAccountMenu: FC<AppAccountMenuProps> = ({ address }) => {
       <PopoverContent>
         <Spacer>
           {needToSwitchNetwork && (
-            <SwitchNetworkButton onPress={close}/>
+            <SwitchNetworkButton onPress={close} />
           )}
-          <AccountButton address={address} onPress={close}/>
-          <DisconnectButton onPress={close}/>
+          <AccountButton address={address} onPress={close} />
+          <DisconnectButton onPress={close} />
+          <ChangeMnemonicButton />
+          <ViewMnemonicButton />
         </Spacer>
       </PopoverContent>
     </Popover>

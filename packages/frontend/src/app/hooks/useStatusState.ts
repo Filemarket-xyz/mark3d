@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+
 import { stringifyError } from '../utils/error'
 
 export function useStatusState<ResultType>() {

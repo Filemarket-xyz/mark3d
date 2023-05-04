@@ -19,6 +19,7 @@ jobs:
         run: |
           echo "swagger_changed=$(./is_changed.sh fm_swagger indexer/swagger.yaml)" >> $GITHUB_OUTPUT
           echo "frontend_changed=$(./is_changed.sh fm_frontend packages)" >> $GITHUB_OUTPUT
+          echo "$(find packages -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum)"
           echo "backend_changed=$(./is_changed.sh fm_backend backend)" >> $GITHUB_OUTPUT
           echo "indexer_changed=$(./is_changed.sh fm_indexer indexer)" >> $GITHUB_OUTPUT
           echo "healthcheck_changed=$(./is_changed.sh fm_healthcheck healthcheck-tg)" >> $GITHUB_OUTPUT
@@ -92,7 +93,7 @@ jobs:
         working-directory: indexer/
       - name: Build indexer container
         if: ${{ needs.check-changes.outputs.swagger_changes == 'true' || needs.check-changes.outputs.indexer_changes == 'true' }}
-        run: docker build --build-arg env=main -t file-market-indexer-service:latest .
+        run: docker build --build-arg env=dev -t file-market-indexer-service:latest .
         working-directory: indexer/
   build-healthcheck:
     runs-on: [ self-hosted, dev ]

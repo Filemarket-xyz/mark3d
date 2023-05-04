@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
+
 import { styled } from '../../../styles'
-import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
-import { Button, PageLayout, textVariant } from '../../UIkit'
-import { Input } from '../../UIkit/Form/Input'
-import { TextArea } from '../../UIkit/Form/Textarea'
-import { useCreateCollection } from './hooks/useCreateCollection'
 import MintModal, {
   ErrorBody,
   extractMessageFromError,
   InProgressBody,
   SuccessNavBody
 } from '../../components/Modal/Modal'
+import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
+import { Button, PageLayout, textVariant } from '../../UIkit'
 import { FormControl } from '../../UIkit/Form/FormControl'
+import { Input } from '../../UIkit/Form/Input'
+import { TextArea } from '../../UIkit/Form/Textarea'
+import { useCreateCollection } from './hooks/useCreateCollection'
 import { useModalProperties } from './hooks/useModalProperties'
 
 export const Title = styled('h1', {

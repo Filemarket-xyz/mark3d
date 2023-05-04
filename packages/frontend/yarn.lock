@@ -12479,6 +12479,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-simple-import-sort@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "eslint-plugin-simple-import-sort@npm:10.0.0"
+  peerDependencies:
+    eslint: ">=5.0.0"
+  checksum: 23221ff63f80f9c52da807d388ee8a51bc36a3b73345f60ec886e7973c28d75eb1d1e47f7f2916a7c1f94a1b5037b1450356a64a8fbd58096fd6bee57c6e3e48
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-storybook@npm:^0.6.6":
   version: 0.6.6
   resolution: "eslint-plugin-storybook@npm:0.6.6"
@@ -12490,6 +12499,28 @@ __metadata:
   peerDependencies:
     eslint: ">=6"
   checksum: 94c14db656d9ee28a57948d10d61542a9be9691b81272aeebbc9df45a8bd06054c41d8407d22cc6bd6b7cda11800c89f79cb97a6e65edb671f3663b29d6116ce
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-unused-imports@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "eslint-plugin-unused-imports@npm:2.0.0"
+  dependencies:
+    eslint-rule-composer: ^0.3.0
+  peerDependencies:
+    "@typescript-eslint/eslint-plugin": ^5.0.0
+    eslint: ^8.0.0
+  peerDependenciesMeta:
+    "@typescript-eslint/eslint-plugin":
+      optional: true
+  checksum: 8aa1e03e75da2a62a354065e0cb8fe370118c6f8d9720a32fe8c1da937de6adb81a4fed7d0d391d115ac9453b49029fb19f970d180a2cf3dba451fd4c20f0dc4
+  languageName: node
+  linkType: hard
+
+"eslint-rule-composer@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "eslint-rule-composer@npm:0.3.0"
+  checksum: c2f57cded8d1c8f82483e0ce28861214347e24fd79fd4144667974cd334d718f4ba05080aaef2399e3bbe36f7d6632865110227e6b176ed6daa2d676df9281b1
   languageName: node
   linkType: hard
 
@@ -13338,7 +13369,9 @@ __metadata:
     eslint-plugin-n: ^15.3.0
     eslint-plugin-promise: ^6.1.1
     eslint-plugin-react: ^7.31.10
+    eslint-plugin-simple-import-sort: ^10.0.0
     eslint-plugin-storybook: ^0.6.6
+    eslint-plugin-unused-imports: ^2.0.0
     ethers: ^5
     file-saver: ^2.0.5
     jdenticon: ^3.2.0

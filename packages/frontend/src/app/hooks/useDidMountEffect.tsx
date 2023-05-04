@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 const NUMBER_OF_RERENDERS_IN_DEV = 2
 

@@ -1,8 +1,9 @@
 import { useState } from 'react'
+
 import { useAfterDidMountEffect } from '../../../hooks/useDidMountEffect'
 import {
-  useMintNFT,
-  MintNFTForm as FormToTransfer
+  MintNFTForm as FormToTransfer,
+  useMintNFT
 } from '../../../processing/nft-interaction'
 import { CreateNFTForm } from '../CreateNFTPage'
 

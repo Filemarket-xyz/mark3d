@@ -1,4 +1,5 @@
 import { ComponentProps, ReactNode } from 'react'
+
 import { RowCell } from '../../pages/ExplorerPage/components/TableRow/TableRow'
 
 // TODO also need to implement 'column attributes: to apply css not on one cell but on full column'

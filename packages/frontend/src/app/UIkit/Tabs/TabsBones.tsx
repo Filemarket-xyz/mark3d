@@ -1,5 +1,5 @@
-import React, { ComponentProps } from 'react'
 import { Tabs as MUITabs } from '@mui/material'
+import React, { ComponentProps } from 'react'
 
 /** Must pass value and onchange attributes */
 export default function TabsBones(props: ComponentProps<typeof MUITabs>) {

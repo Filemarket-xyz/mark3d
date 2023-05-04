@@ -1,8 +1,9 @@
 import { useState } from 'react'
+
 import { styled } from '../../../styles'
-import Table from './components/Table/Table'
 import { textVariant } from '../../UIkit'
 import { PageLayout } from '../../UIkit/PageLayout'
+import Table from './components/Table/Table'
 import { columns, rows } from './tableData'
 
 const Title = styled('h1', {

@@ -18,7 +18,7 @@ type TelegramHealthNotifier struct {
 
 func (hn *TelegramHealthNotifier) Notify(ctx context.Context, text string) error {
 	client := &http.Client{}
-	url := fmt.Sprint(hn.Addr, "/notify")
+	url := fmt.Sprint("http://", hn.Addr, "/notify")
 
 	// TODO: use sync.Pool
 	reqBody := bytes.NewBufferString(text)

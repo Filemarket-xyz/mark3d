@@ -1,20 +1,21 @@
-import React, { useState } from 'react'
 import { Modal } from '@nextui-org/react'
-import { AppDialogProps } from '../../../utils/dialog'
-import { styled } from '../../../../styles'
-import { ModalTitle } from '../../Modal/Modal'
-import { Button, Txt } from '../../../UIkit'
-import { CreatePasswordForm } from './CreatePasswordForm/CreatePasswordForm'
-import { createMnemonic } from '../ConnectFileWalletDialog/utils/createMnemonic'
-import { ButtonContainer } from '../../MarketCard/NFTCard'
-import { useMediaMui } from '../../../hooks/useMediaMui'
-import { mnemonicToSeed } from 'bip39'
+import { mnemonicToEntropy } from 'bip39'
+import React, { useState } from 'react'
 import { useAccount } from 'wagmi'
+
+import { styled } from '../../../../styles'
 import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
+import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeedProviderFactory } from '../../../processing'
+import { Button, Txt } from '../../../UIkit'
+import { AppDialogProps } from '../../../utils/dialog'
+import { ButtonContainer } from '../../MarketCard/NFTCard'
+import { ModalTitle } from '../../Modal/Modal'
+import { createMnemonic } from '../ConnectFileWalletDialog/utils/createMnemonic'
+import { CreatePasswordForm } from './CreatePasswordForm/CreatePasswordForm'
 
 const CreatedMnemonicStyle = styled('div', {
-  width: '85%',
+  width: '90%',
   position: 'relative',
   margin: '0 auto',
   fontSize: '12px',
@@ -53,7 +54,7 @@ const CreatedMnemonicStyle = styled('div', {
 
 })
 
-export function CreateMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX.Element {
+export function CreateMnemonicDialog({ open, onClose, onSuccess }: AppDialogProps<{ onSuccess?: () => void }>): JSX.Element {
   useCloseIfNotConnected(onClose)
   const { adaptive } = useMediaMui()
   const [mnemonic, setMnemonic] = useState<string>()
@@ -68,10 +69,10 @@ export function CreateMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX
         sm: '400px',
         md: '650px',
         lg: '950px',
-        defaultValue: 'inherit'
+        defaultValue: '950px'
       })}
     >
-      <ModalTitle>Write down or remember this phrase</ModalTitle>
+      <ModalTitle>{mnemonic ? 'Remember this phrase' : 'Enter a password'}</ModalTitle>
       <CreatedMnemonicStyle>
         <div className="contentModalWindow">
           {mnemonic && <>
@@ -88,11 +89,14 @@ export function CreateMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX
             if (address) {
               const seedProvider = await seedProviderFactory.getSeedProvider(address)
               const newMnemonic = createMnemonic()
-              const seed = await mnemonicToSeed(newMnemonic)
+              const seed = Buffer.from(mnemonicToEntropy(newMnemonic), 'hex')
+              console.log(mnemonicToEntropy(newMnemonic))
+              // console.log(entropyToMnemonic(seed.toString()))
               await seedProvider.set(seed, password)
-              setMnemonic(createMnemonic())
+              setMnemonic(newMnemonic)
+              onSuccess?.()
             }
-          }}/>}
+          }} />}
         </div>
         {mnemonic &&
             <ButtonContainer>

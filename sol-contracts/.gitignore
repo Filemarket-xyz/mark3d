@@ -24,3 +24,4 @@ test.sh
 .mumbai-secret
 .hyperspace-secret
 .yarn
+.mainnet-secret

@@ -1,5 +1,6 @@
-import { useTextField, AriaTextFieldOptions } from 'react-aria'
 import React from 'react'
+import { AriaTextFieldOptions, useTextField } from 'react-aria'
+
 import { styled } from '../../../styles'
 
 const InputStyle = styled('div', {

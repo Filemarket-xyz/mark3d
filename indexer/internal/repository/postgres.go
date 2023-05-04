@@ -40,6 +40,8 @@ type Tokens interface {
 	GetToken(ctx context.Context, tx pgx.Tx, contractAddress common.Address, tokenId *big.Int) (*domain.Token, error)
 	InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error
 	UpdateToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error
+	GetMetadata(ctx context.Context, tx pgx.Tx, address common.Address, tokenId *big.Int) (*domain.TokenMetadata, error)
+	InsertMetadata(ctx context.Context, tx pgx.Tx, metadata *domain.TokenMetadata, contractAddress common.Address, tokenId *big.Int) error
 }
 
 type Transfers interface {
@@ -49,7 +51,7 @@ type Transfers interface {
 	GetActiveOutgoingTransfersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Transfer, error)
 	GetTransfer(ctx context.Context, tx pgx.Tx, id int64) (*domain.Transfer, error)
 	GetActiveTransfer(ctx context.Context, tx pgx.Tx, contractAddress common.Address, tokenId *big.Int) (*domain.Transfer, error)
-	GetTokenEncryptedPassword(ctx context.Context, tx pgx.Tx, contractAddress common.Address, tokenId *big.Int) (string, error)
+	GetTokenEncryptedPassword(ctx context.Context, tx pgx.Tx, contractAddress common.Address, tokenId *big.Int) (string, *big.Int, error)
 	InsertTransfer(ctx context.Context, tx pgx.Tx, transfer *domain.Transfer) (int64, error)
 	UpdateTransfer(ctx context.Context, tx pgx.Tx, transfer *domain.Transfer) error
 	InsertTransferStatus(ctx context.Context, tx pgx.Tx, transferId int64, status *domain.TransferStatus) error

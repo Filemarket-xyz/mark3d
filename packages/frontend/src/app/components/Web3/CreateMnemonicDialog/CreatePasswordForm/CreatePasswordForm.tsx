@@ -1,20 +1,22 @@
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
+
 import { styled } from '../../../../../styles'
+import { Button, Txt } from '../../../../UIkit'
+import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
 import { FormControl } from '../../../../UIkit/Form/FormControl'
 import { Input } from '../../../../UIkit/Form/Input'
-import { Button, Txt } from '../../../../UIkit'
 import { validatePassword } from '../../ConnectFileWalletDialog/utils/validate'
-import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
 
 const CreatePasswordStyle = styled('form', {
   paddingTop: '2rem',
-  width: '80%',
+  width: '100%',
   margin: '0 auto'
 })
 
 export interface CreatePasswordValue {
   password: string
+  repeatPassword: string
 }
 
 export interface CreatePasswordProps {
@@ -27,7 +29,10 @@ const ButtonContainer = styled('div', {
 })
 
 export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<CreatePasswordValue>()
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<CreatePasswordValue>()
+
+  const password = watch('password')
+  const passwordRepeat = watch('repeatPassword')
 
   return (
         <CreatePasswordStyle onSubmit={handleSubmit(onSubmit)}>
@@ -39,6 +44,15 @@ export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
                     isError={!!errors?.password}
                 />
                 {errors?.password && <ErrorMessage><Txt h5>{errors.password?.message}</Txt></ErrorMessage>}
+            </FormControl>
+            <FormControl>
+                <Input
+                    type="password"
+                    placeholder='Repeat a password'
+                    {...register('repeatPassword', { validate: () => password === passwordRepeat ? undefined : 'Password are not matching' })}
+                    isError={!!errors?.repeatPassword}
+                />
+                {errors?.repeatPassword && <ErrorMessage><Txt h5>{errors.repeatPassword?.message}</Txt></ErrorMessage>}
             </FormControl>
             <ButtonContainer>
                 <Button

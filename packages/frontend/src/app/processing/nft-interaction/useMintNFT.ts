@@ -7,7 +7,7 @@ import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { FileMeta } from '../types'
-import { assertAccount, assertContract, assertSigner, globalSaltMock, hexToBuffer } from '../utils'
+import { assertAccount, assertContract, assertSigner } from '../utils'
 import { useUploadLighthouse } from './useUploadLighthouse'
 
 export interface MintNFTForm {
@@ -45,15 +45,10 @@ export function useMintNFT(form: MintNFTForm = {}) {
       throw Error('CreateCollection form is not filled')
     }
 
-    const owner = await factory.getOwner(address)
     const tokenCountBN = await contract.tokensCount()
+    const owner = await factory.getOwner(address, collectionAddress, tokenCountBN.toNumber())
 
-    const hiddenFileEncrypted = await owner.encryptFile(
-      hiddenFile,
-      globalSaltMock,
-      hexToBuffer(collectionAddress),
-      tokenCountBN.toNumber()
-    )
+    const hiddenFileEncrypted = await owner.encryptFile(hiddenFile)
     const hiddenFileMeta: FileMeta = {
       name: hiddenFile.name,
       type: hiddenFile.type,

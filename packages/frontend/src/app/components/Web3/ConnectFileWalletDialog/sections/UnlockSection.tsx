@@ -1,14 +1,15 @@
 import { FC, useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { CreatePasswordValue } from '../../CreateMnemonicDialog/CreatePasswordForm/CreatePasswordForm'
-import { FormControl } from '../../../../UIkit/Form/FormControl'
-import { Input } from '../../../../UIkit/Form/Input'
-import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
-import { Button, Txt } from '../../../../UIkit'
+import { useAccount } from 'wagmi'
+
 import { styled } from '../../../../../styles'
 import { useSeedProvider } from '../../../../processing'
-import { useAccount } from 'wagmi'
+import { Button, Txt } from '../../../../UIkit'
+import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
+import { FormControl } from '../../../../UIkit/Form/FormControl'
+import { Input } from '../../../../UIkit/Form/Input'
 import { stringifyError } from '../../../../utils/error'
+import { CreatePasswordValue } from '../../CreateMnemonicDialog/CreatePasswordForm/CreatePasswordForm'
 
 export interface UnlockSectionProps {
   onSuccess?: () => void
@@ -37,7 +38,9 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
     if (seedProvider) {
       seedProvider
         .unlock(v.password)
-        .then(onSuccess)
+        .then(() => {
+          onSuccess?.()
+        })
         .catch(err => setError(stringifyError(err)))
     }
   }, [seedProvider])

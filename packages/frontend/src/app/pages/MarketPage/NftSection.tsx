@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import React from 'react'
+
 import { styled } from '../../../styles'
 import NFTCard from '../../components/MarketCard/NFTCard'
 import { useOpenOrderListStore } from '../../hooks/useOrdersListStore'

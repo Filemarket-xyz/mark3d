@@ -2,13 +2,12 @@ import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
-import { buf2Hex } from '../../../../../crypto/src/lib/utils'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, dealNumberMock, globalSaltMock, hexToBuffer } from '../utils'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex } from '../utils'
 
 export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
@@ -24,21 +23,13 @@ export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFull
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
 
-    const tokenIdBN = BigNumber.from(tokenId)
-    // const transferCountBN = await contract.transferCounts(tokenIdBN)
-    const transferCountBN = BigNumber.from(dealNumberMock)
-    const buyer = await factory.getBuyer(address)
-    const privateKey = await buyer.revealRsaPrivateKey(
-      transferCountBN.toNumber(),
-      globalSaltMock,
-      hexToBuffer(collectionAddress),
-      +tokenId
-    )
+    const buyer = await factory.getBuyer(address, collectionAddress, +tokenId)
+    const privateKey = await buyer.revealRsaPrivateKey()
     console.log('report fraud', { tokenId, privateKey })
 
     const tx = await contract.reportFraud(
-      tokenIdBN,
-      `0x${buf2Hex(privateKey)}`,
+      BigNumber.from(tokenId),
+      bufferToEtherHex(privateKey),
       { gasPrice: mark3dConfig.gasPrice }
     )
 

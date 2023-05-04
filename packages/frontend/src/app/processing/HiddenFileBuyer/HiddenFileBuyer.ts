@@ -1,28 +1,41 @@
 
 import { FileMarketCrypto } from '../../../../../crypto/src'
+import { IBlockchainDataProvider } from '../BlockchainDataProvider'
 import { ISeedProvider } from '../SeedProvider'
-import { PersistentDerivationParams } from '../types'
+import { PersistentDerivationArgs } from '../types'
 import { assertSeed } from '../utils'
 import { IHiddenFileBuyer } from './IHiddenFileBuyer'
 
 export class HiddenFileBuyer implements IHiddenFileBuyer {
-  constructor(
-    public readonly seedProvider: ISeedProvider,
-    public readonly crypto: FileMarketCrypto
-  ) {}
+  #tokenFullIdArgs: [ArrayBuffer, number]
+  #persistentArgs: PersistentDerivationArgs
 
-  async initBuy(dealNumber: number, ...args: PersistentDerivationParams): Promise<ArrayBuffer> {
+  constructor(
+    public readonly crypto: FileMarketCrypto,
+    public readonly blockchainDataProvider: IBlockchainDataProvider,
+    public readonly seedProvider: ISeedProvider,
+    public readonly globalSalt: ArrayBuffer,
+    public readonly collectionAddress: ArrayBuffer,
+    public readonly tokenId: number
+  ) {
+    this.#tokenFullIdArgs = [this.collectionAddress, this.tokenId]
+    this.#persistentArgs = [this.globalSalt, ...this.#tokenFullIdArgs]
+  }
+
+  async initBuy(): Promise<ArrayBuffer> {
     assertSeed(this.seedProvider.seed)
 
-    const { pub } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...args, dealNumber)
+    const dealNumber = await this.blockchainDataProvider.getTransferCount(...this.#tokenFullIdArgs)
+    const { pub } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
 
     return pub
   }
 
-  async revealRsaPrivateKey(dealNumber: number, ...args: PersistentDerivationParams): Promise<ArrayBuffer> {
+  async revealRsaPrivateKey(): Promise<ArrayBuffer> {
     assertSeed(this.seedProvider.seed)
 
-    const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...args, dealNumber)
+    const dealNumber = await this.blockchainDataProvider.getTransferCount(...this.#tokenFullIdArgs)
+    const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
 
     return priv
   }

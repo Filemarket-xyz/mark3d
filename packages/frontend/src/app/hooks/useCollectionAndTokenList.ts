@@ -1,6 +1,6 @@
-import { useStores } from './useStores'
 import { CollectionAndTokenListStore } from '../stores/CollectionAndTokenList/CollectionAndTokenListStore'
 import { useActivateDeactivateRequireParams } from './useActivateDeactivateStore'
+import { useStores } from './useStores'
 
 /**
  * Component, using this hook, MUST be wrapped into observer
