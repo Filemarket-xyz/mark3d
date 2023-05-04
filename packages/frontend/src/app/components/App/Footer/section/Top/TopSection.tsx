@@ -132,18 +132,18 @@ const TopSection = () => {
   //   text: 'About',
   //   url: ''
   // },
-  // {
-  //   text: 'Ambassador program',
-  //   url: ''
-  // },
-  // {
-  //   text: 'Become a partner',
-  //   url: ''
-  // },
-  // {
-  //   text: 'Branding',
-  //   url: ''
-  // },
+    {
+      text: 'Ambassador program',
+      url: 'https://filemarket.typeform.com/to/MTwDOB1J'
+    },
+    {
+      text: 'Become a partner',
+      url: 'https://filemarket.typeform.com/to/BqkdzJQM'
+    },
+    // {
+    //   text: 'Branding',
+    //   url: ''
+    // },
     {
       text: 'Calendly',
       url: 'http://calendly.com/filemarket'
