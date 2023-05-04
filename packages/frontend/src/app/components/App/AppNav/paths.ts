@@ -1,11 +1,6 @@
 import { NavBarItemData } from '../../../UIkit'
 
 export const paths: NavBarItemData[] = [
-  // {
-  //   to: 'https://filebunnies.xyz',
-  //   label: 'FileBunnies',
-  //   isLink: true
-  // },
   {
     to: '/market',
     label: 'Explore'
@@ -15,4 +10,5 @@ export const paths: NavBarItemData[] = [
     label: 'Blogs',
     isLink: true
   }
+
 ]
