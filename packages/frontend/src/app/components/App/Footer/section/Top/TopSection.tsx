@@ -185,7 +185,7 @@ const TopSection = () => {
         <TopSectionStyle>
             <div className="section first">
                 <img src={FileMarketIcon} alt="" />
-                <Text>The first NFT marketplace and protocol with Filecoin Virtual Machine support for monetizing downloadable digital content on web3 through file tokenization.</Text>
+                <Text>FileMarket is a multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing Filecoin decentralized storage with privacy protocol for NFTs - Encrypted FileToken (EFT)</Text>
             </div>
             <div className="section second">
                 <HeaderText>Marketplace</HeaderText>
