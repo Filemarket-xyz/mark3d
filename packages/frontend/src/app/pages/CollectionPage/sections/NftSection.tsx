@@ -6,8 +6,7 @@ import { styled } from '../../../../styles'
 import NFTCard from '../../../components/MarketCard/NFTCard'
 import Plug from '../../../components/Plug/Plug'
 import { useCollectionTokenListStore } from '../../../hooks/useCollectionTokenListStore'
-import { Button, Txt } from '../../../UIkit'
-import { CardsPlaceholder } from '../../../UIkit/CardsPlaceholder/CardsPlaceholder'
+import { Button, CardsPlaceholder, Txt } from '../../../UIkit'
 
 export const CardsContainer = styled('div', {
   display: 'flex',
