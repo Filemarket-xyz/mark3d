@@ -51,8 +51,8 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
             color: '$gray300',
             fill: '$gray300',
             ...textVariant('primary2').true,
-              fontSize: '14px',
-              fontWeight: '400'
+            fontSize: '14px',
+            fontWeight: '400'
           }
         },
         small: {
