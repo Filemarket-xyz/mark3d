@@ -28,6 +28,7 @@ const NftSection = observer(() => {
       {nftCards.map((card, index) => (
         <NFTCard {...card} key={index} />
       ))}
+      {nftCards.length <= 0 && 'Нету пока NFT иди уроки учи'}
     </CardsContainer>
   )
 })

@@ -20,7 +20,8 @@ export const BasicCardSquareImg = styled('img', {
   outline: '1px solid $whiteOp50',
   outlineOffset: '-1px',
   objectFit: 'cover',
-  margin: '0 auto'
+  margin: '0 auto',
+  position: 'relative'
 })
 
 export const BasicCardControls = styled('div', {
