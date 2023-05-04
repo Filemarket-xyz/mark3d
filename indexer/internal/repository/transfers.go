@@ -644,7 +644,7 @@ func (p *postgres) GetTokenEncryptedPassword(
 
 	var pwd, numberStr string
 
-	err := row.Scan(&pwd, &numberStr)
+	err := row.Scan(&numberStr, &pwd)
 	if err != nil {
 		return "", nil, err
 	}
