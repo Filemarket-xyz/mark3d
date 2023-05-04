@@ -10,9 +10,16 @@ const genRanHex = (size: number) =>
     .join("");
 
 async function callRpc(method: string, params: string) {
+  const network = process.env.HARDHAT_NETWORK;
+  let url: string;
+  if (network === 'filecoin') {
+    url = 'https://filecoin-mainnet.chainstacklabs.com/rpc/v1';
+  } else {
+    url = 'https://api.hyperspace.node.glif.io/rpc/v1';
+  }
   const options = {
     method: "POST",
-    url: "https://api.hyperspace.node.glif.io/rpc/v1",
+    url: url,
     headers: {
       "Content-Type": "application/json",
     },

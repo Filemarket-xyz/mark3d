@@ -7,6 +7,7 @@ services:
     depends_on:
       - indexer-postgres
       - indexer-redis
+      - healthcheck-service
     volumes:
       - ~/logs:/logs
     restart: unless-stopped
@@ -14,6 +15,11 @@ services:
     image: file-market-oracle-service:latest
     depends_on:
       - oracle-redis
+    volumes:
+      - ~/logs:/logs
+    restart: unless-stopped
+  healthcheck-service:
+    image: file-market-healthcheck-service:latest
     volumes:
       - ~/logs:/logs
     restart: unless-stopped
@@ -36,6 +42,11 @@ services:
       - indexer-postgres-data:/var/lib/postgresql/data
     env_file: ~/.indexer_pg_env
     restart: unless-stopped
+    healthcheck:
+      test: pg_isready -d file_market_indexer -U indexer
+      interval: 10s
+      timeout: 5s
+      retries: 5
   indexer-redis:
     image: redis:7
     volumes:

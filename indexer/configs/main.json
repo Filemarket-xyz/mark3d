@@ -10,10 +10,11 @@
     "swaggerHost": "https://indexer-swagger.mark3d.xyz"
   },
   "service": {
-    "accessTokenAddress": "0xDF5a6aBa1D6a68c4e933127829dddBF106f45075",
-    "exchangeAddress": "0x1358f538b52D60c8012091adA98c8604F81e5556",
-    "fraudDeciderWeb2Address": "0x039d246110F50afb4aC8d3a025e6aA11C732578A",
+    "accessTokenAddress": "0x2905A2Ad979ABfeb50C12F042Ab2b2A1359a47E4",
+    "exchangeAddress": "0xFDD2eF676C5c5dE3476FFCf6EECa86E4cb8499d4",
+    "fraudDeciderWeb2Address": "0xf3b3a65500b7753ADbeC9576cc2a346bdf35Fb64",
     "allowedBlockNumberDifference": 20,
-    "healthCheckInterval": 60
+    "healthCheckInterval": 60,
+    "mode": "main"
   }
 }

@@ -982,7 +982,7 @@ func (s *service) ListenBlockchain() error {
 				// Send telegram notification if at least 120 seconds passed since last notification
 				elapsedTime := time.Now().Sub(lastNotificationTime)
 				if elapsedTime >= 120*time.Second {
-					err := s.healthNotifier.Notify(context.Background(), fmt.Sprint("ListenBlockchain: ", err.Error()))
+					err := s.healthNotifier.Notify(context.Background(), fmt.Sprintf("ListenBlockchain %s: %s", s.cfg.Mode, err.Error()))
 					if err != nil {
 						log.Printf("Failed to send error notification %v", err)
 					}

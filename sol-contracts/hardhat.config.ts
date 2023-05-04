@@ -5,6 +5,7 @@ import fs from "fs";
 
 const mumbaiAccounts: string[] = [];
 const hyperspaceAccounts: string[] = [];
+const filecoinAccounts: string[] = [];
 
 if (fs.existsSync(".mumbai-secret")) {
   mumbaiAccounts.push(fs.readFileSync(".mumbai-secret").toString().trim());
@@ -12,6 +13,10 @@ if (fs.existsSync(".mumbai-secret")) {
 if (fs.existsSync(".hyperspace-secret")) {
   hyperspaceAccounts.push(fs.readFileSync(".hyperspace-secret").toString().trim());
 }
+if (fs.existsSync(".mainnet-secret")) {
+  filecoinAccounts.push(fs.readFileSync(".mainnet-secret").toString().trim());
+}
+
 const mumbaiConfig: HttpNetworkUserConfig = {
   url: "https://matic-mumbai.chainstacklabs.com/",
   chainId: 80001,
@@ -26,8 +31,15 @@ const hyperspaceConfig: HttpNetworkUserConfig = {
 if (process.env.POLYGON_QUIKNODE_URL) {
   mumbaiConfig.url = process.env.POLYGON_QUIKNODE_URL;
 }
+const filecoinConfig: HttpNetworkUserConfig = {
+  url: "https://filecoin-mainnet.chainstacklabs.com/rpc/v1",
+  chainId: 314,
+  accounts: filecoinAccounts,
+  timeout: 1000000000
+}
 console.log("mumbai cfg:", mumbaiConfig);
 console.log("hyperspace cfg:", hyperspaceConfig);
+console.log("mainnet cfg:", filecoinConfig)
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -41,7 +53,8 @@ const config: HardhatUserConfig = {
   },
   networks: {
     mumbai: mumbaiConfig,
-    hyperspace: hyperspaceConfig
+    hyperspace: hyperspaceConfig,
+    filecoin: filecoinConfig
   },
   etherscan: {
     apiKey: {

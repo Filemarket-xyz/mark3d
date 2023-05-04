@@ -46,6 +46,7 @@ type (
 		AllowedBlockNumberDifference int64
 		TelegramHealthNotifierAddr   string
 		HealthCheckInterval          int
+		Mode                         string
 	}
 
 	RedisConfig struct {
@@ -96,6 +97,7 @@ func Init(configPath string) (*Config, error) {
 			AllowedBlockNumberDifference: jsonCfg.GetInt64("service.allowedBlockNumberDifference"),
 			TelegramHealthNotifierAddr:   envCfg.GetString("TELEGRAM_HEALTH_NOTIFIER_ADDRESS"),
 			HealthCheckInterval:          jsonCfg.GetInt("service.healthCheckInterval"),
+			Mode:                         jsonCfg.GetString("service.mode"),
 		},
 		Redis: &RedisConfig{
 			Addr:     envCfg.GetString("REDIS_ADDRESS"),
