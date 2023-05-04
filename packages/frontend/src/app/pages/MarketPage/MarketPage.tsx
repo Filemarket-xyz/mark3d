@@ -10,7 +10,7 @@ const TabsContainer = styled('div', {
   marginBottom: '$4'
 })
 
-export const MarketPage = observer(() => {
+const MarketPage = observer(() => {
   const { nftCards } = useOpenOrderListStore()
 
   return (
@@ -30,3 +30,4 @@ export const MarketPage = observer(() => {
     </PageLayout>
   )
 })
+export default MarketPage

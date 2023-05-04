@@ -48,9 +48,11 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
         },
         footer: {
           true: {
-            color: '$white',
-            fill: '$white',
-            ...textVariant('primary2').true
+            color: '$gray300',
+            fill: '$gray300',
+            ...textVariant('primary2').true,
+              fontSize: '14px',
+              fontWeight: '400'
           }
         },
         small: {
