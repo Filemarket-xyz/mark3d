@@ -30,5 +30,3 @@ export const MarketPage = observer(() => {
     </PageLayout>
   )
 })
-
-export default MarketPage

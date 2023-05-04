@@ -4,11 +4,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 
 import { TransferCard } from '../../../components/MarketCard/TransferCard'
+import Plug from '../../../components/Plug/Plug'
 import { useUserTransferStore } from '../../../hooks/useUserTransfers'
-import { CardsPlaceholder } from '../../../UIkit'
+import { Button, CardsPlaceholder, Txt } from '../../../UIkit'
 import { Params } from '../../../utils/router/Params'
 import { CardsContainer } from '../../MarketPage/NftSection'
-import { EmptyTablePlaceholder } from './HistorySection'
 
 const TransfersSection = observer(() => {
   const { address: currentAddress } = useAccount()
@@ -35,7 +35,16 @@ const TransfersSection = observer(() => {
           ))}
         </CardsContainer>
       ) : (
-        <EmptyTablePlaceholder>No active transfers</EmptyTablePlaceholder>
+        <Plug header={'You don`t have any activity'}
+              mainText={'Get started by creating your own NFT or go to the market to find something amazing'}
+              buttonsBlock={<>
+                <Button primary onClick={() => { navigate('/market') }}>
+                  <Txt primary1>3D Market</Txt>
+                </Button>
+                <Button onClick={() => { navigate('/create') }}>
+                  <Txt primary1>Create</Txt>
+                </Button></>}
+        />
       )}
     </>
   )
