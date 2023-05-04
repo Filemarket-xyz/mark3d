@@ -166,6 +166,11 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           mythical: {
             background: 'linear-gradient(90deg, #FC6076 0%, #FF9A44 100%)'
           }
+        },
+        mediumHg: {
+          true: {
+            height: '56px'
+          }
         }
       },
       compoundVariants: [

@@ -354,13 +354,13 @@ const CreateNftPage = observer(() => {
               <Label>Category</Label>
               <CollectionPickerContainer>
                 <ControlledComboBox<CreateNFTForm>
-                    name='category'
-                    control={control}
-                    placeholder={'Select a category'}
-                    comboboxProps={{
-                      options: categoryOptions
-                    }}
-                    rules={{ required: true }}
+                  name='category'
+                  control={control}
+                  placeholder={'Select a category'}
+                  comboboxProps={{
+                    options: categoryOptions
+                  }}
+                  rules={{ required: true }}
                 />
               </CollectionPickerContainer>
             </FormControl>
@@ -369,14 +369,14 @@ const CreateNftPage = observer(() => {
               <Label>Subcategory&nbsp;&nbsp;<TextGray>(Optional)</TextGray></Label>
               <CollectionPickerContainer>
                 <ControlledComboBox<CreateNFTForm>
-                    name='subcategory'
-                    control={control}
-                    placeholder={'Select a subcategory'}
-                    comboboxProps={{
-                      options: subcategoryOptions
-                    }}
-                    rules={{ required: false }}
-                    isDisabled={!category}
+                  name='subcategory'
+                  control={control}
+                  placeholder={'Select a subcategory'}
+                  comboboxProps={{
+                    options: subcategoryOptions
+                  }}
+                  rules={{ required: false }}
+                  isDisabled={!category}
                 />
               </CollectionPickerContainer>
             </FormControl>
@@ -386,17 +386,17 @@ const CreateNftPage = observer(() => {
             <Label>Tags&nbsp;&nbsp;<TextGray>(Optional)</TextGray></Label>
             <ContentField>
               <ControlledComboBox<CreateNFTForm>
-                  name='tags'
-                  control={control}
-                  placeholder={'Content tags'}
-                  comboboxProps={{
-                    options: tags?.filter((tag) => !chosenTags.includes(tag.title))
-                  }}
-                  rules={{ required: false }}
-                  onEnter={(value) => {
-                    if (value && !chosenTags.includes(value)) setChosenTags([...chosenTags, value])
-                    console.log(value)
-                  }}
+                name='tags'
+                control={control}
+                placeholder={'Content tags'}
+                comboboxProps={{
+                  options: tags?.filter((tag) => !chosenTags.includes(tag.title))
+                }}
+                rules={{ required: false }}
+                onEnter={(value) => {
+                  if (value && !chosenTags.includes(value)) setChosenTags([...chosenTags, value])
+                  console.log(value)
+                }}
               />
               {chosenTags.length > 0 && <TagsSection tags={chosenTags} tagOptions={{
                 isCanDelete: true,
@@ -419,13 +419,13 @@ const CreateNftPage = observer(() => {
             <Label>License</Label>
             <ContentField>
               <ControlledComboBox<CreateNFTForm>
-                  name='license'
-                  control={control}
-                  placeholder={'License'}
-                  comboboxProps={{
-                    options: licenseOptions
-                  }}
-                  rules={{ required: true }}
+                name='license'
+                control={control}
+                placeholder={'License'}
+                comboboxProps={{
+                  options: licenseOptions
+                }}
+                rules={{ required: true }}
               />
               <Description secondary>
                 {licenseDescription}
