@@ -624,15 +624,24 @@ func (p *postgres) GetTokenEncryptedPassword(
 	tx pgx.Tx,
 	contractAddress common.Address,
 	tokenId *big.Int,
-) (string, *big.Int, error) {
+) (string, string, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT number, encrypted_password
-		FROM transfers
+		SELECT t.number, t.encrypted_password
+		FROM transfers t
 		WHERE collection_address=$1
 		  AND token_id=$2
+		  AND (
+				SELECT ts.status 
+				FROM transfer_statuses AS ts 
+				WHERE ts.transfer_id = t.id
+					AND ts.timestamp =(
+						SELECT MAX(ts2.timestamp) 
+						FROM transfer_statuses AS ts2 
+						WHERE ts2.transfer_id = t.id
+					)
+			)= 'Finished'
 		ORDER BY number DESC
-		LIMIT 1;
 	`
 
 	row := tx.QueryRow(
@@ -642,16 +651,11 @@ func (p *postgres) GetTokenEncryptedPassword(
 		tokenId.String(),
 	)
 
-	var pwd, numberStr string
+	var pwd, number string
 
-	err := row.Scan(&pwd, &numberStr)
+	err := row.Scan(&number, &pwd)
 	if err != nil {
-		return "", nil, err
-	}
-
-	number, ok := big.NewInt(0).SetString(numberStr, 10)
-	if !ok {
-		return "", nil, fmt.Errorf("failed to parse big int: %s", numberStr)
+		return "", "", err
 	}
 
 	return pwd, number, nil
