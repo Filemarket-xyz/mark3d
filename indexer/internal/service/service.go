@@ -273,27 +273,27 @@ func (s *service) isCollection(ctx context.Context, tx pgx.Tx, address common.Ad
 func (s *service) loadTokenParams(ctx context.Context, cid string) domain.TokenMetadata {
 	cid = strings.TrimPrefix(cid, "ipfs://")
 	if cid == "" {
-		return domain.TokenMetadata{}
+		return domain.NewEmptyTokenMetadata()
 	}
 	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://gateway.lighthouse.storage/ipfs/%s", cid), nil)
 	if err != nil {
-		return domain.TokenMetadata{}
+		return domain.NewEmptyTokenMetadata()
 	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return domain.TokenMetadata{}
+		return domain.NewEmptyTokenMetadata()
 	}
 	defer resp.Body.Close()
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return domain.TokenMetadata{}
+		return domain.NewEmptyTokenMetadata()
 	}
 
 	var meta domain.TokenMetadataIpfs
 	if err := json.Unmarshal(data, &meta); err != nil {
-		return domain.TokenMetadata{}
+		return domain.NewEmptyTokenMetadata()
 	}
 	return domain.IpfsMetadataToDomain(meta)
 }

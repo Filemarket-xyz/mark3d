@@ -29,6 +29,12 @@ type TokenMetadata struct {
 	Tags           []string
 }
 
+func NewEmptyTokenMetadata() TokenMetadata {
+	return TokenMetadata{
+		HiddenFileMeta: &HiddenFileMetadata{},
+	}
+}
+
 type MetadataProperty struct {
 	TraitType       string
 	DisplayType     string
@@ -71,23 +77,37 @@ type TokenMetadataIpfs struct {
 
 func IpfsMetadataToDomain(m TokenMetadataIpfs) TokenMetadata {
 	res := TokenMetadata{
-		Name:          m.Name,
-		Description:   m.Description,
-		Image:         m.Image,
-		ExternalLink:  m.ExternalLink,
-		HiddenFile:    m.HiddenFile,
-		License:       m.License,
-		LicenseUrl:    m.LicenseUrl,
-		Categories:    m.Categories,
-		Subcategories: m.Subcategories,
-		Tags:          m.Tags,
+		Name:           m.Name,
+		Description:    m.Description,
+		Image:          m.Image,
+		ExternalLink:   m.ExternalLink,
+		HiddenFile:     m.HiddenFile,
+		HiddenFileMeta: &HiddenFileMetadata{},
+		License:        m.License,
+		LicenseUrl:     m.LicenseUrl,
+		Properties:     make([]*MetadataProperty, 0),
+		Rankings:       make([]*MetadataProperty, 0),
+		Stats:          make([]*MetadataProperty, 0),
+		Categories:     make([]string, 0),
+		Subcategories:  make([]string, 0),
+		Tags:           make([]string, 0),
 	}
+
 	if m.HiddenFileMeta != nil {
 		res.HiddenFileMeta = &HiddenFileMetadata{
 			Name: m.HiddenFileMeta.Name,
 			Type: m.HiddenFileMeta.Type,
 			Size: m.HiddenFileMeta.Size,
 		}
+	}
+	if m.Categories != nil {
+		res.Categories = m.Categories
+	}
+	if m.Subcategories != nil {
+		res.Subcategories = m.Subcategories
+	}
+	if m.Tags != nil {
+		res.Tags = m.Tags
 	}
 
 	for _, a := range m.Attributes {
@@ -133,6 +153,10 @@ func IpfsMetadataToDomain(m TokenMetadataIpfs) TokenMetadata {
 }
 
 func MetadataPropertyToModel(mp *MetadataProperty) *models.MetadataProperty {
+	if mp == nil {
+		return nil
+	}
+
 	return &models.MetadataProperty{
 		DisplayType:     mp.DisplayType,
 		TraitType:       mp.TraitType,
