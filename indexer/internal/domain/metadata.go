@@ -153,3 +153,16 @@ func NewMetadataProperty(traitType, displayType, value, maxValue, minValue strin
 		MinValue:    minValue,
 	}
 }
+
+func NewPlaceholderMetadata() TokenMetadata {
+	return TokenMetadata{
+		Name:        "Undefined",
+		Description: "Undefined",
+		Image:       "",
+		HiddenFileMeta: &HiddenFileMetadata{
+			Name: "Undefined",
+			Type: "Undefined",
+			Size: 0,
+		},
+	}
+}

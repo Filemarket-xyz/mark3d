@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"io"
 	"log"
 	"math/big"
@@ -202,9 +203,10 @@ func (s *service) collectionTokenURI(ctx context.Context,
 			return "", err
 		}
 		var metaUri string
-		metaUri, err = instance.TokenURI(&bind.CallOpts{
-			Context: ctx,
-		}, tokenId)
+		metaUri, err = instance.TokenURI(
+			&bind.CallOpts{Context: ctx},
+			tokenId,
+		)
 		if err != nil {
 			log.Println("token uri collection failed", address, tokenId, err)
 		} else if metaUri == "" {
@@ -285,32 +287,32 @@ func (s *service) isCollection(ctx context.Context, tx pgx.Tx, address common.Ad
 	return true, nil
 }
 
-func (s *service) loadTokenParams(ctx context.Context, cid string) domain.TokenMetadata {
+func (s *service) loadTokenParams(ctx context.Context, cid string) (domain.TokenMetadata, error) {
 	cid = strings.TrimPrefix(cid, "ipfs://")
 	if cid == "" {
-		return domain.TokenMetadata{}
+		return domain.TokenMetadata{}, errors.New("empty cid")
 	}
 	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://gateway.lighthouse.storage/ipfs/%s", cid), nil)
 	if err != nil {
-		return domain.TokenMetadata{}
+		return domain.TokenMetadata{}, errors.New("failed to create request")
 	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return domain.TokenMetadata{}
+		return domain.TokenMetadata{}, errors.New("failed to execute request")
 	}
 	defer resp.Body.Close()
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return domain.TokenMetadata{}
+		return domain.TokenMetadata{}, err
 	}
 
 	var meta domain.TokenMetadataIpfs
 	if err := json.Unmarshal(data, &meta); err != nil {
-		return domain.TokenMetadata{}
+		return domain.TokenMetadata{}, err
 	}
-	return domain.IpfsMetadataToDomain(meta)
+	return domain.IpfsMetadataToDomain(meta), nil
 }
 
 func (s *service) processCollectionCreation(
@@ -328,7 +330,11 @@ func (s *service) processCollectionCreation(
 	if err != nil {
 		return err
 	}
-	meta := s.loadTokenParams(ctx, metaUri)
+	meta, err := s.loadTokenParams(ctx, metaUri)
+	if err != nil {
+		return err
+	}
+
 	if err := s.repository.InsertCollection(ctx, tx, &domain.Collection{
 		Address:     ev.Instance,
 		Creator:     from,
@@ -440,12 +446,6 @@ func (s *service) tryProcessCollectionTransferEvent(
 		return nil
 	}
 
-	metaUri, err := s.collectionTokenURI(ctx, l.Address, transfer.TokenId)
-	if err != nil {
-		return err
-	}
-
-	meta := s.loadTokenParams(ctx, metaUri)
 	token := &domain.Token{
 		CollectionAddress: *t.To(),
 		TokenId:           transfer.TokenId,
@@ -453,9 +453,88 @@ func (s *service) tryProcessCollectionTransferEvent(
 		Creator:           transfer.To,
 		MintTxTimestamp:   block.Time(),
 		MintTxHash:        t.Hash(),
-		MetaUri:           metaUri,
-		Metadata:          &meta,
 	}
+
+	// Get token metadata
+	shouldLoadMetadata := true
+	shouldCreatePlaceholder := false
+
+	metaUriRetryOpts := retry.Options{
+		Fn: func(ctx context.Context, args ...any) (any, error) {
+			collectionAddress, caOk := args[0].(common.Address)
+			tokenId, tiOk := args[1].(*big.Int)
+
+			if !caOk || !tiOk {
+				return "", fmt.Errorf("wrong Fn agruments: %w", retry.UnretryableErr)
+			}
+			return s.collectionTokenURI(ctx, collectionAddress, tokenId)
+		},
+		FnArgs:          []any{l.Address, transfer.TokenId},
+		RetryOnAnyError: true,
+		SleepDuration:   6 * time.Second,
+		Timeout:         30 * time.Second,
+	}
+
+	metaUriAny, err := retry.OnErrors(ctx, metaUriRetryOpts)
+	if err != nil {
+		if failedErr, ok := err.(*retry.FailedErr); ok {
+			log.Printf("failed to get metadataUri: %v", failedErr)
+			shouldLoadMetadata = false
+		} else {
+			return err
+		}
+	}
+
+	var meta domain.TokenMetadata
+	var metaUri string
+
+	if shouldLoadMetadata {
+		metaUri, ok := metaUriAny.(string)
+		if !ok {
+			return errors.New("failed to cast metaUri to string")
+		}
+
+		loadMetaRetryOpts := retry.Options{
+			Fn: func(ctx context.Context, args ...any) (any, error) {
+				uri, ok := args[0].(string)
+				if ok {
+					return "", fmt.Errorf("wrong Fn agruments: %w", retry.UnretryableErr)
+				}
+				return s.loadTokenParams(ctx, uri)
+			},
+			FnArgs:          []any{metaUri},
+			RetryOnAnyError: true,
+			SleepDuration:   10 * time.Second,
+			Timeout:         30 * time.Second,
+		}
+
+		metaAny, err := retry.OnErrors(ctx, loadMetaRetryOpts)
+		if err != nil {
+			if failedErr, ok := err.(*retry.FailedErr); ok {
+				log.Printf("failed to load metadata: %v", failedErr)
+				shouldCreatePlaceholder = true
+			} else {
+				return err
+			}
+		}
+
+		meta, ok = metaAny.(domain.TokenMetadata)
+		if !ok {
+			return errors.New("failed to cast to Metadata")
+		}
+	}
+
+	// Inserting placeholder metadata in case data is corrupted by self-mint
+	if shouldCreatePlaceholder || !shouldLoadMetadata {
+		log.Printf("inserting placeholder metadata for Token(address: %s, id: %s)",
+			token.CollectionAddress.String(),
+			token.TokenId.String(),
+		)
+		meta = domain.NewPlaceholderMetadata()
+	}
+
+	token.Metadata = &meta
+	token.MetaUri = metaUri
 
 	if err := s.repository.InsertToken(ctx, tx, token); err != nil {
 		return err
