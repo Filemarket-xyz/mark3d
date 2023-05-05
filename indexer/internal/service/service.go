@@ -988,7 +988,7 @@ func (s *service) ListenBlockchain() error {
 	lastNotificationTime := time.Now().Add(-1 * time.Hour)
 	for {
 		select {
-		case <-time.After(100 * time.Millisecond):
+		case <-time.After(250 * time.Millisecond):
 			current, err := s.checkBlock(lastBlock)
 			if err != nil {
 				err = fmt.Errorf("process block failed: %w", err)
