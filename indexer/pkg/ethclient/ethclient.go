@@ -65,21 +65,28 @@ func (e *ethClient) BlockByNumber(ctx context.Context, number *big.Int) (*types.
 }
 
 func (e *ethClient) GetLatestBlockNumber(ctx context.Context) (*big.Int, error) {
-	var err error
+	var (
+		err error
+		max *big.Int
+	)
 	for i, c := range e.rpcClients {
 		var raw json.RawMessage
 		err = c.CallContext(ctx, &raw, "eth_blockNumber")
 		if err != nil {
 			log.Println("get block error", e.urls[i], err)
 		} else if len(raw) != 0 {
-			var res *big.Int
-			res, err = hexutil.DecodeBig(strings.Trim(string(raw), "\""))
+			res, err := hexutil.DecodeBig(strings.Trim(string(raw), "\""))
 			if err != nil {
 				log.Println("decode block number failed", e.urls[i], err)
 			} else {
-				return res, nil
+				if max == nil || res.Cmp(max) == 1 {
+					max = res
+				}
 			}
 		}
+	}
+	if max != nil {
+		return max, nil
 	}
 	return nil, err
 }
