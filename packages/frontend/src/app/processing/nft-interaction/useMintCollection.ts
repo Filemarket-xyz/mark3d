@@ -7,6 +7,7 @@ import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useAccessTokenContract } from '../contracts'
 import { Mark3dAccessTokenEventNames } from '../types'
+import { catchContractCallError } from '../utils'
 import { assertContract, assertSigner } from '../utils/assert'
 import { normalizeCounterId } from '../utils/id'
 import { useUploadLighthouse } from './useUploadLighthouse'
@@ -34,6 +35,7 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
     assertContract(contract, mark3dConfig.accessToken.name)
     assertSigner(signer)
     assert(name && symbol && image, 'CreateCollection form is not filled')
+
     const metadata = await upload({
       name,
       description: description ?? '',
@@ -41,8 +43,9 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       external_link: mark3dConfig.externalLink
     })
     console.log('mint metadata', metadata)
+
     const salt = `0x${Buffer.from(randomBytes(32)).toString('hex')}` as const
-    const result = await contract.createCollection(
+    const receipt: ContractReceipt = await catchContractCallError(() => contract.createCollection(
       salt,
       name,
       symbol,
@@ -50,13 +53,14 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       metadata.url,
       '0x00',
       { gasPrice: mark3dConfig.gasPrice }
-    )
-    const receipt = await result.wait()
+    ), { ignoreTxFailture: true })
+
     const createCollectionEvent = receipt.events
       ?.find(event => event.event === Mark3dAccessTokenEventNames.CollectionCreation)
     if (!createCollectionEvent) {
       throw Error(`receipt does not contain ${Mark3dAccessTokenEventNames.CollectionCreation} event`)
     }
+
     const collectionIdArgIndex = 0
     const collectionAddressArgIndex = 1
     const getArg = (index: number): any => {
@@ -64,9 +68,11 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       assert(arg, `${Mark3dAccessTokenEventNames.CollectionCreation} does not have an arg with index ${index}`)
       return arg
     }
+
     const collectionId = normalizeCounterId(getArg(collectionIdArgIndex))
     const collectionTokenAddress: string = getArg(collectionAddressArgIndex)
     const collectionName = 'Test'
+
     return {
       collectionId,
       collectionTokenAddress,

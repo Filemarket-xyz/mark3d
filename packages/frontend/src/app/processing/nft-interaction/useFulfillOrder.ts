@@ -8,7 +8,7 @@ import { useStatusState } from '../../hooks'
 import { useCollectionContract, useExchangeContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex } from '../utils'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, catchContractCallError } from '../utils'
 
 /**
  * Fulfills an existing order.
@@ -39,7 +39,7 @@ export function useFulfillOrder(
     const publicKey = await buyer.initBuy()
     console.log('fulfill order', { collectionAddress, publicKey, tokenId, price })
 
-    const tx = await exchangeContract.fulfillOrder(
+    return catchContractCallError(() => exchangeContract.fulfillOrder(
       utils.getAddress(collectionAddress),
       bufferToEtherHex(publicKey),
       BigNumber.from(tokenId),
@@ -47,9 +47,7 @@ export function useFulfillOrder(
         value: BigNumber.from(price),
         gasPrice: mark3dConfig.gasPrice
       }
-    )
-
-    return tx.wait()
+    ))
   }), [exchangeContract, collectionContract, address, wrapPromise, signer, collectionAddress, tokenId, price])
   return { ...statuses, fulfillOrder }
 }
