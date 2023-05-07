@@ -347,6 +347,13 @@ func (s *service) processCollectionCreation(
 	}
 
 	// Get token metadata
+	backoff := &retry.ExponentialBackoff{
+		InitialInterval: 1,
+		RandFactor:      0.5,
+		Multiplier:      2,
+		MaxInterval:     6,
+	}
+
 	metaUriRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
 			blockNum, bnOk := args[0].(*big.Int)
@@ -362,8 +369,8 @@ func (s *service) processCollectionCreation(
 			ev.TokenId,
 		},
 		RetryOnAnyError: true,
-		SleepDuration:   6 * time.Second,
-		Timeout:         30 * time.Second,
+		Backoff:         backoff,
+		MaxElapsedTime:  30 * time.Second,
 	}
 
 	metaUriAny, err := retry.OnErrors(ctx, metaUriRetryOpts)
@@ -393,8 +400,8 @@ func (s *service) processCollectionCreation(
 			},
 			FnArgs:          []any{metaUri},
 			RetryOnAnyError: true,
-			SleepDuration:   10 * time.Second,
-			Timeout:         30 * time.Second,
+			Backoff:         backoff,
+			MaxElapsedTime:  30 * time.Second,
 		}
 
 		metaAny, err := retry.OnErrors(ctx, loadMetaRetryOpts)
@@ -532,6 +539,12 @@ func (s *service) tryProcessCollectionTransferEvent(
 	shouldLoadMetadata := true
 	shouldCreatePlaceholder := false
 
+	backoff := &retry.ExponentialBackoff{
+		InitialInterval: 1,
+		RandFactor:      0.5,
+		Multiplier:      2,
+		MaxInterval:     6,
+	}
 	metaUriRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
 			collectionAddress, caOk := args[0].(common.Address)
@@ -544,8 +557,8 @@ func (s *service) tryProcessCollectionTransferEvent(
 		},
 		FnArgs:          []any{l.Address, transfer.TokenId},
 		RetryOnAnyError: true,
-		SleepDuration:   6 * time.Second,
-		Timeout:         30 * time.Second,
+		Backoff:         backoff,
+		MaxElapsedTime:  30 * time.Second,
 	}
 
 	metaUriAny, err := retry.OnErrors(ctx, metaUriRetryOpts)
@@ -579,8 +592,8 @@ func (s *service) tryProcessCollectionTransferEvent(
 			},
 			FnArgs:          []any{metaUri},
 			RetryOnAnyError: true,
-			SleepDuration:   10 * time.Second,
-			Timeout:         30 * time.Second,
+			Backoff:         backoff,
+			MaxElapsedTime:  30 * time.Second,
 		}
 
 		metaAny, err := retry.OnErrors(ctx, loadMetaRetryOpts)
@@ -683,6 +696,12 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 		return err
 	}
 
+	backoff := &retry.ExponentialBackoff{
+		InitialInterval: 1,
+		RandFactor:      0.5,
+		Multiplier:      2,
+		MaxInterval:     6,
+	}
 	getOrderRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
 			blockNum, bnOk := args[0].(*big.Int)
@@ -700,8 +719,8 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 			initEv.TokenId,
 		},
 		RetryOnAnyError: true,
-		SleepDuration:   6 * time.Second,
-		Timeout:         30 * time.Second,
+		Backoff:         backoff,
+		MaxElapsedTime:  30 * time.Second,
 	}
 
 	orderAny, err := retry.OnErrors(ctx, getOrderRetryOpts)

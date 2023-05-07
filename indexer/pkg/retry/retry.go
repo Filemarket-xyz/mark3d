@@ -31,8 +31,8 @@ type Options struct {
 	RetryOnAnyError bool
 	RetryMap        map[error]int
 	RetryCondition  ConditionFunc
-	SleepDuration   time.Duration
-	Timeout         time.Duration
+	Backoff         BackoffStrategy
+	MaxElapsedTime  time.Duration
 }
 
 func OnErrors(ctx context.Context, opts Options) (any, error) {
@@ -40,10 +40,10 @@ func OnErrors(ctx context.Context, opts Options) (any, error) {
 	var retries int
 	var res any
 
-	deadline := time.Now().Add(opts.Timeout)
+	deadline := time.Now().Add(opts.MaxElapsedTime)
 
 	for {
-		if opts.Timeout > 0 && time.Now().After(deadline) {
+		if opts.MaxElapsedTime > 0 && time.Now().After(deadline) {
 			return nil, &FailedErr{Retries: retries, Err: lastErr}
 		}
 
@@ -68,10 +68,11 @@ func OnErrors(ctx context.Context, opts Options) (any, error) {
 		if shouldRetry {
 			retries++
 			lastErr = err
+			sleepDuration := opts.Backoff.Next()
 			select {
 			case <-ctx.Done():
 				return nil, ctx.Err()
-			case <-time.After(opts.SleepDuration):
+			case <-time.After(sleepDuration):
 			}
 		} else {
 			return nil, &FailedErr{Retries: retries, Err: lastErr}
