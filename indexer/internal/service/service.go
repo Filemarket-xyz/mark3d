@@ -165,13 +165,16 @@ func (s *service) HealthCheck(ctx context.Context) (*models.HealthStatusResponse
 
 func (s *service) tokenURI(ctx context.Context,
 	blockNum, tokenId *big.Int) (string, error) {
-	start := now.Now()
-	defer func() {
+
+	defer func(start time.Time) {
 		log.Println("token uri time", now.Now().Sub(start).Milliseconds())
-	}()
+	}(now.Now())
+
 	var err error
 	for _, cli := range s.ethClient.Clients() {
-		instance, err := access_token.NewMark3dAccessToken(s.accessTokenAddress, cli)
+		var instance *access_token.Mark3dAccessToken
+
+		instance, err = access_token.NewMark3dAccessToken(s.accessTokenAddress, cli)
 		if err != nil {
 			return "", err
 		}
@@ -198,7 +201,9 @@ func (s *service) collectionTokenURI(ctx context.Context,
 	address common.Address, tokenId *big.Int) (string, error) {
 	var err error
 	for _, cli := range s.ethClient.Clients() {
-		instance, err := collection.NewMark3dCollection(address, cli)
+		var instance *collection.Mark3dCollection
+
+		instance, err = collection.NewMark3dCollection(address, cli)
 		if err != nil {
 			return "", err
 		}
@@ -237,6 +242,7 @@ func (s *service) getExchangeOrder(
 	var err error
 	for _, cli := range s.ethClient.Clients() {
 		var exchangeInstance *exchange.Mark3dExchange
+
 		exchangeInstance, err = exchange.NewMark3dExchange(s.exchangeAddress, cli)
 		if err != nil {
 			return struct {
