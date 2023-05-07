@@ -221,8 +221,12 @@ func (s *service) collectionTokenURI(ctx context.Context,
 	return "", err
 }
 
-func (s *service) getExchangeOrder(ctx context.Context, blockNum *big.Int,
-	address common.Address, tokenId *big.Int) (struct {
+func (s *service) getExchangeOrder(
+	ctx context.Context,
+	blockNum *big.Int,
+	address common.Address,
+	tokenId *big.Int,
+) (struct {
 	Token     common.Address
 	TokenId   *big.Int
 	Price     *big.Int
@@ -232,7 +236,8 @@ func (s *service) getExchangeOrder(ctx context.Context, blockNum *big.Int,
 }, error) {
 	var err error
 	for _, cli := range s.ethClient.Clients() {
-		exchangeInstance, err := exchange.NewMark3dExchange(s.exchangeAddress, cli)
+		var exchangeInstance *exchange.Mark3dExchange
+		exchangeInstance, err = exchange.NewMark3dExchange(s.exchangeAddress, cli)
 		if err != nil {
 			return struct {
 				Token     common.Address
@@ -258,6 +263,7 @@ func (s *service) getExchangeOrder(ctx context.Context, blockNum *big.Int,
 		if err != nil {
 			log.Println("get exchange order failed", address, tokenId, err)
 		} else if order.Token == common.HexToAddress(zeroAddress) {
+			err = errors.New("empty collection address")
 			log.Println("get exchange order empty", address, tokenId)
 		} else {
 			return order, nil
@@ -326,25 +332,86 @@ func (s *service) processCollectionCreation(
 	if err != nil {
 		return err
 	}
-	metaUri, err := s.tokenURI(ctx, big.NewInt(0).SetUint64(blockNumber), ev.TokenId)
-	if err != nil {
-		return err
-	}
-	meta, err := s.loadTokenParams(ctx, metaUri)
-	if err != nil {
-		return err
+
+	c := domain.Collection{
+		Address: ev.Instance,
+		Creator: from,
+		Owner:   from,
+		TokenId: ev.TokenId,
 	}
 
-	if err := s.repository.InsertCollection(ctx, tx, &domain.Collection{
-		Address:     ev.Instance,
-		Creator:     from,
-		Owner:       from,
-		TokenId:     ev.TokenId,
-		MetaUri:     metaUri,
-		Name:        meta.Name,
-		Description: meta.Description,
-		Image:       meta.Image,
-	}); err != nil {
+	// Get token metadata
+	metaUriRetryOpts := retry.Options{
+		Fn: func(ctx context.Context, args ...any) (any, error) {
+			blockNum, bnOk := args[0].(*big.Int)
+			tokenId, tiOk := args[1].(*big.Int)
+
+			if !bnOk || !tiOk {
+				return "", fmt.Errorf("wrong Fn agruments: %w", retry.UnretryableErr)
+			}
+			return s.tokenURI(ctx, blockNum, tokenId)
+		},
+		FnArgs: []any{
+			big.NewInt(0).SetUint64(blockNumber),
+			ev.TokenId,
+		},
+		RetryOnAnyError: true,
+		SleepDuration:   6 * time.Second,
+		Timeout:         30 * time.Second,
+	}
+
+	metaUriAny, err := retry.OnErrors(ctx, metaUriRetryOpts)
+	if err != nil {
+		var failedErr *retry.FailedErr
+		if errors.As(err, &failedErr) {
+			log.Printf("failed to get metadataUri: %v", failedErr)
+		} else {
+			return err
+		}
+	}
+
+	meta := domain.NewPlaceholderMetadata()
+	metaUri, ok := metaUriAny.(string)
+	if !ok {
+		return errors.New("failed to cast metaUri to string")
+	}
+
+	if metaUri != "" {
+		loadMetaRetryOpts := retry.Options{
+			Fn: func(ctx context.Context, args ...any) (any, error) {
+				uri, ok := args[0].(string)
+				if ok {
+					return "", fmt.Errorf("wrong Fn agruments: %w", retry.UnretryableErr)
+				}
+				return s.loadTokenParams(ctx, uri)
+			},
+			FnArgs:          []any{metaUri},
+			RetryOnAnyError: true,
+			SleepDuration:   10 * time.Second,
+			Timeout:         30 * time.Second,
+		}
+
+		metaAny, err := retry.OnErrors(ctx, loadMetaRetryOpts)
+		if err != nil {
+			var failedErr *retry.FailedErr
+			if errors.As(err, &failedErr) {
+				log.Printf("failed to load metadata: %v", failedErr)
+			} else {
+				return err
+			}
+		}
+		meta, ok = metaAny.(domain.TokenMetadata)
+		if !ok {
+			return errors.New("failed to cast to Metadata")
+		}
+	}
+
+	c.MetaUri = metaUri
+	c.Name = meta.Name
+	c.Description = meta.Description
+	c.Image = meta.Image
+
+	if err := s.repository.InsertCollection(ctx, tx, &c); err != nil {
 		return err
 	}
 	if err := s.repository.InsertCollectionTransfer(ctx, tx, ev.Instance, &domain.CollectionTransfer{
@@ -477,9 +544,10 @@ func (s *service) tryProcessCollectionTransferEvent(
 
 	metaUriAny, err := retry.OnErrors(ctx, metaUriRetryOpts)
 	if err != nil {
-		if failedErr, ok := err.(*retry.FailedErr); ok {
-			log.Printf("failed to get metadataUri: %v", failedErr)
+		var failedErr *retry.FailedErr
+		if errors.As(err, &failedErr) {
 			shouldLoadMetadata = false
+			log.Printf("failed to get metadataUri: %v", failedErr)
 		} else {
 			return err
 		}
@@ -489,7 +557,8 @@ func (s *service) tryProcessCollectionTransferEvent(
 	var metaUri string
 
 	if shouldLoadMetadata {
-		metaUri, ok := metaUriAny.(string)
+		var ok bool
+		metaUri, ok = metaUriAny.(string)
 		if !ok {
 			return errors.New("failed to cast metaUri to string")
 		}
@@ -510,9 +579,10 @@ func (s *service) tryProcessCollectionTransferEvent(
 
 		metaAny, err := retry.OnErrors(ctx, loadMetaRetryOpts)
 		if err != nil {
-			if failedErr, ok := err.(*retry.FailedErr); ok {
-				log.Printf("failed to load metadata: %v", failedErr)
+			var failedErr *retry.FailedErr
+			if errors.As(err, &failedErr) {
 				shouldCreatePlaceholder = true
+				log.Printf("failed to load metadata: %v", failedErr)
 			} else {
 				return err
 			}
@@ -606,10 +676,45 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 		}
 		return err
 	}
-	order, err := s.getExchangeOrder(ctx, big.NewInt(0).SetUint64(l.BlockNumber), l.Address, initEv.TokenId)
+
+	getOrderRetryOpts := retry.Options{
+		Fn: func(ctx context.Context, args ...any) (any, error) {
+			blockNum, bnOk := args[0].(*big.Int)
+			address, aOk := args[1].(common.Address)
+			tokenId, tiOk := args[2].(*big.Int)
+
+			if !bnOk || !aOk || !tiOk {
+				return "", fmt.Errorf("wrong Fn agruments: %w", retry.UnretryableErr)
+			}
+			return s.getExchangeOrder(ctx, blockNum, address, tokenId)
+		},
+		FnArgs: []any{
+			big.NewInt(0).SetUint64(l.BlockNumber),
+			l.Address,
+			initEv.TokenId,
+		},
+		RetryOnAnyError: true,
+		SleepDuration:   6 * time.Second,
+		Timeout:         30 * time.Second,
+	}
+
+	orderAny, err := retry.OnErrors(ctx, getOrderRetryOpts)
 	if err != nil {
 		return err
 	}
+
+	order, ok := orderAny.(struct {
+		Token     common.Address
+		TokenId   *big.Int
+		Price     *big.Int
+		Initiator common.Address
+		Receiver  common.Address
+		Fulfilled bool
+	})
+	if !ok {
+		return errors.New("failed to cast order")
+	}
+
 	transfer := &domain.Transfer{
 		CollectionAddress: l.Address,
 		TokenId:           initEv.TokenId,
