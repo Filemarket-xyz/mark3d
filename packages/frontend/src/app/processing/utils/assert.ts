@@ -6,13 +6,13 @@ export function assertContract<Contract>(contract: Contract, contractName: strin
 
 export function assertSigner<Signer>(signer: Signer): asserts signer {
   if (!signer) {
-    throw Error('User must have connected wallet to call contracts')
+    throw Error('Wallet is not connected. If it is connected, try to reconnect')
   }
 }
 
 export function assertAccount(account?: string): asserts account {
   if (!account) {
-    throw new Error('need to connect wallet')
+    throw new Error('Wallet is not connected. If it is connected, try to reconnect')
   }
 }
 
@@ -30,6 +30,6 @@ export function assertTokenId(tokenId?: string): asserts tokenId {
 
 export function assertSeed(seed?: ArrayBuffer): asserts seed {
   if (!seed) {
-    throw new Error('seed not found')
+    throw new Error('Seed not found. Try to reconnect.')
   }
 }
