@@ -348,10 +348,10 @@ func (s *service) processCollectionCreation(
 
 	// Get token metadata
 	backoff := &retry.ExponentialBackoff{
-		InitialInterval: 1,
+		InitialInterval: 3,
 		RandFactor:      0.5,
 		Multiplier:      2,
-		MaxInterval:     6,
+		MaxInterval:     10,
 	}
 
 	metaUriRetryOpts := retry.Options{
@@ -540,10 +540,10 @@ func (s *service) tryProcessCollectionTransferEvent(
 	shouldCreatePlaceholder := false
 
 	backoff := &retry.ExponentialBackoff{
-		InitialInterval: 1,
+		InitialInterval: 3,
 		RandFactor:      0.5,
 		Multiplier:      2,
-		MaxInterval:     6,
+		MaxInterval:     10,
 	}
 	metaUriRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
@@ -697,10 +697,10 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 	}
 
 	backoff := &retry.ExponentialBackoff{
-		InitialInterval: 1,
+		InitialInterval: 3,
 		RandFactor:      0.5,
 		Multiplier:      2,
-		MaxInterval:     6,
+		MaxInterval:     10,
 	}
 	getOrderRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
