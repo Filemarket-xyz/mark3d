@@ -73,7 +73,7 @@ func main() {
 
 	// goroutine in which server running
 	go func() {
-		if err = srv.ListenAndServe(); err != http.ErrServerClosed {
+		if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Panicln(err)
 		}
 	}()
@@ -105,6 +105,7 @@ func main() {
 					if err != nil {
 						log.Printf("Falied to send health notification %v", err)
 					}
+					return
 				}
 				if resp.Status != models.HealthStatusHealthy {
 					err := healthNotifier.Notify(ctx, fmt.Sprintf("%v", *resp))

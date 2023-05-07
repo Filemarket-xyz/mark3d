@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math/big"
 	"strings"
@@ -408,6 +409,14 @@ func (p *postgres) InsertMetadata(
 	collectionAddress common.Address,
 	tokenId *big.Int,
 ) error {
+	if metadata == nil {
+		return errors.New("metadata is nil")
+	}
+
+	if metadata.HiddenFileMeta == nil {
+		return errors.New("hiddenFileMeta is nil")
+	}
+
 	// FIXME: too many separate INSERT statements. Use query builder later
 	tokenQuery := `
 		INSERT INTO token_metadata (
