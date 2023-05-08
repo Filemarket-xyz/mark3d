@@ -707,6 +707,10 @@ definitions:
         type: string
         description: Цена
         pattern: "^[0-9]+$"
+      priceUsd:
+        type: string
+        description: Цена в долларах
+        pattern: "^[0-9]+.[0-9]+$"
       statuses:
         type: array
         description: Статусы ордера
