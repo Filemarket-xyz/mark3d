@@ -29,7 +29,6 @@ func NewRedisExchangeRateCache(
 func (r *RedisExchangeRateCache) GetExchangeRate(ctx context.Context, from, to string) (float64, error) {
 	cachedRate, err := r.getFromCache(ctx, from, to)
 	if err == nil {
-		fmt.Print("\n\n_____Got from cache------\n\n")
 		return cachedRate, nil
 	}
 
