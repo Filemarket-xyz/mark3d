@@ -1,5 +1,6 @@
 import { ComponentProps } from '@stitches/react'
 import React, { FC, ReactNode } from 'react'
+
 import { styled } from '../../../../../styles'
 import { textVariant } from '../../../../UIkit'
 
@@ -14,12 +15,21 @@ const CardStyle = styled('div', {
   border: '2px solid $gray300',
   color: '$gray800',
   fontSize: '16px',
+  '@lg': {
+    gridTemplateColumns: 'auto',
+    justifyContent: 'center'
+  },
   variants: {
     cardType: {
       main: {
         gap: '42px',
         maxWidth: '707px',
-        padding: '20px'
+        padding: '20px',
+        '@sm': {
+          '& img': {
+            display: 'none'
+          }
+        }
       },
       info: {
         gap: '48px',
@@ -74,7 +84,10 @@ const Text = styled('div', {
         '& span': {
           fontSize: '18px !important',
           fontWeight: '400 !important',
-          lineHeight: '30px !important'
+          lineHeight: '30px !important',
+          '@sm': {
+            fontSize: '12px !important'
+          }
         }
       }
     }
@@ -87,6 +100,18 @@ const Header = styled('h4', {
   paddingBottom: '12px',
   lineHeight: '40px',
   variants: {
+    cardType: {
+      main: {
+        '@sm': {
+          fontSize: '20px'
+        }
+      },
+      info: {
+        '@sm': {
+          fontSize: '16px'
+        }
+      }
+    },
     linear: {
       true: {
         fontSize: '24px',
@@ -113,7 +138,10 @@ const RightBottomContent = styled('div', {
   }
 })
 
-const ImgBlock = styled('div', {
+const ImgBlock = styled('a', {
+  '@lg': {
+    display: 'none'
+  },
   variants: {
     cardType: {
       main: {
@@ -144,16 +172,16 @@ const Card: FC<CardProps> = ({ headerText, img, imgHref, text, rightBottomConten
       {
         isImgRight ? <>
             <Info cardType={cardType}>
-              <Header linear={linear}>{headerText}</Header>
+              <Header linear={linear} cardType={cardType}>{headerText}</Header>
               <Text cardType={cardType}>{text}</Text>
               <RightBottomContent cardType={cardType}>{rightBottomContent}</RightBottomContent>
             </Info>
-            {imgHref ? <a href={imgHref}><img src={img}/></a> : <ImgBlock cardType={cardType} style={{ backgroundImage: `url(${img}` }}/>}
+            <ImgBlock href={imgHref} cardType={cardType} style={{ backgroundImage: `url(${img}` }} />
         </>
           : <>
-            {imgHref ? <a href={imgHref}><img src={img}/></a> : <ImgBlock cardType={cardType} style={{ backgroundImage: `url(${img}` }}/>}
+            <ImgBlock href={imgHref} cardType={cardType} style={{ backgroundImage: `url(${img}` }} />
             <Info cardType={cardType}>
-              <Header linear={linear}>{headerText}</Header>
+              <Header linear={linear} cardType={cardType}>{headerText}</Header>
               <Text cardType={cardType}>{text}</Text>
               <RightBottomContent cardType={cardType}>{rightBottomContent}</RightBottomContent>
             </Info>

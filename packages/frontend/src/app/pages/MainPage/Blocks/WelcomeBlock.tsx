@@ -1,9 +1,16 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import lastUpdateImg from '../../../../assets/img/MainPage/LastUpdate.jpg'
 import { styled } from '../../../../styles'
-import { Container, LinkButton, NavButton, textVariant, ToolCard } from '../../../UIkit'
-import { TechnologyStack } from '../components/TechnologyStack'
+import { Button, Container, Link, textVariant, ToolCard, Txt } from '../../../UIkit'
+import Card from '../components/Card/Card'
 import bgStorage from '../img/bgStorage.svg'
+
+const BackgroundContainer = styled('section', {
+  background: 'linear-gradient(291.31deg, rgba(2, 145, 252, 0.25) 0%, rgba(74, 198, 209, 0.25) 100%), #FFFFFF;',
+  width: '100%'
+})
 
 const WelcomeScreenWrapper = styled('section', {
   background: `url(${bgStorage})`,
@@ -11,15 +18,14 @@ const WelcomeScreenWrapper = styled('section', {
   backgroundSize: 'auto 80%',
   backgroundRepeat: 'no-repeat',
   $$topPad: '128px',
-  backgroundPosition: 'top $$topPad right -5%',
+  backgroundPosition: 'top $$topPad right -2.7%',
   '@xl': {
-    backgroundPosition: 'top $$topPad right -15%'
+    backgroundPosition: 'top $$topPad right -3.1%'
   },
   '@lg': {
     background: 'none'
   }
 })
-
 const Title = styled('h1', {
   ...textVariant('h1').true,
   fontSize: '3.6rem',
@@ -39,13 +45,13 @@ const Title = styled('h1', {
   maxWidth: '730px',
   marginBottom: 0
 })
-
 const Description = styled('p', {
   ...textVariant('body1').true,
   fontWeight: 500,
   color: '$gray800',
   maxWidth: 730,
   marginTop: '$3',
+  paddingBottom: '48px',
   '@lg': {
     textAlign: 'center',
     marginLeft: 'auto',
@@ -56,14 +62,12 @@ const Description = styled('p', {
     fontSize: '$body2'
   }
 })
-
 export const ToolCardNarrow = styled(ToolCard, {
   width: '350px',
   '@sm': {
     width: '100%'
   }
 })
-
 export const ToolCardContent = styled('div', {
   gap: '$2',
   padding: '$4',
@@ -73,7 +77,6 @@ export const ToolCardContent = styled('div', {
   justifyContent: 'space-between',
   minHeight: 350
 })
-
 export const ToolCardInfo = styled('div', {
   display: 'flex',
   flexDirection: 'column',
@@ -82,7 +85,6 @@ export const ToolCardInfo = styled('div', {
     gap: '$3'
   }
 })
-
 export const ToolTitle = styled('h5', {
   color: '$white',
   '@md': {
@@ -93,7 +95,6 @@ export const ToolTitle = styled('h5', {
   },
   ...textVariant('h5').true
 })
-
 export const ToolDescription = styled('p', {
   fontSize: '1.25rem',
   fontWeight: '500',
@@ -105,7 +106,6 @@ export const ToolDescription = styled('p', {
     fontSize: '$body3'
   }
 })
-
 const WelcomeInfo = styled(Container, {
   paddingTop: 'calc($layout$navBarHeight + 44px)',
   paddingBottom: '140px',
@@ -114,64 +114,33 @@ const WelcomeInfo = styled(Container, {
   }
 })
 
-const ToolsContainer = styled('div', {
-  display: 'flex',
-  gap: '$4',
-  marginTop: 48,
-  '@lg': {
-    justifyContent: 'center'
-  },
-  '@sm': {
-    flexDirection: 'column',
-    alignItems: 'center'
-  }
-})
-
 export default function WelcomeBlock() {
+  const navigate = useNavigate()
   return (
-    <WelcomeScreenWrapper>
-      <WelcomeInfo>
-        <Title>
-          Store, sell, buy or send any files as NFTs
-        </Title>
-        <Description>
-          Our new standard of NFT: Encrypted FileToken (EFT) using FVM allows perpetual storage of encrypted files on
-          decentralized network of Filecoin & IPFS
-        </Description>
-        <ToolsContainer>
-          <ToolCardNarrow>
-            <ToolCardContent>
-              <ToolCardInfo>
-                <ToolTitle>For Digital Content Creators</ToolTitle>
-                <ToolDescription>
-                  Secure tokenization of any files, decentralized notary and storage, new monetization with access to
-                  DeFi, DAO, Metaverse
-                </ToolDescription>
-              </ToolCardInfo>
-
-              <NavButton secondary to={'/create/nft'}>
-                Mint NFT File
-              </NavButton>
-            </ToolCardContent>
-          </ToolCardNarrow>
-
-          <ToolCardNarrow>
-            <ToolCardContent>
-              <ToolCardInfo>
-                <ToolTitle>Create your own files online shop</ToolTitle>
-                <ToolDescription>
-                  Create and customize your own unique storefront on your domain with only your digital content
-                </ToolDescription>
-              </ToolCardInfo>
-
-              <LinkButton target="_blank" secondary href="https://form.typeform.com/to/gulmhUKG">
-                Make order
-              </LinkButton>
-            </ToolCardContent>
-          </ToolCardNarrow>
-        </ToolsContainer>
-        <TechnologyStack />
-      </WelcomeInfo>
-    </WelcomeScreenWrapper>
+    <BackgroundContainer>
+      <WelcomeScreenWrapper>
+        <WelcomeInfo>
+          <Title>
+            Store, sell, buy or send any files as NFTs
+          </Title>
+          <Description>
+            Welcome to the leading market for tokenized files! Send your digital content into the future of decentralized finance, organizations, metaverses, and the Data Economy!
+          </Description>
+          <Button primary mediumHg smallMxWidth style={{
+            marginBottom: '59px'
+          }} onClick={() => {
+            navigate('/market')
+          }}><Txt h5>Explore</Txt></Button>
+          <Card
+            cardType={'main'}
+            img={lastUpdateImg}
+            headerText={'Last update'}
+            imgHref={'#'}
+            text={<Txt primary1 style={{ fontSize: '20px', fontWeight: 400 }}>The FileMarket.xyz team has just successfully completed the FVM Mainnet cohort (Filecoin incubator) and deployed their product on the Mainnet.</Txt>}
+            rightBottomContent={<Link iconRedirect href={'https://twitter.com/filemarket_xyz'} target={'_blank'}><Txt h5 style={{ fontWeight: 600 }}>All news</Txt></Link>}
+          />
+        </WelcomeInfo>
+      </WelcomeScreenWrapper>
+    </BackgroundContainer>
   )
 }

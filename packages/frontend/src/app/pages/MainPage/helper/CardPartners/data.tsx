@@ -36,26 +36,72 @@ export const PoweredByOptions: CardPartnerProps[] = [
 export const OurPartnersOptions: CardPartnerProps[] = [
   {
     img: item1,
-    url: 'https://ethereum.org/'
+    url: 'https://ethereum.org/',
+    text: 'Filecoin'
   },
   {
     img: item2,
-    url: 'https://polygon.technology/'
+    url: 'https://polygon.technology/',
+    text: 'Filecoin Foundation'
   },
   {
     img: item3,
-    url: 'https://filecoin.io/'
+    url: 'https://filecoin.io/',
+    text: 'LightHose'
   },
   {
     img: item4,
-    url: 'https://fvm.filecoin.io/'
+    url: 'https://fvm.filecoin.io/',
+    text: 'NFT.Storage'
   },
   {
     img: item6,
-    url: 'https://ipld.io/'
+    url: 'https://ipld.io/',
+    text: 'Web3.Storage'
   },
   {
     img: item7,
-    url: 'https://www.lighthouse.storage/'
+    url: 'https://www.lighthouse.storage/',
+    text: 'Collectif DAO'
+  },
+  {
+    img: ,
+    url: '',
+    text: 'H20 Data'
+  },
+  {
+    img: ,
+    url: '',
+    text: 'Glif'
+  },
+  {
+    img: ,
+    url: '',
+    text: 'Flame Launch'
+  },
+  {
+    img: ,
+    url: '',
+    text: 'FNS DAO'
+  },
+  {
+    img: ,
+    url: '',
+    text: 'Huddie 01'
+  },
+  {
+    img: ,
+    url: '',
+    text: 'Spheron'
+  },
+  {
+    img: ,
+    url: '',
+    text: 'Filet'
+  },
+  {
+    img: ,
+    url: '',
+    text: ''
   }
 ]

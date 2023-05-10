@@ -1,11 +1,17 @@
 import React from 'react'
 
 import FileMarketIcon from '../../../../../../assets/FileMarket.svg'
+import DiscordBlackImg from '../../../../../../assets/img/DiscordBlack.svg'
 import DiscordImg from '../../../../../../assets/img/DiscordImg.svg'
+import LinkedinBlackImg from '../../../../../../assets/img/LinkedinBlack.svg'
 import LinkedinImg from '../../../../../../assets/img/LinkedinImg.svg'
+import MediumBlackImg from '../../../../../../assets/img/MediumBlack.svg'
 import MediumImg from '../../../../../../assets/img/MediumImg.svg'
+import TelegramBlackImg from '../../../../../../assets/img/TelegramBlack.svg'
 import TelegramImg from '../../../../../../assets/img/TelegramImg.svg'
-import TwitterImg from '../../../../../../assets/img/TwitterImg.svg'
+import TwitterImg from '../../../../../../assets/img/TelegramImg.svg'
+import TwitterBlackImg from '../../../../../../assets/img/TwitterBlack.svg'
+import YoutubeBlackImg from '../../../../../../assets/img/YoutubeBlack.svg'
 import YoutubeImg from '../../../../../../assets/img/YoutubeImg.svg'
 import { styled } from '../../../../../../styles'
 import { textVariant } from '../../../../../UIkit'
@@ -39,13 +45,23 @@ const TopSectionStyle = styled('div', {
   }
 })
 
-const Text = styled('a', {
+export const Text = styled('a', {
   ...textVariant('secondary2').true,
   fontWeight: '500',
   color: 'white',
   textDecoration: 'none',
   '&:hover': {
     color: '#D3D3D4'
+  },
+  variants: {
+    black: {
+      true: {
+        color: '#232528',
+        '&:hover': {
+          color: '#393B3E'
+        }
+      }
+    }
   }
 })
 
@@ -67,7 +83,7 @@ const ThirdContent = styled('div', {
   gap: '4px'
 })
 
-const Card = styled('a', {
+export const Card = styled('a', {
   background: '#232528',
   width: '126px',
   height: '44px',
@@ -79,6 +95,18 @@ const Card = styled('a', {
   textDecoration: 'none',
   '&:hover': {
     background: '#393B3E'
+  },
+  variants: {
+    white: {
+      true: {
+        background: 'white',
+        border: '1px solid $gray300',
+        boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
+        '&:hover': {
+          background: '#D3D3D4'
+        }
+      }
+    }
   }
 })
 
@@ -86,6 +114,45 @@ interface Link {
   text: string
   url: string
 }
+
+export const Cards: Array<{ img: string, blackImg: string, text: string, url: string }> = [
+  {
+    img: TwitterImg,
+    blackImg: TwitterBlackImg,
+    text: 'Twitter',
+    url: 'https://twitter.com/filemarket_xyz'
+  },
+  {
+    img: DiscordImg,
+    blackImg: DiscordBlackImg,
+    text: 'Discord',
+    url: 'https://discord.gg/9pe5CUqqz4'
+  },
+  {
+    img: TelegramImg,
+    blackImg: TelegramBlackImg,
+    text: 'Telegram',
+    url: 'https://t.me/FileMarketChat'
+  },
+  {
+    img: YoutubeImg,
+    blackImg: YoutubeBlackImg,
+    text: 'Youtube',
+    url: 'https://www.youtube.com/@filemarket_xyz'
+  },
+  {
+    img: MediumImg,
+    blackImg: MediumBlackImg,
+    text: 'Medium',
+    url: 'https://medium.com/filemarket-xyz'
+  },
+  {
+    img: LinkedinImg,
+    blackImg: LinkedinBlackImg,
+    text: 'LinkedIn',
+    url: 'https://www.linkedin.com/company/filemarketxyz/'
+  }
+]
 
 const TopSection = () => {
   const MarketPlaceItems: Link[] = [
@@ -147,38 +214,6 @@ const TopSection = () => {
     {
       text: 'Calendly',
       url: 'http://calendly.com/filemarket'
-    }
-  ]
-  const Cards: Array<{ img: string, text: string, url: string }> = [
-    {
-      img: TwitterImg,
-      text: 'Twitter',
-      url: 'https://twitter.com/filemarket_xyz'
-    },
-    {
-      img: DiscordImg,
-      text: 'Discord',
-      url: 'https://discord.gg/9pe5CUqqz4'
-    },
-    {
-      img: TelegramImg,
-      text: 'Telegram',
-      url: 'https://t.me/FileMarketChat'
-    },
-    {
-      img: YoutubeImg,
-      text: 'Youtube',
-      url: 'https://www.youtube.com/@filemarket_xyz'
-    },
-    {
-      img: MediumImg,
-      text: 'Medium',
-      url: 'https://medium.com/filemarket-xyz'
-    },
-    {
-      img: LinkedinImg,
-      text: 'LinkedIn',
-      url: 'https://www.linkedin.com/company/filemarketxyz/'
     }
   ]
   return (

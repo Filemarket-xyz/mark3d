@@ -167,6 +167,20 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             background: 'linear-gradient(90deg, #FC6076 0%, #FF9A44 100%)'
           }
         },
+        mediumMxWidth: {
+          true: {
+            '@md': {
+              width: '100% !important'
+            }
+          }
+        },
+        smallMxWidth: {
+          true: {
+            '@sm': {
+              width: '100% !important'
+            }
+          }
+        },
         mediumHg: {
           true: {
             height: '56px'

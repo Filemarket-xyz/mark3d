@@ -1,5 +1,6 @@
 import interRegular from '../assets/fonts/Inter-Regular.ttf'
 import montserratBold from '../assets/fonts/Montserrat-Bold.ttf'
+import montserratRegularItalic from '../assets/fonts/Montserrat-Italic-VariableFont_wght.ttf'
 import montserratRegular from '../assets/fonts/Montserrat-Regular.ttf'
 import montserratSemiBold from '../assets/fonts/Montserrat-SemiBold.ttf'
 import soraBold from '../assets/fonts/Sora-Bold.ttf'
@@ -24,6 +25,12 @@ export const globalStyles = globalCss({
       fontStyle: 'normal',
       fontWeight: 700,
       src: `local(''), url('${montserratBold}') format('truetype')`
+    },
+    {
+      fontFamily: 'Montserrat',
+      fontStyle: 'Italic',
+      fontWeight: 400,
+      src: `local(''), url('${montserratRegularItalic}') format('truetype')`
     },
     {
       fontFamily: 'Sora',

@@ -51,8 +51,8 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
             color: '$gray300',
             fill: '$gray300',
             ...textVariant('primary2').true,
-              fontSize: '14px',
-              fontWeight: '400'
+            fontSize: '14px',
+            fontWeight: '400'
           }
         },
         small: {
@@ -71,6 +71,17 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
               position: 'absolute',
               top: 0,
               right: '-20px'
+            }
+          }
+        },
+        howToGetStart: {
+          true: {
+            fontSize: '14px',
+            lineHeight: '16px',
+            fontWeight: '600',
+            '@md': {
+              fontSize: '12px',
+              lineHeight: '14px'
             }
           }
         }

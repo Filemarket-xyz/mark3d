@@ -1,15 +1,22 @@
 import React from 'react'
-import { Header, InfoBlockCard } from '../../helper/InfoBlockCard/InfoBlockCard'
-import { styled } from '../../../../../styles'
-import { Button, Txt } from '../../../../UIkit'
 import { SubmitHandler, useForm } from 'react-hook-form'
+
+import { styled } from '../../../../../styles'
+import { Card, Cards, Text } from '../../../../components/App/Footer/section/Top/TopSection'
+import { Button, Txt } from '../../../../UIkit'
 import { Input } from '../../../../UIkit/Form/Input'
+import { Header, InfoBlockCard } from '../../helper/InfoBlockCard/InfoBlockCard'
 
 const KeepUpDateStyle = styled('div', {
   display: 'grid',
   width: '100%',
   gridTemplateColumns: '58% auto 38%',
-  justifyContent: 'space-between'
+  justifyContent: 'space-between',
+  '@md': {
+    gridTemplateRows: 'auto auto',
+    gridTemplateColumns: 'inherit',
+    gap: '12px'
+  }
 })
 
 const Line = styled('div', {
@@ -19,9 +26,10 @@ const Line = styled('div', {
 })
 
 const CommunityBlock = styled('div', {
-  width: '38%',
+  width: '100%',
   display: 'flex',
-  flexWrap: 'wrap'
+  flexWrap: 'wrap',
+  gap: '8px'
 })
 
 const InputForm = styled('form', {
@@ -59,14 +67,20 @@ const KeepUpDate = () => {
             <Input
               placeholder='Enter your email'
               {...register('email', { required: true, pattern: /^\S+@\S+\.\S+$/ })}
+              style={{
+                border: '1px solid #E9E9EA',
+                boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)'
+              }}
             />
             <Button primary>Subscribe</Button>
           </InputForm>
         </div>
-      <Line/>
+      <Line />
         <div>
         <Header style={{ paddingBottom: '16px' }}>Join the community</Header>
-        <CommunityBlock></CommunityBlock>
+        <CommunityBlock>
+          {Cards.map((item, index) => <Card href={item.url} target={'_blank'} white key={index}><img src={item.blackImg} /><Text black>{item.text}</Text></Card>)}
+        </CommunityBlock>
         </div>
       </KeepUpDateStyle>
     </InfoBlockCard>
