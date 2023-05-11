@@ -33,6 +33,17 @@ export default function useWatchFileWalletConnect(): void {
     setCheckHasSeed(false)
   }, [checkHasSeed, setCheckHasSeed, seedProvider])
 
+  useEffect(() => {
+    console.log('init watch file wallet connect')
+    return () => {
+      console.log('destroy watch file wallet connect')
+    }
+  }, [])
+
+  useEffect(() => {
+    console.log('use file wallet watch', 'address change', address)
+  }, [address])
+
   // opens connect dialog if account has connected, but there is no seed
   useEffect(() => {
     if (checkGetAccessPagePath()) return

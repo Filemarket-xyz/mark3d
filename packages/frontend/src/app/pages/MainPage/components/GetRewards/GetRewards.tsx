@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { styled } from '../../../../../styles'
 import { Header } from '../../helper/InfoBlockCard/InfoBlockCard'
 
@@ -16,7 +17,7 @@ const GetRewards = () => {
   return (
     <GetRewardsStyle>
       <Header style={{ paddingBottom: '24px' }}></Header>
-      <LinkBlocks/>
+      <LinkBlocks />
     </GetRewardsStyle>
   )
 }

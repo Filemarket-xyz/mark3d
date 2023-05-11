@@ -16,7 +16,7 @@ const FileTypeStyle = styled('div', {
   top: '4px',
   left: '13px',
   position: 'absolute',
-  zIndex: '9999',
+  zIndex: '9',
   '& img': {
     width: '16px',
     height: '16px'

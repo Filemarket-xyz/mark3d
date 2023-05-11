@@ -23,11 +23,11 @@ export const ViewMnemonicButton: FC<ChangeMnemonicButton> = observer(({ onPress 
   return (
         <Link
             type="button"
-            onPress={(e) => {
+            onPress={() => {
               openWindow()
             }}
         >
-            Files wallet seed phrase
+            View FileWallet seed phrase
         </Link>
   )
 })

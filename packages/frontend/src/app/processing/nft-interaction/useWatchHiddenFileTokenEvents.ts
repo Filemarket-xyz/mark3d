@@ -3,7 +3,7 @@ import { useContractEvent } from 'wagmi'
 import { mark3dConfig } from '../../config/mark3d'
 import { IHiddenFilesTokenEventsListener } from '../HiddenFilesTokenEventsListener'
 import { HiddenFilesTokenEventNames } from '../types'
-import { ensureAddress } from '../utils/address'
+import { ensureAddress } from '../utils'
 
 /**
  * Hook called to listen for transfer updates and pass them into TransferStore.
