@@ -29,7 +29,7 @@ const TopSectionStyle = styled('div', {
   gap: '16px',
   flexWrap: 'wrap',
   '& .first': {
-    maxWidth: '320px',
+    maxWidth: '360px',
     '& img': {
       width: '170px',
       height: '30px'
@@ -41,6 +41,11 @@ const TopSectionStyle = styled('div', {
   },
   '& .third': {
     maxWidth: '256px'
+  },
+  '@lg': {
+    '& .third': {
+      maxWidth: '360px'
+    }
   },
   '@md': {
     '& .first, .third': {
@@ -55,7 +60,7 @@ const TopSectionStyle = styled('div', {
   }
 })
 
-export const Text = styled('a', {
+export const TextLink = styled('a', {
   ...textVariant('secondary2').true,
   fontWeight: '500',
   color: 'white',
@@ -70,6 +75,21 @@ export const Text = styled('a', {
         '&:hover': {
           color: '#393B3E'
         }
+      }
+    }
+  }
+})
+
+export const Text = styled('span', {
+  ...textVariant('secondary2').true,
+  fontWeight: '400',
+  fontSize: '16px',
+  color: 'white',
+  textDecoration: 'none',
+  variants: {
+    black: {
+      true: {
+        color: '#232528'
       }
     }
   }
@@ -96,7 +116,7 @@ const ThirdContent = styled('div', {
 
 export const Card = styled('a', {
   background: '#232528',
-  width: '126px',
+  width: '49%',
   height: '44px',
   display: 'flex',
   justifyContent: 'center',
@@ -238,19 +258,19 @@ const TopSection = () => {
             </div>
             <div className="section second">
                 <HeaderText>Platform</HeaderText>
-                <SecondContent>{MarketPlaceItems.map((item, index) => <Text href={item.url} target={'_blank'} key={index}>{item.text}</Text>)}</SecondContent>
+                <SecondContent>{MarketPlaceItems.map((item, index) => <TextLink href={item.url} target={'_blank'} key={index}>{item.text}</TextLink>)}</SecondContent>
             </div>
             <div className="section second">
                 <HeaderText>Links</HeaderText>
-                <SecondContent>{Links.map((item, index) => <Text href={item.url} target={'_blank'} key={index}>{item.text}</Text>)}</SecondContent>
+                <SecondContent>{Links.map((item, index) => <TextLink href={item.url} target={'_blank'} key={index}>{item.text}</TextLink>)}</SecondContent>
             </div>
             <div className="section second">
                 <HeaderText>Company</HeaderText>
-                <SecondContent>{Company.map((item, index) => <Text href={item.url} target={'_blank'} key={index}>{item.text}</Text>)}</SecondContent>
+                <SecondContent>{Company.map((item, index) => <TextLink href={item.url} target={'_blank'} key={index}>{item.text}</TextLink>)}</SecondContent>
             </div>
             <div className="section third">
                 <HeaderText>Join our community</HeaderText>
-                <ThirdContent>{Cards.map((item, index) => <Card href={item.url} target={'_blank'} key={index}><img src={item.img} /><Text>{item.text}</Text></Card>)}</ThirdContent>
+                <ThirdContent>{Cards.map((item, index) => <Card href={item.url} target={'_blank'} key={index}><img src={item.img} /><TextLink>{item.text}</TextLink></Card>)}</ThirdContent>
             </div>
         </TopSectionStyle>
   )
