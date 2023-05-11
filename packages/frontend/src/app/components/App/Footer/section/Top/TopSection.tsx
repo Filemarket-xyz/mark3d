@@ -22,7 +22,6 @@ const TopSectionStyle = styled('div', {
     flexDirection: 'column',
     gap: '16px',
     ...textVariant('secondary2')
-
   },
   display: 'flex',
   width: '100%',
@@ -42,6 +41,17 @@ const TopSectionStyle = styled('div', {
   },
   '& .third': {
     maxWidth: '256px'
+  },
+  '@md': {
+    '& .first, .third': {
+      maxWidth: '100%',
+      width: '100%'
+    }
+  },
+  '@sm': {
+    columnGap: '74px',
+    justifyContent: 'left',
+    gap: '32px'
   }
 })
 
@@ -80,7 +90,8 @@ const SecondContent = styled('div', {
 const ThirdContent = styled('div', {
   display: 'flex',
   flexWrap: 'wrap',
-  gap: '4px'
+  gap: '4px',
+  width: '100%'
 })
 
 export const Card = styled('a', {
@@ -107,6 +118,9 @@ export const Card = styled('a', {
         }
       }
     }
+  },
+  '@md': {
+    width: '49%'
   }
 })
 
@@ -223,7 +237,7 @@ const TopSection = () => {
                 <Text>FileMarket is a multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing Filecoin decentralized storage with privacy protocol for NFTs - Encrypted FileToken (EFT)</Text>
             </div>
             <div className="section second">
-                <HeaderText>Marketplace</HeaderText>
+                <HeaderText>Platform</HeaderText>
                 <SecondContent>{MarketPlaceItems.map((item, index) => <Text href={item.url} target={'_blank'} key={index}>{item.text}</Text>)}</SecondContent>
             </div>
             <div className="section second">
