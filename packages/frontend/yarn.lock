@@ -10914,6 +10914,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"convertkit-react@npm:^1.5.5":
+  version: 1.5.5
+  resolution: "convertkit-react@npm:1.5.5"
+  dependencies:
+    prop-types: ^15.7.2
+    react: ^17.0.2
+  checksum: a4056769969e8f7d7fe60463ee56e05236fe805ef634e7dca36004b0de8608d0448df84f7c08885519f225fd6516969bdcf1c860974eb6a01941b4dfd0d39d44
+  languageName: node
+  linkType: hard
+
 "cookie-signature@npm:1.0.6":
   version: 1.0.6
   resolution: "cookie-signature@npm:1.0.6"
@@ -13362,6 +13372,7 @@ __metadata:
     babel-loader: ^8.2.5
     bip39: ^3.1.0
     buffer: ^6.0.3
+    convertkit-react: ^1.5.5
     dayjs: ^1.11.7
     eslint: ^8.25.0
     eslint-config-standard-with-typescript: ^23.0.0
@@ -20051,6 +20062,16 @@ __metadata:
     react: ">=16.6.0"
     react-dom: ">=16.6.0"
   checksum: 75602840106aa9c6545149d6d7ae1502fb7b7abadcce70a6954c4b64a438ff1cd16fc77a0a1e5197cdd72da398f39eb929ea06f9005c45b132ed34e056ebdeb1
+  languageName: node
+  linkType: hard
+
+"react@npm:^17.0.2":
+  version: 17.0.2
+  resolution: "react@npm:17.0.2"
+  dependencies:
+    loose-envify: ^1.1.0
+    object-assign: ^4.1.1
+  checksum: b254cc17ce3011788330f7bbf383ab653c6848902d7936a87b09d835d091e3f295f7e9dd1597c6daac5dc80f90e778c8230218ba8ad599f74adcc11e33b9d61b
   languageName: node
   linkType: hard
 

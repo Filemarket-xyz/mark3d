@@ -6,6 +6,7 @@ import CollectionPage from './CollectionPage/CollectionPage'
 import { collectionPageRoutes } from './CollectionPage/routes'
 import { createRoutes } from './CreatePage/routes'
 import ExplorerPage from './ExplorerPage/ExplorerPage'
+import GetAccessPage from './GetAccessPage/GetAccessPage'
 import MainPage from './MainPage/MainPage'
 import MarketPage from './MarketPage/MarketPage'
 import { marketRoutes } from './MarketPage/routes'
@@ -15,46 +16,49 @@ import { profileRoutes } from './ProfilePage/routes'
 
 const routes: RouteObject[] = [
   {
-    path: 'explorer',
-    element: <ExplorerPage />
-  },
-  {
     path: '/',
-    element: <MainPage />
+    element: <GetAccessPage />
   },
-  {
-    path: 'market',
-    element: <MarketPage />,
-    children: marketRoutes
-  },
-  {
-    path: 'create',
-    children: createRoutes
-  },
-  {
-    path: `profile/:${Params.profileAddress}`,
-    element: <ProfilePage />,
-    children: profileRoutes
-  },
-  {
-    path: `collection/:${Params.collectionAddress}`,
-    element: <CollectionPage />,
-    children: collectionPageRoutes
-  },
-  {
-    path: `collection/:${Params.collectionAddress}/:${Params.tokenId}`,
-    element: <NFTPage />
-  },
-  {
-    path: '*',
-    element: <Navigate to={''} />
-  }
-]
-
-export const router = createBrowserRouter([
   {
     path: '/',
     element: <AppLayout />,
-    children: routes
+    children: [
+      {
+        path: 'explorer',
+        element: <ExplorerPage />
+      },
+      {
+        path: 'main',
+        element: <MainPage />
+      },
+      {
+        path: 'market',
+        element: <MarketPage />,
+        children: marketRoutes
+      },
+      {
+        path: 'create',
+        children: createRoutes
+      },
+      {
+        path: `profile/:${Params.profileAddress}`,
+        element: <ProfilePage />,
+        children: profileRoutes
+      },
+      {
+        path: `collection/:${Params.collectionAddress}`,
+        element: <CollectionPage />,
+        children: collectionPageRoutes
+      },
+      {
+        path: `collection/:${Params.collectionAddress}/:${Params.tokenId}`,
+        element: <NFTPage />
+      },
+      {
+        path: '*',
+        element: <Navigate to={''} />
+      }
+    ]
   }
-])
+]
+export const router = createBrowserRouter(routes)

@@ -63,45 +63,45 @@ export const OurPartnersOptions: CardPartnerProps[] = [
     img: item7,
     url: 'https://www.lighthouse.storage/',
     text: 'Collectif DAO'
-  },
-  {
-    img: ,
-    url: '',
-    text: 'H20 Data'
-  },
-  {
-    img: ,
-    url: '',
-    text: 'Glif'
-  },
-  {
-    img: ,
-    url: '',
-    text: 'Flame Launch'
-  },
-  {
-    img: ,
-    url: '',
-    text: 'FNS DAO'
-  },
-  {
-    img: ,
-    url: '',
-    text: 'Huddie 01'
-  },
-  {
-    img: ,
-    url: '',
-    text: 'Spheron'
-  },
-  {
-    img: ,
-    url: '',
-    text: 'Filet'
-  },
-  {
-    img: ,
-    url: '',
-    text: ''
   }
+  // {
+  //   img: ,
+  //   url: '',
+  //   text: 'H20 Data'
+  // },
+  // {
+  //   img: ,
+  //   url: '',
+  //   text: 'Glif'
+  // },
+  // {
+  //   img: ,
+  //   url: '',
+  //   text: 'Flame Launch'
+  // },
+  // {
+  //   img: ,
+  //   url: '',
+  //   text: 'FNS DAO'
+  // },
+  // {
+  //   img: ,
+  //   url: '',
+  //   text: 'Huddie 01'
+  // },
+  // {
+  //   img: ,
+  //   url: '',
+  //   text: 'Spheron'
+  // },
+  // {
+  //   img: ,
+  //   url: '',
+  //   text: 'Filet'
+  // },
+  // {
+  //   img: ,
+  //   url: '',
+  //   text: ''
+  // }
 ]

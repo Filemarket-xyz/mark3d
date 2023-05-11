@@ -1,11 +1,10 @@
 import React from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
 
 import { styled } from '../../../../../styles'
 import { Card, Cards, Text } from '../../../../components/App/Footer/section/Top/TopSection'
-import { Button, Txt } from '../../../../UIkit'
-import { Input } from '../../../../UIkit/Form/Input'
+import { Txt } from '../../../../UIkit'
 import { Header, InfoBlockCard } from '../../helper/InfoBlockCard/InfoBlockCard'
+import EmailForm from '../EmailForm/EmailForm'
 
 const KeepUpDateStyle = styled('div', {
   display: 'grid',
@@ -32,48 +31,14 @@ const CommunityBlock = styled('div', {
   gap: '8px'
 })
 
-const InputForm = styled('form', {
-  display: 'flex',
-  width: '100%',
-  gap: '8px',
-  justifyContent: 'space-between'
-})
-
-interface SubscribeForm {
-  email: string
-}
-
 const KeepUpDate = () => {
-  const {
-    register,
-    handleSubmit
-  } = useForm<SubscribeForm>({})
-
-  const subscribe = ({ email }: SubscribeForm) => {
-    console.log(email)
-  }
-
-  const onSubmit: SubmitHandler<SubscribeForm> = (data) => {
-    subscribe(data)
-  }
-
   return (
     <InfoBlockCard>
       <KeepUpDateStyle>
         <div>
           <Header style={{ paddingBottom: '16px' }}>Keep up to date</Header>
           <Txt primary1 style={{ fontWeight: '400' }}>Subscribe to our newsletter to remain informed about our latest feature updates, NFT launches, and guidance on how to effectively explore FileMarket.</Txt>
-          <InputForm onSubmit={handleSubmit(onSubmit)} style={{ marginTop: '24px' }}>
-            <Input
-              placeholder='Enter your email'
-              {...register('email', { required: true, pattern: /^\S+@\S+\.\S+$/ })}
-              style={{
-                border: '1px solid #E9E9EA',
-                boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)'
-              }}
-            />
-            <Button primary>Subscribe</Button>
-          </InputForm>
+          <EmailForm />
         </div>
       <Line />
         <div>
