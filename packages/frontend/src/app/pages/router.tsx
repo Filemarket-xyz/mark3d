@@ -28,7 +28,7 @@ const routes: RouteObject[] = [
         element: <ExplorerPage />
       },
       {
-        path: 'main',
+        path: 'mainpage',
         element: <MainPage />
       },
       {

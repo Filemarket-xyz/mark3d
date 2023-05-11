@@ -57,7 +57,7 @@ const GetAccessPageStyle = styled('div', {
   }
 })
 
-const MainBlock = styled('div', {
+export const MainBlock = styled('div', {
   padding: '130px 20px',
   border: '2px solid #0090FF',
   display: 'flex',

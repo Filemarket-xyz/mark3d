@@ -185,6 +185,21 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           true: {
             height: '56px'
           }
+        },
+        largeHg: {
+          true: {
+            height: '80px'
+          }
+        },
+        whiteWithBlue: {
+          true: {
+            background: 'none',
+            ...textVariant('primary1').true,
+            fontSize: '18px',
+            border: '2px solid #028FFF',
+            borderRadius: '12px',
+            color: '#028FFF'
+          }
         }
       },
       compoundVariants: [

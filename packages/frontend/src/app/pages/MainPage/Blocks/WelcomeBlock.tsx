@@ -1,36 +1,35 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import lastUpdateImg from '../../../../assets/img/MainPage/LastUpdate.jpg'
 import { styled } from '../../../../styles'
-import { Button, Container, Link, textVariant, ToolCard, Txt } from '../../../UIkit'
-import Card from '../components/Card/Card'
+import { Button, Container, textVariant, ToolCard } from '../../../UIkit'
+import { MainBlock } from '../../GetAccessPage/GetAccessPage'
+import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
 import bgStorage from '../img/bgStorage.svg'
+import greenCircles from '../img/GreenCircles.svg'
+import SupportedBy from './SupportedBy'
 
 const BackgroundContainer = styled('section', {
-  background: 'linear-gradient(291.31deg, rgba(2, 145, 252, 0.25) 0%, rgba(74, 198, 209, 0.25) 100%), #FFFFFF;',
   width: '100%'
 })
 
 const WelcomeScreenWrapper = styled('section', {
-  background: `url(${bgStorage})`,
+  background: `url(${bgStorage}), url(${greenCircles})`,
   width: '100%',
-  backgroundSize: 'auto 80%',
+  backgroundSize: '480px',
   backgroundRepeat: 'no-repeat',
-  $$topPad: '128px',
-  backgroundPosition: 'top $$topPad right -2.7%',
+  $$topPad: '260px',
+  backgroundPosition: 'top $$topPad right 1.5%, top 188px right 0',
   '@xl': {
-    backgroundPosition: 'top $$topPad right -3.1%'
+    backgroundPosition: 'top $$topPad right 2.5%, top 188px right 0'
   },
   '@lg': {
     background: 'none'
   }
 })
 const Title = styled('h1', {
-  ...textVariant('h1').true,
-  fontSize: '3.6rem',
+  ...textVariant('ternary1').true,
   color: '$gray800',
-  fontWeight: '700',
   '@lg': {
     fontSize: 'calc(1.5vw + 30px)',
     textAlign: 'center',
@@ -42,14 +41,14 @@ const Title = styled('h1', {
       display: 'none'
     }
   },
-  maxWidth: '730px',
+  maxWidth: '871px',
   marginBottom: 0
 })
 const Description = styled('p', {
   ...textVariant('body1').true,
-  fontWeight: 500,
+  fontWeight: 400,
   color: '$gray800',
-  maxWidth: 730,
+  maxWidth: 776,
   marginTop: '$3',
   paddingBottom: '48px',
   '@lg': {
@@ -106,6 +105,36 @@ export const ToolDescription = styled('p', {
     fontSize: '$body3'
   }
 })
+
+const NavigateBlock = styled(MainBlock, {
+  maxWidth: 777,
+  padding: '64px 59px',
+  flexDirection: 'column',
+  gap: '42px',
+  '& .buttonContainer': {
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'space-between',
+    '@md': {
+      flexDirection: 'column',
+      gap: '12px'
+    }
+  },
+  '@md': {
+    padding: '48px 32px !important'
+  },
+  '@sm': {
+    padding: '48px 24px !important'
+  }
+})
+
+const NavigateTitle = styled('h4', {
+  ...textVariant('ternary2').true,
+  '@md': {
+    ...textVariant('ternary3').true
+  }
+})
+
 const WelcomeInfo = styled(Container, {
   paddingTop: 'calc($layout$navBarHeight + 44px)',
   paddingBottom: '140px',
@@ -121,24 +150,24 @@ export default function WelcomeBlock() {
       <WelcomeScreenWrapper>
         <WelcomeInfo>
           <Title>
-            Store, sell, buy or send any files as NFTs
+            No code NFT shop builder with privacy layer & perpetual decentralized storage
           </Title>
-          <Description>
-            Welcome to the leading market for tokenized files! Send your digital content into the future of decentralized finance, organizations, metaverses, and the Data Economy!
-          </Description>
-          <Button primary mediumHg smallMxWidth style={{
-            marginBottom: '59px'
-          }} onClick={() => {
-            navigate('/market')
-          }}><Txt h5>Explore</Txt></Button>
-          <Card
-            cardType={'main'}
-            img={lastUpdateImg}
-            headerText={'Last update'}
-            imgHref={'#'}
-            text={<Txt primary1 style={{ fontSize: '20px', fontWeight: 400 }}>The FileMarket.xyz team has just successfully completed the FVM Mainnet cohort (Filecoin incubator) and deployed their product on the Mainnet.</Txt>}
-            rightBottomContent={<Link iconRedirect href={'https://twitter.com/filemarket_xyz'} target={'_blank'}><Txt h5 style={{ fontWeight: 600 }}>All news</Txt></Link>}
-          />
+          <Description>Multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing FIlecoin decentralized storage with privacy protocol for NFTs - Encrypted FileToken (EFT).</Description>
+          <NavigateBlock>
+            <NavigateTitle>Start tokenizing your content/data today:</NavigateTitle>
+            <div className='buttonContainer'>
+              <Button mediumMxWidth whiteWithBlue largeHg style={{ height: '80px', padding: '28px 59px' }}
+                      onClick={() => {
+                        navigate('/create/nft')
+                      }}>Mint EFT right here</Button>
+              <Button mediumMxWidth whiteWithBlue largeHg style={{ height: '80px', padding: '28px 59px' }}
+                      onClick={() => {
+                        navigate('/market')
+                      }}>Apply for own shop</Button>
+            </div>
+            </NavigateBlock>
+          <SupportedBy />
+          <HowToGetStart />
         </WelcomeInfo>
       </WelcomeScreenWrapper>
     </BackgroundContainer>

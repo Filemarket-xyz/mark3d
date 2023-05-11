@@ -1,9 +1,10 @@
 import interRegular from '../assets/fonts/Inter-Regular.ttf'
 import montserratBold from '../assets/fonts/Montserrat-Bold.ttf'
-import montserratRegularItalic from '../assets/fonts/Montserrat-Italic-VariableFont_wght.ttf'
 import montserratRegular from '../assets/fonts/Montserrat-Regular.ttf'
 import montserratSemiBold from '../assets/fonts/Montserrat-SemiBold.ttf'
+import montserratRegular400 from '../assets/fonts/Montserrat-VariableFont_wght.ttf'
 import soraBold from '../assets/fonts/Sora-Bold.ttf'
+import SpaceGrotesk from '../assets/fonts/SpaceGrotesk-VariableFont_wght.ttf'
 import { globalCss } from './stitches.config'
 
 export const globalStyles = globalCss({
@@ -28,9 +29,9 @@ export const globalStyles = globalCss({
     },
     {
       fontFamily: 'Montserrat',
-      fontStyle: 'Italic',
+      fontStyle: 'normal',
       fontWeight: 400,
-      src: `local(''), url('${montserratRegularItalic}') format('truetype')`
+      src: `local(''), url('${montserratRegular400}') format('truetype')`
     },
     {
       fontFamily: 'Sora',
@@ -43,6 +44,12 @@ export const globalStyles = globalCss({
       fontStyle: 'normal',
       fontWeight: 400,
       src: `local(''), url('${interRegular}') format('truetype')`
+    },
+    {
+      fontFamily: 'Space Grotesk',
+      fontStyle: 'normal',
+      fontWeight: 700,
+      src: `local(''), url('${SpaceGrotesk}') format('truetype')`
     }
   ],
   'html, body, #root, #root>div': {
@@ -58,7 +65,8 @@ export const globalStyles = globalCss({
     overflow: 'overlay'
   },
   '*::-webkit-scrollbar, html *::-webkit-scrollbar': {
-    width: '5px'
+    width: '5px',
+    height: '4px'
   },
   '*::-webkit-scrollbar-track, html *::-webkit-scrollbar-track': {
     background: 'none',
