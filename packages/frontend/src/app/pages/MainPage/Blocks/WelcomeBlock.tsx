@@ -1,30 +1,36 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { styled } from '../../../../styles'
-import { Container, LinkButton, NavButton, textVariant, ToolCard } from '../../../UIkit'
-import { TechnologyStack } from '../components/TechnologyStack'
+import { Button, Container, Link, textVariant, ToolCard } from '../../../UIkit'
+import { MainBlock } from '../../GetAccessPage/GetAccessPage'
+import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
 import bgStorage from '../img/bgStorage.svg'
+import greenCircles from '../img/GreenCircles.svg'
+import greenSun from '../img/GreenSun.svg'
+import SupportedBy from './SupportedBy'
+
+const BackgroundContainer = styled('section', {
+  width: '100%'
+})
 
 const WelcomeScreenWrapper = styled('section', {
-  background: `url(${bgStorage})`,
+  background: `url(${bgStorage}), url(${greenCircles}), url(${greenSun})`,
   width: '100%',
-  backgroundSize: 'auto 80%',
+  backgroundSize: '480px',
   backgroundRepeat: 'no-repeat',
-  $$topPad: '128px',
-  backgroundPosition: 'top $$topPad right -5%',
+  $$topPad: '260px',
+  backgroundPosition: 'top $$topPad right 1.5%, top 188px right 0, top -68px left -20px',
   '@xl': {
-    backgroundPosition: 'top $$topPad right -15%'
+    backgroundPosition: 'top $$topPad right 2.5%, top 188px right 0, top -68px left -10px'
   },
   '@lg': {
     background: 'none'
   }
 })
-
 const Title = styled('h1', {
-  ...textVariant('h1').true,
-  fontSize: '3.6rem',
+  ...textVariant('ternary1').true,
   color: '$gray800',
-  fontWeight: '700',
   '@lg': {
     fontSize: 'calc(1.5vw + 30px)',
     textAlign: 'center',
@@ -36,16 +42,16 @@ const Title = styled('h1', {
       display: 'none'
     }
   },
-  maxWidth: '730px',
+  maxWidth: '871px',
   marginBottom: 0
 })
-
 const Description = styled('p', {
   ...textVariant('body1').true,
-  fontWeight: 500,
+  fontWeight: 400,
   color: '$gray800',
-  maxWidth: 730,
+  maxWidth: 776,
   marginTop: '$3',
+  paddingBottom: '48px',
   '@lg': {
     textAlign: 'center',
     marginLeft: 'auto',
@@ -56,14 +62,12 @@ const Description = styled('p', {
     fontSize: '$body2'
   }
 })
-
 export const ToolCardNarrow = styled(ToolCard, {
   width: '350px',
   '@sm': {
     width: '100%'
   }
 })
-
 export const ToolCardContent = styled('div', {
   gap: '$2',
   padding: '$4',
@@ -73,7 +77,6 @@ export const ToolCardContent = styled('div', {
   justifyContent: 'space-between',
   minHeight: 350
 })
-
 export const ToolCardInfo = styled('div', {
   display: 'flex',
   flexDirection: 'column',
@@ -82,7 +85,6 @@ export const ToolCardInfo = styled('div', {
     gap: '$3'
   }
 })
-
 export const ToolTitle = styled('h5', {
   color: '$white',
   '@md': {
@@ -93,7 +95,6 @@ export const ToolTitle = styled('h5', {
   },
   ...textVariant('h5').true
 })
-
 export const ToolDescription = styled('p', {
   fontSize: '1.25rem',
   fontWeight: '500',
@@ -106,6 +107,35 @@ export const ToolDescription = styled('p', {
   }
 })
 
+const NavigateBlock = styled(MainBlock, {
+  maxWidth: 777,
+  padding: '64px 59px',
+  flexDirection: 'column',
+  gap: '42px',
+  '& .buttonContainer': {
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'space-between',
+    '@md': {
+      flexDirection: 'column',
+      gap: '12px'
+    }
+  },
+  '@md': {
+    padding: '48px 32px !important'
+  },
+  '@sm': {
+    padding: '48px 24px !important'
+  }
+})
+
+const NavigateTitle = styled('h4', {
+  ...textVariant('ternary2').true,
+  '@md': {
+    ...textVariant('ternary3').true
+  }
+})
+
 const WelcomeInfo = styled(Container, {
   paddingTop: 'calc($layout$navBarHeight + 44px)',
   paddingBottom: '140px',
@@ -114,64 +144,33 @@ const WelcomeInfo = styled(Container, {
   }
 })
 
-const ToolsContainer = styled('div', {
-  display: 'flex',
-  gap: '$4',
-  marginTop: 48,
-  '@lg': {
-    justifyContent: 'center'
-  },
-  '@sm': {
-    flexDirection: 'column',
-    alignItems: 'center'
-  }
-})
-
 export default function WelcomeBlock() {
+  const navigate = useNavigate()
   return (
-    <WelcomeScreenWrapper>
-      <WelcomeInfo>
-        <Title>
-          Store, sell, buy or send any files as NFTs
-        </Title>
-        <Description>
-          Our new standard of NFT: Encrypted FileToken (EFT) using FVM allows perpetual storage of encrypted files on
-          decentralized network of Filecoin & IPFS
-        </Description>
-        <ToolsContainer>
-          <ToolCardNarrow>
-            <ToolCardContent>
-              <ToolCardInfo>
-                <ToolTitle>For Digital Content Creators</ToolTitle>
-                <ToolDescription>
-                  Secure tokenization of any files, decentralized notary and storage, new monetization with access to
-                  DeFi, DAO, Metaverse
-                </ToolDescription>
-              </ToolCardInfo>
-
-              <NavButton secondary to={'/create/nft'}>
-                Mint NFT File
-              </NavButton>
-            </ToolCardContent>
-          </ToolCardNarrow>
-
-          <ToolCardNarrow>
-            <ToolCardContent>
-              <ToolCardInfo>
-                <ToolTitle>Create your own files online shop</ToolTitle>
-                <ToolDescription>
-                  Create and customize your own unique storefront on your domain with only your digital content
-                </ToolDescription>
-              </ToolCardInfo>
-
-              <LinkButton target="_blank" secondary href="https://form.typeform.com/to/gulmhUKG">
-                Make order
-              </LinkButton>
-            </ToolCardContent>
-          </ToolCardNarrow>
-        </ToolsContainer>
-        <TechnologyStack />
-      </WelcomeInfo>
-    </WelcomeScreenWrapper>
+    <BackgroundContainer>
+      <WelcomeScreenWrapper>
+        <WelcomeInfo>
+          <Title>
+            No code NFT shop builder with privacy layer & perpetual decentralized storage
+          </Title>
+          <Description>Multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing FIlecoin decentralized storage with privacy protocol for NFTs - <Link style={{ fontSize: '1.25rem', borderBottom: '1px solid #0090FF', fontWeight: '400' }} target={'_blank'} href={'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34'}>Encrypted FileToken (EFT)</Link>.</Description>
+          <NavigateBlock>
+            <NavigateTitle>Start tokenizing your content/data today:</NavigateTitle>
+            <div className='buttonContainer'>
+              <Button mediumMxWidth whiteWithBlue largeHg style={{ height: '80px', padding: '28px 59px' }}
+                      onClick={() => {
+                        navigate('/create/nft')
+                      }}>Mint EFT right here</Button>
+              <Button mediumMxWidth whiteWithBlue largeHg style={{ height: '80px', padding: '28px 59px' }}
+                      onClick={() => {
+                        navigate('/market')
+                      }}>Apply for own shop</Button>
+            </div>
+            </NavigateBlock>
+          <SupportedBy />
+          <HowToGetStart />
+        </WelcomeInfo>
+      </WelcomeScreenWrapper>
+    </BackgroundContainer>
   )
 }

@@ -1,16 +1,21 @@
 import React from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
 
 import { styled } from '../../../../../styles'
-import { Button, Txt } from '../../../../UIkit'
-import { Input } from '../../../../UIkit/Form/Input'
+import { Card, Cards, Text } from '../../../../components/App/Footer/section/Top/TopSection'
+import { Txt } from '../../../../UIkit'
 import { Header, InfoBlockCard } from '../../helper/InfoBlockCard/InfoBlockCard'
+import EmailForm from '../EmailForm/EmailForm'
 
 const KeepUpDateStyle = styled('div', {
   display: 'grid',
   width: '100%',
   gridTemplateColumns: '58% auto 38%',
-  justifyContent: 'space-between'
+  justifyContent: 'space-between',
+  '@md': {
+    gridTemplateRows: 'auto auto',
+    gridTemplateColumns: 'inherit',
+    gap: '12px'
+  }
 })
 
 const Line = styled('div', {
@@ -20,54 +25,27 @@ const Line = styled('div', {
 })
 
 const CommunityBlock = styled('div', {
-  width: '38%',
-  display: 'flex',
-  flexWrap: 'wrap'
-})
-
-const InputForm = styled('form', {
-  display: 'flex',
   width: '100%',
-  gap: '8px',
-  justifyContent: 'space-between'
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '8px'
 })
-
-interface SubscribeForm {
-  email: string
-}
 
 const KeepUpDate = () => {
-  const {
-    register,
-    handleSubmit
-  } = useForm<SubscribeForm>({})
-
-  const subscribe = ({ email }: SubscribeForm) => {
-    console.log(email)
-  }
-
-  const onSubmit: SubmitHandler<SubscribeForm> = (data) => {
-    subscribe(data)
-  }
-
   return (
     <InfoBlockCard>
       <KeepUpDateStyle>
         <div>
           <Header style={{ paddingBottom: '16px' }}>Keep up to date</Header>
           <Txt primary1 style={{ fontWeight: '400' }}>Subscribe to our newsletter to remain informed about our latest feature updates, NFT launches, and guidance on how to effectively explore FileMarket.</Txt>
-          <InputForm onSubmit={handleSubmit(onSubmit)} style={{ marginTop: '24px' }}>
-            <Input
-              placeholder='Enter your email'
-              {...register('email', { required: true, pattern: /^\S+@\S+\.\S+$/ })}
-            />
-            <Button primary>Subscribe</Button>
-          </InputForm>
+          <EmailForm />
         </div>
       <Line />
         <div>
         <Header style={{ paddingBottom: '16px' }}>Join the community</Header>
-        <CommunityBlock></CommunityBlock>
+        <CommunityBlock>
+          {Cards.map((item, index) => <Card href={item.url} target={'_blank'} white key={index}><img src={item.blackImg} /><Text black>{item.text}</Text></Card>)}
+        </CommunityBlock>
         </div>
       </KeepUpDateStyle>
     </InfoBlockCard>

@@ -9,7 +9,15 @@ const BottomSectionStyle = styled('div', {
   justifyContent: 'space-between',
   width: '100%',
   flexWrap: 'wrap',
-  gap: '$3'
+  gap: '$3',
+  '& .links': {
+    display: 'flex',
+    gap: '16px'
+  },
+  '@sm': {
+    flexFlow: 'column-reverse wrap',
+    alignItems: 'center'
+  }
 })
 
 const Info = styled('div', {
@@ -17,8 +25,8 @@ const Info = styled('div', {
   gap: '$4',
   flexWrap: 'wrap',
   '@sm': {
-    flexDirection: 'column',
-    gap: '0',
+    flexFlow: 'column-reverse wrap',
+    gap: '16px',
     alignItems: 'center'
   }
 })
@@ -49,12 +57,14 @@ const BottomSection = () => {
   return (
         <BottomSectionStyle>
             <Info>
-                <Txt secondary1 css={{ fontSize: 14 }}>
+                <Txt secondary1 css={{ fontSize: 14, color: '#A7A8A9' }}>
                     © {date.getFullYear()} FileMarket.xyz, Inc
                 </Txt>
                 <Divider />
+              <div className='links'>
                 <Link footer>Privacy policy</Link>
                 <Link footer>Terms of Service</Link>
+              </div>
             </Info>
             <Email>
                 <img src={EmailImg} />
