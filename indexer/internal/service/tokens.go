@@ -19,6 +19,7 @@ func (s *service) GetToken(ctx context.Context, address common.Address,
 		return nil, internalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
+
 	token, err := s.repository.GetToken(ctx, tx, address, tokenId)
 	if err != nil {
 		if err == pgx.ErrNoRows {
@@ -59,15 +60,20 @@ func (s *service) GetTokenEncryptedPassword(
 	return &res, nil
 }
 
-func (s *service) GetCollectionTokens(ctx context.Context,
-	address common.Address) ([]*models.Token, *models.ErrorResponse) {
+func (s *service) GetCollectionTokens(
+	ctx context.Context,
+	address common.Address,
+	lastTokenId *big.Int,
+	limit int,
+) ([]*models.Token, *models.ErrorResponse) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
 		return nil, internalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
-	tokens, err := s.repository.GetCollectionTokens(ctx, tx, address)
+
+	tokens, err := s.repository.GetCollectionTokens(ctx, tx, address, lastTokenId, limit)
 	if err != nil {
 		log.Println("get collection tokens failed: ", err)
 		return nil, internalError
@@ -75,25 +81,35 @@ func (s *service) GetCollectionTokens(ctx context.Context,
 	return domain.MapSlice(tokens, domain.TokenToModel), nil
 }
 
-func (s *service) GetTokensByAddress(ctx context.Context,
-	address common.Address) (*models.TokensResponse, *models.ErrorResponse) {
+func (s *service) GetTokensByAddress(
+	ctx context.Context,
+	address common.Address,
+	lastCollectionAddress *common.Address,
+	collectionLimit int,
+	lastTokenCollectionAddress *common.Address,
+	lastTokenId *big.Int,
+	tokenLimit int,
+) (*models.TokensResponse, *models.ErrorResponse) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
 		return nil, internalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
-	collections, err := s.repository.GetCollectionsByAddress(ctx, tx, address)
+
+	collections, err := s.repository.GetCollectionsByOwnerAddress(ctx, tx, address, lastCollectionAddress, collectionLimit)
 	if err != nil {
 		log.Println("get collections by address failed: ", err)
 		return nil, internalError
 	}
-	tokens, err := s.repository.GetTokensByAddress(ctx, tx, address)
+
+	tokens, err := s.repository.GetTokensByAddress(ctx, tx, address, lastTokenCollectionAddress, lastTokenId, tokenLimit)
 	if err != nil {
 		log.Println("get tokens by address failed: ", err)
 		return nil, internalError
 	}
 	tokensRes := domain.MapSlice(tokens, domain.TokenToModel)
+
 	for i, t := range tokens {
 		transfer, err := s.repository.GetActiveTransfer(ctx, tx, t.CollectionAddress, t.TokenId)
 		if err != nil {

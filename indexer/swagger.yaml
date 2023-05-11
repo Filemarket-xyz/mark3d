@@ -53,11 +53,25 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastTokenId
+          in: query
+          description: Id последнего токена на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: string
+          default: ""
+          pattern: "^[0-9]*$"
+        - name: limit
+          in: query
+          description: Максимальное число токенов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 1
+          maximum: 100
   /tokens/{address}:
     get:
       tags:
         - tokens
-      description: Получение списка токенов пользователя
+      description: Получение списка токенов и коллекций пользователя с раздельной пагинацией
       produces:
         - application/json
       responses:
@@ -76,6 +90,38 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastCollectionAddress
+          in: query
+          description: Адрес последней коллекции.
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: collectionLimit
+          in: query
+          description: Максимальное число коллекций, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+        - name: lastTokenId
+          in: query
+          description: Id последнего токена на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: string
+          default: ""
+          pattern: "^[0-9]*$"
+        - name: lastTokenCollectionAddress
+          in: query
+          description: Адрес последней коллекции последнего токена.
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
+        - name: tokenLimit
+          in: query
+          description: Максимальное число токенов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
   /tokens/{collection}/{id}:
     get:
       tags:
@@ -154,6 +200,20 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastTokenId
+          in: query
+          description: Id последнего токена на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: string
+          default: ""
+          pattern: "^[0-9]*$"
+        - name: limit
+          in: query
+          description: Максимальное число токенов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 1
+          maximum: 100
   /transfers/{address}:
     get:
       tags:
@@ -177,6 +237,32 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastIncomingTransferId
+          in: query
+          description: Id последнего входящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: incomingLimit
+          in: query
+          description: Максимальное число входящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+        - name: lastOutgoingTransferId
+          in: query
+          description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: outgoingLimit
+          in: query
+          description: Максимальное число исходящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
   /transfers/{address}/{id}:
     get:
       tags:
@@ -228,6 +314,32 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastIncomingTransferId
+          in: query
+          description: Id последнего входящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: incomingLimit
+          in: query
+          description: Максимальное число входящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+        - name: lastOutgoingTransferId
+          in: query
+          description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: outgoingLimit
+          in: query
+          description: Максимальное число исходящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
   /v2/transfers/{address}:
     get:
       tags:
@@ -251,6 +363,32 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastIncomingTransferId
+          in: query
+          description: Id последнего входящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: incomingLimit
+          in: query
+          description: Максимальное число входящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+        - name: lastOutgoingTransferId
+          in: query
+          description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: outgoingLimit
+          in: query
+          description: Максимальное число исходящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
   /v2/transfers/{address}/{id}:
     get:
       tags:
@@ -302,6 +440,32 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastIncomingTransferId
+          in: query
+          description: Id последнего входящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: incomingLimit
+          in: query
+          description: Максимальное число входящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
+        - name: lastOutgoingTransferId
+          in: query
+          description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: outgoingLimit
+          in: query
+          description: Максимальное число исходящих трансферов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 0
+          maximum: 100
   /orders/all_active:
     get:
       tags:
@@ -320,6 +484,20 @@ paths:
           description: Ошибка
           schema:
             $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: lastOrderId
+          in: query
+          description: Id последнего ордера на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: integer
+          format: int64
+        - name: limit
+          in: query
+          description: Максимальное число ордеров, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10
+          minimum: 1
+          maximum: 100
   /orders/{address}:
     get:
       tags:

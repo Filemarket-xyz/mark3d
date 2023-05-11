@@ -55,9 +55,20 @@ func (h *handler) handleGetTokenEncryptedPassword(w http.ResponseWriter, r *http
 
 func (h *handler) handleGetCollectionTokens(w http.ResponseWriter, r *http.Request) {
 	address := mux.Vars(r)["address"]
+	lastTokenId, err := parseLastTokenIdParam(r)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	limit, err := parseLimitParam(r, "limit", 10, 100)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
-	tokens, e := h.service.GetCollectionTokens(ctx, common.HexToAddress(address))
+	tokens, e := h.service.GetCollectionTokens(ctx, common.HexToAddress(address), lastTokenId, limit)
 	if e != nil {
 		sendResponse(w, e.Code, e)
 		return
@@ -67,9 +78,37 @@ func (h *handler) handleGetCollectionTokens(w http.ResponseWriter, r *http.Reque
 
 func (h *handler) handleGetTokens(w http.ResponseWriter, r *http.Request) {
 	address := mux.Vars(r)["address"]
+
+	lastCollectionAddress := parseCommonAddressParam(r, "lastCollectionAddress")
+	collectionLimit, err := parseLimitParam(r, "collectionLimit", 10, 100)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	lastTokenId, err := parseLastTokenIdParam(r)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	lastTokenCollectionAddress := parseCommonAddressParam(r, "lastTokenCollectionAddress")
+	tokenLimit, err := parseLimitParam(r, "tokenLimit", 10, 100)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
-	tokens, e := h.service.GetTokensByAddress(ctx, common.HexToAddress(address))
+
+	tokens, e := h.service.GetTokensByAddress(
+		ctx,
+		common.HexToAddress(address),
+		lastCollectionAddress,
+		collectionLimit,
+		lastTokenCollectionAddress,
+		lastTokenId,
+		tokenLimit,
+	)
 	if e != nil {
 		sendResponse(w, e.Code, e)
 		return

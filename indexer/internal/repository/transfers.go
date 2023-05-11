@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"math"
 	"math/big"
 	"strings"
 
@@ -15,6 +16,8 @@ func (p *postgres) GetIncomingTransfersByAddress(
 	ctx context.Context,
 	tx pgx.Tx,
 	address common.Address,
+	lastTransferId *int64,
+	limit int,
 ) ([]*domain.Transfer, error) {
 	// language=PostgreSQL
 	query := `
@@ -31,10 +34,20 @@ func (p *postgres) GetIncomingTransfersByAddress(
 			t.number
 		FROM transfers AS t 
         LEFT JOIN orders o on t.id = o.transfer_id
-        WHERE t.to_address=$1 
+        WHERE t.to_address=$1 AND t.id < $2
 		ORDER BY id DESC
+		LIMIT $3
 	`
-	rows, err := tx.Query(ctx, query, strings.ToLower(address.String()))
+
+	var lastTransferIdParam int64 = math.MaxInt64
+	if lastTransferId != nil {
+		lastTransferIdParam = *lastTransferId
+	}
+	rows, err := tx.Query(ctx, query,
+		strings.ToLower(address.String()),
+		lastTransferIdParam,
+		limit,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -95,6 +108,8 @@ func (p *postgres) GetOutgoingTransfersByAddress(
 	ctx context.Context,
 	tx pgx.Tx,
 	address common.Address,
+	lastTransferId *int64,
+	limit int,
 ) ([]*domain.Transfer, error) {
 	// language=PostgreSQL
 	query := `
@@ -111,11 +126,21 @@ func (p *postgres) GetOutgoingTransfersByAddress(
 			t.number
 		FROM transfers AS t 
         LEFT JOIN orders o on t.id = o.transfer_id 
-		WHERE t.from_address=$1 
+		WHERE t.from_address=$1 AND t.id < $2
 		ORDER BY id DESC
+		LIMIT $3
 	`
 
-	rows, err := tx.Query(ctx, query, strings.ToLower(address.String()))
+	var lastTransferIdParam int64 = math.MaxInt64
+	if lastTransferId != nil {
+		lastTransferIdParam = *lastTransferId
+	}
+
+	rows, err := tx.Query(ctx, query,
+		strings.ToLower(address.String()),
+		lastTransferIdParam,
+		limit,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -178,6 +203,8 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 	ctx context.Context,
 	tx pgx.Tx,
 	address common.Address,
+	lastTransferId *int64,
+	limit int,
 ) ([]*domain.Transfer, error) {
 	// language=PostgreSQL
 	query := `
@@ -211,12 +238,20 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 					WHERE 
 						ts2.transfer_id = t.id
 				)
-			)= ANY('{Finished,Cancelled}') 
-		ORDER BY 
-			t.id DESC
+			)= ANY('{Finished,Cancelled}') AND t.id < $2
+		ORDER BY t.id DESC
+		LIMIT $3
 	`
 
-	rows, err := tx.Query(ctx, query, strings.ToLower(address.String()))
+	var lastTransferIdParam int64 = math.MaxInt64
+	if lastTransferId != nil {
+		lastTransferIdParam = *lastTransferId
+	}
+	rows, err := tx.Query(ctx, query,
+		strings.ToLower(address.String()),
+		lastTransferIdParam,
+		limit,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -277,6 +312,8 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(
 	ctx context.Context,
 	tx pgx.Tx,
 	address common.Address,
+	lastTransferId *int64,
+	limit int,
 ) ([]*domain.Transfer, error) {
 	// language=PostgreSQL
 	query := `
@@ -311,12 +348,20 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(
 					WHERE 
 						ts2.transfer_id = t.id
 				)
-			)= ANY('{Finished,Cancelled}') 
-		ORDER BY 
-			t.id DESC
+			)= ANY('{Finished,Cancelled}') AND t.id < $2
+		ORDER BY t.id DESC
+		LIMIT $3
 	`
 
-	rows, err := tx.Query(ctx, query, strings.ToLower(address.String()))
+	var lastTransferIdParam int64 = math.MaxInt64
+	if lastTransferId != nil {
+		lastTransferIdParam = *lastTransferId
+	}
+	rows, err := tx.Query(ctx, query,
+		strings.ToLower(address.String()),
+		lastTransferIdParam,
+		limit,
+	)
 	if err != nil {
 		return nil, err
 	}
