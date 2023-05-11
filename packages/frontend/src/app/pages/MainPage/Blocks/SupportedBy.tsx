@@ -16,14 +16,13 @@ const SupportedContainerBlocks = styled('div', {
   width: '100%',
   marginTop: '24px',
   marginBottom: '200px',
-  overflowX: 'auto',
-  '& .overflow': {
-    width: 'max-content',
-    display: 'flex',
-    gap: '66px'
-  },
-  '@md': {
-    marginBottom: '100px'
+  display: 'flex',
+  gap: '66px',
+  '@sm': {
+    marginBottom: '100px',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    gapColumn: '32px'
   }
 })
 
@@ -32,11 +31,9 @@ const SupportedBy = () => {
     <SupportedByStyle>
       <Txt ternary3 style={{ paddingLeft: '16px', marginBottom: '24px' }}>Supported By</Txt>
       <SupportedContainerBlocks>
-        <div className='overflow'>
           {supportedByData.map((item, index) => {
             return <a href={item.url} target={'_blank'} key={index} rel="noreferrer"><img src={item.src} /></a>
           })}
-        </div>
       </SupportedContainerBlocks>
     </SupportedByStyle>
   )

@@ -2,11 +2,12 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { styled } from '../../../../styles'
-import { Button, Container, textVariant, ToolCard } from '../../../UIkit'
+import { Button, Container, Link, textVariant, ToolCard } from '../../../UIkit'
 import { MainBlock } from '../../GetAccessPage/GetAccessPage'
 import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
 import bgStorage from '../img/bgStorage.svg'
 import greenCircles from '../img/GreenCircles.svg'
+import greenSun from '../img/GreenSun.svg'
 import SupportedBy from './SupportedBy'
 
 const BackgroundContainer = styled('section', {
@@ -14,14 +15,14 @@ const BackgroundContainer = styled('section', {
 })
 
 const WelcomeScreenWrapper = styled('section', {
-  background: `url(${bgStorage}), url(${greenCircles})`,
+  background: `url(${bgStorage}), url(${greenCircles}), url(${greenSun})`,
   width: '100%',
   backgroundSize: '480px',
   backgroundRepeat: 'no-repeat',
   $$topPad: '260px',
-  backgroundPosition: 'top $$topPad right 1.5%, top 188px right 0',
+  backgroundPosition: 'top $$topPad right 1.5%, top 188px right 0, top -68px left -20px',
   '@xl': {
-    backgroundPosition: 'top $$topPad right 2.5%, top 188px right 0'
+    backgroundPosition: 'top $$topPad right 2.5%, top 188px right 0, top -68px left -10px'
   },
   '@lg': {
     background: 'none'
@@ -152,7 +153,7 @@ export default function WelcomeBlock() {
           <Title>
             No code NFT shop builder with privacy layer & perpetual decentralized storage
           </Title>
-          <Description>Multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing FIlecoin decentralized storage with privacy protocol for NFTs - Encrypted FileToken (EFT).</Description>
+          <Description>Multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing FIlecoin decentralized storage with privacy protocol for NFTs - <Link style={{ fontSize: '1.25rem', borderBottom: '1px solid #0090FF', fontWeight: '400' }} target={'_blank'} href={'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34'}>Encrypted FileToken (EFT)</Link>.</Description>
           <NavigateBlock>
             <NavigateTitle>Start tokenizing your content/data today:</NavigateTitle>
             <div className='buttonContainer'>

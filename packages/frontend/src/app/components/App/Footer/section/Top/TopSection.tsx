@@ -270,7 +270,7 @@ const TopSection = () => {
             </div>
             <div className="section third">
                 <HeaderText>Join our community</HeaderText>
-                <ThirdContent>{Cards.map((item, index) => <Card href={item.url} target={'_blank'} key={index}><img src={item.img} /><TextLink>{item.text}</TextLink></Card>)}</ThirdContent>
+                <ThirdContent>{Cards.map((item, index) => <Card href={item.url} target={'_blank'} key={index}><img src={item.img} /><Text>{item.text}</Text></Card>)}</ThirdContent>
             </div>
         </TopSectionStyle>
   )

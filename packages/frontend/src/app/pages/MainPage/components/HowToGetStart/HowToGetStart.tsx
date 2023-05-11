@@ -56,7 +56,7 @@ const Line = styled('div', {
       true: {
         marginBottom: '$3',
         marginTop: '$3',
-        '@md': {
+        '@lg': {
           marginBottom: '$2',
           marginTop: '$2'
         },
