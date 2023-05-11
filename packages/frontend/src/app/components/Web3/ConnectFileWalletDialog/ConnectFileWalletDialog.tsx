@@ -7,6 +7,7 @@ import { styled } from '../../../../styles'
 import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useCanUnlock } from '../../../processing/SeedProvider/useCanUnlock'
+import { Txt } from '../../../UIkit'
 import { AppDialogProps } from '../../../utils/dialog'
 import { ModalTitle } from '../../Modal/Modal'
 import { CreateOrImportSection } from './sections/CreateOrImportSection'
@@ -38,7 +39,7 @@ export const ConnectFileWalletDialog = observer(({ open, onClose }: AppDialogPro
           defaultValue: canUnlock ? '500px' : '950px'
         })}
       >
-        <ModalTitle>Connect Files Wallet</ModalTitle>
+        <ModalTitle><Txt h4>Connect FileWallet</Txt></ModalTitle>
         <Modal.Body>
           {canUnlock ? (<UnlockSection onSuccess={() => {
             onClose()

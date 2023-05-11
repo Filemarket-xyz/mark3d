@@ -7,15 +7,9 @@ import { styled } from '../../../../styles'
 import NFTCard from '../../../components/MarketCard/NFTCard'
 import Plug from '../../../components/Plug/Plug'
 import { useCollectionAndTokenListStore } from '../../../hooks'
-import { Button, CardsPlaceholder, NavButton, textVariant, Txt } from '../../../UIkit'
+import { Button, CardsPlaceholder, NavButton, Txt } from '../../../UIkit'
 import { Params } from '../../../utils/router/Params'
 import { CardsContainer } from '../../MarketPage/NftSection'
-
-const P = styled('p', {
-  color: '$gray500',
-  ...textVariant('primary1').true,
-  textAlign: 'center'
-})
 
 const NoNftContainer = styled('div', {
   gridColumn: '1/-1',

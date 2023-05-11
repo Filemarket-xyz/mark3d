@@ -51,7 +51,7 @@ jobs:
         run: |
           yarn --immutable
           yarn prepare
-          yarn build
+          VITE_IS_MAINNET=true yarn build
           zip -r frontend.zip dist
         working-directory: packages/frontend
       - name: Save artifacts

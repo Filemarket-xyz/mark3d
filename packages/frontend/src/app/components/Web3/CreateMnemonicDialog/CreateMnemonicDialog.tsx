@@ -43,7 +43,7 @@ const CreatedMnemonicStyle = styled('div', {
     '& span': {
       fontSize: '1.25rem'
     },
-    padding: '1rem 0'
+    padding: '$4 0'
   },
   '@md': {
     fontSize: '15px'
@@ -72,7 +72,7 @@ export function CreateMnemonicDialog({ open, onClose, onSuccess }: AppDialogProp
         defaultValue: '950px'
       })}
     >
-      <ModalTitle>{mnemonic ? 'Remember this phrase' : 'Enter a password'}</ModalTitle>
+      <ModalTitle>{mnemonic ? 'Remember and save this seed phrase (mnemonic) ' : 'Enter a password'}</ModalTitle>
       <CreatedMnemonicStyle>
         <div className="contentModalWindow">
           {mnemonic && <>
@@ -80,9 +80,8 @@ export function CreateMnemonicDialog({ open, onClose, onSuccess }: AppDialogProp
                   <Txt h5>{mnemonic}</Txt>
               </div>
               <div className="grayText">
-                  <Txt h5>You need to save this phrase somewhere, because
-                      it will be used to log in to other devices or
-                      restore your account in the future</Txt>
+                  <Txt h5>You need to save this phrase somewhere, because it can be used
+                      to log in from other devices or to restore your account in the future</Txt>
               </div>
           </>}
           {!mnemonic && <CreatePasswordForm onSubmit={async ({ password }) => {

@@ -76,16 +76,16 @@ export const CreateOrImportSection: FC<{ onSuccess?: () => void }> = observer(({
   return (
     <ConnectWalletWindowContentStyle>
       <div className="headText">
-        <Txt h3>Create or Import Account</Txt>
+        <Txt body2>FileWallet will store encryption keys to your files</Txt>
       </div>
       <div className="mainContent">
         <div className="section">
           <ToolCardConnectWallet>
             <ToolCardContentWallet>
               <ToolCardInfo>
-                <ToolTitle style={{ textAlign: 'center' }}>Create Account</ToolTitle>
+                <ToolTitle style={{ textAlign: 'center' }}>Create FileWallet</ToolTitle>
                 <ToolDescription style={{ textAlign: 'center' }}>
-                  Create a new account
+                  Click here, if you are new to FileMarket.xyz
                 </ToolDescription>
               </ToolCardInfo>
               <Button onClick={() => {
@@ -100,16 +100,15 @@ export const CreateOrImportSection: FC<{ onSuccess?: () => void }> = observer(({
           <ToolCardConnectWallet>
             <ToolCardContentWallet>
               <ToolCardInfo>
-                <ToolTitle style={{ textAlign: 'center' }}>Import Account</ToolTitle>
+                <ToolTitle style={{ textAlign: 'center' }}>Connect FileWallet</ToolTitle>
                 <ToolDescription style={{ textAlign: 'center' }}>
-                  Import your account using the seed phrase
-                  received during registration
+                  Click here, if you have already used FileMarket.xyz on a different device
                 </ToolDescription>
               </ToolCardInfo>
               <Button onClick={() => {
                 openImportAccountDialog()
               }}>
-                Import
+                Connect
               </Button>
             </ToolCardContentWallet>
           </ToolCardConnectWallet>

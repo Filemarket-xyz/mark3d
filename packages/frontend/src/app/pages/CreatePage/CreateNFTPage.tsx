@@ -222,7 +222,6 @@ const CreateNftPage = observer(() => {
   const chosenCategory = watch('category')
   const license = watch('license')
   const category = watch('category')
-  const description = watch('description')
 
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
     createNft({ ...data, tagsValue: chosenTags, licenseUrl })
