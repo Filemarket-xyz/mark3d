@@ -2,6 +2,7 @@ import { Collapse } from '@nextui-org/react'
 import { useWeb3Modal } from '@web3modal/react'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAccount } from 'wagmi'
 
 import ArrowCollapseImg from '../../../../../assets/img/ArrowCollapse.svg'
 import CursorSquare from '../../../../../assets/img/HowToGetStart/CursorSquare.svg'
@@ -146,6 +147,7 @@ const Title = styled('h3', {
 
 const HowToGetStart = () => {
   const { open } = useWeb3Modal()
+  const { isConnected } = useAccount()
   const navigate = useNavigate()
   return (
       <Collapse title={<Title>How to use FileMarket?</Title>}
@@ -175,8 +177,8 @@ const HowToGetStart = () => {
             <HowToGetStartCard number={2} content={
               <Link
                     howToGetStart
-                    onClick={() => {
-                      open()
+                    onPress={() => {
+                      !isConnected && open()
                     }}
                     style={{
                       textDecoration: 'underline'
@@ -195,7 +197,7 @@ const HowToGetStart = () => {
             <HowToGetStartCard number={4} content={
                 <Link
                   howToGetStart
-                  onClick={() => {
+                  onPress={() => {
                     navigate('/market')
                   }}
                   style={{
@@ -221,8 +223,8 @@ const HowToGetStart = () => {
               <HowToGetStartCard number={1} content={
                 <Link
                   howToGetStart
-                  onClick={() => {
-                    open()
+                  onPress={() => {
+                    !isConnected && open()
                   }}
                   style={{
                     textDecoration: 'underline'
@@ -261,9 +263,8 @@ const HowToGetStart = () => {
               <HowToGetStartCard number={2} content={
                 <Link
                   howToGetStart
-                  onClick={() => {
-                    open()
-                  }}
+                  href={'/create/nft'}
+                  target={'_blank'}
                   style={{
                     textDecoration: 'underline'
                   }}
@@ -291,10 +292,9 @@ const HowToGetStart = () => {
               <HowToGetStartCard number={1} content={
                 <Link
                       howToGetStart
-                      onClick={() => {
+                      onPress={() => {
                         navigate('/market')
                       }}
-                      target={'_blank'}
                       style={{
                         textDecoration: 'underline'
                       }}
