@@ -47,7 +47,7 @@ const ConvertKitStyle = styled(ConvertKitForm, {
 
 const EmailForm = () => {
   return (
-    <ConvertKitStyle formId={5117091} />
+    <ConvertKitStyle formId={5117091} submitText={'Get Access'} emailPlaceholder={'Email'} />
   )
 }
 
