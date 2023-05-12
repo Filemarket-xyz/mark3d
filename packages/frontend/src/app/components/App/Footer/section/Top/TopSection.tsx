@@ -57,7 +57,10 @@ const TopSectionStyle = styled('div', {
   '@sm': {
     columnGap: '74px',
     justifyContent: 'left',
-    gap: '32px'
+    gap: '32px',
+    '& .second': {
+      width: '140px'
+    }
   }
 })
 
@@ -191,35 +194,35 @@ export const Cards: Array<{ img: string, blackImg: string, text: string, url: st
 
 const TopSection = () => {
   const MarketPlaceItems: ILink[] = [
-  //   {
-  //   text: 'FileBunnies',
-  //   url: ''
-  // },
     {
-      text: 'Explore NFT Files',
+      text: 'Explore EFTs',
       url: '/market'
     },
-    // {
-    //   text: 'Collections',
-    //   url: ''
-    // },
     {
-      text: 'Blogs',
-      url: 'https://medium.com/filemarket-xyz'
+      text: 'Build own Shop',
+      url: 'https://form.typeform.com/to/gulmhUKG?typeform-source=filemarket.xyz'
+    },
+    {
+      text: 'Collections',
+      url: ''
+    },
+    {
+      text: 'How to get FIL',
+      url: 'https://medium.com/filemarket-xyz/how-to-buy-fil-and-use-fil-in-the-filecoin-virtual-machine-d67fa90764d5'
+    },
+    {
+      text: 'FAQ',
+      url: ''
     }
-  // {
-  //   text: 'FAQ',
-  //   url: ''
-  // }
   ]
   const Links: ILink[] = [{
-    text: 'EFT',
+    text: 'EFT Protocol',
     url: 'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34'
   },
-  // {
-  //   text: 'API',
-  //   url: ''
-  // },
+  {
+    text: 'SDK',
+    url: ''
+  },
   {
     text: 'DAO',
     url: 'https://discord.gg/9pe5CUqqz4'
@@ -227,13 +230,17 @@ const TopSection = () => {
   {
     text: 'GitHub',
     url: 'https://github.com/Filemarket-xyz/file-market'
+  },
+  {
+    text: 'Blogs',
+    url: 'https://medium.com/filemarket-xyz'
   }
   ]
   const Company: ILink[] = [
-  //   {
-  //   text: 'About',
-  //   url: ''
-  // },
+    {
+      text: 'About',
+      url: ''
+    },
     {
       text: 'Ambassador program',
       url: 'https://filemarket.typeform.com/to/MTwDOB1J'
@@ -242,10 +249,10 @@ const TopSection = () => {
       text: 'Become a partner',
       url: 'https://filemarket.typeform.com/to/BqkdzJQM'
     },
-    // {
-    //   text: 'Branding',
-    //   url: ''
-    // },
+    {
+      text: 'Branding',
+      url: ''
+    },
     {
       text: 'Calendly',
       url: 'http://calendly.com/filemarket'
