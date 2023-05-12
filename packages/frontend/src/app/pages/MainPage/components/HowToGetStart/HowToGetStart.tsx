@@ -231,7 +231,7 @@ const HowToGetStart = () => {
                   }}
                 >Connect your crypto wallet
                 </Link>} img={KeySquare2} size={'small'} />
-              <HowToGetStartCard number={1} content={
+              <HowToGetStartCard number={2} content={
                 <div>
                   <div>
                     <Text style={{ lineHeight: '1' }}> If the FileWallet was created on the same device</Text>

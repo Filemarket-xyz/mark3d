@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { styled } from '../../../../styles'
-import { Button, Container, Link, textVariant, ToolCard } from '../../../UIkit'
+import { Button, Container, Link, LinkButton, textVariant, ToolCard } from '../../../UIkit'
 import { MainBlock } from '../../GetAccessPage/GetAccessPage'
 import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
 import bgStorage from '../img/bgStorage.svg'
@@ -161,10 +161,14 @@ export default function WelcomeBlock() {
                       onClick={() => {
                         navigate('/create/nft')
                       }}>Mint EFT right here</Button>
-              <Button mediumMxWidth whiteWithBlue largeHg style={{ height: '80px', padding: '28px 59px' }}
-                      onClick={() => {
-                        navigate('/market')
-                      }}>Apply for own shop</Button>
+              <LinkButton
+                mediumMxWidth
+                whiteWithBlue
+                largeHg
+                style={{ height: '80px', padding: '28px 59px' }}
+                href={'https://form.typeform.com/to/gulmhUKG?typeform-source=filemarket.xyz'}
+                target={'_blank'}
+              >Apply for own shop</LinkButton>
             </div>
             </NavigateBlock>
           <SupportedBy />
