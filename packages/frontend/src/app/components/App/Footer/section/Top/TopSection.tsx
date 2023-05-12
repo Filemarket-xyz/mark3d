@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 import FileMarketIcon from '../../../../../../assets/FileMarket.svg'
 import DiscordBlackImg from '../../../../../../assets/img/DiscordBlack.svg'
@@ -144,7 +145,7 @@ export const Card = styled('a', {
   }
 })
 
-interface Link {
+interface ILink {
   text: string
   url: string
 }
@@ -189,7 +190,7 @@ export const Cards: Array<{ img: string, blackImg: string, text: string, url: st
 ]
 
 const TopSection = () => {
-  const MarketPlaceItems: Link[] = [
+  const MarketPlaceItems: ILink[] = [
   //   {
   //   text: 'FileBunnies',
   //   url: ''
@@ -211,7 +212,7 @@ const TopSection = () => {
   //   url: ''
   // }
   ]
-  const Links: Link[] = [{
+  const Links: ILink[] = [{
     text: 'EFT',
     url: 'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34'
   },
@@ -228,7 +229,7 @@ const TopSection = () => {
     url: 'https://github.com/Filemarket-xyz/file-market'
   }
   ]
-  const Company: Link[] = [
+  const Company: ILink[] = [
   //   {
   //   text: 'About',
   //   url: ''
@@ -253,7 +254,7 @@ const TopSection = () => {
   return (
         <TopSectionStyle>
             <div className="section first">
-                <img src={FileMarketIcon} alt="" />
+              <Link to={'/mainpage'}><img src={FileMarketIcon} alt="" /></Link>
                 <Text>FileMarket is a multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing Filecoin decentralized storage with privacy protocol for NFTs - Encrypted FileToken (EFT)</Text>
             </div>
             <div className="section second">

@@ -12,7 +12,7 @@ export const AppNav: FC = () => (
   <>
     <NavBar
       mobileBp={mobileBp}
-      brand={<AppLogoButton to='/' hideNameIn={mobileBp} />}
+      brand={<AppLogoButton to='/mainpage' hideNameIn={mobileBp} />}
       items={paths}
       actions={<AppConnectWidget />}
     />
