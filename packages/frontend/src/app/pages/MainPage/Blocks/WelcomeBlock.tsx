@@ -165,7 +165,7 @@ export default function WelcomeBlock() {
                 mediumMxWidth
                 whiteWithBlue
                 largeHg
-                style={{ height: '80px', padding: '28px 59px' }}
+                style={{ height: '80px', padding: '28px 59px', textAlign: 'center' }}
                 href={'https://form.typeform.com/to/gulmhUKG?typeform-source=filemarket.xyz'}
                 target={'_blank'}
               >Apply for own shop</LinkButton>

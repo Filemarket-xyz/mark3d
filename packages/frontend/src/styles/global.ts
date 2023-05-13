@@ -1,6 +1,5 @@
 import interRegular from '../assets/fonts/Inter-Regular.ttf'
 import montserratBold from '../assets/fonts/Montserrat-Bold.ttf'
-import montserratRegular from '../assets/fonts/Montserrat-Regular.ttf'
 import montserratSemiBold from '../assets/fonts/Montserrat-SemiBold.ttf'
 import montserratRegular400 from '../assets/fonts/Montserrat-VariableFont_wght.ttf'
 import soraBold from '../assets/fonts/Sora-Bold.ttf'
@@ -9,12 +8,6 @@ import { globalCss } from './stitches.config'
 
 export const globalStyles = globalCss({
   '@font-face': [
-    {
-      fontFamily: 'Montserrat',
-      fontStyle: 'normal',
-      fontWeight: 400,
-      src: `local(''), url('${montserratRegular}') format('truetype')`
-    },
     {
       fontFamily: 'Montserrat',
       fontStyle: 'normal',
