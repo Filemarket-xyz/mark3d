@@ -1,17 +1,20 @@
 import { Collapse } from '@nextui-org/react'
 import { useWeb3Modal } from '@web3modal/react'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 
 import ArrowCollapseImg from '../../../../../assets/img/ArrowCollapse.svg'
+import Money from '../../../../../assets/img/HowToGetStart/Banknote2.svg'
 import CursorSquare from '../../../../../assets/img/HowToGetStart/CursorSquare.svg'
 import Danger from '../../../../../assets/img/HowToGetStart/Danger.svg'
 import DownloadMinimalistic from '../../../../../assets/img/HowToGetStart/DownloadMinimalistic.svg'
 import FolderWithFiles from '../../../../../assets/img/HowToGetStart/FolderWithFiles.svg'
+import Items from '../../../../../assets/img/HowToGetStart/Items.svg'
 import KeySquare2 from '../../../../../assets/img/HowToGetStart/KeySquare2.svg'
-import LinkImg from '../../../../../assets/img/HowToGetStart/Link.svg'
 import ListCheck from '../../../../../assets/img/HowToGetStart/ListCheck.svg'
+import PlusCircle from '../../../../../assets/img/HowToGetStart/PlusCircle.svg'
+import Ticket from '../../../../../assets/img/HowToGetStart/Ticket.svg'
 import UserCheckRounded from '../../../../../assets/img/HowToGetStart/UserCheckRounded.svg'
 import VerifiedCheck from '../../../../../assets/img/HowToGetStart/VerifiedCheck.svg'
 import Wallet from '../../../../../assets/img/HowToGetStart/Wallet.svg'
@@ -149,8 +152,13 @@ const HowToGetStart = () => {
   const { open } = useWeb3Modal()
   const { isConnected } = useAccount()
   const navigate = useNavigate()
+  const [isOpen, setIsOpen] = useState<boolean | undefined>(false)
+
   return (
       <Collapse title={<Title>How to use FileMarket?</Title>}
+                onChange={(event, index, value) => {
+                  setIsOpen(value)
+                }}
                 css={{
                   background: 'white',
                   border: '1px solid #0090FF',
@@ -159,7 +167,10 @@ const HowToGetStart = () => {
                   '& .nextui-collapse-title-content': {
                     width: '80%'
                   }
-                }} arrowIcon={<ArrowContent><Txt primary1 style={{ fontWeight: '500', fontSize: '24px', color: '#0090FF' }}>Expand</Txt><img src={ArrowCollapseImg} /></ArrowContent>}
+                }} arrowIcon={<ArrowContent>
+        <Txt primary1 style={{ fontWeight: '500', fontSize: '24px', color: '#0090FF' }}>{isOpen ? 'Collapse' : 'Expand'}</Txt>
+        <img src={ArrowCollapseImg} style={{ transform: `rotateX(${isOpen ? '180deg' : '0'})` }} />
+      </ArrowContent>}
       >          <Line />
         <HowToGetStartStyle>
         <Block>
@@ -168,12 +179,13 @@ const HowToGetStart = () => {
             <HowToGetStartCard number={1} content={
               <Link iconRedirect
                     howToGetStart
+                    target={'_blank'}
                     href={'https://medium.com/filemarket-xyz/how-to-buy-fil-and-use-fil-in-the-filecoin-virtual-machine-d67fa90764d5'}
                     style={{
                       textDecoration: 'underline'
                     }}
               >Top up your wallet with $FIL
-              </Link>} img={LinkImg} size={'medium'} />
+              </Link>} img={Money} size={'medium'} />
             <HowToGetStartCard number={2} content={
               <Link
                     howToGetStart
@@ -187,7 +199,7 @@ const HowToGetStart = () => {
               </Link>} img={Wallet} size={'medium'} />
             <HowToGetStartCard number={3} content={
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Text blue
+              <Text
               >Create a FileWallet and set a password for it
               </Text>
               <Text linear>
@@ -211,7 +223,7 @@ const HowToGetStart = () => {
           gap: '16px'
         }}>
           <Txt h5 style={{ fontWeight: '600', fontSize: '1.25em' }}>*Why create a FileWallet?</Txt>
-          <Txt h5 style={{ fontWeight: '400', fontSize: '1.25em' }}>Each file hidden inside an NFT using EFT© Protocol
+          <Txt h5 style={{ fontWeight: '400', fontSize: '1.25em', lineHeight: '28px' }}>Each file hidden inside an NFT using EFT© Protocol
             is encrypted with a special cryptographic key. This key belongs only to the EFT owner,
             providing reliable protection against unauthorized content downloading.
             FileWallet stores all these keys so you can decrypt and download all your files from any device.
@@ -230,7 +242,7 @@ const HowToGetStart = () => {
                     textDecoration: 'underline'
                   }}
                 >Connect your crypto wallet
-                </Link>} img={KeySquare2} size={'small'} />
+                </Link>} img={Wallet} size={'small'} />
               <HowToGetStartCard number={2} content={
                 <div>
                   <div>
@@ -259,7 +271,7 @@ const HowToGetStart = () => {
                         textDecoration: 'underline'
                       }}
                 >Create a collection
-                </Link>} img={LinkImg} size={'small'} />
+                </Link>} img={PlusCircle} size={'small'} />
               <HowToGetStartCard number={2} content={
                 <Link
                   howToGetStart
@@ -273,7 +285,7 @@ const HowToGetStart = () => {
               <HowToGetStartCard number={3} content={
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <Text>List your EFT and place an order</Text>
-                </div>} img={Wallet} size={'small'} />
+                </div>} img={Ticket} size={'small'} />
               <HowToGetStartCard number={4} content={
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <Text>Await a purchase request</Text>
@@ -299,7 +311,7 @@ const HowToGetStart = () => {
                         textDecoration: 'underline'
                       }}
                 >Select an EFT in the storefront
-                </Link>} img={LinkImg} size={'small'} />
+                </Link>} img={Items} size={'small'} />
               <HowToGetStartCard number={2} content={
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <Text>Press the Buy button</Text>
