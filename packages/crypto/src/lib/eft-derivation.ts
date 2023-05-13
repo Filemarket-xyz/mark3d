@@ -4,6 +4,7 @@ import {AesKeyAndIv, EftAesDerivationFunction, EftRsaDerivationFunction, HkdfFun
 import {aesIVLength, aesKeyLength, aesKeyType, rsaKeyType, rsaModulusLength} from './config';
 import {numberToBuffer} from './utils';
 import {hkdfSha512, hkdfSha512Native} from './hkdf-sha512';
+// @ts-ignore
 import RsaWorker from './rsa.worker.ts?worker'
 
 export const eftAesDerivationNative = (crypto: Crypto): EftAesDerivationFunction =>
@@ -61,6 +62,7 @@ const eftRsaDerivationAux = async (
 
   return new Promise((resolve) => {
     const rsaWorker = new RsaWorker()
+    // @ts-ignore
     rsaWorker.onmessage = (e) => resolve(e.data)
 
     rsaWorker.postMessage({ seed: OKM })
