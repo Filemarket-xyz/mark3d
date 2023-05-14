@@ -12,7 +12,7 @@ const BottomSectionStyle = styled('div', {
   gap: '$3',
   '& .links': {
     display: 'flex',
-    gap: '16px'
+    gap: '32px'
   },
   '@sm': {
     flexFlow: 'column-reverse wrap',
