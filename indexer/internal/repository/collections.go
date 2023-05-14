@@ -51,8 +51,11 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 			&tokenId, &c.MetaUri, &c.Description, &c.Image); err != nil {
 			return nil, err
 		}
-		c.Address, c.Owner, c.Creator = common.HexToAddress(collectionAddress),
-			common.HexToAddress(creator), common.HexToAddress(owner)
+
+		c.Address = common.HexToAddress(collectionAddress)
+		c.Owner = common.HexToAddress(owner)
+		c.Creator = common.HexToAddress(creator)
+
 		var ok bool
 		c.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
 		if !ok {
