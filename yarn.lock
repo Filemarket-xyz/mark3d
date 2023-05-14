@@ -13478,7 +13478,7 @@ __metadata:
     karma-jasmine: ^5.1.0
     karma-sourcemap-loader: ^0.4.0
     karma-webpack: ^5.0.0
-    node-forge: "npm:filemarket-node-forge@1.3.2-0"
+    node-forge: "npm:filemarket-node-forge@1.3.3"
     rimraf: ^4.4.1
     ts-loader: ^9.4.2
     typescript: ^5.0.3
@@ -18193,10 +18193,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-forge@npm:filemarket-node-forge@1.3.2-0":
-  version: 1.3.2-0
-  resolution: "filemarket-node-forge@npm:1.3.2-0"
-  checksum: d7753a12602b157d175775b83ffcc053f02afb272c9ff5772c6ad160e5b7e6a6de50e448f6eef61379cc4cc7345aaee7c98c87913735988ccc066960f7edb269
+"node-forge@npm:filemarket-node-forge@1.3.3":
+  version: 1.3.3
+  resolution: "filemarket-node-forge@npm:1.3.3"
+  checksum: ccbc3acc4106bfda70024b8b470b9f1633f7455dc3b6d0324fb657a3256788eacf1132e0acbe0a53bb5889463210173ceb3be4e308f99779313e60beb7abb082
   languageName: node
   linkType: hard
 
