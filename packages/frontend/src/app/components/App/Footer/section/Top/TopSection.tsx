@@ -10,8 +10,8 @@ import MediumBlackImg from '../../../../../../assets/img/MediumBlack.svg'
 import MediumImg from '../../../../../../assets/img/MediumImg.svg'
 import TelegramBlackImg from '../../../../../../assets/img/TelegramBlack.svg'
 import TelegramImg from '../../../../../../assets/img/TelegramImg.svg'
-import TwitterImg from '../../../../../../assets/img/TelegramImg.svg'
 import TwitterBlackImg from '../../../../../../assets/img/TwitterBlack.svg'
+import TwitterImg from '../../../../../../assets/img/TwitterImg.svg'
 import YoutubeBlackImg from '../../../../../../assets/img/YoutubeBlack.svg'
 import YoutubeImg from '../../../../../../assets/img/YoutubeImg.svg'
 import { styled } from '../../../../../../styles'
@@ -85,9 +85,9 @@ export const TextLink = styled('a', {
 })
 
 export const Text = styled('span', {
-  ...textVariant('secondary2').true,
+  ...textVariant('primary2').true,
   fontWeight: '400',
-  fontSize: '16px',
+  fontSize: '14px',
   color: 'white',
   textDecoration: 'none',
   variants: {
@@ -262,7 +262,7 @@ const TopSection = () => {
         <TopSectionStyle>
             <div className="section first">
               <Link to={'/mainpage'}><img src={FileMarketIcon} alt="" /></Link>
-                <Text>FileMarket is a multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing Filecoin decentralized storage with privacy protocol for NFTs - Encrypted FileToken (EFT)</Text>
+                <Text style={{ lineHeight: '24px', fontSize: '16px' }}>FileMarket is a multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing Filecoin decentralized storage with privacy protocol for NFTs - Encrypted FileToken (EFT)</Text>
             </div>
             <div className="section second">
                 <HeaderText>Platform</HeaderText>
