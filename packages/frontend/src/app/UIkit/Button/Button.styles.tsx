@@ -167,9 +167,38 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             background: 'linear-gradient(90deg, #FC6076 0%, #FF9A44 100%)'
           }
         },
+        mediumMxWidth: {
+          true: {
+            '@md': {
+              width: '100% !important'
+            }
+          }
+        },
+        smallMxWidth: {
+          true: {
+            '@sm': {
+              width: '100% !important'
+            }
+          }
+        },
         mediumHg: {
           true: {
             height: '56px'
+          }
+        },
+        largeHg: {
+          true: {
+            height: '80px'
+          }
+        },
+        whiteWithBlue: {
+          true: {
+            background: 'none',
+            ...textVariant('primary1').true,
+            fontSize: '18px',
+            border: '2px solid #028FFF',
+            borderRadius: '12px',
+            color: '#028FFF'
           }
         }
       },

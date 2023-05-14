@@ -1,11 +1,12 @@
 import React from 'react'
 
 import { styled } from '../../../../styles'
-import { Container, Txt } from '../../../UIkit'
+import { Txt } from '../../../UIkit'
 import CardPartner from '../components/Card/CardPartner'
 import { OurPartnersOptions } from '../helper/CardPartners/data'
+import { PoweredByContainer } from './PoweredBy'
 
-const OurPartnersContainer = styled(Container, {
+const OurPartnersContainer = styled(PoweredByContainer, {
   paddingTB: '160px',
   display: 'flex',
   flexDirection: 'column',

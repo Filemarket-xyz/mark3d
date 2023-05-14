@@ -1,5 +1,5 @@
 import {FileMarketCrypto} from './index';
-import {buf2Hex} from './lib/utils';
+import {bufferToHex} from './lib/utils';
 
 const globalSalt = Buffer.from('137d63f71265a151c69a5158e20675b51ae359133fdcace8a7294b7af2f0d05d4561d8ea180b6698abb70ff110376517c6ad7968090c2d576b3dbf208af4e841', 'hex')
 const address = '0x736367086A8920EF71C1F68a11e6CeB8b6026a13'
@@ -15,7 +15,7 @@ describe('full cycle', () => {
     const {priv, pub} = await fc.eftRsaDerivation(seed, globalSalt, addressBuffer, 0, 0)
     const encryptedPassword = await fc.rsaEncrypt(generatedPassword, pub)
     const decryptedPassword = await fc.rsaDecrypt(encryptedPassword, priv)
-    expect(buf2Hex(decryptedPassword))
-      .toEqual(buf2Hex(generatedPassword))
+    expect(bufferToHex(decryptedPassword))
+      .toEqual(bufferToHex(generatedPassword))
   })
 })

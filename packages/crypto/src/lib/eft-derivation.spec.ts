@@ -1,6 +1,6 @@
 import {eftAesDerivation, eftAesDerivationNative, eftRsaDerivation, eftRsaDerivationNative} from './eft-derivation';
 import {RsaKeyPair} from './types';
-import {buf2Hex} from './utils';
+import {bufferToHex} from './utils';
 
 const globalSalt = Buffer.from('137d63f71265a151c69a5158e20675b51ae359133fdcace8a7294b7af2f0d05d4561d8ea180b6698abb70ff110376517c6ad7968090c2d576b3dbf208af4e841', 'hex')
 const address = '0x736367086A8920EF71C1F68a11e6CeB8b6026a13'
@@ -18,8 +18,8 @@ describe('eft-derivation', () => {
       const tokenId = 8;
       const derivedKey = await eftAesDerivation(seed, globalSalt, collectionAddress, tokenId)
       const derivedKeyNative = await eftAesDerivationNative(window.crypto)(seed, globalSalt, collectionAddress, tokenId)
-      expect(buf2Hex(derivedKey.key))
-        .toEqual(buf2Hex(derivedKeyNative.key))
+      expect(bufferToHex(derivedKey.key))
+        .toEqual(bufferToHex(derivedKeyNative.key))
       expect(Buffer.from(derivedKey.iv).toString('hex'))
         .toEqual(Buffer.from(derivedKeyNative.iv).toString('hex'))
       expect(derivedKey.key.byteLength).toEqual(256/8)
@@ -32,10 +32,10 @@ describe('eft-derivation', () => {
       const tokenId = 1;
       const dealNumber = 2;
       const derivedKey = await eftRsaDerivation(seed, globalSalt, collectionAddress, tokenId, dealNumber)
-      expect(buf2Hex(derivedKey.pub))
-        .toEqual(buf2Hex(rsaPreDerived.pub))
-      expect(buf2Hex(derivedKey.priv))
-        .toEqual(buf2Hex(rsaPreDerived.priv))
+      expect(bufferToHex(derivedKey.pub))
+        .toEqual(bufferToHex(rsaPreDerived.pub))
+      expect(bufferToHex(derivedKey.priv))
+        .toEqual(bufferToHex(rsaPreDerived.priv))
     })
     it('should derive the same keys natively', async () => {
       const collectionAddress = Buffer.from(address.slice(2), 'hex')
@@ -43,10 +43,10 @@ describe('eft-derivation', () => {
       const dealNumber = 2;
       const derivedKey = await eftRsaDerivationNative(window.crypto)(seed, globalSalt, collectionAddress, tokenId, dealNumber)
       // const derivedKeyNative = await eftRsaDerivationNative(window.crypto)(seed, globalSalt, collectionAddress, dealNumber)
-      expect(buf2Hex(derivedKey.pub))
-        .toEqual(buf2Hex(rsaPreDerived.pub))
-      expect(buf2Hex(derivedKey.priv))
-        .toEqual(buf2Hex(rsaPreDerived.priv))
+      expect(bufferToHex(derivedKey.pub))
+        .toEqual(bufferToHex(rsaPreDerived.pub))
+      expect(bufferToHex(derivedKey.priv))
+        .toEqual(bufferToHex(rsaPreDerived.priv))
     })
   })
 })

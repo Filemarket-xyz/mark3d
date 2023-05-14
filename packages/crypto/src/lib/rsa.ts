@@ -1,6 +1,7 @@
 import {pki, random, asn1} from 'node-forge';
 import {rsaModulusLength} from './config';
 import {RsaKeyPair, RsaPrivateKey, RsaPublicKey} from './types';
+import {Buffer} from 'buffer'
 
 export const rsaGenerateKeyPair = async (seed: ArrayBuffer): Promise<RsaKeyPair> => {
   const seedHex = Buffer.from(seed).toString('hex')
