@@ -47,7 +47,10 @@ module.exports = {
     'react/prop-types': 'off',
     'react/jsx-tag-spacing': 'warn',
     'react/jsx-max-props-per-line': ['warn', {
-      maximum: 1
+      maximum: { 
+        single: 3,
+        multi: 1
+      }
     }],
     'react/jsx-first-prop-new-line': ['warn', 'multiline-multiprop'],
     'react/jsx-sort-props': ['warn', {
