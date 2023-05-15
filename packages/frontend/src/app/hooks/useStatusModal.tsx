@@ -10,10 +10,16 @@ export interface UseModalOkArgs {
   statuses: StatusStateType['statuses']
   loadingMsg: ReactNode
   okMsg: ReactNode
+  waitForSign?: boolean
   // error message is retrieved from error
 }
 
-export function useStatusModal({ statuses: { isLoading, result, error }, okMsg, loadingMsg }: UseModalOkArgs) {
+export function useStatusModal({
+  statuses: { isLoading, result, error },
+  okMsg,
+  loadingMsg,
+  waitForSign = true
+}: UseModalOkArgs) {
   const {
     modalOpen,
     setModalOpen,
@@ -36,6 +42,7 @@ export function useStatusModal({ statuses: { isLoading, result, error }, okMsg, 
       setModalBody(
         <InProgressBody
           text={loadingMsg}
+          waitForSign={waitForSign}
         />
       )
     } else if (result) {
@@ -52,7 +59,7 @@ export function useStatusModal({ statuses: { isLoading, result, error }, okMsg, 
         />
       )
     }
-  }, [isLoading, result, error, loadingMsg, okMsg, handleClose])
+  }, [isLoading, result, error, loadingMsg, okMsg, waitForSign, handleClose])
 
   return {
     modalProps: {
