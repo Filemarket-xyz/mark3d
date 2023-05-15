@@ -3,7 +3,6 @@ import React, { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { styled } from '../../../styles'
-import { useStores } from '../../hooks'
 import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 import { useTokenStore } from '../../hooks/useTokenStore'
@@ -87,8 +86,7 @@ const NFTPage = observer(() => {
   const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
   const tokenStore = useTokenStore(collectionAddress, tokenId)
   const tokenMetaStore = useTokenMetaStore(tokenStore.data?.metaUri)
-  const { errorStore } = useStores()
-  const files = useHiddenFileDownload(tokenMetaStore, errorStore, tokenStore.data)
+  const files = useHiddenFileDownload(tokenMetaStore, tokenStore.data)
   const tokenFullId = useMemo(
     () => makeTokenFullId(collectionAddress, tokenId),
     [collectionAddress, tokenId]
@@ -98,7 +96,6 @@ const NFTPage = observer(() => {
   const canViewHiddenFiles = isBuyer && transferPermissions.buyer.canViewHiddenFiles(
     transferStore.data
   )
-  const { data: token } = useTokenStore(collectionAddress, tokenId)
 
   return (
     <>
@@ -115,29 +112,44 @@ const NFTPage = observer(() => {
         <GridLayout>
           <GridBlockSection>
             <BaseInfoSection />
-            {window.innerWidth <= 900 && <GridBlockSectionRow>
-              <ControlSection />
-              <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files} />
-            </GridBlockSectionRow>}
+            {window.innerWidth <= 900 && (
+              <GridBlockSectionRow>
+                <ControlSection />
+                <FileInfoSection
+                  isOwner={isOwner}
+                  canViewHiddenFiles={canViewHiddenFiles}
+                  files={files}
+                />
+              </GridBlockSectionRow>
+            )}
             <HomeLandSection />
-             <TagsSection
-               categories={[
-                 ...Array.from(token?.categories ?? []),
-                 ...Array.from(token?.subcategories ?? [])
-               ]}
-               tags={token?.tags}
-             />
-            {window.innerWidth > 1200 && <><DescriptionSection /></>}
+            <TagsSection
+              tags={tokenStore.data?.tags}
+              categories={[
+                ...Array.from(tokenStore.data?.categories ?? []),
+                ...Array.from(tokenStore.data?.subcategories ?? [])
+              ]}
+            />
+            {window.innerWidth > 1200 && <DescriptionSection />}
           </GridBlockSection>
 
-          {window.innerWidth > 900 && <GridBlockSection>
-            <ControlSection />
-            <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files} />
-          </GridBlockSection>}
+          {window.innerWidth > 900 && (
+            <GridBlockSection>
+              <ControlSection />
+              <FileInfoSection
+                isOwner={isOwner}
+                canViewHiddenFiles={canViewHiddenFiles}
+                files={files}
+              />
+            </GridBlockSection>
+          )}
         </GridLayout>
 
-        {window.innerWidth <= 1200 && <DisplayLayout><DescriptionSection />
-    </DisplayLayout>}
+        {window.innerWidth <= 1200 && (
+          <DisplayLayout>
+            <DescriptionSection />
+          </DisplayLayout>
+        )}
       </MainInfo>
     </>
   )
