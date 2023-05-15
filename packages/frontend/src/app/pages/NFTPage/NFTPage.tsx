@@ -101,7 +101,7 @@ const NFTPage = observer(() => {
         {
           <PreviewNFTFlow
             getFile={files[0]?.getFile}
-            hiddenFile={token?.hiddenFileMeta}
+            hiddenFile={tokenStore.data?.hiddenFileMeta}
             canViewFile={isOwner || canViewHiddenFiles}
             imageURL={getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')}
           />
