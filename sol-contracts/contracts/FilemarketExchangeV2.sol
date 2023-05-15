@@ -23,8 +23,7 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
 
     uint256 public constant PERCENT_MULTIPLIER = 10000;
 
-    uint256 public feePointPrecision;
-    uint256 public fee;               // fee as (percentage * 10^feePointPrecision). Ex: (precision: 2, value: 1337) => 13.37%
+    uint256 public fee;               // fee as percentage * PERCENT_MULTIPLIER
     uint256 public accumulatedFees;
 
     mapping(IEncryptedFileToken => uint256) public whitelistDeadlines;
@@ -32,21 +31,17 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
 
     mapping(IEncryptedFileToken => mapping(uint256 => Order)) public orders;
 
-    event FeeChanged(uint256 newFee, uint256 newFeePointPrecision);
+    event FeeChanged(uint256 newFee);
 
-    constructor(uint256 _fee, uint256 _feePointPrecision) {
-        require(_feePointPrecision > 0, "FilemarketExchangeV2: fee decimal point precision cannot be less then 0");
-        require(_fee <= 100 * 10**feePointPrecision, "FilemarketExchangeV2: fee cannot be more than 100%");
+    constructor(uint256 _fee) {
+        require(_fee <= 100 * PERCENT_MULTIPLIER, "FilemarketExchangeV2: fee cannot be more than 100%");
         fee = _fee;
-        feePointPrecision = _feePointPrecision;
     }
 
-    function setFee(uint256 _fee, uint256 _feePointPrecision) external onlyOwner {
-        require(_feePointPrecision > 0, "FilemarketExchangeV2: fee decimal point precision cannot be less then 0");
-        require(_fee <= 100 * 10**feePointPrecision, "FilemarketExchangeV2: fee cannot be more than 100%");
+    function setFee(uint256 _fee) external onlyOwner {
+        require(_fee <= 100 * PERCENT_MULTIPLIER, "FilemarketExchangeV2: fee cannot be more than 100%");
         fee = _fee;
-        feePointPrecision = _feePointPrecision;
-        emit FeeChanged(_fee, _feePointPrecision);
+        emit FeeChanged(_fee);
     }
 
     function setWhitelistParams(
@@ -144,7 +139,7 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
         require(order.price != 0, "FilemarketExchangeV2: order doesn't exist");
         require(order.fulfilled, "FilemarketExchangeV2: order wasn't fulfilled");
         
-        uint256 feeAmount = order.price * fee / 10**feePointPrecision;
+        uint256 feeAmount = order.price * fee / (PERCENT_MULTIPLIER * 100);
         uint256 receiverAmount = order.price - feeAmount;
         accumulatedFees += feeAmount;
         

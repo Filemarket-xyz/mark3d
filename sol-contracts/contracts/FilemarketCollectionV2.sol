@@ -34,6 +34,8 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         uint256 passwordSetAt;                                  // password set at
     }
 
+    uint256 public constant PERCENT_MULTIPLIER = 10000;
+    
     uint256 public accessTokenId;                              // access token id
     Mark3dAccessToken public accessToken;                      // Access token contract address
     bytes public collectionData;                               // collection additional data
@@ -41,6 +43,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     mapping(uint256 => string) public tokenUris;               // mapping of token metadata uri
     mapping(uint256 => bytes) public tokenData;                // mapping of token additional data
     mapping(uint256 => uint256) private royalties;             // mapping of token to royalty (represented as percentage * 1000)
+    address public royaltyReceiver;
     uint256 public tokensCount;                                // count of minted tokens
     uint256 public tokensLimit;                                // mint limit
     mapping(uint256 => TransferInfo) private transfers;        // transfer details
@@ -73,6 +76,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         Mark3dAccessToken _accessToken,
         uint256 _accessTokenId,
         address _owner,
+        address _royaltyReceiver,
         bytes memory _data,
         IFraudDecider _fraudDecider,
         bool _fraudLateDecisionEnabled
@@ -89,6 +93,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         fraudLateDecisionEnabled = _fraudLateDecisionEnabled;
         finalizeTransferTimeout = 24 hours;
         salesStartTimestamp = block.timestamp - 1 minutes;
+        royaltyReceiver = _royaltyReceiver;
         _transferOwnership(_owner);
     }
 
@@ -369,7 +374,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     function transferOwnership(address to) public virtual override onlyAccessToken {
         _transferOwnership(to);
     }
-
+    
     function safeTransferFrom(address, address, uint256,
         bytes memory) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IEncryptedFileTokenUpgradeable) {
         revert("common transfer disabled");
@@ -383,6 +388,10 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     function transferFrom(address, address,
         uint256) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IEncryptedFileTokenUpgradeable) {
         revert("common transfer disabled");
+    }
+
+    function setRoyaltyReceiver(address newAddress) external onlyAccessToken {
+        royaltyReceiver = newAddress;
     }
 
     function setFinalizeTransferTimeout(uint256 newTimeout) external onlyOwner {
@@ -401,7 +410,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     /// @param royalty - royalty percentage * 1000
     function _mint(address to, uint256 id, string memory metaUri, bytes memory data, uint256 royalty) internal {
         require(id == tokensCount, "FilemarketCollectionV2: wrong id");
-        require(royalty < 100_000 && royalty >= 0, "FilemarketCollectionV2: royalty cannot be more than 100% or less than 0");
+        require(royalty < 100 * PERCENT_MULTIPLIER && royalty >= 0, "FilemarketCollectionV2: royalty cannot be more than 100% or less than 0");
         tokensCount++;
         _safeMint(to, id);
         tokenUris[id] = metaUri;
@@ -422,7 +431,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     function royaltyInfo(uint256 tokenId, uint256 salePrice) public view override returns (address receiver, uint256 royaltyAmount) {
         require(tokenId < tokensCount, "ERC2981Royalties: Token does not exist");
 
-        royaltyAmount = (salePrice * royalties[tokenId]) / 100_000;
-        return (owner(), royaltyAmount);
+        royaltyAmount = salePrice * royalties[tokenId] / (100 * PERCENT_MULTIPLIER);
+        return (royaltyReceiver, royaltyAmount);
     }
 }
