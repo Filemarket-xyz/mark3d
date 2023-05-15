@@ -423,6 +423,6 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         require(tokenId < tokensCount, "ERC2981Royalties: Token does not exist");
 
         royaltyAmount = (salePrice * royalties[tokenId]) / 100_000;
-        return (ownerOf(tokenId), royaltyAmount);
+        return (owner(), royaltyAmount);
     }
 }
