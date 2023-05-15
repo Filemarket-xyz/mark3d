@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { styled } from '../../../../../styles'
@@ -14,16 +14,25 @@ const NftName = styled('h1', {
   marginBottom: '$2'
 })
 
-export const NftLicence = styled('h5', {})
+export const NftLicence = styled('h5', {
+  marginTop: '$3',
+  '@md': {
+    marginTop: '$2'
+  }
+})
 
 const BaseInfoSection = () => {
   const { collectionAddress, tokenId } = useParams<Params>()
   const { data: token } = useTokenStore(collectionAddress, tokenId)
+  const transactionUrl: string = useMemo(() => {
+    return `https://filfox.info/en/message/${token?.mintTxHash}`
+  }, [token?.mintTxHash])
   return (
         <GridBlock>
             <NftName>{token?.name}</NftName>
-            {/* {token?.date && <Link href={token?.mintSrc ?? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'} target="_blank">Minted on {new Date(token?.date).toDateString().substring(4)}</Link>} */}
-            {token?.license && <NftLicence>License: <Link href={'https://creativecommons.org/licenses/'} target="_blank">{token?.license}</Link></NftLicence>}
+             {token?.mintTxTimestamp &&
+               <Link href={transactionUrl ?? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'} target="_blank">Minted on {new Date(token?.mintTxTimestamp * 1000).toDateString().substring(4)}</Link>}
+            {token?.license && <NftLicence>License: <Link iconRedirect href={'https://creativecommons.org/licenses/'} target="_blank">{token?.license}</Link></NftLicence>}
         </GridBlock>
   )
 }
