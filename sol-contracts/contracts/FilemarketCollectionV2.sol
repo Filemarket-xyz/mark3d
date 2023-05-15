@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/interfaces/IERC2981.sol";
 
 import "./Mark3dAccessToken.sol";
 import "./IFraudDecider.sol";
@@ -10,7 +11,7 @@ import "./IEncryptedFileToken.sol";
 import "./IEncryptedFileTokenUpgradeable.sol";
 import "./IEncryptedFileTokenCallbackReceiver.sol";
 
-contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpgradeable, OwnableUpgradeable {
+contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpgradeable, OwnableUpgradeable, IERC2981 {
     /// @dev TokenData - struct with basic token data
     struct TokenData {
         uint256 id;             // token id
@@ -24,7 +25,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         address initiator;                                      // transfer initiator
         address from;                                           // transfer sender
         address to;                                             // transfer target
-        IEncryptedFileTokenCallbackReceiver callbackReceiver;  // callback receiver
+        IEncryptedFileTokenCallbackReceiver callbackReceiver;   // callback receiver
         bytes data;                                             // transfer data
         bytes publicKey;                                        // public key of receiver
         bytes encryptedPassword;                                // encrypted password
@@ -39,6 +40,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     string private contractMetaUri;                            // contract-level metadata
     mapping(uint256 => string) public tokenUris;               // mapping of token metadata uri
     mapping(uint256 => bytes) public tokenData;                // mapping of token additional data
+    mapping(uint256 => uint256) private royalties;             // mapping of token to royalty (represented as percentage * 1000)
     uint256 public tokensCount;                                // count of minted tokens
     uint256 public tokensLimit;                                // mint limit
     mapping(uint256 => TransferInfo) private transfers;        // transfer details
@@ -93,7 +95,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721EnumerableUpgradeable, IERC165Upgradeable) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721EnumerableUpgradeable, IERC165Upgradeable, IERC165) returns (bool) {
         return
         interfaceId == type(IEncryptedFileTokenUpgradeable).interfaceId ||
         interfaceId == type(IEncryptedFileToken).interfaceId ||
@@ -127,26 +129,29 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         address to,
         uint256 id,
         string memory metaUri,
-        bytes memory _data
+        bytes memory _data,
+        uint256 royalty
     ) external onlyOwner {
         require(bytes(metaUri).length > 0, "FilemarketCollectionV2: empty meta uri");
         require(id < tokensLimit, "FilemarketCollectionV2: limit reached");
-        _mint(to, id, metaUri, _data);
+        _mint(to, id, metaUri, _data, royalty);
     }
 
     /// @dev Mint function without id. Can called only by the owner. Equivalent to mint(to, tokensCount(), metaUri, _data)
     /// @param to - token receiver
     /// @param metaUri - metadata uri
     /// @param _data - additional token data
+    /// @param royalty - royalty percentage * 1000
     function mintWithoutId(
         address to,
         string memory metaUri,
-        bytes memory _data
+        bytes memory _data,
+        uint256 royalty
     ) external onlyOwner returns (uint256) {
         require(bytes(metaUri).length > 0, "FilemarketCollectionV2: empty meta uri");
         uint256 id = tokensCount;
         require(id < tokensLimit, "FilemarketCollectionV2: limit reached");
-        _mint(to, id, metaUri, _data);
+        _mint(to, id, metaUri, _data, royalty);
         return id;
     }
 
@@ -155,13 +160,15 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     /// @param count - tokens quantity to mint
     /// @param metaUris - metadata uri list
     /// @param _data - additional token data list
-    function mintBatch(address to, uint256 count, string[] memory metaUris, bytes[] memory _data) external onlyOwner {
+    /// @param royalty - royalty percentage * 1000
+    function mintBatch(address to, uint256 count, string[] memory metaUris, bytes[] memory _data, uint256[] memory royalty) external onlyOwner {
         require(count == metaUris.length, "FilemarketCollectionV2: metaUri list length must be equal to count");
         require(count == _data.length, "FilemarketCollectionV2: _data list length must be equal to count");
+        require(count == royalty.length, "FilemarketCollectionV2: royalty list length must be equal to count");
         uint256 id = tokensCount;
         for (uint256 i = 0; i < count; i++) {
             require(id < tokensLimit, "FilemarketCollectionV2: limit reached");
-            _mint(to, id, metaUris[i], _data[i]);
+            _mint(to, id, metaUris[i], _data[i], royalty[i]);
             id++;
         }
     }
@@ -391,13 +398,17 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     /// @param id - token id
     /// @param metaUri - metadata uri
     /// @param data - additional token data
-    function _mint(address to, uint256 id, string memory metaUri, bytes memory data) internal {
+    /// @param royalty - royalty percentage * 1000
+    function _mint(address to, uint256 id, string memory metaUri, bytes memory data, uint256 royalty) internal {
         require(id == tokensCount, "FilemarketCollectionV2: wrong id");
+        require(royalty < 100_000 && royalty >= 0, "FilemarketCollectionV2: royalty cannot be more than 100% or less than 0");
         tokensCount++;
         _safeMint(to, id);
         tokenUris[id] = metaUri;
         tokenData[id] = data;
+        royalties[id] = royalty;
     }
+    
 
     function _afterTokenTransfer(
         address from,
@@ -406,5 +417,12 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     ) internal virtual override {
         super._afterTokenTransfer(from, to, tokenId);
         accessToken.updateCollectionIndex(from, to, accessTokenId);
+    }
+
+    function royaltyInfo(uint256 tokenId, uint256 salePrice) public view override returns (address receiver, uint256 royaltyAmount) {
+        require(tokenId < tokensCount, "ERC2981Royalties: Token does not exist");
+
+        royaltyAmount = (salePrice * royalties[tokenId]) / 100_000;
+        return (ownerOf(tokenId), royaltyAmount);
     }
 }
