@@ -1,5 +1,6 @@
 import 'swiper/css'
 import 'swiper/css/navigation'
+import '@google/model-viewer'
 
 import { Loading } from '@nextui-org/react'
 import { useState } from 'react'

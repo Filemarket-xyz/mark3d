@@ -360,7 +360,7 @@ func (s *service) processCollectionCreation(
 			tokenId, tiOk := args[1].(*big.Int)
 
 			if !bnOk || !tiOk {
-				return "", fmt.Errorf("wrong Fn agruments: %w", retry.UnretryableErr)
+				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
 			}
 			return s.tokenURI(ctx, blockNum, tokenId)
 		},
@@ -393,8 +393,8 @@ func (s *service) processCollectionCreation(
 		loadMetaRetryOpts := retry.Options{
 			Fn: func(ctx context.Context, args ...any) (any, error) {
 				uri, ok := args[0].(string)
-				if ok {
-					return "", fmt.Errorf("wrong Fn agruments: %w", retry.UnretryableErr)
+				if !ok {
+					return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
 				}
 				return s.loadTokenParams(ctx, uri)
 			},
@@ -410,7 +410,7 @@ func (s *service) processCollectionCreation(
 			if errors.As(err, &failedErr) {
 				log.Printf("failed to load metadata: %v", failedErr)
 			} else {
-				return err
+				return fmt.Errorf("failed to loadTokenParams: %w", err)
 			}
 		}
 		meta, ok = metaAny.(domain.TokenMetadata)
@@ -551,7 +551,7 @@ func (s *service) tryProcessCollectionTransferEvent(
 			tokenId, tiOk := args[1].(*big.Int)
 
 			if !caOk || !tiOk {
-				return "", fmt.Errorf("wrong Fn agruments: %w", retry.UnretryableErr)
+				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
 			}
 			return s.collectionTokenURI(ctx, collectionAddress, tokenId)
 		},
@@ -585,8 +585,8 @@ func (s *service) tryProcessCollectionTransferEvent(
 		loadMetaRetryOpts := retry.Options{
 			Fn: func(ctx context.Context, args ...any) (any, error) {
 				uri, ok := args[0].(string)
-				if ok {
-					return "", fmt.Errorf("wrong Fn agruments: %w", retry.UnretryableErr)
+				if !ok {
+					return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
 				}
 				return s.loadTokenParams(ctx, uri)
 			},
@@ -603,7 +603,7 @@ func (s *service) tryProcessCollectionTransferEvent(
 				shouldCreatePlaceholder = true
 				log.Printf("failed to load metadata: %v", failedErr)
 			} else {
-				return err
+				return fmt.Errorf("failed to loadTokenParams: %w", err)
 			}
 		}
 
@@ -709,7 +709,7 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 			tokenId, tiOk := args[2].(*big.Int)
 
 			if !bnOk || !aOk || !tiOk {
-				return "", fmt.Errorf("wrong Fn agruments: %w", retry.UnretryableErr)
+				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
 			}
 			return s.getExchangeOrder(ctx, blockNum, address, tokenId)
 		},

@@ -4,7 +4,10 @@ import {AesKeyAndIv, EftAesDerivationFunction, EftRsaDerivationFunction, HkdfFun
 import {aesIVLength, aesKeyLength, aesKeyType, rsaKeyType, rsaModulusLength} from './config';
 import {numberToBuffer} from './utils';
 import {hkdfSha512, hkdfSha512Native} from './hkdf-sha512';
-import {rsaGenerateKeyPair} from './rsa';
+// to get the worker into the build
+// @ts-ignore
+import * as RsaWorker from '../dedicated-wokrers/rsa.worker.js'
+const rsaWorkerUrl = new URL('../dedicated-wokrers/rsa.worker.js', import.meta.url)
 
 export const eftAesDerivationNative = (crypto: Crypto): EftAesDerivationFunction =>
   async (seed, globalSalt, collectionAddress, tokenId) =>
@@ -58,6 +61,12 @@ const eftRsaDerivationAux = async (
       numberToBuffer(dealNumber)]),
     rsaModulusLength,
   )
-  return rsaGenerateKeyPair(OKM)
+
+  return new Promise((resolve) => {
+    const rsaWorker = new Worker(rsaWorkerUrl, { type: 'module' })
+    rsaWorker.onmessage = (e) => resolve(e.data)
+
+    rsaWorker.postMessage({ seed: OKM })
+  })
 }
 

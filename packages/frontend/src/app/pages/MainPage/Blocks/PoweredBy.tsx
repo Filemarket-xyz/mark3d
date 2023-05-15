@@ -5,7 +5,7 @@ import { Container, Txt } from '../../../UIkit'
 import CardPartner from '../components/Card/CardPartner'
 import { PoweredByOptions } from '../helper/CardPartners/data'
 
-const PoweredByContainer = styled(Container, {
+export const PoweredByContainer = styled(Container, {
   paddingTB: '160px',
   display: 'flex',
   flexDirection: 'column',

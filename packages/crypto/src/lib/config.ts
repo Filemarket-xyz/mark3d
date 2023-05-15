@@ -1,3 +1,5 @@
+import {Buffer} from 'buffer'
+
 // all sizes are in bits
 export const rsaModulusLength = 4096
 
