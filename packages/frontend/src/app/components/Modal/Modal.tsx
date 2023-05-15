@@ -23,12 +23,13 @@ const ModalP = styled('p', {
 
 interface InProcessBodyProps {
   text: ReactNode
+  waitForSign?: boolean
 }
-export const InProgressBody = ({ text }: InProcessBodyProps) => (
+export const InProgressBody: React.FC<InProcessBodyProps> = ({ text, waitForSign = true }) => (
   <>
     <Loading size='xl' type='points' />
     <ModalTitle>{text}</ModalTitle>
-    <ModalP>Please check your wallet and sign the transaction</ModalP>
+    {waitForSign && <ModalP>Please check your wallet and sign the transaction</ModalP>}
   </>
 )
 
@@ -40,7 +41,13 @@ export const SuccessNavBody = ({ buttonText, link }: SuccessNavBodyProps) => (
   <>
     <ModalTitle css={{ marginBottom: '$4' }}>Success</ModalTitle>
     <Center>
-      <NavButton to={link} primary type="button">{buttonText}</NavButton>
+      <NavButton
+        primary
+        to={link}
+        type="button"
+      >
+        {buttonText}
+      </NavButton>
     </Center>
   </>
 )
