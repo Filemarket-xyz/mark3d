@@ -82,15 +82,12 @@ module.exports = {
     // other
     'no-use-before-define': 'off',
     'multiline-ternary': 'off',
-    'max-len': [
-      'warn',
-      {
-        code: 120,
-        ignoreStrings: true,
-        ignorePattern: '^\\s*var\\s.+=\\s*require\\s*\\(',
-        ignoreUrls: true
-      }
-    ],
+    'max-len': ['warn', {
+      code: 120,
+      ignoreStrings: true,
+      ignorePattern: '^\\s*var\\s.+=\\s*require\\s*\\(',
+      ignoreUrls: true
+    }],
     'no-void': 'off',
     'indent': ['warn', 2],
   },
