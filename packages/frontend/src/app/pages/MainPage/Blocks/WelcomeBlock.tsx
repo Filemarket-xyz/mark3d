@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { styled } from '../../../../styles'
-import { Button, Container, Link, LinkButton, textVariant, ToolCard } from '../../../UIkit'
+import { Button, Container, Link, LinkButton, textVariant } from '../../../UIkit'
 import { MainBlock } from '../../GetAccessPage/GetAccessPage'
 import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
 import bgStorage from '../img/bgStorage.svg'
@@ -62,12 +62,7 @@ const Description = styled('p', {
     fontSize: '$body2'
   }
 })
-export const ToolCardNarrow = styled(ToolCard, {
-  width: '350px',
-  '@sm': {
-    width: '100%'
-  }
-})
+
 export const ToolCardContent = styled('div', {
   gap: '$2',
   padding: '$4',
