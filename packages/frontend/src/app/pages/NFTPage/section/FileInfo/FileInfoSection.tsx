@@ -1,10 +1,9 @@
 import React, { FC } from 'react'
 
 import { styled } from '../../../../../styles'
-import { FileButton } from '../../../../components/NFT/FileButton'
-import { ProtectedStamp } from '../../../../components/NFT/FileButton/ProtectedStamp'
-import { HiddenFileDownload } from '../../../../hooks/useHiddenFilesDownload'
-import { formatFileSize } from '../../../../utils/nfts/formatFileSize'
+import { FileButton, MintModal, ProtectedStamp } from '../../../../components'
+import { HiddenFileDownload, useStatusModal, useStatusState } from '../../../../hooks'
+import { formatFileSize } from '../../../../utils/nfts'
 import { GridBlock, PropertyTitle } from '../../helper/styles/style'
 
 const FileInfoSectionStyle = styled('div', {
@@ -41,33 +40,43 @@ interface FileInfoSectionProps {
 }
 
 const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHiddenFiles }) => {
+  const { statuses, wrapPromise } = useStatusState()
+  const { modalProps } = useStatusModal({
+    statuses,
+    okMsg: 'File decrypted and download started',
+    loadingMsg: 'Decrypt file in progress'
+  })
+
   return (
-    <GridBlock>
-      <FileInfoSectionStyle>
-        <FileInfoSectionTitle>Hidden file</FileInfoSectionTitle>
-        <FileList>
-          {(isOwner || canViewHiddenFiles) ? (
-            files.map(({ cid, name, size, download }) => (
-              <ProtectedStamp key={cid}>
+    <>
+      <MintModal {...modalProps} />
+      <GridBlock>
+        <FileInfoSectionStyle>
+          <FileInfoSectionTitle>Hidden file</FileInfoSectionTitle>
+          <FileList>
+            {(isOwner || canViewHiddenFiles) ? (
+              files.map(({ cid, name, size, download }) => (
+                <ProtectedStamp key={cid}>
+                  <FileButton
+                    caption={`download (${formatFileSize(size)})`}
+                    name={name}
+                    onPress={wrapPromise(download)}
+                  />
+                </ProtectedStamp>
+              ))
+            ) : (
+              <ProtectedStamp>
                 <FileButton
-                  name={name}
-                  caption={`download (${formatFileSize(size)})`}
-                  onPress={download}
+                  caption="to the owner"
+                  isDisabled={true}
+                  name="Available only"
                 />
               </ProtectedStamp>
-            ))
-          ) : (
-            <ProtectedStamp>
-              <FileButton
-                name="Available only"
-                caption="to the owner"
-                isDisabled={true}
-              />
-            </ProtectedStamp>
-          )}
-        </FileList>
-      </FileInfoSectionStyle>
-    </GridBlock>
+            )}
+          </FileList>
+        </FileInfoSectionStyle>
+      </GridBlock>
+    </>
   )
 }
 
