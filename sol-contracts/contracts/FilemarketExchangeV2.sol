@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/interfaces/IERC2981.sol";
+
 import "./IEncryptedFileToken.sol";
 import "./IEncryptedFileTokenCallbackReceiver.sol";
 
@@ -142,9 +144,18 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
         require(order.price != 0, "FilemarketExchangeV2: order doesn't exist");
         require(order.fulfilled, "FilemarketExchangeV2: order wasn't fulfilled");
         
-        uint256 feeAmount = order.price * fee / 10000;
+        uint256 feeAmount = order.price * fee / 10**feePointPrecision;
+        uint256 receiverAmount = order.price - feeAmount;
         accumulatedFees += feeAmount;
-        order.initiator.transfer(order.price - feeAmount);
+        
+        try IERC2981(_msgSender()).royaltyInfo(tokenId, order.price) returns (address receiver, uint royaltyAmount) {
+            if (receiver != address(0) && royaltyAmount > 0) {
+                receiverAmount -= royaltyAmount;
+                payable(receiver).transfer(royaltyAmount);
+            }
+        } catch {}
+
+        order.initiator.transfer(receiverAmount);
 
         delete orders[IEncryptedFileToken(_msgSender())][tokenId];
     }
