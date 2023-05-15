@@ -51,7 +51,8 @@ module.exports = {
     '@typescript-eslint/return-await': ['warn', 'in-try-catch'],
     '@typescript-eslint/promise-function-async': 'off',
     '@typescript-eslint/no-floating-promises': 'off',
-    'react/jsx-tag-spacing': 'warn'
+    'react/jsx-tag-spacing': 'warn',
+    '@typescript-eslint/no-invalid-void-type': 'off'
   },
   settings: {
     react: {

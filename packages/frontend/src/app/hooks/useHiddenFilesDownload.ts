@@ -16,7 +16,7 @@ export interface HiddenFileDownload {
   cid: string
   name: string
   size: number
-  download: () => void
+  download: () => Promise<boolean | void>
   getFile: () => Promise<DecryptResult<File>>
 }
 
@@ -48,9 +48,10 @@ export function useHiddenFileDownload(
         const file = await owner.decryptFile(encryptedFile, hiddenMeta)
         if (file.ok) {
           saveAs(file.result, file.result.name)
-        } else {
-          errorStore.showError(file.error)
+          return file.ok
         }
+
+        errorStore.showError(file.error)
       },
       getFile: async () => {
         const encryptedFile = await ipfsService.fetchBytes(hiddenFileURI)

@@ -20,14 +20,17 @@ export function useStatusModal({ statuses: { isLoading, result, error }, okMsg, 
     modalBody,
     setModalBody
   } = useModalProperties()
+
   const handleClose = useCallback(() => {
     setModalOpen(false)
   }, [setModalOpen])
+
   useEffect(() => {
     if (isLoading || result || error) {
       setModalOpen(true)
     }
   }, [isLoading, result, error])
+
   useEffect(() => {
     if (isLoading) {
       setModalBody(
@@ -50,6 +53,7 @@ export function useStatusModal({ statuses: { isLoading, result, error }, okMsg, 
       )
     }
   }, [isLoading, result, error, loadingMsg, okMsg, handleClose])
+
   return {
     modalProps: {
       body: modalBody,
