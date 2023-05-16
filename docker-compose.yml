@@ -21,7 +21,7 @@ services:
     ports:
       - "9201:8080"
     volumes:
-      - ~/indexer-swagger:/specs
+      - ~/mark3d-indexer-swagger:/specs
     environment:
       - SWAGGER_JSON=/specs/swagger.yaml
   oracle-redis:
@@ -33,13 +33,13 @@ services:
     image: postgres:13
     volumes:
       - indexer-postgres-data:/var/lib/postgresql/data
-    env_file: ~/.indexer_pg_env
+    env_file: ~/.mark3d_indexer_pg_env
     restart: unless-stopped
   indexer-postgres-migration:
     build:
       context: .
       dockerfile: migrate.Dockerfile
-    env_file: ~/.indexer_pg_env
+    env_file: ~/.mark3d_indexer_pg_env
     depends_on:
       - indexer-postgres
 

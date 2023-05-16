@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Copy .env from host
-        run: cp ~/.oracle_main_env backend/.env
+        run: cp ~/.mark3d_oracle_env backend/.env
       - name: Build contracts
         run: make build-contracts
         working-directory: backend/
@@ -45,7 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Copy .env from host
-        run: cp ~/.indexer_main_env indexer/.env
+        run: cp ~/.mark3d_indexer_env indexer/.env
       - name: Build contracts
         run: make build-contracts
         working-directory: indexer/
