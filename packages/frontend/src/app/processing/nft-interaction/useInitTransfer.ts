@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { BigNumber, ContractReceipt, utils } from 'ethers'
+import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 
 import { mark3dConfig } from '../../config/mark3d'
@@ -20,7 +20,7 @@ export function useInitTransfer({ collectionAddress, tokenId }: Partial<TokenFul
 
     return callContract({ contract, method: 'initTransfer' },
       BigNumber.from(tokenId),
-      utils.getAddress(to),
+      to,
       '0x00',
       nullAddress,
       { gasPrice: mark3dConfig.gasPrice }

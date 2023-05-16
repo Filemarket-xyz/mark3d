@@ -141,6 +141,7 @@ const WelcomeInfo = styled(Container, {
 
 export default function WelcomeBlock() {
   const navigate = useNavigate()
+
   return (
     <BackgroundContainer>
       <WelcomeScreenWrapper>
@@ -178,7 +179,6 @@ export default function WelcomeBlock() {
                 }}
               >
                 Mint EFT right here
-
               </Button>
               <LinkButton
                 mediumMxWidth
@@ -193,7 +193,6 @@ export default function WelcomeBlock() {
                 }}
               >
                 Apply for own shop
-
               </LinkButton>
             </div>
           </NavigateBlock>

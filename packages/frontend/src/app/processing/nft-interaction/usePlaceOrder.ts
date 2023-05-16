@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { BigNumber, BigNumberish, ContractReceipt, utils } from 'ethers'
+import { BigNumber, BigNumberish, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 
 import { mark3dConfig } from '../../config/mark3d'
@@ -27,7 +27,7 @@ export function usePlaceOrder({ collectionAddress, tokenId }: Partial<TokenFullI
     console.log('place order', { collectionAddress, tokenId, price })
 
     return callContract({ contract, method: 'placeOrder' },
-      utils.getAddress(collectionAddress),
+      collectionAddress,
       BigNumber.from(tokenId),
       BigNumber.from(price),
       { gasPrice: mark3dConfig.gasPrice }

@@ -1,4 +1,4 @@
-import { type BigNumber, ContractReceipt, utils } from 'ethers'
+import { type BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -69,7 +69,7 @@ export function useMintNFT(form: MintNFTForm = {}) {
     console.log('mint metadata', metadata)
 
     const receipt = await callContract({ contract, signer, method: 'mint' },
-      utils.getAddress(address),
+      address,
       tokenCountBN,
       metadata.url,
       '0x00',
