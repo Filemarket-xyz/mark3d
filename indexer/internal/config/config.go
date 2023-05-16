@@ -42,6 +42,7 @@ type (
 		RpcUrls                      []string
 		AccessTokenAddress           common.Address
 		ExchangeAddress              common.Address
+		ExchangeV2Address            common.Address
 		FraudDeciderWeb2Address      common.Address
 		AllowedBlockNumberDifference int64
 		TelegramHealthNotifierAddr   string
@@ -94,6 +95,7 @@ func Init(configPath string) (*Config, error) {
 			AccessTokenAddress:           common.HexToAddress(jsonCfg.GetString("service.accessTokenAddress")),
 			FraudDeciderWeb2Address:      common.HexToAddress(jsonCfg.GetString("service.fraudDeciderWeb2Address")),
 			ExchangeAddress:              common.HexToAddress(jsonCfg.GetString("service.exchangeAddress")),
+			ExchangeV2Address:            common.HexToAddress(jsonCfg.GetString("service.exchangeV2Address")),
 			AllowedBlockNumberDifference: jsonCfg.GetInt64("service.allowedBlockNumberDifference"),
 			TelegramHealthNotifierAddr:   envCfg.GetString("TELEGRAM_HEALTH_NOTIFIER_ADDRESS"),
 			HealthCheckInterval:          jsonCfg.GetInt("service.healthCheckInterval"),

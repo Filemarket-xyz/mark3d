@@ -707,6 +707,14 @@ definitions:
         type: string
         description: Цена
         pattern: "^[0-9]+$"
+      currency:
+        type: string
+        description: Адрес ERC20. Если нулевой адрес, то нативная валюта
+        pattern: "0x[0-9a-f-A-F]{40}"
+      exchangeAddress:
+        type: string
+        description: Адрес коллекции
+        pattern: "0x[0-9a-f-A-F]{40}"
       statuses:
         type: array
         description: Статусы ордера

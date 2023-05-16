@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/mark3d-xyz/mark3d/indexer/contracts/exchangeV2"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"io"
 	"log"
@@ -93,7 +94,9 @@ type service struct {
 	accessTokenAddress  common.Address
 	accessTokenInstance *access_token.Mark3dAccessToken
 	exchangeAddress     common.Address
+	exchangeV2Address   common.Address
 	exchangeInstance    *exchange.Mark3dExchange
+	exchangeV2Instance  *exchangeV2.FilemarketExchangeV2
 	closeCh             chan struct{}
 }
 
@@ -113,6 +116,11 @@ func NewService(
 		return nil, err
 	}
 
+	exchangeV2Instance, err := exchangeV2.NewFilemarketExchangeV2(cfg.ExchangeV2Address, nil)
+	if err != nil {
+		return nil, err
+	}
+
 	return &service{
 		ethClient:           ethClient,
 		repository:          repo,
@@ -121,7 +129,9 @@ func NewService(
 		accessTokenAddress:  cfg.AccessTokenAddress,
 		accessTokenInstance: accessTokenInstance,
 		exchangeAddress:     cfg.ExchangeAddress,
+		exchangeV2Address:   cfg.ExchangeV2Address,
 		exchangeInstance:    exchangeInstance,
+		exchangeV2Instance:  exchangeV2Instance,
 		closeCh:             make(chan struct{}),
 	}, nil
 }
@@ -229,7 +239,7 @@ func (s *service) collectionTokenURI(ctx context.Context,
 func (s *service) getExchangeOrder(
 	ctx context.Context,
 	blockNum *big.Int,
-	address common.Address,
+	collectionAddress common.Address,
 	tokenId *big.Int,
 ) (struct {
 	Token     common.Address
@@ -265,12 +275,12 @@ func (s *service) getExchangeOrder(
 		order, err = exchangeInstance.Orders(&bind.CallOpts{
 			Context:     ctx,
 			BlockNumber: blockNum,
-		}, address, tokenId)
+		}, collectionAddress, tokenId)
 		if err != nil {
-			log.Println("get exchange order failed", address, tokenId, err)
+			log.Println("get exchange order failed", collectionAddress, tokenId, err)
 		} else if order.Token == common.HexToAddress(zeroAddress) {
 			err = errors.New("empty collection address")
-			log.Println("get exchange order empty", address, tokenId)
+			log.Println("get exchange order empty", collectionAddress, tokenId)
 		} else {
 			return order, nil
 		}
@@ -282,6 +292,72 @@ func (s *service) getExchangeOrder(
 		Token     common.Address
 		TokenId   *big.Int
 		Price     *big.Int
+		Initiator common.Address
+		Receiver  common.Address
+		Fulfilled bool
+	}{}, err
+}
+
+func (s *service) getExchangeV2Order(
+	ctx context.Context,
+	blockNum *big.Int,
+	collectionAddress common.Address,
+	tokenId *big.Int,
+) (struct {
+	Token     common.Address
+	TokenId   *big.Int
+	Price     *big.Int
+	Currency  common.Address
+	Initiator common.Address
+	Receiver  common.Address
+	Fulfilled bool
+}, error) {
+	var err error
+	for _, cli := range s.ethClient.Clients() {
+		var exchangeInstance *exchangeV2.FilemarketExchangeV2
+
+		exchangeInstance, err = exchangeV2.NewFilemarketExchangeV2(s.exchangeV2Address, cli)
+		if err != nil {
+			return struct {
+				Token     common.Address
+				TokenId   *big.Int
+				Price     *big.Int
+				Currency  common.Address
+				Initiator common.Address
+				Receiver  common.Address
+				Fulfilled bool
+			}{}, err
+		}
+		var order struct {
+			Token     common.Address
+			TokenId   *big.Int
+			Price     *big.Int
+			Currency  common.Address
+			Initiator common.Address
+			Receiver  common.Address
+			Fulfilled bool
+		}
+		order, err = exchangeInstance.Orders(&bind.CallOpts{
+			Context:     ctx,
+			BlockNumber: blockNum,
+		}, collectionAddress, tokenId)
+		if err != nil {
+			log.Println("get exchangeV2 order failed", collectionAddress, tokenId, err)
+		} else if order.Token == common.HexToAddress(zeroAddress) {
+			err = errors.New("empty collection address")
+			log.Println("get exchangeV2 order empty", collectionAddress, tokenId)
+		} else {
+			return order, nil
+		}
+	}
+	if err == nil {
+		err = fmt.Errorf("empty order")
+	}
+	return struct {
+		Token     common.Address
+		TokenId   *big.Int
+		Price     *big.Int
+		Currency  common.Address
 		Initiator common.Address
 		Receiver  common.Address
 		Fulfilled bool
@@ -711,7 +787,57 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 			if !bnOk || !aOk || !tiOk {
 				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
 			}
-			return s.getExchangeOrder(ctx, blockNum, address, tokenId)
+
+			var errV1, errV2 error
+			var order struct {
+				Token           common.Address
+				TokenId         *big.Int
+				Price           *big.Int
+				Currency        common.Address
+				Initiator       common.Address
+				Receiver        common.Address
+				Fulfilled       bool
+				ExchangeAddress common.Address
+			}
+			var orderV2 struct {
+				Token     common.Address
+				TokenId   *big.Int
+				Price     *big.Int
+				Currency  common.Address
+				Initiator common.Address
+				Receiver  common.Address
+				Fulfilled bool
+			}
+
+			orderV1, errV1 := s.getExchangeOrder(ctx, blockNum, address, tokenId)
+			if errV1 != nil {
+				orderV2, errV2 = s.getExchangeV2Order(ctx, blockNum, address, tokenId)
+				if errV2 != nil {
+					return nil, errors.Join(errV1, errV2)
+				}
+
+				order.Token = orderV2.Token
+				order.TokenId = orderV2.TokenId
+				order.Price = orderV2.Price
+				order.Currency = orderV2.Currency
+				order.Initiator = orderV2.Initiator
+				order.Receiver = orderV2.Receiver
+				order.Fulfilled = orderV2.Fulfilled
+				order.ExchangeAddress = s.cfg.ExchangeV2Address
+
+				return order, nil
+			}
+
+			order.Token = orderV1.Token
+			order.TokenId = orderV1.TokenId
+			order.Price = orderV1.Price
+			order.Currency = common.HexToAddress(zeroAddress)
+			order.Initiator = orderV1.Initiator
+			order.Receiver = orderV1.Receiver
+			order.Fulfilled = orderV1.Fulfilled
+			order.ExchangeAddress = s.cfg.ExchangeAddress
+
+			return order, nil
 		},
 		FnArgs: []any{
 			big.NewInt(0).SetUint64(l.BlockNumber),
@@ -729,12 +855,14 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 	}
 
 	order, ok := orderAny.(struct {
-		Token     common.Address
-		TokenId   *big.Int
-		Price     *big.Int
-		Initiator common.Address
-		Receiver  common.Address
-		Fulfilled bool
+		Token           common.Address
+		TokenId         *big.Int
+		Price           *big.Int
+		Currency        common.Address
+		Initiator       common.Address
+		Receiver        common.Address
+		Fulfilled       bool
+		ExchangeAddress common.Address
 	})
 	if !ok {
 		return errors.New("failed to cast order")
@@ -760,8 +888,10 @@ func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
 		return err
 	}
 	o := &domain.Order{
-		TransferId: id,
-		Price:      order.Price,
+		TransferId:      id,
+		Price:           order.Price,
+		Currency:        order.Currency,
+		ExchangeAddress: order.ExchangeAddress,
 	}
 	orderId, err := s.repository.InsertOrder(ctx, tx, o)
 	if err != nil {
@@ -1163,7 +1293,7 @@ func (s *service) processBlock(block *types.Block) error {
 		}
 		if *t.To() == s.cfg.AccessTokenAddress {
 			err = s.processAccessTokenTx(ctx, tx, t)
-		} else if *t.To() == s.cfg.ExchangeAddress {
+		} else if *t.To() == s.cfg.ExchangeAddress || *t.To() == s.cfg.ExchangeV2Address {
 			err = s.processCollectionTx(ctx, tx, t)
 		} else if *t.To() == s.cfg.FraudDeciderWeb2Address {
 			err = s.processCollectionTx(ctx, tx, t)
