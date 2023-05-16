@@ -4,7 +4,7 @@ import { BigNumber, Contract, ContractTransaction, Signer } from 'ethers'
 
 import { wagmiClient } from '../../config/web3Modal'
 
-const TWO_MINUTES = 120_000
+const FIVE_MINUTES = 300_000
 const fallbackError = { code: 500, message: 'unknown' }
 
 const stringifyContractError = (error: any) => {
@@ -83,7 +83,7 @@ export const callContract = async ({
       return await tx.wait()
     }
 
-    return await getTransactionReceipt(tx.hash)
+    return await getTxReceipt(tx)
   } catch (error: any) {
     console.error(error)
 
@@ -95,22 +95,30 @@ export const wait = (miliseconds: number) => new Promise<void>((resolve) => {
   setTimeout(() => resolve(), miliseconds)
 })
 
-export const getTransactionReceipt = async (txHash: string) => {
+const pingTx = async (txHash: string) => {
   let receipt = null
   const start = Date.now()
 
   while (receipt === null) {
-    // maybe more?
-    if (Date.now() - start > TWO_MINUTES) {
-      throw new JsonRpcError(504, 'The transaction is taking too long to execute')
-    }
+    if (Date.now() - start > FIVE_MINUTES) break
+    await wait(1000)
 
     receipt = await wagmiClient.provider.getTransactionReceipt(txHash)
 
-    if (receipt === null) {
-      await wait(1000)
-      continue
-    }
+    if (receipt === null) continue
+  }
+
+  return receipt
+}
+
+const getTxReceipt = async (tx: ContractTransaction) => {
+  const receipt = await Promise.race([
+    tx.wait(),
+    pingTx(tx.hash)
+  ])
+
+  if (!receipt) {
+    throw new JsonRpcError(503, `The transaction ${tx.hash} is failed`)
   }
 
   return receipt
