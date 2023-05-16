@@ -46,6 +46,8 @@ type (
 		AllowedBlockNumberDifference int64
 		TelegramHealthNotifierAddr   string
 		HealthCheckInterval          int
+		CoinMarketCapApiKey          string
+		CurrencyConversionCacheTTL   string
 		Mode                         string
 	}
 
@@ -97,6 +99,8 @@ func Init(configPath string) (*Config, error) {
 			AllowedBlockNumberDifference: jsonCfg.GetInt64("service.allowedBlockNumberDifference"),
 			TelegramHealthNotifierAddr:   envCfg.GetString("TELEGRAM_HEALTH_NOTIFIER_ADDRESS"),
 			HealthCheckInterval:          jsonCfg.GetInt("service.healthCheckInterval"),
+			CoinMarketCapApiKey:          envCfg.GetString("COINMARKETCAP_API_KEY"),
+			CurrencyConversionCacheTTL:   jsonCfg.GetString("currencyConversionCacheTTL"),
 			Mode:                         jsonCfg.GetString("service.mode"),
 		},
 		Redis: &RedisConfig{
