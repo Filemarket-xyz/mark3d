@@ -24,10 +24,7 @@ import TagsSection from './section/Tags/TagsSection'
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',
-  height: 700,
-  '@md': {
-    height: 500
-  },
+  height: 555,
   background: '$gradients$background',
   paddingTop: 'calc($layout$navBarHeight)',
   paddingBottom: '$6',
@@ -35,6 +32,7 @@ const NFTPreviewContainer = styled('div', {
 })
 
 const MainInfo = styled(PageLayout, {
+  marginTop: '-80px',
   paddingTB: 48,
   fontSize: '16px',
   gridTemplateColumns: '3fr 1fr',
@@ -103,6 +101,7 @@ const NFTPage = observer(() => {
         {
           <PreviewNFTFlow
             getFile={files[0]?.getFile}
+            hiddenFile={tokenStore.data?.hiddenFileMeta}
             canViewFile={isOwner || canViewHiddenFiles}
             imageURL={getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')}
           />
