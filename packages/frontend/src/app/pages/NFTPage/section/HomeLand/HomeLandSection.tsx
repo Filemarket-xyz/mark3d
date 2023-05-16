@@ -26,55 +26,58 @@ const HomeLandSection = () => {
   const { data: token } = useTokenStore(collectionAddress, tokenId)
   const { collection } = useCollectionStore(collectionAddress)
   return (
-        <GridBlock>
-            <BadgesContainer>
-                <NavLink
-                    to={
-                        collection?.address
-                          ? `/collection/${collection?.address}`
-                          : location.pathname
-                    }
-                >
-                    <Badge
-                        image={{
-                          url: collection?.image
-                            ? getHttpLinkFromIpfsString(collection.image)
-                            : gradientPlaceholderImg,
-                          borderRadius: 'roundedSquare'
-                        }}
-                        content={{ title: 'Collection', value: collection?.name ?? '' }}
-                    />
-                </NavLink>
-                <NavLink
-                    to={collection?.creator ? `/profile/${collection?.creator}` : location.pathname}
-                >
-                    <Badge
-                        image={{
-                          borderRadius: 'circle',
-                          url: getProfileImageUrl(collection?.creator ?? '')
-                        }}
-                        content={{
-                          title: 'Creator',
-                          value: reduceAddress(collection?.creator ?? '')
-                        }}
-                    />
-                </NavLink>
-                <NavLink
-                    to={token?.owner ? `/profile/${token?.owner}` : location.pathname}
-                >
-                    <Badge
-                        image={{
-                          borderRadius: 'circle',
-                          url: getProfileImageUrl(token?.owner ?? '')
-                        }}
-                        content={{
-                          title: 'Owner',
-                          value: reduceAddress(token?.owner ?? '')
-                        }}
-                    />
-                </NavLink>
-            </BadgesContainer>
-        </GridBlock>
+    <GridBlock>
+      <BadgesContainer>
+        <NavLink
+          mdFullWidth
+          to={
+            collection?.address
+              ? `/collection/${collection?.address}`
+              : location.pathname
+          }
+        >
+          <Badge
+            content={{ title: 'Collection', value: collection?.name ?? '' }}
+            image={{
+              url: collection?.image
+                ? getHttpLinkFromIpfsString(collection.image)
+                : gradientPlaceholderImg,
+              borderRadius: 'roundedSquare'
+            }}
+          />
+        </NavLink>
+        <NavLink
+          mdFullWidth
+          to={collection?.creator ? `/profile/${collection?.creator}` : location.pathname}
+        >
+          <Badge
+            image={{
+              borderRadius: 'circle',
+              url: getProfileImageUrl(collection?.creator ?? '')
+            }}
+            content={{
+              title: 'Creator',
+              value: reduceAddress(collection?.creator ?? '')
+            }}
+          />
+        </NavLink>
+        <NavLink
+          mdFullWidth
+          to={token?.owner ? `/profile/${token?.owner}` : location.pathname}
+        >
+          <Badge
+            image={{
+              borderRadius: 'circle',
+              url: getProfileImageUrl(token?.owner ?? '')
+            }}
+            content={{
+              title: 'Owner',
+              value: reduceAddress(token?.owner ?? '')
+            }}
+          />
+        </NavLink>
+      </BadgesContainer>
+    </GridBlock>
   )
 }
 

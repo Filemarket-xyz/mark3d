@@ -4,6 +4,7 @@ import '@google/model-viewer'
 
 import { Loading } from '@nextui-org/react'
 import { useEffect, useMemo, useState } from 'react'
+import screenfull from 'screenfull'
 import { Navigation, Pagination } from 'swiper'
 import { Swiper, SwiperSlide as SwiperSlideUnstyled } from 'swiper/react'
 import { useAccount } from 'wagmi'
@@ -83,7 +84,7 @@ export const PreviewNFTFlow = ({
     state: PreviewState
     data?: string
   }>()
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
   const { tokenMetaStore, tokenStore } = useStores()
   const seed = useSeed(address)
   const [is3D, setIs3D] = useState<boolean | undefined>(undefined)
@@ -99,8 +100,8 @@ export const PreviewNFTFlow = ({
   }, [hiddenFile])
 
   const isLoading: boolean = useMemo(() => {
-    return tokenMetaStore.isLoading || tokenStore.isLoading || !seed
-  }, [tokenMetaStore.isLoading, tokenStore.isLoading, !seed])
+    return (tokenMetaStore.isLoading || tokenStore.isLoading || !seed) && isConnected
+  }, [tokenMetaStore.isLoading, tokenStore.isLoading, !seed, isConnected])
 
   const isCanView: boolean = useMemo(() => {
     if (!getFile) return false
@@ -108,13 +109,13 @@ export const PreviewNFTFlow = ({
     const availableExtensionsImage: string[] = ['jpg', 'jpeg', 'png', 'gif', 'bmp']
     if (availableExtensions3D.includes(String(extensionFile))) {
       setIs3D(true)
-      return true
+      return canViewFile
     } else if (availableExtensionsImage.includes(String(extensionFile))) {
       setIs3D(false)
-      return true
+      return canViewFile
     }
     return false
-  }, [hiddenFile, getFile])
+  }, [hiddenFile, getFile, canViewFile])
 
   const handleLoadClick = async () => {
     if (!getFile) return
@@ -169,10 +170,11 @@ export const PreviewNFTFlow = ({
       void handleLoadClick()
       setIsViewFile(true)
       setIsViewedMounted(true)
-    } else {
+    }
+    if (!isConnected) {
       setIsViewFile(false)
     }
-  }, [getFile, isCanView, seed, isLoading])
+  }, [getFile, isCanView, seed, isLoading, isConnected])
 
   useEffect(() => {
     if (isLoading) {
@@ -195,9 +197,9 @@ export const PreviewNFTFlow = ({
           '--swiper-navigation-size': '20px'
         }}
       >
-        {canViewFile && (
-          <SwiperSlide>
-            {isViewFile ? (
+        <SwiperSlide>
+          {isViewFile ? (
+            isCanView && (
               <>
                 {previewState?.state === PreviewState.LOADED ? (
                   is3D ? (
@@ -232,23 +234,29 @@ export const PreviewNFTFlow = ({
                 )}
               </>
             )
-              : (
-                <>
-                  {isLoading ? <Loading size='xl' color={'white'} /> : (
-                    <Image
-                      src={imageURL}
-                      onError={({ currentTarget }) => {
-                        currentTarget.onerror = null
-                        currentTarget.src = gradientPlaceholderImg
-                      }}
-                    />
-                  )}
-                </>
-
+          )
+            : (
+              <>
+                {isLoading ? <Loading size='xl' color={'white'} /> : (
+                  <Image
+                    src={imageURL}
+                    onError={({ currentTarget }) => {
+                      currentTarget.onerror = null
+                      currentTarget.src = gradientPlaceholderImg
+                    }}
+                    onClick={(e) => {
+                      if (screenfull.isFullscreen) {
+                        screenfull.exit()
+                      } else if (screenfull.isEnabled) {
+                        screenfull.request(e.target as Element)
+                      }
+                    }}
+                  />
+                )}
+              </>
               )}
-            {(isCanView && !isLoading) && <ViewFile isPreviewView={!isViewFile} type={typeFile} onClick={() => { setIsViewFile(value => !value); handleLoadClick() }} />}
-          </SwiperSlide>
-        )}
+          {(isCanView && !isLoading) && <ViewFile isPreviewView={!isViewFile} type={typeFile} onClick={() => { setIsViewFile(value => !value); handleLoadClick() }} />}
+        </SwiperSlide>
       </SwiperStyled>
     </CenterContainer>
   )

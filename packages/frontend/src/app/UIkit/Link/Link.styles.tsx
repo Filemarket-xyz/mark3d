@@ -83,6 +83,11 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
               lineHeight: '14px'
             }
           }
+        },
+        mdFullWidth: {
+          true: {
+            width: '100%'
+          }
         }
       }
     })

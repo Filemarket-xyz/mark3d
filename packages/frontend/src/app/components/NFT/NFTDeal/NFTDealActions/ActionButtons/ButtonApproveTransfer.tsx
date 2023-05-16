@@ -28,11 +28,11 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
         primary
         fullWidth
         borderRadiusSecond
+        isDisabled={isLoading}
         onPress={async () => {
           await approveTransfer()
           callback?.()
         }}
-        isDisabled={isLoading}
       >
         Transfer hidden file
       </Button>

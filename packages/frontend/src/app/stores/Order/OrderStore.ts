@@ -31,6 +31,7 @@ export class OrderStore implements IStoreRequester,
   }
 
   private request(tokenFullId: TokenFullId) {
+    console.log('RESPONSEEEE')
     storeRequest<Order | null>(
       this,
       api.orders.ordersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),

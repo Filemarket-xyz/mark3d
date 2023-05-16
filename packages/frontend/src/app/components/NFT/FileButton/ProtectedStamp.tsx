@@ -62,10 +62,28 @@ export const ProtectedStamp: FC<PropsWithChildren> = ({ children }) => {
   return (
     <LayoutStyled>
       {children}
-      <Tooltip content={'Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT.'}
-               rounded color="primary" className={'tooltip'}>
+      <Tooltip
+        rounded
+        trigger={'hover'}
+        content={<div>{'Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT.'}</div>}
+        color="primary"
+        className={'tooltip'}
+        css={{
+          width: '368px',
+          '@sm': {
+            width: '90%'
+          }
+        }}
+      >
         <div className="buttons">
-          <Button className={'buttons'}><span><img src={Protected} className={'firstImg'} />Protected by EFT techology <img src={QuestionMark} className={'secondImg'} /></span></Button>
+          <Button className={'buttons'}>
+            <span>
+              <img src={Protected} className={'firstImg'} />
+              Protected by EFT techology
+              {' '}
+              <img src={QuestionMark} className={'secondImg'} />
+            </span>
+          </Button>
         </div>
       </Tooltip>
     </LayoutStyled>

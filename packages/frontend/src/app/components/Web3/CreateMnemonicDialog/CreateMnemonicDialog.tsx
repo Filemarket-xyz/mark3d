@@ -64,49 +64,55 @@ export function CreateMnemonicDialog({ open, onClose, onSuccess }: AppDialogProp
     <Modal
       closeButton
       open={open}
-      onClose={onClose}
       width={adaptive({
         sm: '400px',
         md: '650px',
         lg: '950px',
         defaultValue: '950px'
       })}
+      onClose={onClose}
     >
       <ModalTitle>{mnemonic ? 'Remember and save this seed phrase (mnemonic) ' : 'Enter a password'}</ModalTitle>
       <CreatedMnemonicStyle>
         <div className="contentModalWindow">
-          {mnemonic && <>
+          {mnemonic && (
+            <>
               <div className="mnemonic">
-                  <Txt h5>{mnemonic}</Txt>
+                <Txt h5>{mnemonic}</Txt>
               </div>
               <div className="grayText">
-                  <Txt h5>You need to save this phrase somewhere, because it can be used
-                      to log in from other devices or to restore your account in the future</Txt>
+                <Txt h5>
+                  You need to save this phrase somewhere, because it can be used
+                  to log in from other devices or to restore your account in the future
+                </Txt>
               </div>
-          </>}
-          {!mnemonic && <CreatePasswordForm onSubmit={async ({ password }) => {
-            if (address) {
-              const seedProvider = await seedProviderFactory.getSeedProvider(address)
-              const newMnemonic = createMnemonic()
-              const seed = Buffer.from(mnemonicToEntropy(newMnemonic), 'hex')
-              console.log(mnemonicToEntropy(newMnemonic))
-              // console.log(entropyToMnemonic(seed.toString()))
-              await seedProvider.set(seed, password)
-              setMnemonic(newMnemonic)
-              onSuccess?.()
-            }
-          }} />}
+            </>
+          )}
+          {!mnemonic && (
+            <CreatePasswordForm onSubmit={async ({ password }) => {
+              if (address) {
+                const seedProvider = await seedProviderFactory.getSeedProvider(address)
+                const newMnemonic = createMnemonic()
+                const seed = Buffer.from(mnemonicToEntropy(newMnemonic), 'hex')
+                await seedProvider.set(seed, password)
+                setMnemonic(newMnemonic)
+                onSuccess?.()
+              }
+            }}
+            />
+          )}
         </div>
-        {mnemonic &&
-            <ButtonContainer>
-                <Button
-                    type="submit"
-                    primary
-                    onClick={onClose}
-                >
-                    Ok
-                </Button>
-            </ButtonContainer>}
+        {mnemonic && (
+          <ButtonContainer>
+            <Button
+              primary
+              type="submit"
+              onClick={onClose}
+            >
+              Ok
+            </Button>
+          </ButtonContainer>
+        )}
       </CreatedMnemonicStyle>
     </Modal>
   )

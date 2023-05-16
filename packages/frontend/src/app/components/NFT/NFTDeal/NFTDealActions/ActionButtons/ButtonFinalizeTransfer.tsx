@@ -26,11 +26,11 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
         primary
         fullWidth
         borderRadiusSecond
+        isDisabled={isLoading}
         onPress={async () => {
           await finalizeTransfer()
           callback?.()
         }}
-        isDisabled={isLoading}
       >
         Send payment
       </Button>

@@ -68,13 +68,15 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
                 </ProtectedStamp>
               ))
             ) : (
-              <ProtectedStamp>
-                <FileButton
-                  caption="to the owner"
-                  isDisabled={true}
-                  name="Available only"
-                />
-              </ProtectedStamp>
+              files.map(({ cid, name }) => (
+                <ProtectedStamp key={cid}>
+                  <FileButton
+                    caption="to the owner"
+                    isDisabled={true}
+                    name={name}
+                  />
+                </ProtectedStamp>
+              ))
             )}
           </FileList>
         </FileInfoSectionStyle>

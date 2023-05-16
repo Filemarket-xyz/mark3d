@@ -58,6 +58,7 @@
     "react-router-dom": "^6.4.2",
     "react-stately": "^3.18.0",
     "reseter.css": "^2.0.0",
+    "screenfull": "^6.0.2",
     "swagger-typescript-api": "^12.0.2",
     "swiper": "^8.4.4",
     "wagmi": "^0.12.1"
