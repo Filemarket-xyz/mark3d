@@ -3,7 +3,7 @@ services:
   indexer-service:
     image: mark3d-indexer-service:latest
     ports:
-      - "9202:9202"
+      - "9502:9502"
     depends_on:
       - indexer-postgres
     volumes:
@@ -19,7 +19,7 @@ services:
   indexer-swagger:
     image: swaggerapi/swagger-ui:latest
     ports:
-      - "9201:8080"
+      - "9501:8080"
     volumes:
       - ~/mark3d-indexer-swagger:/specs
     environment:
