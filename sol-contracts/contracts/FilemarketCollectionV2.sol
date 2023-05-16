@@ -42,7 +42,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     string private contractMetaUri;                            // contract-level metadata
     mapping(uint256 => string) public tokenUris;               // mapping of token metadata uri
     mapping(uint256 => bytes) public tokenData;                // mapping of token additional data
-    mapping(uint256 => uint256) private royalties;             // mapping of token to royalty (represented as percentage * 1000)
+    mapping(uint256 => uint256) private royalties;             // mapping of token to royalty
     address public royaltyReceiver;
     uint256 public tokensCount;                                // count of minted tokens
     uint256 public tokensLimit;                                // mint limit
@@ -410,7 +410,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     /// @param royalty - royalty percentage * 1000
     function _mint(address to, uint256 id, string memory metaUri, bytes memory data, uint256 royalty) internal {
         require(id == tokensCount, "FilemarketCollectionV2: wrong id");
-        require(royalty < 100 * PERCENT_MULTIPLIER && royalty >= 0, "FilemarketCollectionV2: royalty cannot be more than 100% or less than 0");
+        require(royalty < PERCENT_MULTIPLIER && royalty >= 0, "FilemarketCollectionV2: royalty cannot be more than 100% or less than 0");
         tokensCount++;
         _safeMint(to, id);
         tokenUris[id] = metaUri;
@@ -431,7 +431,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     function royaltyInfo(uint256 tokenId, uint256 salePrice) public view override returns (address receiver, uint256 royaltyAmount) {
         require(tokenId < tokensCount, "ERC2981Royalties: Token does not exist");
 
-        royaltyAmount = salePrice * royalties[tokenId] / (100 * PERCENT_MULTIPLIER);
+        royaltyAmount = salePrice * royalties[tokenId] / (PERCENT_MULTIPLIER);
         return (royaltyReceiver, royaltyAmount);
     }
 }
