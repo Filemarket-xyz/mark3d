@@ -36,7 +36,7 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getGlobalSalt() {
     const contract = this.contractProvider.getAccessTokenContract()
 
-    const globalSalt = await catchContractGetterError(contract.globalSalt)
+    const globalSalt = await catchContractGetterError<`0x${string}`>({ contract, method: 'globalSalt' })
 
     return hexToBuffer(globalSalt)
   }
@@ -44,13 +44,13 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getCollectionCreator(address: ArrayBuffer) {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(address))
 
-    return catchContractGetterError(contract.owner)
+    return catchContractGetterError<`0x${string}`>({ contract, method: 'owner' })
   }
 
   async getTransferCount(collectionAddress: ArrayBuffer, tokenId: number) {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(collectionAddress))
 
-    const transferCountBN = await catchContractGetterError(() => contract.transferCounts(BigNumber.from(tokenId)))
+    const transferCountBN = await catchContractGetterError<BigNumber>({ contract, method: 'transferCounts' }, BigNumber.from(tokenId))
 
     return transferCountBN.toNumber()
   }

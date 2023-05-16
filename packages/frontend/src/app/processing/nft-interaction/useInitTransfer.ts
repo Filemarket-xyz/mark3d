@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { BigNumber, ContractReceipt } from 'ethers'
+import { BigNumber, ContractReceipt, utils } from 'ethers'
 import { useCallback } from 'react'
 
 import { mark3dConfig } from '../../config/mark3d'
@@ -18,13 +18,13 @@ export function useInitTransfer({ collectionAddress, tokenId }: Partial<TokenFul
     assert(to, 'receiver address ("to") is undefined')
     console.log('init transfer', { tokenId, to, callbackReceiver: nullAddress })
 
-    return catchContractCallError(() => contract.initTransfer(
+    return catchContractCallError({ contract, method: 'initTransfer' },
       BigNumber.from(tokenId),
-      to as `0x${string}`,
+      utils.getAddress(to),
       '0x00',
       nullAddress,
       { gasPrice: mark3dConfig.gasPrice }
-    ))
+    )
   }), [contract, signer, wrapPromise, collectionAddress, tokenId, to])
   return {
     ...statuses,

@@ -18,10 +18,10 @@ export function useFinalizeTransfer({ collectionAddress, tokenId }: Partial<Toke
     assertTokenId(tokenId)
     console.log('finalize transfer', { tokenId })
 
-    return catchContractCallError(() => contract.finalizeTransfer(
+    return catchContractCallError({ contract, method: 'finalizeTransfer' },
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice }
-    ))
+    )
   }), [contract, signer, wrapPromise])
 
   return {

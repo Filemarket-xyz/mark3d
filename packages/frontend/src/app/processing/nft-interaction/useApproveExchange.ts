@@ -23,11 +23,11 @@ export function useApproveExchange({ collectionAddress, tokenId }: Partial<Token
 
     console.log('approve exchange', 'exchange contract address', mark3dConfig.exchangeToken.address, 'tokenId', tokenId)
 
-    return catchContractCallError(() => contract.approve(
+    return catchContractCallError({ contract, method: 'approve' },
       mark3dConfig.exchangeToken.address,
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice }
-    ))
+    )
   }), [wrapPromise, contract, signer, tokenId])
   return {
     ...statuses,

@@ -18,11 +18,11 @@ export function useDraftTransfer({ collectionAddress, tokenId }: Partial<TokenFu
     assertTokenId(tokenId)
     console.log('draft transfer', { tokenId, callbackReceiver: nullAddress })
 
-    return catchContractCallError(() => contract.draftTransfer(
+    return catchContractCallError({ contract, method: 'draftTransfer' },
       BigNumber.from(tokenId),
       nullAddress,
       { gasPrice: mark3dConfig.gasPrice }
-    ))
+    )
   }), [contract, signer, wrapPromise])
 
   return {

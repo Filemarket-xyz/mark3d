@@ -39,7 +39,7 @@ export function useFulfillOrder(
     const publicKey = await buyer.initBuy()
     console.log('fulfill order', { collectionAddress, publicKey, tokenId, price })
 
-    return catchContractCallError(() => exchangeContract.fulfillOrder(
+    return catchContractCallError({ contract: exchangeContract, method: 'fulfillOrder' },
       utils.getAddress(collectionAddress),
       bufferToEtherHex(publicKey),
       BigNumber.from(tokenId),
@@ -47,7 +47,7 @@ export function useFulfillOrder(
         value: BigNumber.from(price),
         gasPrice: mark3dConfig.gasPrice
       }
-    ))
+    )
   }), [exchangeContract, collectionContract, address, wrapPromise, signer, collectionAddress, tokenId, price])
   return { ...statuses, fulfillOrder }
 }

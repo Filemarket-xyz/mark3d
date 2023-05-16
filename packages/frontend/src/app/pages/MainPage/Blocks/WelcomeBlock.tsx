@@ -153,24 +153,55 @@ export default function WelcomeBlock() {
           <Title>
             No code NFT shop builder with privacy layer & perpetual decentralized storage
           </Title>
-          <Description>Multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing FIlecoin decentralized storage with privacy protocol for NFTs - <Link style={{ fontSize: '1.25rem', borderBottom: '1px solid #0090FF', fontWeight: '400' }} target={'_blank'} href={'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34'}>Encrypted FileToken (EFT)</Link>.</Description>
+          <Description>
+            Multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing FIlecoin decentralized storage with privacy protocol for NFTs -
+            {' '}
+            <Link
+              target={'_blank'}
+              href={'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34'}
+              style={{
+                fontSize: '1.25rem',
+                borderBottom: '1px solid #0090FF',
+                fontWeight: '400'
+              }}
+            >
+              Encrypted FileToken (EFT)
+
+            </Link>
+            .
+          </Description>
           <NavigateBlock>
             <NavigateTitle>Start tokenizing your content/data today:</NavigateTitle>
             <div className='buttonContainer'>
-              <Button mediumMxWidth whiteWithBlue largeHg style={{ height: '80px', padding: '28px 59px' }}
-                      onClick={() => {
-                        navigate('/create/nft')
-                      }}>Mint EFT right here</Button>
+              <Button
+                mediumMxWidth
+                whiteWithBlue
+                largeHg
+                style={{ height: '80px', padding: '28px 59px' }}
+                onClick={() => {
+                  navigate('/create/nft')
+                }}
+              >
+                Mint EFT right here
+
+              </Button>
               <LinkButton
                 mediumMxWidth
                 whiteWithBlue
                 largeHg
-                style={{ height: '80px', padding: '28px 59px', textAlign: 'center' }}
                 href={'https://form.typeform.com/to/gulmhUKG?typeform-source=filemarket.xyz'}
                 target={'_blank'}
-              >Apply for own shop</LinkButton>
+                style={{
+                  height: '80px',
+                  padding: '28px 59px',
+                  textAlign: 'center'
+                }}
+              >
+                Apply for own shop
+
+              </LinkButton>
             </div>
-            </NavigateBlock>
+          </NavigateBlock>
           <SupportedBy />
           <HowToGetStart />
         </WelcomeInfo>

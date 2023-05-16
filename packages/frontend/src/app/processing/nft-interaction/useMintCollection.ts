@@ -45,7 +45,8 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
     console.log('mint metadata', metadata)
 
     const salt = `0x${Buffer.from(randomBytes(32)).toString('hex')}` as const
-    const receipt: ContractReceipt = await catchContractCallError(() => contract.createCollection(
+    const receipt: ContractReceipt = await catchContractCallError(
+      { contract, method: 'createCollection', ignoreTxFailture: true },
       salt,
       name,
       symbol,
@@ -53,7 +54,7 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       metadata.url,
       '0x00',
       { gasPrice: mark3dConfig.gasPrice }
-    ), { ignoreTxFailture: true })
+    )
 
     const createCollectionEvent = receipt.events
       ?.find(event => event.event === Mark3dAccessTokenEventNames.CollectionCreation)

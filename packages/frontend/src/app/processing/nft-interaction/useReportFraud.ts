@@ -27,11 +27,11 @@ export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFull
     const privateKey = await buyer.revealRsaPrivateKey()
     console.log('report fraud', { tokenId, privateKey })
 
-    return catchContractCallError(() => contract.reportFraud(
+    return catchContractCallError({ contract, method: 'reportFraud' },
       BigNumber.from(tokenId),
       bufferToEtherHex(privateKey),
       { gasPrice: mark3dConfig.gasPrice }
-    ))
+    )
   }), [contract, signer, address, wrapPromise])
 
   return {

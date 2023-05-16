@@ -1,4 +1,4 @@
-import { ContractReceipt } from 'ethers'
+import { type BigNumber, ContractReceipt, utils } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -45,7 +45,7 @@ export function useMintNFT(form: MintNFTForm = {}) {
       throw Error('CreateCollection form is not filled')
     }
 
-    const tokenCountBN = await catchContractGetterError(contract.tokensCount)
+    const tokenCountBN = await catchContractGetterError<BigNumber>({ contract, method: 'tokensCount' })
     const owner = await factory.getOwner(address, collectionAddress, tokenCountBN.toNumber())
 
     const hiddenFileEncrypted = await owner.encryptFile(hiddenFile)
@@ -68,13 +68,13 @@ export function useMintNFT(form: MintNFTForm = {}) {
     })
     console.log('mint metadata', metadata)
 
-    const receipt = await catchContractCallError(() => contract.mint(
-      address as `0x${string}`,
+    const receipt = await catchContractCallError({ contract, method: 'mint' },
+      utils.getAddress(address),
       tokenCountBN,
       metadata.url,
       '0x00',
       { gasPrice: mark3dConfig.gasPrice }
-    ))
+    )
 
     return {
       tokenId: tokenCountBN.toString(),

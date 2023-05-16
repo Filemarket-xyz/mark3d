@@ -23,11 +23,11 @@ export function useCancelOrder({ collectionAddress, tokenId }: Partial<TokenFull
     assertSigner(signer)
     console.log('cancel order', { collectionAddress, tokenId })
 
-    return catchContractCallError(() => contract.cancelOrder(
+    return catchContractCallError({ contract, method: 'cancelOrder' },
       collectionAddress as `0x${string}`,
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice }
-    ))
+    )
   }), [contract, signer, wrapPromise, collectionAddress, tokenId])
   return {
     ...statuses,

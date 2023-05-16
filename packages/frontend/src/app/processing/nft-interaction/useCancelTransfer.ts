@@ -18,10 +18,10 @@ export function useCancelTransfer({ collectionAddress, tokenId }: Partial<TokenF
     assertTokenId(tokenId)
     console.log('cancel transfer', { tokenId })
 
-    return catchContractCallError(() => contract.cancelTransfer(
+    return catchContractCallError({ contract, method: 'cancelTransfer' },
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice }
-    ))
+    )
   }), [contract, signer, wrapPromise])
 
   return {

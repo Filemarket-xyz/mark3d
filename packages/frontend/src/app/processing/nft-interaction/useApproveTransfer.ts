@@ -32,11 +32,11 @@ export function useApproveTransfer({ collectionAddress, tokenId }: Partial<Token
     const encryptedFilePassword = await owner.encryptFilePassword(hexToBuffer(publicKey))
     console.log('approve transfer', { tokenId, encryptedFilePassword })
 
-    return catchContractCallError(() => contract.approveTransfer(
+    return catchContractCallError({ contract, method: 'approveTransfer' },
       BigNumber.from(tokenId),
       bufferToEtherHex(encryptedFilePassword),
       { gasPrice: mark3dConfig.gasPrice }
-    ))
+    )
   }), [contract, signer, address, wrapPromise, publicKey])
 
   return {

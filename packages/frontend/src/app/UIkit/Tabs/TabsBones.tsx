@@ -6,8 +6,8 @@ export default function TabsBones(props: ComponentProps<typeof MUITabs>) {
   return (
     <MUITabs
       scrollButtons
-      variant={'scrollable'}
       allowScrollButtonsMobile
+      variant='scrollable'
       sx={{
         'span.MuiTabs-indicator': {
           height: '4px !important',
@@ -21,6 +21,7 @@ export default function TabsBones(props: ComponentProps<typeof MUITabs>) {
         }
       }}
       {...props}
-    ></MUITabs>
+    >
+    </MUITabs>
   )
 }

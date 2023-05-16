@@ -36,12 +36,12 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
     const publicKey = await buyer.initBuy()
     console.log('setTransferPublicKey', { tokenId, publicKey })
 
-    return catchContractCallError(() => contract.setTransferPublicKey(
+    return catchContractCallError({ contract, method: 'setTransferPublicKey' },
       BigNumber.from(tokenId),
       bufferToEtherHex(publicKey),
       BigNumber.from(dealNumber),
       { gasPrice: mark3dConfig.gasPrice }
-    ))
+    )
   }), [contract, signer, address, collectionAddress, tokenId])
 
   return { ...statuses, setPublicKey }
