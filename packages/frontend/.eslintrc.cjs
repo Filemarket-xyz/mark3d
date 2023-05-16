@@ -40,6 +40,7 @@ module.exports = {
     '@typescript-eslint/promise-function-async': 'off',
     '@typescript-eslint/no-floating-promises': 'off',
     '@typescript-eslint/no-invalid-void-type': 'off',
+    '@typescript-eslint/indent': ['warn', 2],
 
     // react
     'react/react-in-jsx-scope': 'off',
@@ -89,7 +90,7 @@ module.exports = {
       ignoreUrls: true
     }],
     'no-void': 'off',
-    'indent': ['warn', 2],
+    'newline-before-return': 'warn'
   },
   settings: {
     react: {
