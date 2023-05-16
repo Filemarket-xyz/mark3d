@@ -3,7 +3,7 @@ services:
   indexer-service:
     image: mark3d-indexer-service:latest
     ports:
-      - "9502:9502"
+      - "9502:9202"
     depends_on:
       - indexer-postgres
     volumes:
