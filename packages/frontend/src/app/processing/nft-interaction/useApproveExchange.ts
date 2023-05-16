@@ -5,7 +5,7 @@ import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { TokenFullId } from '../types'
-import { assertCollection, assertContract, assertSigner, assertTokenId, catchContractCallError } from '../utils'
+import { assertCollection, assertContract, assertSigner, assertTokenId, callContract } from '../utils'
 
 /**
  * Used to approve Mark3dExchange contract to manage user's NFT. Should be called prior to placeOrder.
@@ -23,12 +23,13 @@ export function useApproveExchange({ collectionAddress, tokenId }: Partial<Token
 
     console.log('approve exchange', 'exchange contract address', mark3dConfig.exchangeToken.address, 'tokenId', tokenId)
 
-    return catchContractCallError({ contract, method: 'approve' },
+    return callContract({ contract, method: 'approve' },
       mark3dConfig.exchangeToken.address,
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice }
     )
   }), [wrapPromise, contract, signer, tokenId])
+
   return {
     ...statuses,
     approveExchange

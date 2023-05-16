@@ -7,7 +7,7 @@ import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useAccessTokenContract } from '../contracts'
 import { Mark3dAccessTokenEventNames } from '../types'
-import { catchContractCallError } from '../utils'
+import { callContract } from '../utils'
 import { assertContract, assertSigner } from '../utils/assert'
 import { normalizeCounterId } from '../utils/id'
 import { useUploadLighthouse } from './useUploadLighthouse'
@@ -45,8 +45,8 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
     console.log('mint metadata', metadata)
 
     const salt = `0x${Buffer.from(randomBytes(32)).toString('hex')}` as const
-    const receipt: ContractReceipt = await catchContractCallError(
-      { contract, method: 'createCollection', ignoreTxFailture: true },
+    const receipt: ContractReceipt = await callContract(
+      { contract, method: 'createCollection', signer, ignoreTxFailture: true },
       salt,
       name,
       symbol,
@@ -67,6 +67,7 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
     const getArg = (index: number): any => {
       const arg = createCollectionEvent.args?.[index]
       assert(arg, `${Mark3dAccessTokenEventNames.CollectionCreation} does not have an arg with index ${index}`)
+
       return arg
     }
 
@@ -81,5 +82,6 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       receipt
     }
   }), [contract, signer, name, symbol, image, description, wrapPromise, upload])
+
   return { ...statuses, mintCollection }
 }

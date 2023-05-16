@@ -7,7 +7,7 @@ import { useStatusState } from '../../hooks'
 import { useExchangeContract } from '../contracts'
 import { TokenFullId } from '../types'
 import { assertCollection, assertContract, assertSigner, assertTokenId } from '../utils'
-import { catchContractCallError } from '../utils/error'
+import { callContract } from '../utils/error'
 
 /**
  * Calls Mark3dExchange contract to place an order
@@ -26,13 +26,14 @@ export function usePlaceOrder({ collectionAddress, tokenId }: Partial<TokenFullI
     assert(price, 'price is not provided')
     console.log('place order', { collectionAddress, tokenId, price })
 
-    return catchContractCallError({ contract, method: 'placeOrder' },
+    return callContract({ contract, method: 'placeOrder' },
       utils.getAddress(collectionAddress),
       BigNumber.from(tokenId),
       BigNumber.from(price),
       { gasPrice: mark3dConfig.gasPrice }
     )
   }), [contract, signer, wrapPromise, collectionAddress, tokenId, price])
+
   return {
     ...statuses,
     placeOrder

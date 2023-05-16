@@ -9,7 +9,7 @@ import { useBlockchainDataProvider } from '../BlockchainDataProvider'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, catchContractCallError, hexToBuffer } from '../utils'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, callContract, hexToBuffer } from '../utils'
 
 /**
  * Sets public key in a transfer process
@@ -36,7 +36,7 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
     const publicKey = await buyer.initBuy()
     console.log('setTransferPublicKey', { tokenId, publicKey })
 
-    return catchContractCallError({ contract, method: 'setTransferPublicKey' },
+    return callContract({ contract, method: 'setTransferPublicKey' },
       BigNumber.from(tokenId),
       bufferToEtherHex(publicKey),
       BigNumber.from(dealNumber),

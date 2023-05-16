@@ -5,7 +5,7 @@ import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useExchangeContract } from '../contracts'
 import { TokenFullId } from '../types'
-import { assertCollection, assertContract, assertSigner, assertTokenId, catchContractCallError } from '../utils'
+import { assertCollection, assertContract, assertSigner, assertTokenId, callContract } from '../utils'
 
 /**
  * Calls Mark3dExchange contract to cancel an order
@@ -23,12 +23,13 @@ export function useCancelOrder({ collectionAddress, tokenId }: Partial<TokenFull
     assertSigner(signer)
     console.log('cancel order', { collectionAddress, tokenId })
 
-    return catchContractCallError({ contract, method: 'cancelOrder' },
+    return callContract({ contract, method: 'cancelOrder' },
       collectionAddress as `0x${string}`,
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice }
     )
   }), [contract, signer, wrapPromise, collectionAddress, tokenId])
+
   return {
     ...statuses,
     cancelOrder

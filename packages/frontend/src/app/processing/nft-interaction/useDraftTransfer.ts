@@ -5,7 +5,7 @@ import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { TokenFullId } from '../types'
-import { assertCollection, assertContract, assertSigner, assertTokenId, catchContractCallError, nullAddress } from '../utils'
+import { assertCollection, assertContract, assertSigner, assertTokenId, callContract, nullAddress } from '../utils'
 
 export function useDraftTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
@@ -18,7 +18,7 @@ export function useDraftTransfer({ collectionAddress, tokenId }: Partial<TokenFu
     assertTokenId(tokenId)
     console.log('draft transfer', { tokenId, callbackReceiver: nullAddress })
 
-    return catchContractCallError({ contract, method: 'draftTransfer' },
+    return callContract({ contract, method: 'draftTransfer' },
       BigNumber.from(tokenId),
       nullAddress,
       { gasPrice: mark3dConfig.gasPrice }
