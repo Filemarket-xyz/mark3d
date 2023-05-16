@@ -72,7 +72,7 @@ export const callContract = async ({
       const balance = await signer.getBalance()
       // equality anyway throws an error because of gas
       if (balance.isZero() || minBalance?.gte(balance)) {
-        throw new JsonRpcError(402, 'Balance is too low')
+        throw new JsonRpcError(402, 'Insufficient balance')
       }
     }
 
