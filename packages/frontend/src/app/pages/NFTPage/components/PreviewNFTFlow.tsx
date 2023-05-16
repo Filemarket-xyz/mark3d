@@ -126,7 +126,6 @@ export const PreviewNFTFlow = ({
     let model: DecryptResult<File>
     try {
       model = await getFile()
-      console.log(model)
     } catch (error) {
       return setPreviewState({
         state: PreviewState.LOADING_ERROR,

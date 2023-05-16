@@ -33,7 +33,6 @@ export class TokenMetaStore implements IActivateDeactivate<[string]>, IStoreRequ
   }
 
   request(metaURI: string) {
-    console.log('REQUEST')
     storeRequestFetch(
       this,
       ipfsService.fetchText(metaURI),
