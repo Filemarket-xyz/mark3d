@@ -100,7 +100,7 @@ func Init(configPath string) (*Config, error) {
 			TelegramHealthNotifierAddr:   envCfg.GetString("TELEGRAM_HEALTH_NOTIFIER_ADDRESS"),
 			HealthCheckInterval:          jsonCfg.GetInt("service.healthCheckInterval"),
 			CoinMarketCapApiKey:          envCfg.GetString("COINMARKETCAP_API_KEY"),
-			CurrencyConversionCacheTTL:   jsonCfg.GetString("currencyConversionCacheTTL"),
+			CurrencyConversionCacheTTL:   jsonCfg.GetString("service.currencyConversionCacheTTL"),
 			Mode:                         jsonCfg.GetString("service.mode"),
 		},
 		Redis: &RedisConfig{
