@@ -21,7 +21,12 @@ export default function useWatchFileWalletConnect(): void {
     }).onClose(() => setCheckHasSeed(true))
   }, [dialogStore, setCheckHasSeed])
 
+  const checkGetAccessPagePath = () => {
+    return window.location.pathname === '/'
+  }
+
   useEffect(() => {
+    if (checkGetAccessPagePath()) return
     if (checkHasSeed && !seedProvider?.seed) {
       disconnect()
     }
@@ -41,6 +46,7 @@ export default function useWatchFileWalletConnect(): void {
 
   // opens connect dialog if account has connected, but there is no seed
   useEffect(() => {
+    if (checkGetAccessPagePath()) return
     if (address && seedProvider && seedProvider.isForAccount(address) && !seedProvider?.seed) {
       openConnectFileWalletDialog()
     }
@@ -48,6 +54,7 @@ export default function useWatchFileWalletConnect(): void {
 
   // locks seed if account disconnects
   useEffect(() => {
+    if (checkGetAccessPagePath()) return
     if (!address) {
       void seedProvider?.lock()
     }
@@ -55,6 +62,7 @@ export default function useWatchFileWalletConnect(): void {
 
   // disconnect if account changes
   useEffect(() => {
+    if (checkGetAccessPagePath()) return
     if (address && seedProvider && !seedProvider?.isForAccount(address)) {
       disconnect()
     }

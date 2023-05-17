@@ -1,4 +1,4 @@
-import {buf2Hex} from './utils';
+import {bufferToHex} from './utils';
 import {eftAesDerivationNative} from './eft-derivation';
 import {aesDecryptNative, aesEncryptNative} from './aes';
 
@@ -13,7 +13,7 @@ describe('aes', () => {
     const keyAndIv = await eftAesDerivationNative(window.crypto)(seed, globalSalt, collectionAddress, 0)
     const encryptedData = await aesEncryptNative(window.crypto)(data, keyAndIv)
     const decryptedData = await aesDecryptNative(window.crypto)(encryptedData, keyAndIv.key)
-    expect(buf2Hex(decryptedData)).toEqual(buf2Hex(data))
-    expect(buf2Hex(encryptedData)).not.toEqual(buf2Hex(data))
+    expect(bufferToHex(decryptedData)).toEqual(bufferToHex(data))
+    expect(bufferToHex(encryptedData)).not.toEqual(bufferToHex(data))
   })
 })

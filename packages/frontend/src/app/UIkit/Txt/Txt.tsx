@@ -58,6 +58,10 @@ export const Txt = styled('span', {
 
     secondary1: textVariant('secondary1'),
     secondary2: textVariant('secondary2'),
-    secondary3: textVariant('secondary3')
+    secondary3: textVariant('secondary3'),
+
+    ternary1: textVariant('ternary1'),
+    ternary2: textVariant('ternary2'),
+    ternary3: textVariant('ternary3')
   }
 })

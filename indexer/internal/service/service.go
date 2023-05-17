@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"io"
 	"log"
@@ -94,6 +95,7 @@ type service struct {
 	accessTokenInstance *access_token.Mark3dAccessToken
 	exchangeAddress     common.Address
 	exchangeInstance    *exchange.Mark3dExchange
+	currencyConverter   currencyconversion.CurrencyConversionProvider
 	closeCh             chan struct{}
 }
 
@@ -101,6 +103,7 @@ func NewService(
 	repo repository.Repository,
 	ethClient ethclient2.EthClient,
 	healthNotifier healthnotifier.HealthNotifyer,
+	currencyConverter currencyconversion.CurrencyConversionProvider,
 	cfg *config.ServiceConfig,
 ) (Service, error) {
 	accessTokenInstance, err := access_token.NewMark3dAccessToken(cfg.AccessTokenAddress, nil)
@@ -122,6 +125,7 @@ func NewService(
 		accessTokenInstance: accessTokenInstance,
 		exchangeAddress:     cfg.ExchangeAddress,
 		exchangeInstance:    exchangeInstance,
+		currencyConverter:   currencyConverter,
 		closeCh:             make(chan struct{}),
 	}, nil
 }

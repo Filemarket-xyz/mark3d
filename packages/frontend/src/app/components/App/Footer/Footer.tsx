@@ -24,7 +24,8 @@ const FooterContainer = styled(Container, {
   '@md': {
     justifyContent: 'center',
     flexDirection: 'column',
-    gap: '$3'
+    paddingTop: '32px',
+    paddingBottom: '16px'
   },
   '@sm': {
     alignItems: 'center'
@@ -35,7 +36,10 @@ const Line = styled('div', {
   width: '100%',
   height: '1px',
   background: '#232528',
-  margin: '32px 0'
+  margin: '32px 0',
+  '@md': {
+    margin: '16px 0'
+  }
 })
 
 export default function Footer() {

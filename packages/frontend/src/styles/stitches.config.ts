@@ -58,7 +58,8 @@ export const {
       body: 'Montserrat, sans-serif',
       button: 'Montserrat, sans-serif',
       primary: 'Montserrat, sans-serif',
-      secondary: 'Inter, sans-serif'
+      secondary: 'Inter, sans-serif',
+      ternary: 'Space Grotesk, sans-serif'
     },
 
     // 1rem = 16px
@@ -84,7 +85,11 @@ export const {
 
       secondary1: '1rem', // 16px
       secondary2: '0.875rem', // 14px
-      secondary3: '0.75rem' // 12px
+      secondary3: '0.75rem', // 12px
+
+      ternary1: '2.5rem', // 40px
+      ternary2: '2rem', // 32px
+      ternary3: '1.5rem' // 24px
     },
 
     fontWeights: {
@@ -92,7 +97,8 @@ export const {
       body: 400,
       button: 600,
       primary: 600,
-      secondary: 400
+      secondary: 400,
+      ternary: 700
     },
 
     lineHeights: {
@@ -115,7 +121,11 @@ export const {
 
       secondary1: 1.21, // 16px
       secondary2: 1.2857143, // 14px
-      secondary3: 1.333333 // 12px
+      secondary3: 1.333333, // 12px
+
+      ternary1: '48px',
+      ternary2: '48px',
+      ternary3: '30px'
     },
 
     radii: {

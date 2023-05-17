@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"log"
 	"math/big"
 
@@ -19,16 +20,32 @@ func (s *service) GetOrders(ctx context.Context,
 		return nil, internalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
+
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+	if err != nil {
+		log.Println("failed to get conversion rate: ", err)
+		return nil, internalError
+	}
+
 	incomingOrders, err := s.repository.GetActiveIncomingOrdersByAddress(ctx, tx, address)
 	if err != nil {
 		log.Println("get active incoming orders failed: ", err)
 		return nil, internalError
 	}
+	for _, o := range incomingOrders {
+		o.PriceUsd = currencyconversion.Convert(rate, o.Price)
+	}
+
 	outgoingOrders, err := s.repository.GetActiveOutgoingOrdersByAddress(ctx, tx, address)
 	if err != nil {
 		log.Println("get active outgoing orders failed: ", err)
 		return nil, internalError
 	}
+
+	for _, o := range outgoingOrders {
+		o.PriceUsd = currencyconversion.Convert(rate, o.Price)
+	}
+
 	return &models.OrdersResponse{
 		Incoming: domain.MapSlice(incomingOrders, domain.OrderToModel),
 		Outgoing: domain.MapSlice(outgoingOrders, domain.OrderToModel),
@@ -45,16 +62,31 @@ func (s *service) GetOrdersHistory(
 		return nil, internalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
+
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+	if err != nil {
+		log.Println("failed to get conversion rate: ", err)
+		return nil, internalError
+	}
+
 	incomingOrders, err := s.repository.GetIncomingOrdersByAddress(ctx, tx, address)
 	if err != nil {
 		log.Println("get incoming orders failed: ", err)
 		return nil, internalError
 	}
+	for _, o := range incomingOrders {
+		o.PriceUsd = currencyconversion.Convert(rate, o.Price)
+	}
+
 	outgoingOrders, err := s.repository.GetOutgoingOrdersByAddress(ctx, tx, address)
 	if err != nil {
 		log.Println("get outgoing orders failed: ", err)
 		return nil, internalError
 	}
+	for _, o := range outgoingOrders {
+		o.PriceUsd = currencyconversion.Convert(rate, o.Price)
+	}
+
 	return &models.OrdersResponse{
 		Incoming: domain.MapSlice(incomingOrders, domain.OrderToModel),
 		Outgoing: domain.MapSlice(outgoingOrders, domain.OrderToModel),
@@ -69,6 +101,13 @@ func (s *service) GetOrder(ctx context.Context, address common.Address,
 		return nil, internalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
+
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+	if err != nil {
+		log.Println("failed to get conversion rate: ", err)
+		return nil, internalError
+	}
+
 	res, err := s.repository.GetActiveOrder(ctx, tx, address, tokenId)
 	if err != nil {
 		if err == pgx.ErrNoRows {
@@ -76,6 +115,8 @@ func (s *service) GetOrder(ctx context.Context, address common.Address,
 		}
 		return nil, internalError
 	}
+	res.PriceUsd = currencyconversion.Convert(rate, res.Price)
+
 	return domain.OrderToModel(res), nil
 }
 
@@ -91,10 +132,20 @@ func (s *service) GetAllActiveOrders(
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	orders, err := s.repository.GetAllActiveOrders(ctx, tx, lastOrderId, limit)
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+	if err != nil {
+		log.Println("failed to get conversion rate: ", err)
+		return nil, internalError
+	}
+
+	orders, err := s.repository.GetAllActiveOrders(ctx, tx)
 	if err != nil {
 		log.Println("get all active orders failed", err)
 		return nil, internalError
+	}
+
+	for _, o := range orders {
+		o.PriceUsd = currencyconversion.Convert(rate, o.Price)
 	}
 
 	res := make([]*models.OrderWithToken, len(orders))

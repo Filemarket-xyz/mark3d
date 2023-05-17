@@ -1,5 +1,5 @@
 import {rsaDecryptNative, rsaEncryptNative, rsaGenerateKeyPair} from './rsa';
-import {buf2Hex, removeSpaces} from './utils';
+import {bufferToHex, removeSpaces} from './utils';
 
 const SEED = Buffer.from(
   '6541c1895ad24fe201e0439ce152a6fda82eb2db0fdac6866336719ef932010bdf28f443f049dd05574940f8d5c00f0474f1e4b889c78cd5cf17f5db66dff2f7a8ef2ed70ca09d3d8d58396160ea2cde750cb783fc5c60317f410fdfe80d163f6b55685ee93ec0321b844545377c12e2c641ac6efd63ac379d9cf4fd9108e7dc8a62260142d2443c5fc51b26ff5574471091ec7dd796199c76ca8d40be595407c88438155e3171df99fd5725e0bf1997b81207230265e0ace18815c6b98e05bf975ba3837fa7e8cfbe75e9738db09235e0eb6f6502834a5dd691b3dcce81fb616a982f9c13419d366911721082dcf972c786f14def1e5d8ec19f827ee5909989af59f2223a1fe802c7f99f25eea75a2e7105de2d45f652b23dfdb5adf8093b71313f01592c224bd8a80861b2a445443f22f734b1b8b8f8de4c3988534ac31f6cf6e726fbea4b2c6fd59a3bc5184067ecda18b2b28b89bb32c08de8eb300f785d7108ecd7c2c45763fa4cef783c662becde071afc027cef2c9de353c2b545c2241437ab302de1a9693d12cb2e3c27e3d600f965771583fc6393537a4856c2cfc5c0b26a989a3202f6f50a2c44cf6b3d93e15bf3a9d7046da771b97437d9baa18a9b552e83e03782af7e97d9c15184d17a9019633f2017ad5978d4c2c16dca725f310eb984f75f25773350c2c38f8c920f714eac05e9b7194aaa57ba0707eb0de7',
@@ -66,8 +66,8 @@ const data = Buffer.from('34753d35a15d668891889027e835b382cb938b33f6af1974480670
 describe('rsa', () => {
   it('should generate key', async () => {
     const key = await rsaGenerateKeyPair(SEED)
-    expect(buf2Hex(key.priv)).toEqual(preGeneratedPrivHex)
-    expect(buf2Hex(key.pub)).toEqual(preGeneratedPubHex)
+    expect(bufferToHex(key.priv)).toEqual(preGeneratedPrivHex)
+    expect(bufferToHex(key.pub)).toEqual(preGeneratedPubHex)
   })
   it('should use all randomness', async () => {
     const key = await rsaGenerateKeyPair(SEED.subarray(0, SEED.length / 2))
@@ -76,6 +76,6 @@ describe('rsa', () => {
   it('should encrypt and decrypt data', async () => {
     const encrypted = await rsaEncryptNative(window.crypto)(data, Buffer.from(preGeneratedPubHex, 'hex'))
     const decrypted = await rsaDecryptNative(window.crypto)(encrypted, Buffer.from(preGeneratedPrivHex, 'hex'))
-    expect(buf2Hex(decrypted)).toEqual(buf2Hex(data))
+    expect(bufferToHex(decrypted)).toEqual(bufferToHex(data))
   })
 })
