@@ -26,13 +26,13 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
         primary
         fullWidth
         borderRadiusSecond
+        isDisabled={isLoading}
         onPress={async () => {
           await approveExchange()
           callback?.()
         }}
-        isDisabled={isLoading}
       >
-        List
+        Prepare for sale
       </Button>
     </>
   )
