@@ -6,17 +6,44 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
+	"math"
 	"math/big"
 	"strings"
 )
 
-func (p *postgres) GetAllActiveOrders(ctx context.Context, tx pgx.Tx) ([]*domain.Order, error) {
+// GetAllActiveOrders
+// Parameters:
+// - lastTransferId: pass `nil` for first page.
+func (p *postgres) GetAllActiveOrders(
+	ctx context.Context,
+	tx pgx.Tx,
+	lastOrderId *int64,
+	limit int,
+) ([]*domain.Order, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price FROM orders AS o 
-    	JOIN transfers t on o.transfer_id = t.id WHERE 
-    	    NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
-                ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
-                    ANY('{Finished,Cancelled}') ORDER BY o.id DESC `)
+	query := `
+		SELECT o.id, o.transfer_id, o.price 
+		FROM orders AS o 
+    	JOIN transfers t on o.transfer_id = t.id 
+		WHERE NOT (
+				SELECT ts.status 
+		        FROM transfer_statuses AS ts 
+		        WHERE ts.transfer_id=t.id AND ts.timestamp=(
+                		SELECT MAX(ts2.timestamp) 
+                		FROM transfer_statuses AS ts2 
+                		WHERE ts2.transfer_id=t.id
+                )
+		)= ANY('{Finished,Cancelled}') AND o.id < $1
+		ORDER BY o.id DESC
+		LIMIT $2
+	`
+
+	var lastOrderIdParam int64 = math.MaxInt64
+	if lastOrderId != nil {
+		lastOrderIdParam = *lastOrderId
+	}
+
+	rows, err := tx.Query(ctx, query, lastOrderIdParam, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -49,12 +76,21 @@ func (p *postgres) GetAllActiveOrders(ctx context.Context, tx pgx.Tx) ([]*domain
 	return res, nil
 }
 
-func (p *postgres) GetIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx,
-	address common.Address) ([]*domain.Order, error) {
+func (p *postgres) GetIncomingOrdersByAddress(
+	ctx context.Context,
+	tx pgx.Tx,
+	address common.Address,
+) ([]*domain.Order, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price FROM orders AS o 
-    	JOIN transfers t on o.transfer_id = t.id WHERE t.to_address=$1 ORDER BY o.id DESC `,
-		strings.ToLower(address.String()))
+	query := `
+		SELECT o.id, o.transfer_id, o.price 
+		FROM orders AS o 
+    	JOIN transfers t on o.transfer_id = t.id 
+		WHERE t.to_address=$1
+		ORDER BY o.id DESC
+	`
+
+	rows, err := tx.Query(ctx, query, strings.ToLower(address.String()))
 	if err != nil {
 		return nil, err
 	}

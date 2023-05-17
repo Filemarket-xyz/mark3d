@@ -10,13 +10,35 @@ import (
 	"strings"
 )
 
-func (p *postgres) GetCollectionsByAddress(ctx context.Context,
-	tx pgx.Tx, address common.Address) ([]*domain.Collection, error) {
+// GetCollectionsByOwnerAddress returns owned collection or collections of owned tokens
+func (p *postgres) GetCollectionsByOwnerAddress(
+	ctx context.Context,
+	tx pgx.Tx,
+	address common.Address,
+	lastCollectionAddress *common.Address,
+	limit int,
+) ([]*domain.Collection, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT address,creator,owner,name,token_id,meta_uri,description,image 
-			FROM collections AS c WHERE owner=$1 OR 
-            	EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)`,
-		strings.ToLower(address.String()))
+	query := `
+		SELECT address,creator,owner,name,token_id,meta_uri,description,image 
+		FROM collections AS c 
+		WHERE (owner=$1 OR 
+            EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)) AND
+		    address > $2
+		ORDER BY address
+		LIMIT $3
+	`
+
+	lastCollectionAddressStr := ""
+	if lastCollectionAddress != nil {
+		lastCollectionAddressStr = strings.ToLower(lastCollectionAddress.String())
+	}
+
+	rows, err := tx.Query(ctx, query,
+		strings.ToLower(address.String()),
+		lastCollectionAddressStr,
+		limit,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -29,8 +51,11 @@ func (p *postgres) GetCollectionsByAddress(ctx context.Context,
 			&tokenId, &c.MetaUri, &c.Description, &c.Image); err != nil {
 			return nil, err
 		}
-		c.Address, c.Owner, c.Creator = common.HexToAddress(collectionAddress),
-			common.HexToAddress(creator), common.HexToAddress(owner)
+
+		c.Address = common.HexToAddress(collectionAddress)
+		c.Owner = common.HexToAddress(owner)
+		c.Creator = common.HexToAddress(creator)
+
 		var ok bool
 		c.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
 		if !ok {
@@ -61,20 +86,40 @@ func (p *postgres) GetCollection(ctx context.Context,
 	return c, nil
 }
 
-func (p *postgres) GetCollectionsByTokenId(ctx context.Context, tx pgx.Tx,
-	tokenId *big.Int) (*domain.Collection, error) {
+func (p *postgres) GetCollectionByTokenId(
+	ctx context.Context,
+	tx pgx.Tx,
+	tokenId *big.Int,
+) (*domain.Collection, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `SELECT address,creator,owner,name,meta_uri,description,
-       image FROM collections WHERE address=$1`, tokenId.String())
+	query := `
+	SELECT address,creator,owner,name,meta_uri,description,image 
+	FROM collections 
+	WHERE token_id=$1
+	`
+	row := tx.QueryRow(ctx, query, tokenId.String())
 	var collectionAddress, creator, owner string
 	c := &domain.Collection{
 		TokenId: tokenId,
 	}
-	if err := row.Scan(&collectionAddress, &creator, &owner, &c.Name,
-		&c.MetaUri, &c.Description, &c.Image); err != nil {
+
+	if err := row.Scan(
+		&collectionAddress,
+		&creator,
+		&owner,
+		&c.Name,
+		&c.MetaUri,
+		&c.Description,
+		&c.Image,
+	); err != nil {
 		return nil, err
 	}
-	c.Address, c.Owner, c.Creator = common.HexToAddress(collectionAddress), common.HexToAddress(creator), common.HexToAddress(owner)
+
+	c.TokenId = tokenId
+	c.Address = common.HexToAddress(collectionAddress)
+	c.Owner = common.HexToAddress(owner)
+	c.Creator = common.HexToAddress(creator)
+
 	return c, nil
 }
 

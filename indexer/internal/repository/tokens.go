@@ -12,10 +12,15 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 )
 
+// GetCollectionTokens returns all tokens in collection.
+// Parameters:
+// - lastTokenId: pagination cursor. Pass 0 for the first page.
 func (p *postgres) GetCollectionTokens(
 	ctx context.Context,
 	tx pgx.Tx,
 	collectionAddress common.Address,
+	lastTokenId *big.Int,
+	limit int,
 ) ([]*domain.Token, error) {
 	// language=PostgreSQL
 	query := `
@@ -24,12 +29,22 @@ func (p *postgres) GetCollectionTokens(
 		    c.name
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
-		WHERE t.collection_address=$1
+		WHERE t.collection_address=$1 AND t.token_id > $2
+		ORDER BY t.token_id
+		LIMIT $3
 	`
 	var res []*domain.Token
+	lastTokenIdStr := ""
+	if lastTokenId.Cmp(big.NewInt(0)) != 0 {
+		lastTokenIdStr = lastTokenId.String()
+	}
 
 	err := func(res *[]*domain.Token, query string) error {
-		rows, err := tx.Query(ctx, query, strings.ToLower(collectionAddress.String()))
+		rows, err := tx.Query(ctx, query,
+			strings.ToLower(collectionAddress.String()),
+			lastTokenIdStr,
+			limit,
+		)
 		if err != nil {
 			return err
 		}
@@ -77,6 +92,9 @@ func (p *postgres) GetTokensByAddress(
 	ctx context.Context,
 	tx pgx.Tx,
 	ownerAddress common.Address,
+	lastCollectionAddress *common.Address,
+	lastTokenId *big.Int,
+	limit int,
 ) ([]*domain.Token, error) {
 	// language=PostgreSQL
 	query := `
@@ -86,12 +104,29 @@ func (p *postgres) GetTokensByAddress(
 		    c.name
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
-		WHERE t.owner=$1
+		WHERE t.owner=$1 AND (t.collection_address, t.token_id) > ($2, $3)
+		ORDER BY t.collection_address, t.token_id
+		LIMIT $4
 	`
 	var res []*domain.Token
 
+	lastCollectionAddressStr := ""
+	if lastCollectionAddress != nil {
+		lastCollectionAddressStr = strings.ToLower(lastCollectionAddress.String())
+	}
+
+	lastTokenIdStr := ""
+	if lastTokenId.Cmp(big.NewInt(0)) != 0 {
+		lastTokenIdStr = lastTokenId.String()
+	}
+
 	err := func(res *[]*domain.Token, query string) error {
-		rows, err := tx.Query(ctx, query, strings.ToLower(ownerAddress.String()))
+		rows, err := tx.Query(ctx, query,
+			strings.ToLower(ownerAddress.String()),
+			lastCollectionAddressStr,
+			lastTokenIdStr,
+			limit,
+		)
 		if err != nil {
 			return err
 		}
