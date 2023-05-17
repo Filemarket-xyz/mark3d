@@ -160,7 +160,7 @@ export const PreviewNFTFlow = ({
     } else {
       setPreviewState({
         state: PreviewState.EXTENSION_ERROR,
-        data: `File type .${extensionFile} is not supported`
+        data: 'Preview is not available'
       })
     }
   }

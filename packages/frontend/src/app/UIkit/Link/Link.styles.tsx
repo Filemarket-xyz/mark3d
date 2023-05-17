@@ -86,7 +86,9 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
         },
         mdFullWidth: {
           true: {
-            width: '100%'
+            '@md': {
+              width: '100%'
+            }
           }
         }
       }

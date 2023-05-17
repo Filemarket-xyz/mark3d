@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 
 import { styled } from '../../../../../styles'
 import { FileButton, MintModal, ProtectedStamp } from '../../../../components'
@@ -49,6 +49,10 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
     loadingMsg: 'Decrypt file in progress',
     waitForSign: false
   })
+
+  useEffect(() => {
+    console.log(files)
+  }, [files])
 
   return (
     <>
