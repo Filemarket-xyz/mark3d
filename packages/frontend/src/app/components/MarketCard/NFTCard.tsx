@@ -1,12 +1,11 @@
-import { BigNumber, utils } from 'ethers'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { styled } from '../../../styles'
 import { HiddenFileMetaData } from '../../../swagger/Api'
-import { mark3dConfig } from '../../config/mark3d'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
 import { gradientPlaceholderImg, NavButton, textVariant, Txt } from '../../UIkit'
+import { formatCurrency, formatUsd } from '../../utils/web3'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
 import FileType from './FileType'
 
@@ -100,9 +99,16 @@ export const UserName = styled('p', {
 
 export const Price = styled('span', {
   ...textVariant('primary2'),
+  width: '100%',
+  display: 'flex',
+  justifyContent: 'space-between',
   color: '$blue900',
   fontWeight: '600',
   lineHeight: '$body2'
+})
+
+export const PriceUsd = styled('span', {
+  color: '$gray600'
 })
 
 export const ButtonContainer = styled('div', {
@@ -122,6 +128,7 @@ export interface NFTCardProps {
     text: string
     link: string
   }
+  priceUsd?: string
   price?: string
   hiddenFile?: HiddenFileMetaData
 }
@@ -144,50 +151,63 @@ export const BorderLayout = styled('div', {
   ...generateHoverStylesForCard()
 })
 
-export default function NFTCard(props: NFTCardProps) {
+export const NFTCard: React.FC<NFTCardProps> = ({
+  collection,
+  button,
+  imageURL,
+  hiddenFile,
+  title,
+  user,
+  price,
+  priceUsd
+}) => {
   const navigate = useNavigate()
-  const { data: collectionAndNfts } =
-        useCollectionTokenListStore(props.collection)
+  const { data: collectionAndNfts } = useCollectionTokenListStore(collection)
+
   return (
-        <BorderLayout>
-            <Card onClick={() => {
-              navigate(props.button.link)
-            }}>
-                <BasicCardSquareImg
-                    src={props.imageURL}
-                    onError={({ currentTarget }) => {
-                      currentTarget.onerror = null
-                      currentTarget.src = gradientPlaceholderImg
-                    }}
-                />
-              <FileType file={props.hiddenFile} />
-                <CardControls>
-                    <CardTitle title={props.title}>{props.title}</CardTitle>
-                    <CardCollection>{collectionAndNfts.collection?.name}</CardCollection>
-                    <UserContainer>
-                        <UserImg src={props.user.img} />
-                        <UserName>{props.user.username}</UserName>
-                    </UserContainer>
-                        <PriceInfo noneOpacity={props.price === undefined}>
-                            <Price>{`${utils.formatUnits(BigNumber.from(props.price ?? '0'), mark3dConfig.chain.nativeCurrency.decimals)} ${mark3dConfig.chain.nativeCurrency.symbol}`}</Price>
-                        </PriceInfo>
-                    <ButtonContainer>
-                        <NavButton
-                            primary
-                            to={props.button.link}
-                            small={true}
-                            css={{
-                              textDecoration: 'none',
-                              marginLeft: 'auto',
-                              marginRight: 'auto',
-                              width: '100%'
-                            }}
-                        >
-                            <Txt primary3>{props.button.text}</Txt>
-                        </NavButton>
-                    </ButtonContainer>
-                </CardControls>
-            </Card>
-        </BorderLayout>
+    <BorderLayout>
+      <Card onClick={() => navigate(button.link)}>
+        <BasicCardSquareImg
+          src={imageURL}
+          onError={({ currentTarget }) => {
+            currentTarget.onerror = null
+            currentTarget.src = gradientPlaceholderImg
+          }}
+        />
+        <FileType file={hiddenFile} />
+        <CardControls>
+          <CardTitle title={title}>{title}</CardTitle>
+          <CardCollection>{collectionAndNfts.collection?.name}</CardCollection>
+          <UserContainer>
+            <UserImg src={user.img} />
+            <UserName>{user.username}</UserName>
+          </UserContainer>
+          <PriceInfo noneOpacity={price === undefined}>
+            <Price>
+              {formatCurrency(price ?? 0)}
+              <PriceUsd>
+                ~
+                {formatUsd(priceUsd ?? 0)}
+              </PriceUsd>
+            </Price>
+          </PriceInfo>
+          <ButtonContainer>
+            <NavButton
+              primary
+              small
+              to={button.link}
+              css={{
+                textDecoration: 'none',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                width: '100%'
+              }}
+            >
+              <Txt primary3>{button.text}</Txt>
+            </NavButton>
+          </ButtonContainer>
+        </CardControls>
+      </Card>
+    </BorderLayout>
   )
 }

@@ -66,7 +66,10 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
       <DealContainerInfo>
         {children}
         {order && (
-          <NFTDealPrice price={order.price ?? '0'} />
+          <NFTDealPrice
+            price={order.price ?? '0'}
+            priceUsd={order.priceUsd ?? '0'}
+          />
         )}
       </DealContainerInfo>
       <ButtonsContainer>

@@ -81,6 +81,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
             link: `/collection/${token?.collectionAddress}/${token?.tokenId}`,
             text: 'View & Buy'
           },
+          priceUsd: order?.priceUsd,
           price: order?.price
         })
       )
