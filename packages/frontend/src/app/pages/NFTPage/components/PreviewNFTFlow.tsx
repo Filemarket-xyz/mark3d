@@ -166,15 +166,10 @@ export const PreviewNFTFlow = ({
   }
 
   useEffect(() => {
-    if (isCanView && !isViewedMounted && seed && !isLoading) {
-      void handleLoadClick()
-      setIsViewFile(true)
-      setIsViewedMounted(true)
-    }
     if (!isConnected) {
       setIsViewFile(false)
     }
-  }, [getFile, isCanView, seed, isLoading, isConnected])
+  }, [isConnected])
 
   useEffect(() => {
     if (isLoading) {
