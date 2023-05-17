@@ -79,6 +79,10 @@ module.exports = {
       allow: 'single-child'
     }],
     'react/jsx-closing-bracket-location': 'warn',
+    'react/jsx-boolean-value': ['warn', 'never'],
+    'react/jsx-no-useless-fragment': ['warn', {
+      allowExpressions: true
+    }],
 
     // other
     'no-use-before-define': 'off',
@@ -90,7 +94,8 @@ module.exports = {
       ignoreUrls: true
     }],
     'no-void': 'off',
-    'newline-before-return': 'warn'
+    'newline-before-return': 'warn',
+    'no-extra-boolean-cast': 'off'
   },
   settings: {
     react: {

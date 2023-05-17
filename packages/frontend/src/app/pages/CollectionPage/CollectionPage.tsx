@@ -101,84 +101,72 @@ const CollectionPage = observer(() => {
   const { pathname: currentPath } = useLocation()
 
   return (
-    <>
-      <GrayOverlay>
-        <Background />
-        {collectionAndNfts && (
-          <StyledContainer>
-            <Profile>
-              <ProfileHeader>
-                <ProfileImage
-                  src={
-                    collectionAndNfts.collection?.image
-                      ? getHttpLinkFromIpfsString(
-                        collectionAndNfts.collection?.image ?? ''
-                      )
-                      : gradientPlaceholderImg
-                  }
-                />
-                <ProfileName>{collectionAndNfts.collection?.name}</ProfileName>
-              </ProfileHeader>
-
-              <Badges>
-                <NavLink
-                  to={
-                    collectionAndNfts.collection?.owner
-                      ? `/profile/${collectionAndNfts.collection.owner}`
-                      : currentPath
-                  }
-                >
-                  <Badge
-                    content={{
-                      title: 'Creator',
-                      value: reduceAddress(
-                        collectionAndNfts.collection?.owner ?? ''
-                      )
-                    }}
-                    image={{
-                      url: getProfileImageUrl(
-                        collectionAndNfts.collection?.owner ?? ''
-                      ),
-                      borderRadius: 'circle'
-                    }}
-                  />
-                </NavLink>
-
-                {collectionAndNfts.collection?.address && (
-                  <Link
-                    href={`${mark3dConfig.chain.blockExplorers?.default.url}` +
-                      `/address/${collectionAndNfts.collection?.address}`}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                  >
-                    <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
-                  </Link>
-                )}
-              </Badges>
-
-              <ProfileDescription>
-                {collectionAndNfts.collection?.description}
-              </ProfileDescription>
-            </Profile>
-          </StyledContainer>
-
-        )}
-        <Inventory>
-          <TabsContainer>
-            <Tabs
-              tabs={[
-                {
-                  name: 'NFTs',
-                  url: 'nfts',
-                  amount: collectionAndNfts?.tokens?.length ?? 0
+    <GrayOverlay>
+      <Background />
+      {collectionAndNfts && (
+        <StyledContainer>
+          <Profile>
+            <ProfileHeader>
+              <ProfileImage
+                src={
+                  collectionAndNfts.collection?.image
+                    ? getHttpLinkFromIpfsString(collectionAndNfts.collection?.image ?? '')
+                    : gradientPlaceholderImg
                 }
-              ]}
-            />
-          </TabsContainer>
-          <Outlet />
-        </Inventory>
-      </GrayOverlay>
-    </>
+              />
+              <ProfileName>{collectionAndNfts.collection?.name}</ProfileName>
+            </ProfileHeader>
+            <Badges>
+              <NavLink
+                to={
+                  collectionAndNfts.collection?.owner
+                    ? `/profile/${collectionAndNfts.collection.owner}`
+                    : currentPath
+                }
+              >
+                <Badge
+                  content={{
+                    title: 'Creator',
+                    value: reduceAddress(collectionAndNfts.collection?.owner ?? '')
+                  }}
+                  image={{
+                    url: getProfileImageUrl(collectionAndNfts.collection?.owner ?? ''),
+                    borderRadius: 'circle'
+                  }}
+                />
+              </NavLink>
+              {collectionAndNfts.collection?.address && (
+                <Link
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  href={`${mark3dConfig.chain.blockExplorers?.default.url}` +
+                      `/address/${collectionAndNfts.collection?.address}`}
+                >
+                  <Badge content={{ title: 'Etherscan.io', value: 'VRG' }} />
+                </Link>
+              )}
+            </Badges>
+            <ProfileDescription>
+              {collectionAndNfts.collection?.description}
+            </ProfileDescription>
+          </Profile>
+        </StyledContainer>
+      )}
+      <Inventory>
+        <TabsContainer>
+          <Tabs
+            tabs={[
+              {
+                name: 'NFTs',
+                url: 'nfts',
+                amount: collectionAndNfts?.tokens?.length ?? 0
+              }
+            ]}
+          />
+        </TabsContainer>
+        <Outlet />
+      </Inventory>
+    </GrayOverlay>
   )
 })
 
