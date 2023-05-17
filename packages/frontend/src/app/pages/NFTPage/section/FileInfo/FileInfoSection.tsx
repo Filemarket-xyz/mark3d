@@ -2,7 +2,9 @@ import React, { FC } from 'react'
 
 import { styled } from '../../../../../styles'
 import { FileButton, MintModal, ProtectedStamp } from '../../../../components'
-import { HiddenFileDownload, useStatusModal, useStatusState } from '../../../../hooks'
+import { useStatusState } from '../../../../hooks'
+import { HiddenFileDownload } from '../../../../hooks/useHiddenFilesDownload'
+import { useStatusModal } from '../../../../hooks/useStatusModal'
 import { formatFileSize } from '../../../../utils/nfts'
 import { GridBlock, PropertyTitle } from '../../helper/styles/style'
 
@@ -68,8 +70,8 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
             ) : (
               <ProtectedStamp>
                 <FileButton
+                  isDisabled
                   caption="to the owner"
-                  isDisabled={true}
                   name="Available only"
                 />
               </ProtectedStamp>

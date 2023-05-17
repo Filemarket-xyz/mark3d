@@ -3,7 +3,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { styled } from '../../../../styles'
-import NFTCard from '../../../components/MarketCard/NFTCard'
+import { NFTCard } from '../../../components'
 import Plug from '../../../components/Plug/Plug'
 import { useCollectionTokenListStore } from '../../../hooks/useCollectionTokenListStore'
 import { Button, CardsPlaceholder, Txt } from '../../../UIkit'
@@ -48,12 +48,16 @@ const NftSection = observer(() => {
         nftCards.map((card, index) => <NFTCard {...card} key={index} />)
       ) : (
         <NoNftContainer>
-          <Plug header={'There\'s not one thing'}
-                              mainText={'Be the first and create your first EFT'}
-                              buttonsBlock={<>
-                                <Button primary onClick={() => { navigate('/create/nft') }}>
-                                  <Txt primary1>Create</Txt></Button></>} />
-         </NoNftContainer>
+          <Plug
+            header={'There\'s not one thing'}
+            mainText={'Be the first and create your first EFT'}
+            buttonsBlock={(
+              <Button primary onClick={() => navigate('/create/nft')}>
+                <Txt primary1>Create</Txt>
+              </Button>
+            )}
+          />
+        </NoNftContainer>
       )}
     </CardsContainer>
   )
