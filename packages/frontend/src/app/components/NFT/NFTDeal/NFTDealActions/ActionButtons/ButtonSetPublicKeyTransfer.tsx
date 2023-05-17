@@ -35,8 +35,8 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
         primary
         fullWidth
         borderRadiusSecond
-        onPress={onPress}
         isDisabled={isLoading}
+        onPress={onPress}
       >
         Accept transfer
       </Button>

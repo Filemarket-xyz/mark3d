@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 
 import { styled } from '../../../../../styles'
 import { FileButton, MintModal, ProtectedStamp } from '../../../../components'
@@ -50,6 +50,10 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
     waitForSign: false
   })
 
+  useEffect(() => {
+    console.log(files)
+  }, [files])
+
   return (
     <>
       <MintModal {...modalProps} />
@@ -68,13 +72,15 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
                 </ProtectedStamp>
               ))
             ) : (
-              <ProtectedStamp>
-                <FileButton
-                  isDisabled
-                  caption="to the owner"
-                  name="Available only"
-                />
-              </ProtectedStamp>
+              files.map(({ cid, name }) => (
+                <ProtectedStamp key={cid}>
+                  <FileButton
+                    isDisabled
+                    caption="to the owner"
+                    name={name}
+                  />
+                </ProtectedStamp>
+              ))
             )}
           </FileList>
         </FileInfoSectionStyle>

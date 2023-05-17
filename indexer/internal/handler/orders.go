@@ -53,9 +53,22 @@ func (h *handler) handleGetOrder(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) handleGetAllActiveOrders(w http.ResponseWriter, r *http.Request) {
+	lastOrderId, err := parseInt64Param(r, "lastOrderId")
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+
+	limit, err := parseLimitParam(r, "limit", 10, 100)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
-	tokens, e := h.service.GetAllActiveOrders(ctx)
+
+	tokens, e := h.service.GetAllActiveOrders(ctx, lastOrderId, limit)
 	if e != nil {
 		sendResponse(w, e.Code, e)
 		return

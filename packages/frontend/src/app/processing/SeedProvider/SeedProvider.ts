@@ -21,7 +21,6 @@ export class SeedProvider implements ISeedProvider {
   }
 
   canUnlock(): boolean {
-    console.log('can unlock check', this.seedEncrypted)
     return !!this.seedEncrypted
   }
 

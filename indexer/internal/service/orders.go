@@ -52,8 +52,10 @@ func (s *service) GetOrders(ctx context.Context,
 	}, nil
 }
 
-func (s *service) GetOrdersHistory(ctx context.Context,
-	address common.Address) (*models.OrdersResponse, *models.ErrorResponse) {
+func (s *service) GetOrdersHistory(
+	ctx context.Context,
+	address common.Address,
+) (*models.OrdersResponse, *models.ErrorResponse) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
@@ -118,7 +120,11 @@ func (s *service) GetOrder(ctx context.Context, address common.Address,
 	return domain.OrderToModel(res), nil
 }
 
-func (s *service) GetAllActiveOrders(ctx context.Context) ([]*models.OrderWithToken, *models.ErrorResponse) {
+func (s *service) GetAllActiveOrders(
+	ctx context.Context,
+	lastOrderId *int64,
+	limit int,
+) ([]*models.OrderWithToken, *models.ErrorResponse) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
@@ -132,7 +138,7 @@ func (s *service) GetAllActiveOrders(ctx context.Context) ([]*models.OrderWithTo
 		return nil, internalError
 	}
 
-	orders, err := s.repository.GetAllActiveOrders(ctx, tx)
+	orders, err := s.repository.GetAllActiveOrders(ctx, tx, lastOrderId, limit)
 	if err != nil {
 		log.Println("get all active orders failed", err)
 		return nil, internalError

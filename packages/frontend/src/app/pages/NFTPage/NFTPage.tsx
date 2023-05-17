@@ -26,13 +26,22 @@ const NFTPreviewContainer = styled('div', {
   width: '100%',
   height: 555,
   background: '$gradients$background',
-  paddingTop: 'calc($layout$navBarHeight)',
-  paddingBottom: '$6',
-  boxSizing: 'content-box'
+  backgroundSize: 'cover',
+  boxSizing: 'content-box',
+  '& .blur': {
+    width: '100%',
+    height: '100%',
+    mixBlendMode: 'normal',
+    backdropFilter: 'blur(150px)',
+    paddingTop: 'calc($layout$navBarHeight)',
+    paddingBottom: '$6'
+  },
+  zIndex: '1',
+  position: 'relative'
 })
 
 const MainInfo = styled(PageLayout, {
-  marginTop: '-80px',
+  marginTop: '150px',
   paddingTB: 48,
   fontSize: '16px',
   gridTemplateColumns: '3fr 1fr',
@@ -41,7 +50,9 @@ const MainInfo = styled(PageLayout, {
   minHeight: '100%',
   borderRadius: '$6 $6 0 0',
   top: '-$6',
-  boxShadow: '$footer'
+  boxShadow: '$footer',
+  zIndex: '7',
+  position: 'relative'
 })
 
 const GridLayout = styled('div', {
@@ -97,15 +108,20 @@ const NFTPage = observer(() => {
 
   return (
     <>
-      <NFTPreviewContainer>
-        {
-          <PreviewNFTFlow
-            getFile={files[0]?.getFile}
-            hiddenFile={tokenStore.data?.hiddenFileMeta}
-            canViewFile={isOwner || canViewHiddenFiles}
-            imageURL={getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')}
-          />
-        }
+      <NFTPreviewContainer style={{
+        background: `url(${getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')})`
+      }}
+      >
+        <div className='blur'>
+          {
+            <PreviewNFTFlow
+              getFile={files[0]?.getFile}
+              hiddenFile={tokenStore.data?.hiddenFileMeta}
+              canViewFile={isOwner || canViewHiddenFiles}
+              imageURL={getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')}
+            />
+          }
+        </div>
       </NFTPreviewContainer>
       <MainInfo>
         <GridLayout>

@@ -45,8 +45,9 @@ const DealContainerInfo = styled('div', {
 const ButtonsContainer = styled('div', {
   display: 'flex',
   justifyContent: 'stretch',
-  gap: '$4',
+  gap: '$3',
   width: '100%',
+  flexDirection: 'column',
   padding: '0 16px',
   '@sm': {
     flexDirection: 'column',
@@ -63,15 +64,17 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
 }) => {
   return (
     <NFTDealStyle>
-      <DealContainerInfo>
-        {children}
-        {order && (
-          <NFTDealPrice
-            price={order.price ?? '0'}
-            priceUsd={order.priceUsd ?? '0'}
-          />
-        )}
-      </DealContainerInfo>
+      {(children || order) && (
+        <DealContainerInfo>
+          {children}
+          {order && (
+            <NFTDealPrice
+              price={order.price ?? '0'}
+              priceUsd={order.priceUsd ?? '0'}
+            />
+          )}
+        </DealContainerInfo>
+      )}
       <ButtonsContainer>
         <NFTDealActions
           transfer={transfer}

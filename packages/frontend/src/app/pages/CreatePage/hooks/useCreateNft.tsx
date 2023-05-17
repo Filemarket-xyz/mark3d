@@ -41,7 +41,7 @@ export const useCreateNft = () => {
   } = useMintNFT(formToTransfer)
 
   useAfterDidMountEffect(() => {
-    void mintNFT()
+    mintNFT()
   }, [formToTransfer])
 
   return {

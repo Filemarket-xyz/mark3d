@@ -34,10 +34,10 @@ interface TagProps {
 
 const Tag: FC<TagProps> = ({ tagOptions, children, value }) => {
   return (
-        <TagStyle>
-            {children}
-            {tagOptions?.isCanDelete && <img src={deleteImg} onClick={() => { console.log(value); tagOptions?.onDelete?.(value) }} />}
-        </TagStyle>
+    <TagStyle>
+      {children}
+      {tagOptions?.isCanDelete && <img src={deleteImg} onClick={() => { tagOptions?.onDelete?.(value) }} />}
+    </TagStyle>
   )
 }
 

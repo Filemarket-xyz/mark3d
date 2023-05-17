@@ -5,7 +5,7 @@ import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { TokenFullId } from '../types'
-import { assertCollection, assertContract, assertSigner, assertTokenId } from '../utils'
+import { assertCollection, assertContract, assertSigner, assertTokenId, callContract } from '../utils'
 
 export function useCancelTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
@@ -18,12 +18,10 @@ export function useCancelTransfer({ collectionAddress, tokenId }: Partial<TokenF
     assertTokenId(tokenId)
     console.log('cancel transfer', { tokenId })
 
-    const tx = await contract.cancelTransfer(
+    return callContract({ contract, method: 'cancelTransfer' },
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice }
     )
-
-    return tx.wait()
   }), [contract, signer, wrapPromise])
 
   return {

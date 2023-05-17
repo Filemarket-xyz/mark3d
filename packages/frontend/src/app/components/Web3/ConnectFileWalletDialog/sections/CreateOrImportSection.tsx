@@ -88,9 +88,7 @@ export const CreateOrImportSection: FC<{ onSuccess?: () => void }> = observer(({
                   Click here, if you are new to FileMarket.xyz
                 </ToolDescription>
               </ToolCardInfo>
-              <Button onClick={() => {
-                openCreatedMnemonicDialog()
-              }}>
+              <Button onClick={openCreatedMnemonicDialog}>
                 Create
               </Button>
             </ToolCardContentWallet>
@@ -105,9 +103,7 @@ export const CreateOrImportSection: FC<{ onSuccess?: () => void }> = observer(({
                   Click here, if you have already used FileMarket.xyz on a different device
                 </ToolDescription>
               </ToolCardInfo>
-              <Button onClick={() => {
-                openImportAccountDialog()
-              }}>
+              <Button onClick={openImportAccountDialog}>
                 Connect
               </Button>
             </ToolCardContentWallet>
