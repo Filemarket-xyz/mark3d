@@ -42,10 +42,10 @@ const filecoinMainnet: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ['https://filecoin-mainnet.chainstacklabs.com/rpc/v1', 'https://rpc.ankr.com/filecoin', 'https://filecoin.chainup.net/rpc/v1', 'https://api.node.glif.io']
+      http: ['https://rpc.ankr.com/filecoin', 'https://filecoin.chainup.net/rpc/v1', 'https://api.node.glif.io']
     },
     public: {
-      http: ['https://filecoin-mainnet.chainstacklabs.com/rpc/v1', 'https://rpc.ankr.com/filecoin', 'https://filecoin.chainup.net/rpc/v1', 'https://api.node.glif.io']
+      http: ['https://rpc.ankr.com/filecoin', 'https://filecoin.chainup.net/rpc/v1', 'https://api.node.glif.io']
     }
   },
   blockExplorers: {
