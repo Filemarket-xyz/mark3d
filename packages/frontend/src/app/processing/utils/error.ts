@@ -7,9 +7,19 @@ import { wagmiClient } from '../../config/web3Modal'
 const FIVE_MINUTES = 300_000
 const fallbackError = { code: 500, message: 'unknown' }
 
+enum ProviderErrorMessages {
+  InternalError = 'Internal JSON-RPC error.',
+  InsufficientBalance = 'Actor balance less than needed'
+}
+
+enum ErrorMessages {
+  InsufficientBalance = 'Insufficient balance',
+  RejectedByUser = 'Contract call rejected by user'
+}
+
 const stringifyContractError = (error: any) => {
   if (error?.code === 'ACTION_REJECTED') {
-    return 'Contract call rejected by user.'
+    return ErrorMessages.RejectedByUser
   }
 
   let message = 'Unknown'
@@ -24,6 +34,12 @@ const stringifyContractError = (error: any) => {
       message = data.cause.reason
     } else if (data?.cause?.message) {
       message = data.cause.message
+    }
+  } else if (serializedError.message === ProviderErrorMessages.InternalError) {
+    if (data.message?.includes(ProviderErrorMessages.InsufficientBalance)) {
+      message = ErrorMessages.InsufficientBalance
+    } else {
+      message = data.message
     }
   } else {
     message = `Contract call failed. Reason: ${serializedError.message}`
@@ -72,7 +88,7 @@ export const callContract = async ({
       const balance = await signer.getBalance()
       // equality anyway throws an error because of gas
       if (balance.isZero() || minBalance?.gte(balance)) {
-        throw new JsonRpcError(402, 'Insufficient balance')
+        throw new JsonRpcError(402, ErrorMessages.InsufficientBalance)
       }
     }
 
