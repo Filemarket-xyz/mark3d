@@ -9,6 +9,7 @@ import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
 import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
+import { callContract } from '../utils/error'
 
 export function useApproveTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, publicKey?: string) {
   const { contract, signer } = useCollectionContract(collectionAddress)
@@ -31,13 +32,11 @@ export function useApproveTransfer({ collectionAddress, tokenId }: Partial<Token
     const encryptedFilePassword = await owner.encryptFilePassword(hexToBuffer(publicKey))
     console.log('approve transfer', { tokenId, encryptedFilePassword })
 
-    const tx = await contract.approveTransfer(
+    return callContract({ contract, method: 'approveTransfer' },
       BigNumber.from(tokenId),
       bufferToEtherHex(encryptedFilePassword),
       { gasPrice: mark3dConfig.gasPrice }
     )
-
-    return tx.wait()
   }), [contract, signer, address, wrapPromise, publicKey])
 
   return {
