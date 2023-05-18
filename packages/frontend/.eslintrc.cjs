@@ -83,6 +83,10 @@ module.exports = {
     'react/jsx-no-useless-fragment': ['warn', {
       allowExpressions: true
     }],
+    "react/self-closing-comp": ["warn", {
+      "component": true,
+      "html": true
+    }],
 
     // other
     'no-use-before-define': 'off',
