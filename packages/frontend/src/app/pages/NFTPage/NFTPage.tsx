@@ -3,7 +3,6 @@ import React, { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { styled } from '../../../styles'
-import { useStores } from '../../hooks'
 import { useHiddenFileDownload } from '../../hooks/useHiddenFilesDownload'
 import { useTokenMetaStore } from '../../hooks/useTokenMetaStore'
 import { useTokenStore } from '../../hooks/useTokenStore'
@@ -25,17 +24,24 @@ import TagsSection from './section/Tags/TagsSection'
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',
-  height: 700,
-  '@md': {
-    height: 500
-  },
+  height: 555,
   background: '$gradients$background',
-  paddingTop: 'calc($layout$navBarHeight)',
-  paddingBottom: '$6',
-  boxSizing: 'content-box'
+  backgroundSize: 'cover',
+  boxSizing: 'content-box',
+  '& .blur': {
+    width: '100%',
+    height: '100%',
+    mixBlendMode: 'normal',
+    backdropFilter: 'blur(150px)',
+    paddingTop: 'calc($layout$navBarHeight)',
+    paddingBottom: '$6'
+  },
+  zIndex: '1',
+  position: 'relative'
 })
 
 const MainInfo = styled(PageLayout, {
+  marginTop: '150px',
   paddingTB: 48,
   fontSize: '16px',
   gridTemplateColumns: '3fr 1fr',
@@ -44,7 +50,9 @@ const MainInfo = styled(PageLayout, {
   minHeight: '100%',
   borderRadius: '$6 $6 0 0',
   top: '-$6',
-  boxShadow: '$footer'
+  boxShadow: '$footer',
+  zIndex: '7',
+  position: 'relative'
 })
 
 const GridLayout = styled('div', {
@@ -87,8 +95,7 @@ const NFTPage = observer(() => {
   const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
   const tokenStore = useTokenStore(collectionAddress, tokenId)
   const tokenMetaStore = useTokenMetaStore(tokenStore.data?.metaUri)
-  const { errorStore } = useStores()
-  const files = useHiddenFileDownload(tokenMetaStore, errorStore, tokenStore.data)
+  const files = useHiddenFileDownload(tokenMetaStore, tokenStore.data)
   const tokenFullId = useMemo(
     () => makeTokenFullId(collectionAddress, tokenId),
     [collectionAddress, tokenId]
@@ -98,46 +105,66 @@ const NFTPage = observer(() => {
   const canViewHiddenFiles = isBuyer && transferPermissions.buyer.canViewHiddenFiles(
     transferStore.data
   )
-  const { data: token } = useTokenStore(collectionAddress, tokenId)
 
   return (
     <>
-      <NFTPreviewContainer>
-        {
-          <PreviewNFTFlow
-            getFile={files[0]?.getFile}
-            canViewFile={isOwner || canViewHiddenFiles}
-            imageURL={getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')}
-          />
-        }
+      <NFTPreviewContainer style={{
+        background: `url(${getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')})`
+      }}
+      >
+        <div className='blur'>
+          {
+            <PreviewNFTFlow
+              getFile={files[0]?.getFile}
+              hiddenFile={tokenStore.data?.hiddenFileMeta}
+              canViewFile={isOwner || canViewHiddenFiles}
+              imageURL={getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')}
+            />
+          }
+        </div>
       </NFTPreviewContainer>
       <MainInfo>
         <GridLayout>
           <GridBlockSection>
             <BaseInfoSection />
-            {window.innerWidth <= 900 && <GridBlockSectionRow>
-              <ControlSection />
-              <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files} />
-            </GridBlockSectionRow>}
+            {window.innerWidth <= 900 && (
+              <GridBlockSectionRow>
+                <ControlSection />
+                <FileInfoSection
+                  isOwner={isOwner}
+                  canViewHiddenFiles={canViewHiddenFiles}
+                  files={files}
+                />
+              </GridBlockSectionRow>
+            )}
             <HomeLandSection />
-             <TagsSection
-               categories={[
-                 ...Array.from(token?.categories ?? []),
-                 ...Array.from(token?.subcategories ?? [])
-               ]}
-               tags={token?.tags}
-             />
-            {window.innerWidth > 1200 && <><DescriptionSection /></>}
+            <TagsSection
+              tags={tokenStore.data?.tags}
+              categories={[
+                ...Array.from(tokenStore.data?.categories ?? []),
+                ...Array.from(tokenStore.data?.subcategories ?? [])
+              ]}
+            />
+            {window.innerWidth > 1200 && <DescriptionSection />}
           </GridBlockSection>
 
-          {window.innerWidth > 900 && <GridBlockSection>
-            <ControlSection />
-            <FileInfoSection isOwner={isOwner} canViewHiddenFiles={canViewHiddenFiles} files={files} />
-          </GridBlockSection>}
+          {window.innerWidth > 900 && (
+            <GridBlockSection>
+              <ControlSection />
+              <FileInfoSection
+                isOwner={isOwner}
+                canViewHiddenFiles={canViewHiddenFiles}
+                files={files}
+              />
+            </GridBlockSection>
+          )}
         </GridLayout>
 
-        {window.innerWidth <= 1200 && <DisplayLayout><DescriptionSection />
-    </DisplayLayout>}
+        {window.innerWidth <= 1200 && (
+          <DisplayLayout>
+            <DescriptionSection />
+          </DisplayLayout>
+        )}
       </MainInfo>
     </>
   )

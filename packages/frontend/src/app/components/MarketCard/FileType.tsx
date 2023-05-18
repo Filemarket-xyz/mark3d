@@ -4,7 +4,7 @@ import { styled } from '../../../styles'
 import { HiddenFileMetaData } from '../../../swagger/Api'
 import { Txt } from '../../UIkit'
 import { typeFiles, typeImg } from './helper/data'
-import { fileNameToExtension, filenameToType } from './helper/filenameToType'
+import { fileToExtension, fileToType } from './helper/fileToType'
 
 const FileTypeStyle = styled('div', {
   background: 'rgba(255, 255, 255, 0.5)',
@@ -30,7 +30,7 @@ interface FileTypeProps {
 const FileType: FC<FileTypeProps> = ({ file }) => {
   const type: typeFiles | undefined = useMemo(() => {
     if (!file) return undefined
-    return filenameToType(file)
+    return fileToType(file)
   }, [file])
 
   const img: string | undefined = useMemo(() => {
@@ -39,7 +39,7 @@ const FileType: FC<FileTypeProps> = ({ file }) => {
 
   const extension: string | undefined = useMemo(() => {
     if (!file) return undefined
-    return fileNameToExtension(file)
+    return fileToExtension(file)
   }, [file])
 
   return (

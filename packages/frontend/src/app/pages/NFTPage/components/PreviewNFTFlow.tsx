@@ -3,14 +3,22 @@ import 'swiper/css/navigation'
 import '@google/model-viewer'
 
 import { Loading } from '@nextui-org/react'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import screenfull from 'screenfull'
 import { Navigation, Pagination } from 'swiper'
 import { Swiper, SwiperSlide as SwiperSlideUnstyled } from 'swiper/react'
+import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../styles'
+import { HiddenFileMetaData } from '../../../../swagger/Api'
+import { typeFiles } from '../../../components/MarketCard/helper/data'
+import { fileToExtension, fileToType } from '../../../components/MarketCard/helper/fileToType'
+import { useStores } from '../../../hooks'
+import { useSeed } from '../../../processing/SeedProvider/useSeed'
 import { DecryptResult } from '../../../processing/types'
-import { Button, gradientPlaceholderImg, textVariant } from '../../../UIkit'
+import { gradientPlaceholderImg, textVariant } from '../../../UIkit'
 import css from './styles.module.css'
+import ViewFile from './ViewFile/ViewFile'
 
 const CenterContainer = styled('div', {
   display: 'flex',
@@ -18,7 +26,8 @@ const CenterContainer = styled('div', {
   justifyContent: 'center',
   height: '100%',
   gap: '$3',
-  flexDirection: 'column'
+  flexDirection: 'column',
+  position: 'relative'
 })
 
 const ErrorMessage = styled('p', {
@@ -47,6 +56,7 @@ interface PreviewNFTFlowProps {
   getFile?: () => Promise<DecryptResult<File>>
   canViewFile: boolean
   imageURL: string
+  hiddenFile?: HiddenFileMetaData
 }
 
 const SwiperStyled = styled(Swiper)
@@ -67,14 +77,45 @@ const Image = styled('img', {
 export const PreviewNFTFlow = ({
   getFile,
   imageURL,
-  canViewFile
+  canViewFile,
+  hiddenFile
 }: PreviewNFTFlowProps) => {
   const [previewState, setPreviewState] = useState<{
     state: PreviewState
     data?: string
   }>()
-
+  const { address, isConnected } = useAccount()
+  const { tokenMetaStore, tokenStore } = useStores()
+  const seed = useSeed(address)
   const [is3D, setIs3D] = useState<boolean | undefined>(undefined)
+  const [isViewFile, setIsViewFile] = useState<boolean>(false)
+  const [isViewedMounted, setIsViewedMounted] = useState<boolean>(false)
+
+  const typeFile: typeFiles | undefined = useMemo(() => {
+    return hiddenFile ? fileToType(hiddenFile) : undefined
+  }, [hiddenFile])
+
+  const extensionFile: string | undefined = useMemo(() => {
+    return hiddenFile ? fileToExtension(hiddenFile) : undefined
+  }, [hiddenFile])
+
+  const isLoading: boolean = useMemo(() => {
+    return (tokenMetaStore.isLoading || tokenStore.isLoading || !seed) && isConnected
+  }, [tokenMetaStore.isLoading, tokenStore.isLoading, !seed, isConnected])
+
+  const isCanView: boolean = useMemo(() => {
+    if (!getFile) return false
+    const availableExtensions3D: string[] = ['glb', 'gltf']
+    const availableExtensionsImage: string[] = ['jpg', 'jpeg', 'png', 'gif', 'bmp']
+    if (availableExtensions3D.includes(String(extensionFile))) {
+      setIs3D(true)
+      return canViewFile
+    } else if (availableExtensionsImage.includes(String(extensionFile))) {
+      setIs3D(false)
+      return canViewFile
+    }
+    return false
+  }, [hiddenFile, getFile, canViewFile])
 
   const handleLoadClick = async () => {
     if (!getFile) return
@@ -114,22 +155,29 @@ export const PreviewNFTFlow = ({
         data: 'Unable to download, try again later'
       })
 
-    const fileExtension = getFileExtension(model.result)
-    const availableExtensions3D: string[] = ['glb', 'gltf']
-    const availableExtensionsImage: string[] = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tif', 'tiff', 'psd', 'ai', 'eps']
-    if (availableExtensions3D.includes(fileExtension)) {
+    if (isCanView) {
       fr.readAsDataURL(model.result)
-      setIs3D(true)
-    } else if (availableExtensionsImage.includes(fileExtension)) {
-      fr.readAsDataURL(model.result)
-      setIs3D(false)
     } else {
       setPreviewState({
         state: PreviewState.EXTENSION_ERROR,
-        data: `File type .${fileExtension} is not supported`
+        data: 'Preview is not available'
       })
     }
   }
+
+  useEffect(() => {
+    if (!isConnected) {
+      setIsViewFile(false)
+    }
+  }, [isConnected])
+
+  useEffect(() => {
+    if (isLoading) {
+      setPreviewState({
+        state: PreviewState.LOADING
+      })
+    }
+  }, [isLoading])
 
   return (
     <CenterContainer>
@@ -144,46 +192,65 @@ export const PreviewNFTFlow = ({
           '--swiper-navigation-size': '20px'
         }}
       >
-        {canViewFile && (
-          <SwiperSlide>
-            {previewState?.state === PreviewState.LOADED ? (
-              is3D ? <model-viewer
-                src={previewState.data}
-                ar
-                shadow-intensity='1'
-                camera-controls
-                touch-action='pan-y'
-                style={{ width: '100%', height: '100%' }}
-              ></model-viewer>
-                : <img src={previewState.data} />
-            ) : previewState?.state === PreviewState.LOADING ? (
-              <Loading size='xl' color={'white'} />
-            ) : previewState?.state === PreviewState.LOADING_ERROR ? (
-              <>
-                <ErrorMessage>{previewState?.data}</ErrorMessage>
-                <Button secondary onPress={handleLoadClick}>
-                  Load NFT
-                </Button>
-              </>
-            ) : previewState?.state === PreviewState.EXTENSION_ERROR ? (
-              <>
-                <ErrorMessage>{previewState?.data}</ErrorMessage>
-              </>
-            ) : (
-              <Button secondary onPress={handleLoadClick}>
-                Load NFT
-              </Button>
-            )}
-          </SwiperSlide>
-        )}
         <SwiperSlide>
-          <Image
-            src={imageURL}
-            onError={({ currentTarget }) => {
-              currentTarget.onerror = null
-              currentTarget.src = gradientPlaceholderImg
-            }}
-          />
+          {isViewFile ? (
+            isCanView && (
+              <>
+                {previewState?.state === PreviewState.LOADED ? (
+                  is3D ? (
+                    <model-viewer
+                      camera-controls
+                      src={previewState.data}
+                      shadow-intensity='1'
+                      touch-action='pan-y'
+                      style={{ width: '100%', height: '100%' }}
+                    >
+                    </model-viewer>
+                  )
+                    : (
+                      <Image
+                        src={previewState.data}
+                        onError={({ currentTarget }) => {
+                          currentTarget.onerror = null
+                          currentTarget.src = gradientPlaceholderImg
+                        }}
+                      />
+                      )
+                ) : previewState?.state === PreviewState.LOADING ? (
+                  <Loading size='xl' color={'white'} />
+                ) : previewState?.state === PreviewState.LOADING_ERROR ? (
+                  <>
+                    <ErrorMessage>{previewState?.data}</ErrorMessage>
+                  </>
+                ) : previewState?.state === PreviewState.EXTENSION_ERROR && (
+                  <>
+                    <ErrorMessage>{previewState?.data}</ErrorMessage>
+                  </>
+                )}
+              </>
+            )
+          )
+            : (
+              <>
+                {isLoading ? <Loading size='xl' color={'white'} /> : (
+                  <Image
+                    src={imageURL}
+                    onError={({ currentTarget }) => {
+                      currentTarget.onerror = null
+                      currentTarget.src = gradientPlaceholderImg
+                    }}
+                    onClick={(e) => {
+                      if (screenfull.isFullscreen) {
+                        screenfull.exit()
+                      } else if (screenfull.isEnabled) {
+                        screenfull.request(e.target as Element)
+                      }
+                    }}
+                  />
+                )}
+              </>
+              )}
+          {(isCanView && !isLoading) && <ViewFile isPreviewView={!isViewFile} type={typeFile} onClick={() => { setIsViewFile(value => !value); handleLoadClick() }} />}
         </SwiperSlide>
       </SwiperStyled>
     </CenterContainer>

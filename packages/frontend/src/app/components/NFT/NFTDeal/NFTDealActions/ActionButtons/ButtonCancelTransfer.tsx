@@ -26,11 +26,11 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullI
         primary
         fullWidth
         borderRadiusSecond
+        isDisabled={isLoading}
         onPress={async () => {
           await cancelTransfer()
           callback?.()
         }}
-        isDisabled={isLoading}
       >
         Cancel deal
       </Button>

@@ -264,26 +264,35 @@ const CreateNftPage = observer(() => {
   return (
     <>
       <MintModal
+        body={modalBody ?? <></>}
+        open={modalOpen}
         handleClose={() => {
           setIsNftLoading(false)
           setNftError(undefined)
           setModalOpen(false)
         }}
-        body={modalBody ?? <></>}
-        open={modalOpen}
       />
       <PageLayout css={{ paddingBottom: '$4' }}>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <TitleGroup>
             <h3><Txt h3>Create New NFT</Txt></h3>
             <SubTitle>
-              <Txt primary1>With Encrypted
+              <Txt primary1>
+                With Encrypted
                 <Tooltip
-                  content={<Txt>Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin,
-                    which can only be accessed exclusively by the owner of the NFT.</Txt>}>
-                  {' '}<Txt css={{ fontWeight: 700 }}>FileToken&#169;</Txt>{' '}
+                  content={(
+                    <Txt>
+                      Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin,
+                      which can only be accessed exclusively by the owner of the NFT.
+                    </Txt>
+                  )}
+                >
+                  {' '}
+                  <Txt css={{ fontWeight: 700 }}>FileToken&#169;</Txt>
+                  {' '}
                 </Tooltip>
-                Technology on Filecoin storage.</Txt>
+                Technology on Filecoin storage.
+              </Txt>
             </SubTitle>
           </TitleGroup>
 
@@ -297,8 +306,12 @@ const CreateNftPage = observer(() => {
           <FormControl>
             <Label css={{ marginBottom: '$3' }}>Upload any file that will be encrypted and hidden by EFT&#169;</Label>
             <Description>
-              <TextBold>Formats:</TextBold> Any
-              <TextBold> Max size:</TextBold> 100 MB.
+              <TextBold>Formats:</TextBold>
+              {' '}
+              Any
+              <TextBold> Max size:</TextBold>
+              {' '}
+              100 MB.
             </Description>
             <NftLoader
               registerProps={register('hiddenFile', { required: true })}
@@ -320,11 +333,11 @@ const CreateNftPage = observer(() => {
               <ControlledComboBox<CreateNFTForm>
                 name='collection'
                 control={control}
+                rules={{ required: true }}
                 comboboxProps={{
                   options: collectionMintOptions,
                   isLoading: isCollectionLoading
                 }}
-                rules={{ required: true }}
               />
               <NavLink to={'../collection'}>
                 <AddCollectionButton>
@@ -337,7 +350,8 @@ const CreateNftPage = observer(() => {
           <FormControl>
             <LabelWithCounter>
               <Label>
-                Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
+                Description&nbsp;&nbsp;
+                <TextGray>(Optional)</TextGray>
               </Label>
               {/* <LetterCounter>{description?.length}/1000</LetterCounter> */}
             </LabelWithCounter>
@@ -356,61 +370,73 @@ const CreateNftPage = observer(() => {
                   name='category'
                   control={control}
                   placeholder={'Select a category'}
+                  rules={{ required: true }}
                   comboboxProps={{
                     options: categoryOptions
                   }}
-                  rules={{ required: true }}
                 />
               </CollectionPickerContainer>
             </FormControl>
 
             <FormControl>
-              <Label>Subcategory&nbsp;&nbsp;<TextGray>(Optional)</TextGray></Label>
+              <Label>
+                Subcategory&nbsp;&nbsp;
+                <TextGray>(Optional)</TextGray>
+              </Label>
               <CollectionPickerContainer>
                 <ControlledComboBox<CreateNFTForm>
                   name='subcategory'
                   control={control}
                   placeholder={'Select a subcategory'}
+                  rules={{ required: false }}
+                  isDisabled={!category}
                   comboboxProps={{
                     options: subcategoryOptions
                   }}
-                  rules={{ required: false }}
-                  isDisabled={!category}
                 />
               </CollectionPickerContainer>
             </FormControl>
           </CategoryAndSubcategory>
 
           <FormControl>
-            <Label>Tags&nbsp;&nbsp;<TextGray>(Optional)</TextGray></Label>
+            <Label>
+              Tags&nbsp;&nbsp;
+              <TextGray>(Optional)</TextGray>
+            </Label>
             <ContentField>
               <ControlledComboBox<CreateNFTForm>
                 name='tags'
                 control={control}
                 placeholder={'Content tags'}
+                rules={{ required: false }}
                 comboboxProps={{
                   options: tags?.filter((tag) => !chosenTags.includes(tag.title))
                 }}
-                rules={{ required: false }}
                 onEnter={(value) => {
                   if (value && !chosenTags.includes(value)) setChosenTags([...chosenTags, value])
-                  console.log(value)
                 }}
               />
-              {chosenTags.length > 0 && <TagsSection tags={chosenTags} tagOptions={{
-                isCanDelete: true,
-                onDelete: (value?: string) => {
-                  if (value === chosenTag?.title) {
-                    resetField('tags')
-                  }
-                  setChosenTags([...chosenTags?.filter((tag) => {
-                    return tag !== value
-                  })])
-                }
-              }} />}
-              {chosenTags.length <= 0 && <Description secondary>
-                Tags make it easier to find the right content
-              </Description>}
+              {chosenTags.length > 0 && (
+                <TagsSection
+                  tags={chosenTags}
+                  tagOptions={{
+                    isCanDelete: true,
+                    onDelete: (value?: string) => {
+                      if (value === chosenTag?.title) {
+                        resetField('tags')
+                      }
+                      setChosenTags([...chosenTags?.filter((tag) => {
+                        return tag !== value
+                      })])
+                    }
+                  }}
+                />
+              )}
+              {chosenTags.length <= 0 && (
+                <Description secondary>
+                  Tags make it easier to find the right content
+                </Description>
+              )}
             </ContentField>
           </FormControl>
 
@@ -421,10 +447,10 @@ const CreateNftPage = observer(() => {
                 name='license'
                 control={control}
                 placeholder={'License'}
+                rules={{ required: true }}
                 comboboxProps={{
                   options: licenseOptions
                 }}
-                rules={{ required: true }}
               />
               <Description secondary>
                 {licenseDescription}

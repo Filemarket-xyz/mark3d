@@ -87,6 +87,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
     if (!this.address) {
       return []
     }
+
     return this.collections
       // user is only allowed to mint into owned collections
       .filter(collection => collection.owner && utils.getAddress(collection.owner) === utils.getAddress(this.address))

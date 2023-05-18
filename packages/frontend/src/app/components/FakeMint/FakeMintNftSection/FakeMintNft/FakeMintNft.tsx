@@ -1,5 +1,5 @@
 import { ComponentProps } from '@stitches/react'
-import { BigNumber, utils } from 'ethers'
+import { utils } from 'ethers'
 import React, { FC } from 'react'
 
 import { styled } from '../../../../../styles'
@@ -218,48 +218,63 @@ type FakeMintNftProps = ComponentProps<typeof CardRarity> & {
   imageURL: string
 }
 
-const FakeMintNft: FC<FakeMintNftProps> = (props) => {
+const FakeMintNft: FC<FakeMintNftProps> = ({ rarity, imageURL, chance, price }) => {
   return (
-        <HeightContainer>
-            <BorderLayoutFakeNft rarity={props.rarity}>
-                <FakeNftCard>
-                    <BasicCardSquareImgFakeNft
-                        src={props.imageURL}
-                        onError={({ currentTarget }) => {
-                          currentTarget.onerror = null
-                          currentTarget.src = gradientPlaceholderImg
-                        }}
-                    />
-                    <CardInfo>
-                        <CardRarity rarity={props.rarity}>
-                            Rarity:
-                            <Txt h5>
-                                {props.rarity?.toString().toUpperCase()}
-                            </Txt>
-                        </CardRarity>
-                        <Line rarity={props.rarity} />
-                        <CardFakeNftText>Jammy Chance: <Txt h5>{props.chance}%</Txt></CardFakeNftText>
-                        <CardFakeNftText>Encrypted file inside: <Txt h5>Gifts Bundle</Txt></CardFakeNftText>
-                        <PriceFakeNft>{`${utils.formatUnits(BigNumber.from(props.price ?? '0'), mark3dConfig.chain.nativeCurrency.decimals).split('.')[0]} ${mark3dConfig.chain.nativeCurrency.symbol}`}</PriceFakeNft>
-                        <ButtonContainer>
-                            <Button
-                                fakeNft
-                                fakeNftRarity={props.rarity}
-                                small={true}
-                                css={{
-                                  textDecoration: 'none',
-                                  marginLeft: 'auto',
-                                  marginRight: 'auto',
-                                  width: '100%'
-                                }}
-                            >
-                                <Txt body1>MINT</Txt>
-                            </Button>
-                        </ButtonContainer>
-                    </CardInfo>
-                </FakeNftCard>
-            </BorderLayoutFakeNft>
-        </HeightContainer>
+    <HeightContainer>
+      <BorderLayoutFakeNft rarity={rarity}>
+        <FakeNftCard>
+          <BasicCardSquareImgFakeNft
+            src={imageURL}
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null
+              currentTarget.src = gradientPlaceholderImg
+            }}
+          />
+          <CardInfo>
+            <CardRarity rarity={rarity}>
+              Rarity:
+              <Txt h5>
+                {rarity?.toString().toUpperCase()}
+              </Txt>
+            </CardRarity>
+            <Line rarity={rarity} />
+            <CardFakeNftText>
+              Jammy Chance:
+              {' '}
+              <Txt h5>
+                {chance}
+                %
+              </Txt>
+            </CardFakeNftText>
+            <CardFakeNftText>
+              Encrypted file inside:
+              {' '}
+              <Txt h5>Gifts Bundle</Txt>
+            </CardFakeNftText>
+            <PriceFakeNft>
+              {utils.formatUnits(price ?? '0', mark3dConfig.chain.nativeCurrency.decimals).split('.')[0]}
+              {' '}
+              {mark3dConfig.chain.nativeCurrency.symbol}
+            </PriceFakeNft>
+            <ButtonContainer>
+              <Button
+                fakeNft
+                small
+                fakeNftRarity={rarity}
+                css={{
+                  textDecoration: 'none',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  width: '100%'
+                }}
+              >
+                <Txt body1>MINT</Txt>
+              </Button>
+            </ButtonContainer>
+          </CardInfo>
+        </FakeNftCard>
+      </BorderLayoutFakeNft>
+    </HeightContainer>
   )
 }
 

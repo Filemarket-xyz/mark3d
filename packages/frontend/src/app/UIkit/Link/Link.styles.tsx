@@ -69,7 +69,6 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
             '&:after': {
               content: `url(${RedirectImg})`,
               position: 'absolute',
-              top: 0,
               right: '-20px'
             }
           }
@@ -82,6 +81,13 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
             '@md': {
               fontSize: '12px',
               lineHeight: '14px'
+            }
+          }
+        },
+        mdFullWidth: {
+          true: {
+            '@md': {
+              width: '100%'
             }
           }
         }

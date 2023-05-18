@@ -10,7 +10,7 @@ import VideoImg from './img/Video.svg'
 export type typeFiles = 'document' | 'music' | 'rar' | 'picture' | '3D' | 'video' | 'code' | 'another'
 
 export const typeOptions: Record<typeFiles, string[]> = {
-  '3D': ['.obj', '.3ds', '.fbx', '.dae', '.blend', '.stl', '.ply', '.max'],
+  '3D': ['.obj', '.3ds', '.fbx', '.dae', '.blend', '.stl', '.ply', '.max', '.glb', '.gltf'],
   another: [],
   code: ['.c', '.cpp', '.h', '.hpp', '.java', '.py', '.rb', '.html', '.css', '.js', '.php', '.sql', '.xml'],
   document: ['.doc', '.docx', '.pdf', '.txt', '.rtf', '.odt', '.wpd', '.tex', '.ppt', '.pptx', '.xls', '.xlsx', '.csv', '.ods'],

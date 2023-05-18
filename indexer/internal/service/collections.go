@@ -7,6 +7,7 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 	"log"
+	"math/big"
 )
 
 func (s *service) GetCollection(ctx context.Context,
@@ -28,8 +29,12 @@ func (s *service) GetCollection(ctx context.Context,
 	return domain.CollectionToModel(collection), nil
 }
 
-func (s *service) GetCollectionWithTokens(ctx context.Context,
-	address common.Address) (*models.CollectionData, *models.ErrorResponse) {
+func (s *service) GetCollectionWithTokens(
+	ctx context.Context,
+	address common.Address,
+	lastTokenId *big.Int,
+	limit int,
+) (*models.CollectionData, *models.ErrorResponse) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
@@ -44,7 +49,7 @@ func (s *service) GetCollectionWithTokens(ctx context.Context,
 		log.Println("get collection failed: ", err)
 		return nil, internalError
 	}
-	tokens, err := s.repository.GetCollectionTokens(ctx, tx, address)
+	tokens, err := s.repository.GetCollectionTokens(ctx, tx, address, lastTokenId, limit)
 	if err != nil {
 		log.Println("get collection token failed: ", err)
 		return nil, internalError
