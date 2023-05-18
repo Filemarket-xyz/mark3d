@@ -13,6 +13,7 @@ export function useActivateDeactivateRequireParams<Args extends any[]>(
       activated.current = true
       store.activate(...(args as Args))
     }
+
     return () => {
       if (activated.current) {
         activated.current = false
