@@ -1554,6 +1554,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.16.7":
+  version: 7.21.5
+  resolution: "@babel/runtime@npm:7.21.5"
+  dependencies:
+    regenerator-runtime: ^0.13.11
+  checksum: 358f2779d3187f5c67ad302e8f8d435412925d0b991d133c7d4a7b1ddd5a3fda1b6f34537cb64628dfd96a27ae46df105bed3895b8d754b88cacdded8d1129dd
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.19.0, @babel/runtime@npm:^7.8.7":
   version: 7.20.1
   resolution: "@babel/runtime@npm:7.20.1"
@@ -13570,6 +13579,7 @@ __metadata:
     randombytes: ^2.1.0
     react: ^18.2.0
     react-aria: ^3.20.0
+    react-cool-virtual: ^0.7.0
     react-dom: ^18.2.0
     react-hook-form: ^7.39.4
     react-router-dom: ^6.4.2
@@ -20037,6 +20047,17 @@ __metadata:
     react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
   checksum: 7ebfa3323a487fd3b6fba7bcc933a5eaabf316b0a68a61d2a2d10ce2c5d0f2643f89a24934dd5aceead19a0b14def3b7fd32fdc2c4f5828590b1f7bbbc5214b8
+  languageName: node
+  linkType: hard
+
+"react-cool-virtual@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "react-cool-virtual@npm:0.7.0"
+  dependencies:
+    "@babel/runtime": ^7.16.7
+  peerDependencies:
+    react: ">= 16.8.0"
+  checksum: fb05bbf0cae031a3cce7017ba3c6fc6e849766e08e417ce6dfd96581eca9a9993ab99bbc1be38438f724d28a6332bcc6d31cf6e893f71c5d813fdf45f1639fe6
   languageName: node
   linkType: hard
 
