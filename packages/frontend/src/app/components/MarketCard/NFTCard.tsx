@@ -119,7 +119,7 @@ export const ButtonContainer = styled('div', {
 export interface NFTCardProps {
   imageURL: string
   title: string
-  collection: string
+  collectionAddress: string
   user: {
     img: string
     username: string
@@ -152,7 +152,7 @@ export const BorderLayout = styled('div', {
 })
 
 export const NFTCard: React.FC<NFTCardProps> = ({
-  collection,
+  collectionAddress,
   button,
   imageURL,
   hiddenFile,
@@ -162,7 +162,7 @@ export const NFTCard: React.FC<NFTCardProps> = ({
   priceUsd
 }) => {
   const navigate = useNavigate()
-  const { data: collectionAndNfts } = useCollectionTokenListStore(collection)
+  const { data: collectionAndNfts } = useCollectionTokenListStore(collectionAddress)
 
   return (
     <BorderLayout>
