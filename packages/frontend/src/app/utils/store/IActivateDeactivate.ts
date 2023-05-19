@@ -3,7 +3,7 @@
  * инициализацию (активацию) и деактивацию
  */
 
-export interface IActivateDeactivate<Args extends any[]> {
+export interface IActivateDeactivate<Args extends any[] = []> {
   /**
    * Вызывается перед использованием стора.
    */

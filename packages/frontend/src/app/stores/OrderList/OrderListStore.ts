@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
 import { OrderStatus, OrderWithToken } from '../../../swagger/Api'
-import { NFTCardProps } from '../../components/MarketCard/NFTCard'
 import { api } from '../../config/api'
 import { gradientPlaceholderImg } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
@@ -20,15 +19,14 @@ import { ErrorStore } from '../Error/ErrorStore'
  * Stores only ACTIVE order state.
  * Does not listen for updates, need to reload manually.
  */
-export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<[string]> {
+export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate {
   errorStore: ErrorStore
 
   currentRequest?: RequestContext
   requestCount = 0
   isLoaded = false
-  isLoading = false
+  isLoading = true
   isActivated = false
-  address = ''
 
   data: OrderWithToken[] = []
 
@@ -39,16 +37,34 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
     })
   }
 
-  private request(tokenAddress: string) {
-    storeRequest<OrderWithToken[]>(this, api.orders.allActiveList(), (resp) => {
-      this.data = resp
-    })
+  setData(data: OrderWithToken[]) {
+    this.data = data
   }
 
-  activate(address: string): void {
+  addData(data: OrderWithToken[]) {
+    this.data.push(...data)
+  }
+
+  private request() {
+    storeRequest(
+      this,
+      api.orders.allActiveList({ limit: 20 }),
+      (data) => this.setData(data)
+    )
+  }
+
+  requestMore() {
+    const lastOrderId = this.data[this.data.length - 1].order?.id
+    storeRequest(
+      this,
+      api.orders.allActiveList({ lastOrderId, limit: 20 }),
+      (data) => this.addData(data)
+    )
+  }
+
+  activate(): void {
     this.isActivated = true
-    this.address = address
-    this.request(address)
+    this.request()
   }
 
   deactivate(): void {
@@ -61,15 +77,15 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
   }
 
   reload(): void {
-    this.request(this.address)
+    this.request()
   }
 
   get nftCards() {
     return this.data
       .filter(({ order }) => order?.statuses?.[0]?.status === OrderStatus.Created)
       .map(
-        ({ token, order }): NFTCardProps => ({
-          collection: token?.collectionAddress ?? '',
+        ({ token, order }) => ({
+          collectionAddress: token?.collectionAddress ?? '',
           hiddenFile: token?.hiddenFileMeta,
           imageURL: token?.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
           title: token?.name ?? '—',
@@ -82,7 +98,8 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
             text: 'View & Buy'
           },
           priceUsd: order?.priceUsd,
-          price: order?.price
+          price: order?.price,
+          orderId: order?.id
         })
       )
   }
