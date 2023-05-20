@@ -26,7 +26,7 @@ func (h *handler) handleGetFullCollection(w http.ResponseWriter, r *http.Request
 		sendResponse(w, err.Code, err)
 		return
 	}
-	limit, err := parseLimitParam(r, "limit", 0, 100)
+	limit, err := parseLimitParam(r, "limit", 10000, 10000)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
