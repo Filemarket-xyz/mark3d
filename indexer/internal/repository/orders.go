@@ -42,6 +42,9 @@ func (p *postgres) GetAllActiveOrders(
 	if lastOrderId != nil {
 		lastOrderIdParam = *lastOrderId
 	}
+	if limit == 0 {
+		limit = 10000
+	}
 
 	rows, err := tx.Query(ctx, query, lastOrderIdParam, limit)
 	if err != nil {

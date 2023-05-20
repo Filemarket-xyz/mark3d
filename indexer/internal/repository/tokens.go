@@ -35,8 +35,12 @@ func (p *postgres) GetCollectionTokens(
 	`
 	var res []*domain.Token
 	lastTokenIdStr := ""
-	if lastTokenId.Cmp(big.NewInt(0)) != 0 {
+	if lastTokenId != nil && lastTokenId.Cmp(big.NewInt(0)) != 0 {
 		lastTokenIdStr = lastTokenId.String()
+	}
+
+	if limit == 0 {
+		limit = 10000
 	}
 
 	err := func(res *[]*domain.Token, query string) error {
@@ -116,8 +120,12 @@ func (p *postgres) GetTokensByAddress(
 	}
 
 	lastTokenIdStr := ""
-	if lastTokenId.Cmp(big.NewInt(0)) != 0 {
+	if lastTokenId != nil && lastTokenId.Cmp(big.NewInt(0)) != 0 {
 		lastTokenIdStr = lastTokenId.String()
+	}
+
+	if limit == 0 {
+		limit = 10000
 	}
 
 	err := func(res *[]*domain.Token, query string) error {

@@ -64,8 +64,8 @@ paths:
           description: Максимальное число токенов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10
-          minimum: 1
+          default: 0
+          minimum: 0
           maximum: 100
   /tokens/{address}:
     get:
@@ -100,7 +100,7 @@ paths:
           description: Максимальное число коллекций, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10
+          default: 0
           minimum: 0
           maximum: 100
         - name: lastTokenId
@@ -119,7 +119,7 @@ paths:
           description: Максимальное число токенов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10
+          default: 0
           minimum: 0
           maximum: 100
   /tokens/{collection}/{id}:
@@ -211,8 +211,8 @@ paths:
           description: Максимальное число токенов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10
-          minimum: 1
+          default: 0
+          minimum: 0
           maximum: 100
   /transfers/{address}:
     get:
@@ -247,7 +247,7 @@ paths:
           description: Максимальное число входящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10
+          default: 0
           minimum: 0
           maximum: 100
         - name: lastOutgoingTransferId
@@ -260,7 +260,7 @@ paths:
           description: Максимальное число исходящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10
+          default: 0
           minimum: 0
           maximum: 100
   /transfers/{address}/{id}:
@@ -324,7 +324,7 @@ paths:
           description: Максимальное число входящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10
+          default: 0
           minimum: 0
           maximum: 100
         - name: lastOutgoingTransferId
@@ -337,7 +337,7 @@ paths:
           description: Максимальное число исходящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10
+          default: 0
           minimum: 0
           maximum: 100
   /v2/transfers/{address}:
@@ -373,7 +373,7 @@ paths:
           description: Максимальное число входящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10
+          default: 0
           minimum: 0
           maximum: 100
         - name: lastOutgoingTransferId
@@ -386,7 +386,7 @@ paths:
           description: Максимальное число исходящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10
+          default: 0
           minimum: 0
           maximum: 100
   /v2/transfers/{address}/{id}:
@@ -450,7 +450,7 @@ paths:
           description: Максимальное число входящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10
+          default: 0
           minimum: 0
           maximum: 100
         - name: lastOutgoingTransferId
@@ -463,7 +463,7 @@ paths:
           description: Максимальное число исходящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10
+          default: 0
           minimum: 0
           maximum: 100
   /orders/all_active:
@@ -495,8 +495,8 @@ paths:
           description: Максимальное число ордеров, которое вернется на этой странице.
           type: integer
           format: int
-          default: 10
-          minimum: 1
+          default: 0
+          minimum: 0
           maximum: 100
   /orders/{address}:
     get:

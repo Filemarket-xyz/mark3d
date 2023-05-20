@@ -43,6 +43,9 @@ func (p *postgres) GetIncomingTransfersByAddress(
 	if lastTransferId != nil {
 		lastTransferIdParam = *lastTransferId
 	}
+	if limit == 0 {
+		limit = 10000
+	}
 	rows, err := tx.Query(ctx, query,
 		strings.ToLower(address.String()),
 		lastTransferIdParam,
@@ -134,6 +137,9 @@ func (p *postgres) GetOutgoingTransfersByAddress(
 	var lastTransferIdParam int64 = math.MaxInt64
 	if lastTransferId != nil {
 		lastTransferIdParam = *lastTransferId
+	}
+	if limit == 0 {
+		limit = 10000
 	}
 
 	rows, err := tx.Query(ctx, query,
@@ -247,6 +253,9 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 	if lastTransferId != nil {
 		lastTransferIdParam = *lastTransferId
 	}
+	if limit == 0 {
+		limit = 10000
+	}
 	rows, err := tx.Query(ctx, query,
 		strings.ToLower(address.String()),
 		lastTransferIdParam,
@@ -356,6 +365,9 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(
 	var lastTransferIdParam int64 = math.MaxInt64
 	if lastTransferId != nil {
 		lastTransferIdParam = *lastTransferId
+	}
+	if limit == 0 {
+		limit = 10000
 	}
 	rows, err := tx.Query(ctx, query,
 		strings.ToLower(address.String()),
