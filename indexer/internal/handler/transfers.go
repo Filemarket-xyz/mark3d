@@ -17,7 +17,7 @@ func (h *handler) handleGetActiveTransfers(w http.ResponseWriter, r *http.Reques
 		sendResponse(w, err.Code, err)
 		return
 	}
-	incomingLimit, err := parseLimitParam(r, "incomingLimit", 10, 100)
+	incomingLimit, err := parseLimitParam(r, "incomingLimit", 0, 100)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
@@ -27,7 +27,7 @@ func (h *handler) handleGetActiveTransfers(w http.ResponseWriter, r *http.Reques
 		sendResponse(w, err.Code, err)
 		return
 	}
-	outgoingLimit, err := parseLimitParam(r, "outgoingLimit", 10, 100)
+	outgoingLimit, err := parseLimitParam(r, "outgoingLimit", 0, 100)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
@@ -58,7 +58,7 @@ func (h *handler) handleGetTransfersHistory(w http.ResponseWriter, r *http.Reque
 		sendResponse(w, err.Code, err)
 		return
 	}
-	incomingLimit, err := parseLimitParam(r, "incomingLimit", 10, 100)
+	incomingLimit, err := parseLimitParam(r, "incomingLimit", 0, 100)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
@@ -68,7 +68,7 @@ func (h *handler) handleGetTransfersHistory(w http.ResponseWriter, r *http.Reque
 		sendResponse(w, err.Code, err)
 		return
 	}
-	outgoingLimit, err := parseLimitParam(r, "outgoingLimit", 10, 100)
+	outgoingLimit, err := parseLimitParam(r, "outgoingLimit", 0, 100)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
@@ -119,7 +119,7 @@ func (h *handler) handleGetActiveTransfersV2(w http.ResponseWriter, r *http.Requ
 		sendResponse(w, err.Code, err)
 		return
 	}
-	incomingLimit, err := parseLimitParam(r, "incomingLimit", 10, 100)
+	incomingLimit, err := parseLimitParam(r, "incomingLimit", 0, 100)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
@@ -129,7 +129,7 @@ func (h *handler) handleGetActiveTransfersV2(w http.ResponseWriter, r *http.Requ
 		sendResponse(w, err.Code, err)
 		return
 	}
-	outgoingLimit, err := parseLimitParam(r, "outgoingLimit", 10, 100)
+	outgoingLimit, err := parseLimitParam(r, "outgoingLimit", 0, 100)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
