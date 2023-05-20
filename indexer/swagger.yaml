@@ -64,9 +64,9 @@ paths:
           description: Максимальное число токенов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 0
+          default: 10000
           minimum: 0
-          maximum: 100
+          maximum: 10000
   /tokens/{address}:
     get:
       tags:
@@ -100,9 +100,9 @@ paths:
           description: Максимальное число коллекций, которое вернется на этой странице.
           type: integer
           format: int
-          default: 0
+          default: 10000
           minimum: 0
-          maximum: 100
+          maximum: 10000
         - name: lastTokenId
           in: query
           description: Id последнего токена на прошлой странице. Если пустая строка, то вернет первую страницу
@@ -119,9 +119,9 @@ paths:
           description: Максимальное число токенов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 0
+          default: 10000
           minimum: 0
-          maximum: 100
+          maximum: 10000
   /tokens/{collection}/{id}:
     get:
       tags:
@@ -211,9 +211,9 @@ paths:
           description: Максимальное число токенов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 0
+          default: 10000
           minimum: 0
-          maximum: 100
+          maximum: 10000
   /transfers/{address}:
     get:
       tags:
@@ -247,9 +247,9 @@ paths:
           description: Максимальное число входящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 0
+          default: 10000
           minimum: 0
-          maximum: 100
+          maximum: 10000
         - name: lastOutgoingTransferId
           in: query
           description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
@@ -260,9 +260,9 @@ paths:
           description: Максимальное число исходящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 0
+          default: 10000
           minimum: 0
-          maximum: 100
+          maximum: 10000
   /transfers/{address}/{id}:
     get:
       tags:
@@ -324,9 +324,9 @@ paths:
           description: Максимальное число входящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 0
+          default: 10000
           minimum: 0
-          maximum: 100
+          maximum: 10000
         - name: lastOutgoingTransferId
           in: query
           description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
@@ -337,9 +337,9 @@ paths:
           description: Максимальное число исходящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 0
+          default: 10000
           minimum: 0
-          maximum: 100
+          maximum: 10000
   /v2/transfers/{address}:
     get:
       tags:
@@ -373,9 +373,9 @@ paths:
           description: Максимальное число входящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 0
+          default: 10000
           minimum: 0
-          maximum: 100
+          maximum: 10000
         - name: lastOutgoingTransferId
           in: query
           description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
@@ -386,9 +386,9 @@ paths:
           description: Максимальное число исходящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 0
+          default: 10000
           minimum: 0
-          maximum: 100
+          maximum: 10000
   /v2/transfers/{address}/{id}:
     get:
       tags:
@@ -450,9 +450,9 @@ paths:
           description: Максимальное число входящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 0
+          default: 10000
           minimum: 0
-          maximum: 100
+          maximum: 10000
         - name: lastOutgoingTransferId
           in: query
           description: Id последнего исходящего трансфера на прошлой странице. Если пустая строка, то вернет первую страницу
@@ -463,9 +463,9 @@ paths:
           description: Максимальное число исходящих трансферов, которое вернется на этой странице.
           type: integer
           format: int
-          default: 0
+          default: 10000
           minimum: 0
-          maximum: 100
+          maximum: 10000
   /orders/all_active:
     get:
       tags:
@@ -495,9 +495,9 @@ paths:
           description: Максимальное число ордеров, которое вернется на этой странице.
           type: integer
           format: int
-          default: 0
+          default: 10000
           minimum: 0
-          maximum: 100
+          maximum: 10000
   /orders/{address}:
     get:
       tags:
