@@ -14,10 +14,9 @@ import { GridBlock } from '../../helper/styles/style'
 const BadgesContainer = styled('div', {
   display: 'flex',
   flexWrap: 'wrap',
-  gap: '$3',
+  gap: '$2',
   '@sm': {
-    flexDirection: 'column-reverse',
-    gap: '$2'
+    flexDirection: 'column-reverse'
   }
 })
 
@@ -29,7 +28,7 @@ const HomeLandSection = () => {
     <GridBlock>
       <BadgesContainer>
         <NavLink
-          mdFullWidth
+          lgFullWidth
           to={
             collection?.address
               ? `/collection/${collection?.address}`
@@ -44,10 +43,13 @@ const HomeLandSection = () => {
                 : gradientPlaceholderImg,
               borderRadius: 'roundedSquare'
             }}
+            wrapperProps={{
+              nftPage: true
+            }}
           />
         </NavLink>
         <NavLink
-          mdFullWidth
+          lgFullWidth
           to={collection?.creator ? `/profile/${collection?.creator}` : location.pathname}
         >
           <Badge
@@ -59,10 +61,13 @@ const HomeLandSection = () => {
               title: 'Creator',
               value: reduceAddress(collection?.creator ?? '')
             }}
+            wrapperProps={{
+              nftPage: true
+            }}
           />
         </NavLink>
         <NavLink
-          mdFullWidth
+          lgFullWidth
           to={token?.owner ? `/profile/${token?.owner}` : location.pathname}
         >
           <Badge
@@ -73,6 +78,9 @@ const HomeLandSection = () => {
             content={{
               title: 'Owner',
               value: reduceAddress(token?.owner ?? '')
+            }}
+            wrapperProps={{
+              nftPage: true
             }}
           />
         </NavLink>

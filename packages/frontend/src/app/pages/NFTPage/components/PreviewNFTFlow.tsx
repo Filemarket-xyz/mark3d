@@ -66,7 +66,6 @@ const Image = styled('img', {
   maxWidth: '80%',
   height: '90%',
   borderRadius: '$3',
-  objectFit: 'cover',
   '@sm': {
     width: 290,
     height: 290
@@ -89,7 +88,6 @@ export const PreviewNFTFlow = ({
   const seed = useSeed(address)
   const [is3D, setIs3D] = useState<boolean | undefined>(undefined)
   const [isViewFile, setIsViewFile] = useState<boolean>(false)
-  const [isViewedMounted, setIsViewedMounted] = useState<boolean>(false)
 
   const typeFile: typeFiles | undefined = useMemo(() => {
     return hiddenFile ? fileToType(hiddenFile) : undefined
@@ -235,6 +233,7 @@ export const PreviewNFTFlow = ({
                 {isLoading ? <Loading size='xl' color={'white'} /> : (
                   <Image
                     src={imageURL}
+                    style={{ cursor: 'pointer' }}
                     onError={({ currentTarget }) => {
                       currentTarget.onerror = null
                       currentTarget.src = gradientPlaceholderImg

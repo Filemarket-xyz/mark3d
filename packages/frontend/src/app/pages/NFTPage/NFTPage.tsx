@@ -26,7 +26,6 @@ const NFTPreviewContainer = styled('div', {
   width: '100%',
   height: 555,
   background: '$gradients$background',
-  backgroundSize: 'cover',
   boxSizing: 'content-box',
   '& .blur': {
     width: '100%',
@@ -45,9 +44,9 @@ const MainInfo = styled(PageLayout, {
   paddingTB: 48,
   fontSize: '16px',
   gridTemplateColumns: '3fr 1fr',
-  gridTemplateRows: 'max-content',
   columnGap: '$4',
   minHeight: '100%',
+  height: '100%',
   borderRadius: '$6 $6 0 0',
   top: '-$6',
   boxShadow: '$footer',
@@ -60,23 +59,24 @@ const GridLayout = styled('div', {
   gap: '3rem',
   position: 'relative',
   gridTemplateColumns: '3fr 1fr',
-  gridTemplateRows: 'max-content',
   columnGap: '$4',
-  minHeight: '100%',
+  height: '100%',
   '@mdx': {
     display: 'flex'
   }
 })
 
 const GridBlockSection = styled(GridBlock, {
+  height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  gap: '48px'
+  gap: '32px'
 })
 
 const GridBlockSectionRow = styled(GridBlockSection, {
   flexDirection: 'row',
   justifyContent: 'space-between',
+  height: '100%',
   gap: '12px',
   '@mdx': {
     flexDirection: 'column'
@@ -88,6 +88,14 @@ const DisplayLayout = styled('div', {
   gap: '32px',
   marginTop: '32px',
   flexDirection: 'column'
+})
+
+const ControlFileSection = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
+  position: 'sticky',
+  top: '125px'
 })
 
 const NFTPage = observer(() => {
@@ -106,10 +114,18 @@ const NFTPage = observer(() => {
     transferStore.data
   )
 
+  const categories: string[] = useMemo(() => {
+    let categories: string[] = []
+    if (tokenStore.data?.categories) categories = tokenStore.data?.categories
+    if (tokenStore.data?.subcategories && tokenStore.data?.subcategories[0] !== '') categories = [...categories, ...tokenStore.data?.subcategories]
+    return categories
+  }, [tokenStore.data?.categories, tokenStore.data?.subcategories])
+
   return (
     <>
       <NFTPreviewContainer style={{
-        background: `url(${getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')})`
+        background: `url(${getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')})`,
+        backgroundSize: 'cover'
       }}
       >
         <div className='blur'>
@@ -129,33 +145,36 @@ const NFTPage = observer(() => {
             <BaseInfoSection />
             {window.innerWidth <= 900 && (
               <GridBlockSectionRow>
-                <ControlSection />
-                <FileInfoSection
-                  isOwner={isOwner}
-                  canViewHiddenFiles={canViewHiddenFiles}
-                  files={files}
-                />
+                <ControlFileSection>
+                  <ControlSection />
+                  <FileInfoSection
+                    isOwner={isOwner}
+                    canViewHiddenFiles={canViewHiddenFiles}
+                    files={files}
+                    filesMeta={tokenStore.data?.hiddenFileMeta ? [tokenStore.data?.hiddenFileMeta] : []}
+                  />
+                </ControlFileSection>
               </GridBlockSectionRow>
             )}
             <HomeLandSection />
             <TagsSection
               tags={tokenStore.data?.tags}
-              categories={[
-                ...Array.from(tokenStore.data?.categories ?? []),
-                ...Array.from(tokenStore.data?.subcategories ?? [])
-              ]}
+              categories={categories}
             />
             {window.innerWidth > 1200 && <DescriptionSection />}
           </GridBlockSection>
 
           {window.innerWidth > 900 && (
             <GridBlockSection>
-              <ControlSection />
-              <FileInfoSection
-                isOwner={isOwner}
-                canViewHiddenFiles={canViewHiddenFiles}
-                files={files}
-              />
+              <ControlFileSection>
+                <ControlSection />
+                <FileInfoSection
+                  isOwner={isOwner}
+                  canViewHiddenFiles={canViewHiddenFiles}
+                  files={files}
+                  filesMeta={tokenStore.data?.hiddenFileMeta ? [tokenStore.data?.hiddenFileMeta] : []}
+                />
+              </ControlFileSection>
             </GridBlockSection>
           )}
         </GridLayout>

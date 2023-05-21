@@ -53,7 +53,7 @@ const LayoutStyled = styled('div', {
       }
     },
     '& .tooltip': {
-      width: '100% !important'
+      width: '400px !important'
     }
   }
 })
@@ -64,6 +64,7 @@ export const ProtectedStamp: FC<PropsWithChildren> = ({ children }) => {
       {children}
       <Tooltip
         rounded
+        placement={'bottom'}
         trigger={'hover'}
         content={<div>{'Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT.'}</div>}
         color="primary"
@@ -76,7 +77,7 @@ export const ProtectedStamp: FC<PropsWithChildren> = ({ children }) => {
         }}
       >
         <div className="buttons">
-          <Button className={'buttons'}>
+          <Button className={'buttons'} style={{ height: '64px ' }}>
             <span>
               <img src={Protected} className={'firstImg'} />
               Protected by EFT techology

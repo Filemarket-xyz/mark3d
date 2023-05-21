@@ -9,10 +9,14 @@ const DescriptionSection = () => {
   const { collectionAddress, tokenId } = useParams<Params>()
   const { data: token } = useTokenStore(collectionAddress, tokenId)
   return (
-            <GridBlock>
-            <PropertyTitle>Description</PropertyTitle>
-            <P>{token?.description ?? 'Description is missing'}</P>
-            </GridBlock>
+    <>
+      {token?.description && (
+        <GridBlock>
+          <PropertyTitle>Description</PropertyTitle>
+          <P>{token?.description}</P>
+        </GridBlock>
+      )}
+    </>
   )
 }
 
