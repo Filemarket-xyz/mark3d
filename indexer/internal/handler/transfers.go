@@ -11,26 +11,85 @@ import (
 
 func (h *handler) handleGetActiveTransfers(w http.ResponseWriter, r *http.Request) {
 	address := mux.Vars(r)["address"]
+
+	lastIncomingTransferId, err := parseInt64Param(r, "lastIncomingTransferId")
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	incomingLimit, err := parseLimitParam(r, "incomingLimit", 10, 100)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	lastOutgoingTransferId, err := parseInt64Param(r, "lastOutgoingTransferId")
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	outgoingLimit, err := parseLimitParam(r, "outgoingLimit", 10, 100)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
-	tokens, e := h.service.GetTransfers(ctx, common.HexToAddress(address))
+
+	transfers, e := h.service.GetTransfers(
+		ctx,
+		common.HexToAddress(address),
+		lastIncomingTransferId,
+		incomingLimit,
+		lastOutgoingTransferId,
+		outgoingLimit,
+	)
 	if e != nil {
 		sendResponse(w, e.Code, e)
 		return
 	}
-	sendResponse(w, 200, tokens)
+	sendResponse(w, 200, transfers)
 }
 
 func (h *handler) handleGetTransfersHistory(w http.ResponseWriter, r *http.Request) {
 	address := mux.Vars(r)["address"]
+
+	lastIncomingTransferId, err := parseInt64Param(r, "lastIncomingTransferId")
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	incomingLimit, err := parseLimitParam(r, "incomingLimit", 10, 100)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	lastOutgoingTransferId, err := parseInt64Param(r, "lastOutgoingTransferId")
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	outgoingLimit, err := parseLimitParam(r, "outgoingLimit", 10, 100)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
-	tokens, e := h.service.GetTransfersHistory(ctx, common.HexToAddress(address))
+
+	history, e := h.service.GetTransfersHistory(
+		ctx,
+		common.HexToAddress(address),
+		lastIncomingTransferId,
+		incomingLimit,
+		lastOutgoingTransferId,
+		outgoingLimit,
+	)
 	if e != nil {
 		sendResponse(w, e.Code, e)
 		return
 	}
-	sendResponse(w, 200, tokens)
+	sendResponse(w, 200, history)
 }
 
 func (h *handler) handleGetTransfer(w http.ResponseWriter, r *http.Request) {
@@ -54,9 +113,37 @@ func (h *handler) handleGetTransfer(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) handleGetActiveTransfersV2(w http.ResponseWriter, r *http.Request) {
 	address := mux.Vars(r)["address"]
+
+	lastIncomingTransferId, err := parseInt64Param(r, "lastIncomingTransferId")
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	incomingLimit, err := parseLimitParam(r, "incomingLimit", 10, 100)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	lastOutgoingTransferId, err := parseInt64Param(r, "lastOutgoingTransferId")
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	outgoingLimit, err := parseLimitParam(r, "outgoingLimit", 10, 100)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
-	tokens, e := h.service.GetTransfersV2(ctx, common.HexToAddress(address))
+	tokens, e := h.service.GetTransfersV2(
+		ctx,
+		common.HexToAddress(address),
+		lastIncomingTransferId,
+		incomingLimit,
+		lastOutgoingTransferId,
+		outgoingLimit,
+	)
 	if e != nil {
 		sendResponse(w, e.Code, e)
 		return
@@ -66,9 +153,38 @@ func (h *handler) handleGetActiveTransfersV2(w http.ResponseWriter, r *http.Requ
 
 func (h *handler) handleGetTransfersHistoryV2(w http.ResponseWriter, r *http.Request) {
 	address := mux.Vars(r)["address"]
+
+	lastIncomingTransferId, err := parseInt64Param(r, "lastIncomingTransferId")
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	incomingLimit, err := parseLimitParam(r, "incomingLimit", 10, 100)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	lastOutgoingTransferId, err := parseInt64Param(r, "lastOutgoingTransferId")
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	outgoingLimit, err := parseLimitParam(r, "outgoingLimit", 10, 100)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
-	tokens, e := h.service.GetTransfersHistoryV2(ctx, common.HexToAddress(address))
+
+	tokens, e := h.service.GetTransfersHistoryV2(
+		ctx,
+		common.HexToAddress(address),
+		lastIncomingTransferId,
+		incomingLimit,
+		lastOutgoingTransferId,
+		outgoingLimit,
+	)
 	if e != nil {
 		sendResponse(w, e.Code, e)
 		return

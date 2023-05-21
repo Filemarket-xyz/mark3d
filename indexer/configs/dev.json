@@ -15,6 +15,7 @@
     "fraudDeciderWeb2Address": "0x730E5fAa6a0A88eFF1D37114C82725C593D16943",
     "allowedBlockNumberDifference": 20,
     "healthCheckInterval": 60,
+    "currencyConversionCacheTTL": "1h",
     "mode": "dev"
   }
 }

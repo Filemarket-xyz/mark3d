@@ -77,8 +77,8 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
               filesMeta.map(({ name }, index) => (
                 <ProtectedStamp key={index}>
                   <FileButton
+                    isDisabled
                     caption="to the owner"
-                    isDisabled={true}
                     name={name}
                   />
                 </ProtectedStamp>

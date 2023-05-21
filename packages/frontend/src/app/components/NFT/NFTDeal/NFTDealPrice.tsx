@@ -3,10 +3,11 @@ import React, { FC } from 'react'
 
 import { styled } from '../../../../styles'
 import { textVariant } from '../../../UIkit'
-import { formatCurrency } from '../../../utils/web3/currency'
+import { formatCurrency, formatUsd } from '../../../utils/web3'
 
 export interface NFTDealPriceProps {
   price: string // amount of wei
+  priceUsd: string
 }
 
 export const Price = styled('div', {
@@ -25,16 +26,28 @@ export const PriceTitle = styled('span', {
 })
 
 export const PriceValue = styled('p', {
+  display: 'flex',
+  justifyContent: 'space-between',
   fontSize: '24px',
   fontWeight: 600,
   color: '$gray800'
 })
 
-export const NFTDealPrice: FC<NFTDealPriceProps> = observer(({ price }) => {
+const PriceUsd = styled('span', {
+  color: '$gray600'
+})
+
+export const NFTDealPrice: FC<NFTDealPriceProps> = observer(({ price, priceUsd }) => {
   return (
     <Price>
       <PriceTitle>Price</PriceTitle>
-      <PriceValue>{formatCurrency(price)}</PriceValue>
+      <PriceValue>
+        {formatCurrency(price)}
+        <PriceUsd>
+          ~
+          {formatUsd(priceUsd)}
+        </PriceUsd>
+      </PriceValue>
     </Price>
   )
 })

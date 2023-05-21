@@ -40,6 +40,7 @@ module.exports = {
     '@typescript-eslint/promise-function-async': 'off',
     '@typescript-eslint/no-floating-promises': 'off',
     '@typescript-eslint/no-invalid-void-type': 'off',
+    '@typescript-eslint/indent': ['warn', 2],
 
     // react
     'react/react-in-jsx-scope': 'off',
@@ -78,6 +79,10 @@ module.exports = {
       allow: 'single-child'
     }],
     'react/jsx-closing-bracket-location': 'warn',
+    'react/jsx-boolean-value': ['warn', 'never'],
+    'react/jsx-no-useless-fragment': ['warn', {
+      allowExpressions: true
+    }],
 
     // other
     'no-use-before-define': 'off',
@@ -89,7 +94,8 @@ module.exports = {
       ignoreUrls: true
     }],
     'no-void': 'off',
-    'indent': ['warn', 2],
+    'newline-before-return': 'warn',
+    'no-extra-boolean-cast': 'off'
   },
   settings: {
     react: {
