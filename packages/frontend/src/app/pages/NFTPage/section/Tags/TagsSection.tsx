@@ -20,7 +20,7 @@ const Tags = styled('div', {
 })
 
 const Category = styled(BlueText, {
-  fontSize: '24px'
+  fontSize: '20px'
 })
 
 const GridBlockDisplay = styled(GridBlock, {
