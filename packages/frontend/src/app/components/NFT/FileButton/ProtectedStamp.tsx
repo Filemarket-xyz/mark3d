@@ -4,6 +4,7 @@ import React, { FC, PropsWithChildren } from 'react'
 import Protected from '../../../../assets/img/Protected.svg'
 import QuestionMark from '../../../../assets/img/QuestionMark.svg'
 import { styled } from '../../../../styles'
+import { useMediaMui } from '../../../hooks/useMediaMui'
 import { Button } from '../../../UIkit'
 
 const LayoutStyled = styled('div', {
@@ -59,27 +60,31 @@ const LayoutStyled = styled('div', {
 })
 
 export const ProtectedStamp: FC<PropsWithChildren> = ({ children }) => {
+  const { adaptive } = useMediaMui()
+
   return (
     <LayoutStyled>
       {children}
       <Tooltip
         rounded
+        placement={'bottom'}
         trigger={'hover'}
         content={<div>{'Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT.'}</div>}
         color="primary"
         className={'tooltip'}
         css={{
-          width: '368px',
-          '@sm': {
-            width: '90%'
-          }
+          width: `${adaptive({
+            sm: '90%',
+            md: '520px',
+            defaultValue: '400px'
+          })}`
         }}
       >
         <div className="buttons">
-          <Button className={'buttons'}>
+          <Button className={'buttons'} style={{ height: '64px ' }}>
             <span>
               <img src={Protected} className={'firstImg'} />
-              Protected by EFT techology
+              Protected by EFT protocol
               {' '}
               <img src={QuestionMark} className={'secondImg'} />
             </span>

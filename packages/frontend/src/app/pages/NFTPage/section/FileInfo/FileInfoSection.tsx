@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react'
 
 import { styled } from '../../../../../styles'
+import { HiddenFileMetaData } from '../../../../../swagger/Api'
 import { FileButton, MintModal, ProtectedStamp } from '../../../../components'
 import { useStatusState } from '../../../../hooks'
 import { HiddenFileDownload } from '../../../../hooks/useHiddenFilesDownload'
@@ -10,7 +11,7 @@ import { GridBlock, PropertyTitle } from '../../helper/styles/style'
 
 const FileInfoSectionStyle = styled('div', {
   width: '400px',
-  height: '201px',
+  height: '208px',
   border: '3px solid #F4F4F4',
   borderRadius: '20px',
   display: 'flex',
@@ -39,9 +40,10 @@ interface FileInfoSectionProps {
   isOwner?: boolean
   canViewHiddenFiles: boolean
   files: HiddenFileDownload[]
+  filesMeta: HiddenFileMetaData[]
 }
 
-const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHiddenFiles }) => {
+const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHiddenFiles, filesMeta }) => {
   const { statuses, wrapPromise } = useStatusState()
   const { modalProps } = useStatusModal({
     statuses,
@@ -72,8 +74,8 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
                 </ProtectedStamp>
               ))
             ) : (
-              files.map(({ cid, name }) => (
-                <ProtectedStamp key={cid}>
+              filesMeta.map(({ name }, index) => (
+                <ProtectedStamp key={index}>
                   <FileButton
                     isDisabled
                     caption="to the owner"

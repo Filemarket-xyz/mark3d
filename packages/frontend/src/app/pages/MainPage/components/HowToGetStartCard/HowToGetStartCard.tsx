@@ -46,6 +46,13 @@ const HowToGetStartCardStyle = styled('div', {
           width: '100%'
         }
       }
+    },
+    miniImg: {
+      true: {
+        '& img': {
+          width: '20px'
+        }
+      }
     }
   }
 })
@@ -70,14 +77,19 @@ type HowToGetStartCardProps = ComponentProps<typeof HowToGetStartCardStyle> & {
   img: string
 }
 
-const HowToGetStartCard: FC<HowToGetStartCardProps> = ({ number, content, img, size }) => {
+const HowToGetStartCard: FC<HowToGetStartCardProps> = ({ number, content, img, size, miniImg }) => {
   return (
-    <HowToGetStartCardStyle size={size}>
+    <HowToGetStartCardStyle size={size} miniImg={miniImg}>
       <RightPartBlockStyle>
-        <Txt h3 style={{
-          fontSize: '18px',
-          lineHeight: 'inherit'
-        }}>{number}</Txt>
+        <Txt
+          h3
+          style={{
+            fontSize: '18px',
+            lineHeight: 'inherit'
+          }}
+        >
+          {number}
+        </Txt>
         <Line />
         {content}
       </RightPartBlockStyle>

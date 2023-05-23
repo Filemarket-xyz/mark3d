@@ -37,18 +37,31 @@ interface TagsSectionProps {
 
 const TagsSection: FC<TagsSectionProps> = ({ categories, tags, tagOptions }) => {
   return (
-        <GridBlockDisplay>
-            {categories && <Categories>
-                {categories.map((category, index) => {
-                  return <React.Fragment key={index}><Category>{category} </Category> {index !== (categories.length - 1) && '/'}</React.Fragment>
-                })}
-            </Categories>}
-            {tags && <Tags>
-                {tags.map((tag, index) => {
-                  return <Tag key={index} tagOptions={tagOptions} value={tag}>{tag}</Tag>
-                })}
-            </Tags>}
-        </GridBlockDisplay>
+    <GridBlockDisplay style={{ gridArea: 'Tags' }}>
+      {categories && (
+        <Categories>
+          {categories.map((category, index) => {
+            return (
+              <React.Fragment key={index}>
+                <Category>
+                  {category}
+                  {' '}
+                </Category>
+                {' '}
+                {(index !== (categories.length - 1)) && '/'}
+              </React.Fragment>
+            )
+          })}
+        </Categories>
+      )}
+      {tags && (
+        <Tags>
+          {tags.map((tag, index) => {
+            return <Tag key={index} tagOptions={tagOptions} value={tag}>{tag}</Tag>
+          })}
+        </Tags>
+      )}
+    </GridBlockDisplay>
   )
 }
 
