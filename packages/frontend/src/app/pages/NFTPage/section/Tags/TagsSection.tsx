@@ -7,7 +7,7 @@ import { GridBlock } from '../../helper/styles/style'
 const Categories = styled('div', {
   display: 'flex',
   gap: '8px',
-  fontSize: '24px',
+  fontSize: '20px',
   alignItems: 'center',
   color: '#A7A8A9',
   flexWrap: 'wrap'
