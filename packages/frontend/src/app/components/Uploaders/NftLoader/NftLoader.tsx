@@ -4,13 +4,13 @@ import { UseFormRegisterReturn, UseFormResetField } from 'react-hook-form'
 import { styled } from '../../../../styles'
 import { CreateNFTForm } from '../../../pages/CreatePage/CreateNFTPage'
 import { Button, textVariant } from '../../../UIkit'
-import BoxImage from './img/box.svg'
 import CrossImage from './img/cross.svg'
+import BoxImage from './img/LoadFile.svg'
 import SuccessImage from './img/Success.svg'
 
 const Box = styled('img', {
-  width: 80,
-  height: 80
+  width: 48,
+  height: 64
 })
 
 const FileInput = styled('input', {
@@ -49,12 +49,13 @@ const generateFileHoverStyles = () => {
   hoverFileStyles[`&:hover ${WhiteShade.selector}`] = {
     background: 'rgba(255,255,255, 0.3)'
   }
+
   return hoverFileStyles
 }
 
 const File = styled('label', {
-  width: '100%',
-  height: '232px',
+  width: '320px',
+  height: '160px',
   backgroundColor: '$white',
   borderRadius: '16px',
   backgroundImage: 'url("/img/box.svg")',
@@ -117,7 +118,9 @@ export default function NftLoader(props: NftLoaderProps) {
       <Box src={fileChosen ? SuccessImage : BoxImage} />
       {fileChosen ? (
         <BoxLabel css={{ color: '$gray500' }}>
-          {fileChosen.name} selected
+          {fileChosen.name}
+          {' '}
+          selected
         </BoxLabel>
       ) : (
         <BoxLabel>Choose file</BoxLabel>

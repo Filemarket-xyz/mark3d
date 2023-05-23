@@ -23,12 +23,15 @@ export const Title = styled('h1', {
 
 export const Label = styled('label', {
   ...textVariant('primary1').true,
+  lineHeight: '16px',
   marginBottom: '$2',
-  color: '$blue900',
+  color: '$gray800',
   display: 'block'
 })
 
 export const TextBold = styled('span', {
+  ...textVariant('primary1').true,
+  fontSize: '12px',
   fontWeight: 600
 })
 
@@ -117,10 +120,10 @@ export default function CreateCollectionPage() {
     <>
       <MintModal
         body={modalBody ?? <></>}
+        open={modalOpen}
         handleClose={() => {
           setModalOpen(false)
         }}
-        open={modalOpen}
       />
       <PageLayout
         css={{
@@ -157,9 +160,13 @@ export default function CreateCollectionPage() {
           <FormControl>
             <LabelWithCounter>
               <Label>
-                Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
+                Description&nbsp;&nbsp;
+                <TextGray>(Optional)</TextGray>
               </Label>
-              <LetterCounter>{textareaLength}/1000</LetterCounter>
+              <LetterCounter>
+                {textareaLength}
+                /1000
+              </LetterCounter>
             </LabelWithCounter>
 
             <TextArea
@@ -174,8 +181,8 @@ export default function CreateCollectionPage() {
           </FormControl>
 
           <Button
-            type='submit'
             primary
+            type='submit'
             isDisabled={!isValid}
             title={isValid ? undefined : 'Required fields must be filled'}
           >

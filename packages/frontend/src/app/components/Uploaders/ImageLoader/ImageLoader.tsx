@@ -3,9 +3,8 @@ import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
 
 import { styled } from '../../../../styles'
-import { TextBold } from '../../../pages/CreatePage/CreateCollectionPage'
 import { textVariant } from '../../../UIkit'
-import ImgIcon from './img/image-icon.svg'
+import ImgIcon from './img/ImagePreview.svg'
 
 const Shade = styled('div', {
   width: '100%',
@@ -34,6 +33,7 @@ const generateFileHoverStyles = () => {
   hoverFileStyles[`&:hover ${Shade.selector}`] = {
     background: 'rgba(255,255,255, 0.3)'
   }
+
   return hoverFileStyles
 }
 
@@ -51,8 +51,8 @@ const P = styled('p', {
 })
 
 const ImageIcon = styled('img', {
-  width: 64,
-  height: 64,
+  width: 60,
+  height: 60,
   transition: 'all 0.15s ease-in-out',
   variants: {
     selected: {
@@ -75,13 +75,14 @@ const generateSelectedFileHoverStyles = () => {
   styles[`&:hover ${P.selector}`] = {
     opacity: 1
   }
+
   return styles
 }
 
 const File = styled('label', {
   borderRadius: '$3',
   display: 'inline-flex',
-  gap: '$4',
+  gap: '18px',
   alignItems: 'center',
   cursor: 'pointer',
   '@sm': {
@@ -101,8 +102,8 @@ const File = styled('label', {
 
 const FileImageContainer = styled('div', {
   position: 'relative',
-  width: 160,
-  height: 152,
+  width: 320,
+  height: 160,
   backgroundColor: '$white',
   color: '$blue500',
   display: 'flex',
@@ -117,16 +118,6 @@ const FileImageContainer = styled('div', {
 const FileInput = styled('input', {
   display: 'none'
 })
-
-const FileDescriptionList = styled('ul', {
-  ...textVariant('secondary2').true,
-  color: '$gray500',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '$2'
-})
-
-const FileDescriptionItem = styled('li', {})
 
 interface ItemWithGetFileProperty {
   getFile: () => Promise<File>
@@ -168,6 +159,7 @@ export default function ImageLoader(props: ImageLoaderProps) {
   useEffect(() => {
     if (!file) {
       setPreview(undefined)
+
       return
     }
 
@@ -181,10 +173,12 @@ export default function ImageLoader(props: ImageLoaderProps) {
     const target = e.target as HTMLInputElement
     if (!target.files || target.files.length === 0) {
       setFile(undefined)
+
       return
     }
     setFile(target.files[0])
   }
+
   return (
     <File htmlFor='inputTag' selected={Boolean(preview)}>
       <FileImageContainer
@@ -199,20 +193,8 @@ export default function ImageLoader(props: ImageLoaderProps) {
       >
         <Shade selected={Boolean(preview)}></Shade>
         <ImageIcon src={ImgIcon} selected={Boolean(preview)} />
-        <P selected={Boolean(preview)}>Choose photo</P>
+        <P selected={Boolean(preview)}>Choose Preview</P>
       </FileImageContainer>
-
-      <FileDescriptionList>
-        <FileDescriptionItem>
-          <TextBold>Recommended size:</TextBold> 300x300 px
-        </FileDescriptionItem>
-        <FileDescriptionItem>
-          <TextBold>Formats:</TextBold> JPG, PNG, or GIF
-        </FileDescriptionItem>
-        <FileDescriptionItem>
-          <TextBold>Max size:</TextBold> 100 MB
-        </FileDescriptionItem>
-      </FileDescriptionList>
       <FileInput
         id='inputTag'
         type='file'

@@ -16,7 +16,8 @@ import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
 import { useCollectionAndTokenListStore } from '../../hooks'
 import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
-import { Button, Link, PageLayout, Txt } from '../../UIkit'
+import { useMediaMui } from '../../hooks/useMediaMui'
+import { Button, Link, PageLayout, textVariant, Txt } from '../../UIkit'
 import { ComboBoxOption, ControlledComboBox } from '../../UIkit/Form/Combobox'
 import { FormControl } from '../../UIkit/Form/FormControl'
 import { Input } from '../../UIkit/Form/Input'
@@ -29,9 +30,11 @@ import { useModalProperties } from './hooks/useModalProperties'
 import PlusIcon from './img/plus-icon.svg'
 
 const Description = styled('p', {
-  fontSize: '12px',
+  ...textVariant('secondary1').true,
+  fontSize: '14px',
+  lineHeight: '18px',
   color: '$gray600',
-  marginBottom: '$2',
+  marginBottom: '$3',
   variants: {
     secondary: {
       true: {
@@ -201,7 +204,7 @@ const CreateNftPage = observer(() => {
     setError: setNftError,
     setIsLoading: setIsNftLoading
   } = useCreateNft()
-
+  const { adaptive } = useMediaMui()
   const {
     register,
     handleSubmit,
@@ -278,40 +281,55 @@ const CreateNftPage = observer(() => {
             <h3><Txt h3>Create New NFT</Txt></h3>
             <SubTitle>
               <Txt primary1>
-                With Encrypted
                 <Tooltip
+                  placement={'bottom'}
                   content={(
-                    <Txt>
+                    <Txt secondary1 css={{ fontSize: '14px' }}>
                       Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin,
                       which can only be accessed exclusively by the owner of the NFT.
                     </Txt>
                   )}
+                  css={{
+                    width: `${adaptive({
+                      sm: '300px',
+                      md: '400px',
+                      defaultValue: '544px'
+                    })}`
+                  }}
                 >
                   {' '}
-                  <Txt css={{ fontWeight: 700 }}>FileToken&#169;</Txt>
+                  <Txt css={{ color: '$blue500', cursor: 'pointer' }}>Encrypted FileToken&#169;</Txt>
                   {' '}
                 </Tooltip>
-                Technology on Filecoin storage.
+                on Filecoin network
               </Txt>
             </SubTitle>
           </TitleGroup>
 
           <FormControl>
-            <Label css={{ marginBottom: '$3' }}>Upload a preview picture</Label>
+            <Label css={{ marginBottom: '$1' }}>Upload a public preview picture</Label>
+            <Description>
+              <TextBold>Formats:</TextBold>
+              {' '}
+              JPG, PNG or GIF.
+              <TextBold> Max size:</TextBold>
+              {' '}
+              100 MB.
+            </Description>
             <ImageLoader
               registerProps={register('image', { required: true })}
             />
           </FormControl>
 
           <FormControl>
-            <Label css={{ marginBottom: '$3' }}>Upload any file that will be encrypted and hidden by EFT&#169;</Label>
+            <Label css={{ marginBottom: '$1' }}>Upload any file that will be encrypted and hidden by EFT&#169;</Label>
             <Description>
               <TextBold>Formats:</TextBold>
               {' '}
               Any
               <TextBold> Max size:</TextBold>
               {' '}
-              100 MB.
+              1 GB.
             </Description>
             <NftLoader
               registerProps={register('hiddenFile', { required: true })}
@@ -455,7 +473,7 @@ const CreateNftPage = observer(() => {
               <Description secondary>
                 {licenseDescription}
               </Description>
-              <NFTLicense><Link href={licenseUrl} target="_blank" iconRedirect={true}>About CC Licenses</Link></NFTLicense>
+              <NFTLicense><Link iconRedirect href={licenseUrl} target="_blank">About CC Licenses</Link></NFTLicense>
             </ContentField>
           </FormControl>
 
