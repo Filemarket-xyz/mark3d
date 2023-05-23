@@ -322,7 +322,7 @@ const CreateNftPage = observer(() => {
           </FormControl>
 
           <FormControl>
-            <Label css={{ marginBottom: '$1' }}>Upload any file that will be encrypted and hidden by EFT&#169;</Label>
+            <Label css={{ marginBottom: '$1' }}>Upload any file that will be encrypted and hidden by EFT Protocol</Label>
             <Description>
               <TextBold>Formats:</TextBold>
               {' '}
