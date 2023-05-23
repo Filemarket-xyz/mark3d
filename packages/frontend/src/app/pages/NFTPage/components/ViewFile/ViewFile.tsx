@@ -25,6 +25,7 @@ const ViewFileStyle = styled('div', {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: '10.5px',
     height: '100%'
   },
   position: 'absolute',
