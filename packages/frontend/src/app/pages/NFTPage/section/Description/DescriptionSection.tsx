@@ -8,10 +8,11 @@ import { GridBlock, P, PropertyTitle } from '../../helper/styles/style'
 const DescriptionSection = () => {
   const { collectionAddress, tokenId } = useParams<Params>()
   const { data: token } = useTokenStore(collectionAddress, tokenId)
+
   return (
     <>
       {token?.description && (
-        <GridBlock>
+        <GridBlock style={{ gridArea: 'Description' }}>
           <PropertyTitle>Description</PropertyTitle>
           <P>{token?.description}</P>
         </GridBlock>

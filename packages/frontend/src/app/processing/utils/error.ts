@@ -1,4 +1,3 @@
-
 import { JsonRpcError, serializeError } from '@metamask/rpc-errors'
 import { BigNumber, Contract, ContractTransaction, Signer } from 'ethers'
 

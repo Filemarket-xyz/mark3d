@@ -65,7 +65,7 @@ const Image = styled('img', {
   width: 'auto',
   maxWidth: '80%',
   height: '90%',
-  borderRadius: '$3',
+  borderRadius: '20px',
   '@sm': {
     width: 290,
     height: 290
@@ -107,11 +107,14 @@ export const PreviewNFTFlow = ({
     const availableExtensionsImage: string[] = ['jpg', 'jpeg', 'png', 'gif', 'bmp']
     if (availableExtensions3D.includes(String(extensionFile))) {
       setIs3D(true)
+
       return canViewFile
     } else if (availableExtensionsImage.includes(String(extensionFile))) {
       setIs3D(false)
+
       return canViewFile
     }
+
     return false
   }, [hiddenFile, getFile, canViewFile])
 
@@ -180,7 +183,7 @@ export const PreviewNFTFlow = ({
   return (
     <CenterContainer>
       <SwiperStyled
-        navigation={true}
+        navigation
         modules={[Navigation, Pagination]}
         className={css.__swiper}
         allowTouchMove={false}
@@ -213,17 +216,13 @@ export const PreviewNFTFlow = ({
                           currentTarget.src = gradientPlaceholderImg
                         }}
                       />
-                      )
+                    )
                 ) : previewState?.state === PreviewState.LOADING ? (
                   <Loading size='xl' color={'white'} />
                 ) : previewState?.state === PreviewState.LOADING_ERROR ? (
-                  <>
-                    <ErrorMessage>{previewState?.data}</ErrorMessage>
-                  </>
+                  <ErrorMessage>{previewState?.data}</ErrorMessage>
                 ) : previewState?.state === PreviewState.EXTENSION_ERROR && (
-                  <>
-                    <ErrorMessage>{previewState?.data}</ErrorMessage>
-                  </>
+                  <ErrorMessage>{previewState?.data}</ErrorMessage>
                 )}
               </>
             )
@@ -248,7 +247,7 @@ export const PreviewNFTFlow = ({
                   />
                 )}
               </>
-              )}
+            )}
           {(isCanView && !isLoading) && <ViewFile isPreviewView={!isViewFile} type={typeFile} onClick={() => { setIsViewFile(value => !value); handleLoadClick() }} />}
         </SwiperSlide>
       </SwiperStyled>

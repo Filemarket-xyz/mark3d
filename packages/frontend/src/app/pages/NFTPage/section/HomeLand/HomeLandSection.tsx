@@ -24,8 +24,9 @@ const HomeLandSection = () => {
   const { collectionAddress, tokenId } = useParams<Params>()
   const { data: token } = useTokenStore(collectionAddress, tokenId)
   const { collection } = useCollectionStore(collectionAddress)
+
   return (
-    <GridBlock>
+    <GridBlock style={{ gridArea: 'HomeLand' }}>
       <BadgesContainer>
         <NavLink
           lgFullWidth

@@ -14,7 +14,7 @@ const NftName = styled('h1', {
   marginBottom: '$3'
 })
 
-export const NftLicence = styled('h5', {
+export const NftLicence = styled('span', {
   display: 'flex',
   gap: '4px',
   marginTop: '$2'
@@ -26,8 +26,9 @@ const BaseInfoSection = () => {
   const transactionUrl: string = useMemo(() => {
     return `https://filfox.info/en/message/${token?.mintTxHash}`
   }, [token?.mintTxHash])
+
   return (
-    <GridBlock>
+    <GridBlock style={{ gridArea: 'BaseInfo' }}>
       <NftName>{token?.name}</NftName>
       {token?.mintTxTimestamp && (
         <Link

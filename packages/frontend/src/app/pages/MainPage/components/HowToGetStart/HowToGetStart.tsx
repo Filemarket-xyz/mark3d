@@ -155,124 +155,184 @@ const HowToGetStart = () => {
   const [isOpen, setIsOpen] = useState<boolean | undefined>(false)
 
   return (
-      <Collapse title={<Title>How to use FileMarket?</Title>}
-                onChange={(event, index, value) => {
-                  setIsOpen(value)
-                }}
-                css={{
-                  background: 'white',
-                  border: '1px solid #0090FF',
-                  borderRadius: '24px',
-                  padding: '12px 32px',
-                  '& .nextui-collapse-title-content': {
-                    width: '80%'
-                  }
-                }} arrowIcon={<ArrowContent>
-        <Txt primary1 style={{ fontWeight: '500', fontSize: '24px', color: '#0090FF' }}>{isOpen ? 'Collapse' : 'Expand'}</Txt>
-        <img src={ArrowCollapseImg} style={{ transform: `rotateX(${isOpen ? '180deg' : '0'})` }} />
-      </ArrowContent>}
-      >          <Line />
-        <HowToGetStartStyle>
+    <Collapse
+      title={<Title>How to use FileMarket?</Title>}
+      css={{
+        background: 'white',
+        border: '1px solid #0090FF',
+        borderRadius: '24px',
+        padding: '12px 32px',
+        '& .nextui-collapse-title-content': {
+          width: '80%'
+        }
+      }}
+      arrowIcon={(
+        <ArrowContent>
+          <Txt primary1 style={{ fontWeight: '500', fontSize: '24px', color: '#0090FF' }}>{isOpen ? 'Collapse' : 'Expand'}</Txt>
+          <img src={ArrowCollapseImg} style={{ transform: `rotateX(${isOpen ? '180deg' : '0'})` }} />
+        </ArrowContent>
+      )}
+      onChange={(event, index, value) => {
+        setIsOpen(value)
+      }}
+    >
+      {' '}
+      <Line />
+      <HowToGetStartStyle>
         <Block>
           <Header>{'If it\'s your first time on FileMarket'}</Header>
           <CardBlocks>
-            <HowToGetStartCard number={1} content={
-              <Link iconRedirect
-                    howToGetStart
-                    target={'_blank'}
-                    href={'https://medium.com/filemarket-xyz/how-to-buy-fil-and-use-fil-in-the-filecoin-virtual-machine-d67fa90764d5'}
-                    style={{
-                      textDecoration: 'underline'
-                    }}
-              >Top up your wallet with $FIL
-              </Link>} img={Money} size={'medium'} />
-            <HowToGetStartCard number={2} content={
-              <Link
-                    howToGetStart
-                    onPress={() => {
-                      !isConnected && open()
-                    }}
-                    style={{
-                      textDecoration: 'underline'
-                    }}
-              >Connect your crypto wallet
-              </Link>} img={Wallet} size={'medium'} />
-            <HowToGetStartCard number={3} content={
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Text
-              >Create a FileWallet and set a password for it
-              </Text>
-              <Text linear>
-                *Be sure to save the Seed phrase!
-              </Text>
-              </div>} img={KeySquare2} size={'medium'} />
-            <HowToGetStartCard number={4} content={
+            <HowToGetStartCard
+              number={1}
+              img={Money}
+              size={'medium'}
+              content={(
                 <Link
+                  iconRedirect
                   howToGetStart
-                  onPress={() => {
-                    navigate('/market')
-                  }}
+                  target={'_blank'}
+                  href={'https://medium.com/filemarket-xyz/how-to-buy-fil-and-use-fil-in-the-filecoin-virtual-machine-d67fa90764d5'}
                   style={{
                     textDecoration: 'underline'
                   }}
-                >{'You\'re now ready to buy and sell EFTs'}</Link>
-            } img={VerifiedCheck} size={'medium'} />
+                >
+                  Top up your wallet with $FIL
+                </Link>
+              )}
+            />
+            <HowToGetStartCard
+              number={2}
+              img={Wallet}
+              size={'medium'}
+              content={(
+                <Link
+                  howToGetStart
+                  style={{
+                    textDecoration: 'underline'
+                  }}
+                  onPress={() => {
+                    !isConnected && open()
+                  }}
+                >
+                  Connect your crypto wallet
+                </Link>
+              )}
+            />
+            <HowToGetStartCard
+              number={3}
+              img={KeySquare2}
+              size={'medium'}
+              content={(
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <Text >
+                    Create a FileWallet and set a password for it
+                  </Text>
+                  <Text linear>
+                    *Be sure to save the Seed phrase!
+                  </Text>
+                </div>
+              )}
+            />
+            <HowToGetStartCard
+              number={4}
+              img={VerifiedCheck}
+              size={'medium'}
+              content={(
+                <Link
+                  howToGetStart
+                  style={{
+                    textDecoration: 'underline'
+                  }}
+                  onPress={() => {
+                    navigate('/market')
+                  }}
+                >
+                  {'You\'re now ready to buy and sell EFTs'}
+                </Link>
+              )}
+            />
           </CardBlocks>
         </Block>
         <Block style={{
           gap: '16px'
-        }}>
+        }}
+        >
           <Txt h5 style={{ fontWeight: '600', fontSize: '1.25em' }}>*Why create a FileWallet?</Txt>
-          <Txt h5 style={{ fontWeight: '400', fontSize: '1.25em', lineHeight: '28px' }}>Each file hidden inside an NFT using EFT© Protocol
+          <Txt h5 style={{ fontWeight: '400', fontSize: '1.25em', lineHeight: '28px' }}>
+            Each file hidden inside an NFT using EFT© Protocol
             is encrypted with a special cryptographic key. This key belongs only to the EFT owner,
             providing reliable protection against unauthorized content downloading.
             FileWallet stores all these keys so you can decrypt and download all your files from any device.
           </Txt>
         </Block>
-          <Block>
-            <Header>{'If FileWallet has already been created'}</Header>
-            <CardBlocks>
-              <HowToGetStartCard number={1} content={
+        <Block>
+          <Header>{'If FileWallet has already been created'}</Header>
+          <CardBlocks>
+            <HowToGetStartCard
+              number={1}
+              img={Wallet}
+              size={'small'}
+              content={(
                 <Link
                   howToGetStart
-                  onPress={() => {
-                    !isConnected && open()
-                  }}
                   style={{
                     textDecoration: 'underline'
                   }}
-                >Connect your crypto wallet
-                </Link>} img={Wallet} size={'small'} />
-              <HowToGetStartCard number={2} content={
+                  onPress={() => {
+                    !isConnected && open()
+                  }}
+                >
+                  Connect your crypto wallet
+                </Link>
+              )}
+            />
+            <HowToGetStartCard
+              miniImg
+              number={2}
+              img={FolderWithFiles}
+              size={'big'}
+              content={(
                 <div>
                   <div>
                     <Text style={{ lineHeight: '1' }}> If the FileWallet was created on the same device</Text>
-                    <Text blue style={{ lineHeight: '1' }}>Connect your FileWallet by entering your password</Text>
+                    <Text style={{ lineHeight: '1' }}>Connect your FileWallet by entering your password</Text>
                   </div>
                   <Line card />
                   <div>
                     <Text style={{ lineHeight: '1' }}>If the FileWallet was created on the another device</Text>
-                    <Text blue style={{ lineHeight: '1' }}>Connect your FileWallet by entering the seed phrase and creating a password for it</Text>
+                    <Text style={{ lineHeight: '1' }}>Connect your FileWallet by entering the seed phrase and creating a password for it</Text>
                   </div>
                 </div>
-               } img={FolderWithFiles} size={'big'} />
-            </CardBlocks>
-          </Block>
-          <Line style={{ margin: 0 }} />
-          <Block>
-            <Header>{'To sell an EFT with attached encrypted file'}</Header>
-            <CardBlocks>
-              <HowToGetStartCard number={1} content={
+              )}
+            />
+          </CardBlocks>
+        </Block>
+        <Line style={{ margin: 0 }} />
+        <Block>
+          <Header>{'To sell an EFT with attached encrypted file'}</Header>
+          <CardBlocks>
+            <HowToGetStartCard
+              number={1}
+              img={PlusCircle}
+              size={'small'}
+              content={(
                 <Link
-                      howToGetStart
-                      href={'/create/collection'}
-                      target={'_blank'}
-                      style={{
-                        textDecoration: 'underline'
-                      }}
-                >Create a collection
-                </Link>} img={PlusCircle} size={'small'} />
-              <HowToGetStartCard number={2} content={
+                  howToGetStart
+                  href={'/create/collection'}
+                  target={'_blank'}
+                  style={{
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Create a collection
+                </Link>
+              )}
+            />
+            <HowToGetStartCard
+              number={2}
+              img={Danger}
+              size={'small'}
+              content={(
                 <Link
                   howToGetStart
                   href={'/create/nft'}
@@ -280,59 +340,117 @@ const HowToGetStart = () => {
                   style={{
                     textDecoration: 'underline'
                   }}
-                >Mint an EFT with a hidden file
-                </Link>} img={Danger} size={'small'} />
-              <HowToGetStartCard number={3} content={
+                >
+                  Mint an EFT with a hidden file
+                </Link>
+              )}
+            />
+            <HowToGetStartCard
+              number={3}
+              img={Ticket}
+              size={'small'}
+              content={(
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <Text>List your EFT and place an order</Text>
-                </div>} img={Ticket} size={'small'} />
-              <HowToGetStartCard number={4} content={
+                </div>
+              )}
+            />
+            <HowToGetStartCard
+              number={4}
+              img={WatchSquareMinimalistic}
+              size={'small'}
+              content={(
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <Text>Await a purchase request</Text>
-                </div>} img={WatchSquareMinimalistic} size={'small'} />
-              <HowToGetStartCard number={5} content={
+                </div>
+              )}
+            />
+            <HowToGetStartCard
+              number={5}
+              img={CursorSquare}
+              size={'small'}
+              content={
                 <Text>{'Click Transfer Hidden File from the EFT page'}</Text>
-              } img={CursorSquare} size={'small'} />
-              <HowToGetStartCard number={6} content={
+              }
+            />
+            <HowToGetStartCard
+              number={6}
+              img={UserCheckRounded}
+              size={'small'}
+              content={
                 <Text>{'Wait for the buyer\'s transaction confirmation'}</Text>
-              } img={UserCheckRounded} size={'small'} />
-            </CardBlocks>
-          </Block>
-          <Block>
-            <Header>{'To buy an EFT with attached encrypted file'}</Header>
-            <CardBlocks>
-              <HowToGetStartCard number={1} content={
+              }
+            />
+          </CardBlocks>
+        </Block>
+        <Block>
+          <Header>{'To buy an EFT with attached encrypted file'}</Header>
+          <CardBlocks>
+            <HowToGetStartCard
+              number={1}
+              img={Items}
+              size={'small'}
+              content={(
                 <Link
-                      howToGetStart
-                      onPress={() => {
-                        navigate('/market')
-                      }}
-                      style={{
-                        textDecoration: 'underline'
-                      }}
-                >Select an EFT in the storefront
-                </Link>} img={Items} size={'small'} />
-              <HowToGetStartCard number={2} content={
+                  howToGetStart
+                  style={{
+                    textDecoration: 'underline'
+                  }}
+                  onPress={() => {
+                    navigate('/market')
+                  }}
+                >
+                  Select an EFT in the storefront
+                </Link>
+              )}
+            />
+            <HowToGetStartCard
+              number={2}
+              img={CursorSquare}
+              size={'small'}
+              content={(
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <Text>Press the Buy button</Text>
-                </div>} img={CursorSquare} size={'small'} />
-              <HowToGetStartCard number={3} content={
+                </div>
+              )}
+            />
+            <HowToGetStartCard
+              number={3}
+              img={WatchSquareMinimalistic}
+              size={'small'}
+              content={(
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <Text>Wait for the seller to transfer
-                    the hidden file</Text>
-                </div>} img={WatchSquareMinimalistic} size={'small'} />
-              <HowToGetStartCard number={4} content={
+                  <Text>
+                    Wait for the seller to transfer
+                    the hidden file
+                  </Text>
+                </div>
+              )}
+            />
+            <HowToGetStartCard
+              number={4}
+              img={DownloadMinimalistic}
+              size={'medium'}
+              content={(
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <Text>Download the file from the EFT page</Text>
-                </div>} img={DownloadMinimalistic} size={'medium'} />
-              <HowToGetStartCard number={5} content={
+                </div>
+              )}
+            />
+            <HowToGetStartCard
+              number={5}
+              img={ListCheck}
+              size={'medium'}
+              content={(
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <Text>Confirm the deal</Text>
-                </div>} img={ListCheck} size={'medium'} />
-            </CardBlocks>
-          </Block>
-        </HowToGetStartStyle>
-      </Collapse>
+                </div>
+              )}
+            />
+          </CardBlocks>
+        </Block>
+      </HowToGetStartStyle>
+    </Collapse>
   )
 }
 

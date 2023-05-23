@@ -37,7 +37,7 @@ interface TagsSectionProps {
 
 const TagsSection: FC<TagsSectionProps> = ({ categories, tags, tagOptions }) => {
   return (
-    <GridBlockDisplay>
+    <GridBlockDisplay style={{ gridArea: 'Tags' }}>
       {categories && (
         <Categories>
           {categories.map((category, index) => {
