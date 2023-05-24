@@ -257,7 +257,7 @@ const HowToGetStart = () => {
           gap: '16px'
         }}
         >
-          <Txt h5 style={{ fontWeight: '600', fontSize: '1.25em' }}>*Why create a FileWallet?</Txt>
+          <Txt h5 style={{ fontWeight: '600', fontSize: '1.25em' }}>Why create a FileWallet?</Txt>
           <Txt h5 style={{ fontWeight: '400', fontSize: '1.25em', lineHeight: '28px' }}>
             Each file hidden inside an NFT using EFT© Protocol
             is encrypted with a special cryptographic key. This key belongs only to the EFT owner,
@@ -294,12 +294,12 @@ const HowToGetStart = () => {
               content={(
                 <div>
                   <div>
-                    <Text style={{ lineHeight: '1' }}> If the FileWallet was created on the same device</Text>
+                    <Text style={{ lineHeight: '1', color: '#656669' }}> If the FileWallet was created on the same device</Text>
                     <Text style={{ lineHeight: '1' }}>Connect your FileWallet by entering your password</Text>
                   </div>
                   <Line card />
                   <div>
-                    <Text style={{ lineHeight: '1' }}>If the FileWallet was created on the another device</Text>
+                    <Text style={{ lineHeight: '1', color: '#656669' }}>If the FileWallet was created on the another device</Text>
                     <Text style={{ lineHeight: '1' }}>Connect your FileWallet by entering the seed phrase and creating a password for it</Text>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import { FC, forwardRef } from 'react'
+import { FC, forwardRef, ReactNode } from 'react'
 import { AriaButtonProps } from 'react-aria'
 
 import { styled } from '../../../../styles'
@@ -8,7 +8,7 @@ import downloadDisabled from './img/DownloadDisabled.svg'
 
 export type FileButtonProps = AriaButtonProps & {
   name?: string
-  caption?: string
+  caption?: ReactNode
 }
 
 const CardStyled = styled(Card, {
@@ -37,7 +37,7 @@ const ContentStyled = styled('div', {
   alignItems: 'center',
   flexDirection: 'row',
   flexWrap: 'nowrap',
-  gap: '$2',
+  gap: '10px',
   padding: '$2 $3',
   transition: 'opacity 0.25s ease 0s',
   '&[data-pressed=true]': {
@@ -49,8 +49,8 @@ const ContentStyled = styled('div', {
 })
 
 const DownloadIconStyled = styled('img', {
-  width: 48,
-  height: 48,
+  width: 44,
+  height: 44,
   display: 'block',
   flexShrink: 0
 })
@@ -60,19 +60,24 @@ const DownloadInfoStyled = styled('div', {
   flexDirection: 'column',
   flexWrap: 'nowrap',
   flexGrow: 1,
-  gap: 4
+  fontWeight: '600'
 })
 
 const NameStyled = styled('div', {
   overflow: 'hidden',
   whiteSpace: 'nowrap',
-  color: '$gray800',
+  color: '$blue500',
   width: '278px',
   textOverflow: 'ellipsis',
+  '@smx': {
+    '& span': {
+      fontSize: '14px'
+    }
+  },
   variants: {
-    disabled: {
+    isDisabled: {
       true: {
-        color: '$gray400'
+        color: '$gray600'
       }
     }
   }
@@ -83,13 +88,13 @@ const DownloadTextStyled = styled('div', {
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
-  color: '$blue500',
-  variants: {
-    disabled: {
-      true: {
-        color: '$gray400'
-      }
-    }
+  color: '$gray400',
+  display: 'flex',
+  alignItems: 'center',
+  fontSize: '14px',
+  gap: '$2',
+  '@smx': {
+    fontSize: '12px'
   }
 })
 
@@ -100,6 +105,7 @@ export const FileButton: FC<FileButtonProps> = forwardRef<HTMLDivElement, FileBu
   ...props
 }, ref) => {
   const { buttonRef, buttonProps, dripProps } = useButton({ isDisabled, ...props }, ref)
+
   return (
     <CardStyled
       {...buttonProps}
@@ -120,10 +126,10 @@ export const FileButton: FC<FileButtonProps> = forwardRef<HTMLDivElement, FileBu
           />
         )}
         <DownloadInfoStyled>
-          <NameStyled disabled={isDisabled}>
+          <NameStyled isDisabled={isDisabled}>
             <Txt primary1>{name}</Txt>
           </NameStyled>
-          <DownloadTextStyled disabled={isDisabled}>
+          <DownloadTextStyled>
             {caption}
           </DownloadTextStyled>
         </DownloadInfoStyled>
