@@ -4,6 +4,11 @@ import { css, theme } from './stitches.config'
 export const cssShowIn = css({
   variants: {
     showIn: {
+      smx: {
+        '@smxUp': {
+          display: 'none'
+        }
+      },
       sm: {
         '@smUp': {
           display: 'none'
@@ -31,6 +36,11 @@ export const cssShowIn = css({
 export const cssHideIn = css({
   variants: {
     hideIn: {
+      smx: {
+        '@smx': {
+          display: 'none'
+        }
+      },
       sm: {
         '@sm': {
           display: 'none'
