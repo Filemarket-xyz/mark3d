@@ -16,6 +16,15 @@ const Wrapper = styled('div', {
   border: '1px solid $gray300',
   '@md': {
     width: '100%'
+  },
+  variants: {
+    nftPage: {
+      true: {
+        '@lg': {
+          width: '100%'
+        }
+      }
+    }
   }
 })
 
@@ -30,7 +39,8 @@ const Value = styled('p', {
   textOverflow: 'ellipsis',
   overflow: 'hidden',
   whiteSpace: 'nowrap',
-  width: '100%'
+  width: '100%',
+  fontSize: '14px'
 })
 
 const Content = styled('div', {
