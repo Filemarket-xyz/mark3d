@@ -14,6 +14,10 @@ export const inputStyles = {
   '&:placeholder': {
     color: '$gray400'
   },
+  '&:hover': {
+    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
+    border: '1px solid #38BCC9'
+  },
   '&:focus': {
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
     border: '3px solid #38BCC9'
