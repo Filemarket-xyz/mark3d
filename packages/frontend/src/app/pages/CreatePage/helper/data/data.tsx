@@ -538,3 +538,154 @@ export const licenseInfo: Record<license, licenseInfoType> = {
     src: 'https://creativecommons.org/licenses/'
   }
 }
+
+export const tags: ComboBoxOption[] = [
+  {
+    title: 'beginnerfriendly',
+    id: '0'
+  },
+  {
+    title: 'bestseller',
+    id: '1'
+  },
+  {
+    title: 'crossplatform',
+    id: '2'
+  },
+  {
+    title: 'customizable',
+    id: '3'
+  },
+  {
+    title: 'easytouse',
+    id: '4'
+  },
+  {
+    title: 'exclusivecontent',
+    id: '5'
+  },
+  {
+    title: 'handcrafted',
+    id: '6'
+  },
+  {
+    title: 'highquality',
+    id: '7'
+  },
+  {
+    title: 'innovative',
+    id: '8'
+  },
+  {
+    title: 'inspiration',
+    id: '9'
+  },
+  {
+    title: 'nonexclusivecontent',
+    id: '10'
+  },
+  {
+    title: 'nonoriginalcontent',
+    id: '11'
+  },
+  {
+    title: 'originalcontent',
+    id: '12'
+  },
+  {
+    title: 'premiumcontent',
+    id: '13'
+  },
+  {
+    title: 'professional',
+    id: '14'
+  },
+  {
+    title: 'royaltyfree',
+    id: '15'
+  },
+  {
+    title: 'seasonal',
+    id: '16'
+  },
+  {
+    title: 'stock',
+    id: '17'
+  },
+  {
+    title: 'trending',
+    id: '18'
+  },
+  {
+    title: 'english',
+    id: '19'
+  },
+  {
+    title: 'french',
+    id: '20'
+  },
+  {
+    title: 'german',
+    id: '21'
+  },
+  {
+    title: 'italian',
+    id: '22'
+  },
+  {
+    title: 'mandarin',
+    id: '23'
+  },
+  {
+    title: 'portuguese',
+    id: '24'
+  },
+  {
+    title: 'russian',
+    id: '25'
+  },
+  {
+    title: 'spanish',
+    id: '26'
+  },
+  {
+    title: 'arabic',
+    id: '27'
+  },
+  {
+    title: 'japanese',
+    id: '28'
+  },
+  {
+    title: 'korean',
+    id: '29'
+  },
+  {
+    title: 'hindi',
+    id: '30'
+  },
+  {
+    title: 'bengali',
+    id: '31'
+  },
+  {
+    title: 'indonesian',
+    id: '32'
+  },
+  {
+    title: 'turkish',
+    id: '33'
+  },
+  {
+    title: 'swahili',
+    id: '34'
+  },
+  {
+    title: 'dutch',
+    id: '35'
+  },
+  {
+    title: 'polish',
+    id: '36'
+  }
+]
