@@ -6,6 +6,7 @@ import { FileButton, MintModal, ProtectedStamp } from '../../../../components'
 import { useStatusState } from '../../../../hooks'
 import { HiddenFileDownload } from '../../../../hooks/useHiddenFilesDownload'
 import { useStatusModal } from '../../../../hooks/useStatusModal'
+import { Txt } from '../../../../UIkit'
 import { formatFileSize } from '../../../../utils/nfts'
 import { GridBlock, PropertyTitle } from '../../helper/styles/style'
 
@@ -34,6 +35,12 @@ const FileInfoSectionTitle = styled(PropertyTitle, {
   fontWeight: '600',
   fontSize: '20px',
   marginBottom: '12px'
+})
+
+const Line = styled('div', {
+  height: '15px',
+  width: '2px',
+  background: '$gray400'
 })
 
 interface FileInfoSectionProps {
@@ -67,19 +74,25 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
               files.map(({ cid, name, size, download }) => (
                 <ProtectedStamp key={cid}>
                   <FileButton
-                    caption={`download (${formatFileSize(size)})`}
+                    caption={formatFileSize(size)}
                     name={name}
                     onPress={wrapPromise(download)}
                   />
                 </ProtectedStamp>
               ))
             ) : (
-              filesMeta.map(({ name }, index) => (
+              filesMeta.map(({ name, size }, index) => (
                 <ProtectedStamp key={index}>
                   <FileButton
                     isDisabled
-                    caption="to the owner"
                     name={name}
+                    caption={(
+                      <>
+                        <Txt>{formatFileSize(size ?? 0)}</Txt>
+                        <Line />
+                        <Txt>Available only to the owner</Txt>
+                      </>
+                    )}
                   />
                 </ProtectedStamp>
               ))
