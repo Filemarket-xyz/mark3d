@@ -37,7 +37,7 @@ import { useCreateNft } from './hooks/useCreateNft'
 import { useModalProperties } from './hooks/useModalProperties'
 import PlusIcon from './img/plus-icon.svg'
 
-const Description = styled('p', {
+const Description = styled('div', {
   ...textVariant('secondary1').true,
   fontSize: '14px',
   lineHeight: '18px',
@@ -99,7 +99,7 @@ const CollectionPickerContainer = styled('div', {
   }
 })
 
-const TitleGroup = styled('div', {
+const TitleGroup = styled(FormControl, {
   marginBottom: '$4'
 })
 
