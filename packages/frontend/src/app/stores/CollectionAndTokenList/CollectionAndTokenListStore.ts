@@ -50,6 +50,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
     this.isActivated = true
     this.address = address
     this.request(address)
+    console.log(this)
   }
 
   deactivate(): void {

@@ -104,7 +104,7 @@ const Text = styled('h4', {
   ...textVariant('primary1').true,
   fontSize: '14px',
   lineHeight: '16px',
-  fontWeight: '600',
+  fontWeight: '500',
   '@md': {
     fontSize: '12px'
   },

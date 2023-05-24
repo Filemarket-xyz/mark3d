@@ -15,9 +15,8 @@ export const inputStyles = {
     color: '$gray400'
   },
   '&:focus': {
-    background:
-      'linear-gradient($white 0 0) padding-box, $gradients$main border-box',
-    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)'
+    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
+    border: '3px solid #38BCC9'
   },
   width: '100%',
   variants: {
@@ -27,6 +26,14 @@ export const inputStyles = {
       },
       false: {
         borderColor: '$black'
+      }
+    },
+    isDisabledFocusStyle: {
+      true: {
+        '&:focus': {
+          boxShadow: 'none',
+          border: 'none'
+        }
       }
     }
   }

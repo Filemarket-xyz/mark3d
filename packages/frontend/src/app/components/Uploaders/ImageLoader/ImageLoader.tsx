@@ -85,10 +85,11 @@ const File = styled('label', {
   gap: '18px',
   alignItems: 'center',
   cursor: 'pointer',
+  border: '1px solid $gray300',
+  boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
   '@sm': {
     flexDirection: 'column',
-    alignItems: 'center',
-    display: 'flex'
+    alignItems: 'center'
   },
   variants: {
     selected: {
@@ -109,7 +110,7 @@ const FileImageContainer = styled('div', {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  gap: '$2',
+  gap: '18px',
   flexDirection: 'column',
   borderRadius: '$3',
   ...textVariant('primary1').true

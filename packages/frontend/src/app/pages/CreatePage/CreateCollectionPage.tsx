@@ -26,7 +26,17 @@ export const Label = styled('label', {
   lineHeight: '16px',
   marginBottom: '$2',
   color: '$gray800',
-  display: 'block'
+  display: 'block',
+  variants: {
+    paddingL: {
+      true: {
+        paddingLeft: '$3',
+        '@sm': {
+          paddingLeft: 0
+        }
+      }
+    }
+  }
 })
 
 export const TextBold = styled('span', {
@@ -52,9 +62,21 @@ export const LetterCounter = styled('span', {
 })
 
 export const Form = styled('form', {
-  maxWidth: '$breakpoints$sm',
+  maxWidth: 'calc($breakpoints$sm + 32px)',
   marginLeft: 'auto',
   marginRight: 'auto'
+})
+
+export const ButtonContainer = styled('div', {
+  paddingTop: '$3',
+  paddingLeft: '$3',
+  width: '100%',
+  display: 'flex',
+  justifyContent: 'flex-start',
+  '@sm': {
+    paddingLeft: 0,
+    justifyContent: 'center'
+  }
 })
 
 export interface CreateCollectionForm {
@@ -180,14 +202,16 @@ export default function CreateCollectionPage() {
             />
           </FormControl>
 
-          <Button
-            primary
-            type='submit'
-            isDisabled={!isValid}
-            title={isValid ? undefined : 'Required fields must be filled'}
-          >
-            Mint
-          </Button>
+          <ButtonContainer>
+            <Button
+              primary
+              type='submit'
+              isDisabled={!isValid}
+              title={isValid ? undefined : 'Required fields must be filled'}
+            >
+              Mint
+            </Button>
+          </ButtonContainer>
         </Form>
       </PageLayout>
     </>

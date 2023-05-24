@@ -7,11 +7,20 @@ import { Input, inputStyles } from './Input'
 
 const InputWithPrefix = styled('div', {
   ...inputStyles,
-  '&:focus-within': inputStyles['&:focus'],
+  boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
+  border: '1px solid $gray300',
   width: '100%',
   display: 'flex',
   gap: '$2',
-  alignItems: 'center'
+  alignItems: 'center',
+  '&:focus': {
+    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
+    border: '1px solid #38BCC9'
+  },
+  '&:focus-within': {
+    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
+    border: '1px solid #38BCC9'
+  }
 })
 
 const InputPostfix = styled('div', {
@@ -22,15 +31,11 @@ const InputPostfix = styled('div', {
   alignItems: 'center'
 })
 
-interface IPostfixProps {
-  onPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void
-}
-
 interface PrefixedInputProps {
   postfix: ReactNode
   placeholder: string
   inputProps?: ComponentProps<typeof Input>
-  postfixProps?: IPostfixProps
+  postfixProps?: ComponentProps<typeof InputPostfix>
 }
 
 export default function PostfixedInput(props: PrefixedInputProps) {
@@ -49,6 +54,7 @@ export default function PostfixedInput(props: PrefixedInputProps) {
           }
         }}
         {...props.inputProps}
+        isDisabledFocusStyle
         placeholder={props.placeholder}
       />
       <InputPostfix {...props.postfixProps}>{props.postfix}</InputPostfix>

@@ -70,6 +70,8 @@ const File = styled('label', {
   marginBottom: '$2',
   cursor: 'pointer',
   position: 'relative',
+  border: '1px solid $gray300',
+  boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
   ...generateFileHoverStyles()
 })
 
@@ -77,14 +79,15 @@ const CloseButton = styled(Button, {
   width: 48,
   height: 48,
   position: 'absolute',
-  top: '$3',
-  right: '$3',
+  top: '$2',
+  right: '$2',
   padding: 0,
   minWidth: 0,
   borderRadius: '$3',
   backgroundColor: '$white',
   zIndex: 2,
-  boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)'
+  border: '1px solid $gray300',
+  boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)'
 })
 
 const CrossIcon = styled('img', {
