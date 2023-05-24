@@ -20,7 +20,8 @@ const FileInput = styled('input', {
 const BoxLabel = styled('span', {
   ...textVariant('primary1').true,
   color: '$blue500',
-  fontWeight: 600
+  fontWeight: 600,
+  textAlign: 'center'
 })
 
 export const WhiteShade = styled('div', {
@@ -117,10 +118,10 @@ export default function NftLoader(props: NftLoaderProps) {
       <WhiteShade></WhiteShade>
       <Box src={fileChosen ? SuccessImage : BoxImage} />
       {fileChosen ? (
-        <BoxLabel css={{ color: '$gray500' }}>
+        <BoxLabel css={{ color: '$gray600' }}>
           {fileChosen.name}
           {' '}
-          selected
+          uploaded
         </BoxLabel>
       ) : (
         <BoxLabel>Choose file</BoxLabel>

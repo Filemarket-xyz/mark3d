@@ -326,7 +326,7 @@ const CreateNftPage = observer(() => {
             <Description>
               <TextBold>Formats:</TextBold>
               {' '}
-              Any
+              Any.
               <TextBold> Max size:</TextBold>
               {' '}
               1 GB.

@@ -110,6 +110,7 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
 
   const Content = (): JSX.Element => {
     if (props.isLoading) return <ContentLoading />
+
     return <ContentLoaded />
   }
 
@@ -117,6 +118,7 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
     if (event.key === 'Enter' && inputValue) {
       props.onEnter?.(inputValue as string)
       event.preventDefault()
+
       return false
     }
   }
@@ -131,11 +133,16 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
             ...getInputProps(),
             onKeyDown: handleKeyDown
           }}
+          postfixProps={{
+            onPress: handleKeyDown
+          }}
         />
       </div>
-      {groupedOptions?.length > 0 && <Listbox {...getListboxProps()}>
-        <Content />
-      </Listbox>}
+      {groupedOptions?.length > 0 && (
+        <Listbox {...getListboxProps()}>
+          <Content />
+        </Listbox>
+      )}
     </div>
   )
 }
@@ -163,12 +170,12 @@ export const ControlledComboBox = <T extends FieldValues>(
       <UncontrolledCombobox
         options={props.comboboxProps.options}
         value={p.field.value}
-        onChange={(_, data) => p.field.onChange(data)}
         otherFieldProps={p.field}
         placeholder={props.placeholder}
-        onEnter={props.onEnter}
         isDisabled={props.isDisabled}
+        onChange={(_, data) => p.field.onChange(data)}
+        onEnter={props.onEnter}
       />
     )}
   />
-  )
+)

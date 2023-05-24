@@ -1,4 +1,5 @@
 import { ComponentProps, ReactNode } from 'react'
+import * as React from 'react'
 
 import { styled } from '../../../styles'
 import { textVariant } from '../Txt'
@@ -21,10 +22,15 @@ const InputPostfix = styled('div', {
   alignItems: 'center'
 })
 
+interface IPostfixProps {
+  onPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void
+}
+
 interface PrefixedInputProps {
   postfix: ReactNode
   placeholder: string
   inputProps?: ComponentProps<typeof Input>
+  postfixProps?: IPostfixProps
 }
 
 export default function PostfixedInput(props: PrefixedInputProps) {
@@ -45,7 +51,7 @@ export default function PostfixedInput(props: PrefixedInputProps) {
         {...props.inputProps}
         placeholder={props.placeholder}
       />
-      <InputPostfix>{props.postfix}</InputPostfix>
+      <InputPostfix {...props.postfixProps}>{props.postfix}</InputPostfix>
     </InputWithPrefix>
   )
 }
