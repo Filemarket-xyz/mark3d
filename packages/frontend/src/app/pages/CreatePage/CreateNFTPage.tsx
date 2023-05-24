@@ -272,7 +272,7 @@ const CreateNftPage = observer(() => {
             <SubTitle>
               <Txt primary1>
                 <Tooltip
-                  placement={'bottom'}
+                  placement={'bottomStart'}
                   content={(
                     <Txt secondary1 css={{ fontSize: '14px' }}>
                       Allows users to mint EFTs with attached encrypted files of any size stored on Filecoin,
