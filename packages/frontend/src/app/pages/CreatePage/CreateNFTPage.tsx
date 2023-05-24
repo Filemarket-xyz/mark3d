@@ -268,15 +268,14 @@ const CreateNftPage = observer(() => {
       <PageLayout css={{ paddingBottom: '$4' }}>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <TitleGroup>
-            <h3><Txt h3>Create New EFT</Txt></h3>
+            <h3><Txt h3 style={{ fontWeight: '600' }}>Create New EFT</Txt></h3>
             <SubTitle>
               <Txt primary1>
                 <Tooltip
-                  placement={'bottom'}
+                  placement={'bottomStart'}
                   content={(
                     <Txt secondary1 css={{ fontSize: '14px' }}>
-                      Allows users to mint EFTs with attached encrypted files of any size stored on Filecoin,
-                      which can only be accessed exclusively by the owner of the EFT.
+                      Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT
                     </Txt>
                   )}
                   css={{
@@ -319,7 +318,7 @@ const CreateNftPage = observer(() => {
               Any.
               <TextBold> Max size:</TextBold>
               {' '}
-              1 GB.
+              200 MB.
             </Description>
             <NftLoader
               registerProps={register('hiddenFile', { required: true })}
