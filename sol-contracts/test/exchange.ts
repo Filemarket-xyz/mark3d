@@ -234,7 +234,7 @@ describe("Trade token with whitelist", async () => {
     await expect(tx).to.revertedWith("Mark3dExchange: whitelist period");
   });
 
-  it("fullfill whitelist wrong price", async () => {
+  it("fulfill whitelist wrong price", async () => {
     await ethers.provider.send("evm_mine", [start + 23]);
 
     const tx = exchangeInstance.connect(accounts[2])
@@ -247,7 +247,7 @@ describe("Trade token with whitelist", async () => {
     await expect(tx).to.revertedWith("Mark3dExchange: value must equal price with discount");
   })
 
-  it("fullfill whitelist success", async () => {
+  it("fulfill whitelist success", async () => {
     await ethers.provider.send("evm_mine", [start + 26]);
 
     const tx = await exchangeInstance.connect(accounts[2])

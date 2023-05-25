@@ -130,7 +130,6 @@ describe("Trade token", async () => {
   });
 });
 
-
 describe("Trade token with whitelist", async () => {
   let accounts: Signer[];
   let fraudDecider: FraudDeciderWeb2;
@@ -329,7 +328,7 @@ describe("Trade token with whitelist", async () => {
     await expect(tx).to.revertedWith("FilemarketExchangeV2: whitelist period");
   });
 
-  it("fullfill whitelist wrong price", async () => {
+  it("fulfill whitelist wrong price", async () => {
     await ethers.provider.send("evm_mine", [start + 23]);
 
     const tx = exchangeInstance
@@ -350,7 +349,7 @@ describe("Trade token with whitelist", async () => {
     );
   });
 
-  it("fullfill whitelist success", async () => {
+  it("fulfill whitelist success", async () => {
     await ethers.provider.send("evm_mine", [start + 26]);
 
     const tx = await exchangeInstance
@@ -371,7 +370,6 @@ describe("Trade token with whitelist", async () => {
       .withArgs(BN.from(1), await accounts[2].getAddress());
   });
 });
-
 
 describe("Trade token with fraud not approved", async () => {
   let accounts: Signer[];
@@ -471,10 +469,12 @@ describe("Trade token with fraud not approved", async () => {
         await accounts[2].getAddress(),
         BN.from(0)
       );
-    await expect(tx).to.changeEtherBalance(accounts[1], BN.from(10000 - 1000 - 900));
+    await expect(tx).to.changeEtherBalance(
+      accounts[1],
+      BN.from(10000 - 1000 - 900)
+    );
   });
 });
-
 
 describe("Trade token with fraud approved", async () => {
   let accounts: Signer[];
