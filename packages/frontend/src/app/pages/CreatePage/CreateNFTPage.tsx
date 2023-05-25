@@ -2,7 +2,7 @@ import { Tooltip } from '@nextui-org/react'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { NavLink, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 
 import { styled } from '../../../styles'
@@ -357,11 +357,11 @@ const CreateNftPage = observer(() => {
                   collectionAndTokenList.reload()
                 }}
               />
-              <NavLink to={'../collection'}>
+              <a target={'_blank'} href={'/collection'} rel="noreferrer">
                 <AddCollectionButton>
                   <Icon src={PlusIcon} />
                 </AddCollectionButton>
-              </NavLink>
+              </a>
             </CollectionPickerContainer>
           </FormControl>
 
