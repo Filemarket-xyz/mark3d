@@ -8,6 +8,7 @@ import Plug from '../../../components/Plug/Plug'
 import { useUserTransferStore } from '../../../hooks/useUserTransfers'
 import { Button, InfiniteScroll, Txt } from '../../../UIkit'
 import { Params } from '../../../utils/router'
+import { cardsContainerCss } from '../../MarketPage/NftSection'
 
 const TransfersSection: React.FC = observer(() => {
   const { address: currentAddress } = useAccount()
@@ -30,19 +31,7 @@ const TransfersSection: React.FC = observer(() => {
         isLoading={userTransferStore.isLoading}
         currentItemCount={userTransferStore.transferCards.length}
         render={({ index }) => <TransferCard {...userTransferStore.transferCards[index]} key={index} />}
-        listCss={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          gap: '$4',
-          '@md': {
-            justifyContent: 'space-around'
-          },
-          '@sm': {
-            justifyContent: 'center'
-          },
-          paddingBottom: '$3'
-        }}
+        listCss={cardsContainerCss}
       />
       {!userTransferStore.transferCards.length && !userTransferStore.isLoading && (
         <Plug
