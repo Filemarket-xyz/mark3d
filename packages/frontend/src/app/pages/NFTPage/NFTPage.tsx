@@ -1,3 +1,4 @@
+import { useMediaQuery } from '@mui/material'
 import { observer } from 'mobx-react-lite'
 import React, { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
@@ -26,7 +27,6 @@ const NFTPreviewContainer = styled('div', {
   width: '100%',
   height: 555,
   background: '$gradients$background',
-  backgroundSize: 'cover',
   boxSizing: 'content-box',
   '& .blur': {
     width: '100%',
@@ -42,52 +42,58 @@ const NFTPreviewContainer = styled('div', {
 
 const MainInfo = styled(PageLayout, {
   marginTop: '150px',
+  marginBottom: '-80px',
   paddingTB: 48,
   fontSize: '16px',
   gridTemplateColumns: '3fr 1fr',
-  gridTemplateRows: 'max-content',
   columnGap: '$4',
   minHeight: '100%',
+  height: '100%',
   borderRadius: '$6 $6 0 0',
   top: '-$6',
   boxShadow: '$footer',
   zIndex: '7',
-  position: 'relative'
+  position: 'relative',
+  '@md': {
+    height: 'unset'
+  }
 })
 
 const GridLayout = styled('div', {
   display: 'grid',
   gap: '3rem',
   position: 'relative',
-  gridTemplateColumns: '3fr 1fr',
-  gridTemplateRows: 'max-content',
   columnGap: '$4',
-  minHeight: '100%',
-  '@mdx': {
-    display: 'flex'
+  height: '100%',
+  gridTemplateColumns: '3fr 1fr',
+  // eslint-disable-next-line
+  gridTemplateAreas: "'GridBlock Control' 'HomeLand HomeLand' 'Tags Tags' 'Description Description'",
+  '@md': {
+    gridTemplateAreas: "'BaseInfo' 'Control' 'HomeLand' 'Tags' 'Description'",
+    gridTemplateColumns: 'unset'
   }
 })
 
 const GridBlockSection = styled(GridBlock, {
   display: 'flex',
   flexDirection: 'column',
-  gap: '48px'
-})
-
-const GridBlockSectionRow = styled(GridBlockSection, {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  gap: '12px',
-  '@mdx': {
-    flexDirection: 'column'
+  gridArea: 'GridBlock',
+  gap: '32px',
+  '@md': {
+    display: 'none'
   }
 })
 
-const DisplayLayout = styled('div', {
+const ControlFileSection = styled('div', {
   display: 'flex',
-  gap: '32px',
-  marginTop: '32px',
-  flexDirection: 'column'
+  flexDirection: 'column',
+  gap: '16px',
+  position: 'sticky',
+  top: '125px',
+  '@md': {
+    position: 'relative',
+    top: '0'
+  }
 })
 
 const NFTPage = observer(() => {
@@ -106,10 +112,22 @@ const NFTPage = observer(() => {
     transferStore.data
   )
 
+  const categories: string[] = useMemo(() => {
+    let categories: string[] = []
+    if (tokenStore.data?.categories) categories = tokenStore.data?.categories
+    if (tokenStore.data?.subcategories && tokenStore.data?.subcategories[0] !== '') categories = [...categories, ...tokenStore.data?.subcategories]
+
+    return categories
+  }, [tokenStore.data?.categories, tokenStore.data?.subcategories])
+
+  const md = useMediaQuery('(max-width:900px)')
+
   return (
     <>
       <NFTPreviewContainer style={{
-        background: `url(${getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')})`
+        backgroundImage: `url(${getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
       }}
       >
         <div className='blur'>
@@ -125,46 +143,38 @@ const NFTPage = observer(() => {
       </NFTPreviewContainer>
       <MainInfo>
         <GridLayout>
-          <GridBlockSection>
-            <BaseInfoSection />
-            {window.innerWidth <= 900 && (
-              <GridBlockSectionRow>
-                <ControlSection />
-                <FileInfoSection
-                  isOwner={isOwner}
-                  canViewHiddenFiles={canViewHiddenFiles}
-                  files={files}
-                />
-              </GridBlockSectionRow>
-            )}
-            <HomeLandSection />
-            <TagsSection
-              tags={tokenStore.data?.tags}
-              categories={[
-                ...Array.from(tokenStore.data?.categories ?? []),
-                ...Array.from(tokenStore.data?.subcategories ?? [])
-              ]}
-            />
-            {window.innerWidth > 1200 && <DescriptionSection />}
-          </GridBlockSection>
-
-          {window.innerWidth > 900 && (
+          {!md ? (
             <GridBlockSection>
-              <ControlSection />
-              <FileInfoSection
-                isOwner={isOwner}
-                canViewHiddenFiles={canViewHiddenFiles}
-                files={files}
+              <BaseInfoSection />
+              <HomeLandSection />
+              <TagsSection
+                tags={tokenStore.data?.tags}
+                categories={categories}
               />
+              <DescriptionSection />
             </GridBlockSection>
-          )}
+          )
+            : (
+              <>
+                <BaseInfoSection />
+                <HomeLandSection />
+                <TagsSection
+                  tags={tokenStore.data?.tags}
+                  categories={categories}
+                />
+                <DescriptionSection />
+              </>
+            )}
+          <ControlFileSection style={{ gridArea: 'Control' }}>
+            <ControlSection />
+            <FileInfoSection
+              isOwner={isOwner}
+              canViewHiddenFiles={canViewHiddenFiles}
+              files={files}
+              filesMeta={tokenStore.data?.hiddenFileMeta ? [tokenStore.data?.hiddenFileMeta] : []}
+            />
+          </ControlFileSection>
         </GridLayout>
-
-        {window.innerWidth <= 1200 && (
-          <DisplayLayout>
-            <DescriptionSection />
-          </DisplayLayout>
-        )}
       </MainInfo>
     </>
   )

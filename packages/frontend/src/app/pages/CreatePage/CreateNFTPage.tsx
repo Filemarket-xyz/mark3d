@@ -2,7 +2,7 @@ import { Tooltip } from '@nextui-org/react'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { NavLink, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 
 import { styled } from '../../../styles'
@@ -14,28 +14,41 @@ import MintModal, {
 } from '../../components/Modal/Modal'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
-import { useCollectionAndTokenListStore } from '../../hooks'
+import { useCollectionAndTokenListStore, useStores } from '../../hooks'
 import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
-import { Button, Link, PageLayout, Txt } from '../../UIkit'
+import { useMediaMui } from '../../hooks/useMediaMui'
+import { Button, Link, PageLayout, textVariant, Txt } from '../../UIkit'
 import { ComboBoxOption, ControlledComboBox } from '../../UIkit/Form/Combobox'
 import { FormControl } from '../../UIkit/Form/FormControl'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
 import TagsSection from '../NFTPage/section/Tags/TagsSection'
-import { Form, Label, LabelWithCounter, TextBold, TextGray } from './CreateCollectionPage'
-import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory } from './helper/data/data'
+import {
+  ButtonContainer,
+  Form,
+  Label,
+  LabelWithCounter,
+  LetterCounter,
+  TextBold,
+  TextGray
+} from './CreateCollectionPage'
+import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory, tags } from './helper/data/data'
 import { useCreateNft } from './hooks/useCreateNft'
 import { useModalProperties } from './hooks/useModalProperties'
 import PlusIcon from './img/plus-icon.svg'
 
-const Description = styled('p', {
-  fontSize: '12px',
+const Description = styled('div', {
+  ...textVariant('secondary1').true,
+  fontSize: '14px',
+  lineHeight: '18px',
   color: '$gray600',
-  marginBottom: '$2',
+  marginBottom: '$3',
   variants: {
     secondary: {
       true: {
-        fontSize: '14px'
+        ...textVariant('primary1').true,
+        fontSize: '14px',
+        fontWeight: '400'
       }
     }
   }
@@ -50,7 +63,8 @@ const AddCollectionButton = styled(Button, {
   borderRadius: '$3',
   minWidth: 0,
   padding: 0,
-  backgroundColor: '$white'
+  backgroundColor: '$white',
+  boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)'
 })
 
 const Icon = styled('img', {
@@ -86,7 +100,7 @@ const CollectionPickerContainer = styled('div', {
   }
 })
 
-const TitleGroup = styled('div', {
+const TitleGroup = styled(FormControl, {
   marginBottom: '$4'
 })
 
@@ -98,17 +112,13 @@ const CategoryAndSubcategory = styled('div', {
   display: 'flex',
   gap: '30px',
   '@sm': {
-    flexDirection: 'column',
-    gap: 0
-  },
-  '& ul': {
-    maxWidth: '285px'
+    flexDirection: 'column'
   }
 })
 
 const ContentField = styled(CollectionPickerContainer, {
   padding: '$3',
-  border: '3px solid #e9e9e9',
+  border: '1px solid #e9e9e9',
   borderRadius: '20px',
   flexDirection: 'column',
   flexWrap: 'wrap',
@@ -128,7 +138,7 @@ const ContentField = styled(CollectionPickerContainer, {
 
 })
 
-const NFTLicense = styled('h5', {
+const NFTLicense = styled('div', {
   '& a': {
     fontSize: '14px'
   }
@@ -157,38 +167,13 @@ const CreateNftPage = observer(() => {
   } | undefined = location.state?.collection
 
   const [chosenTags, setChosenTags] = useState<string[]>([])
-  const tags: ComboBoxOption[] = [
-    {
-      title: 'VR',
-      id: '0'
-    },
-    {
-      title: 'AR',
-      id: '1'
-    },
-    {
-      title: 'Stream',
-      id: '2'
-    },
-    {
-      title: 'Minecraft',
-      id: '3'
-    },
-    {
-      title: 'Amogus',
-      id: '4'
-    },
-    {
-      title: 'RockPaper',
-      id: '5'
-    }
-
-  ]
 
   const {
     collectionMintOptions,
     isLoading: isCollectionLoading
   } = useCollectionAndTokenListStore(address)
+
+  const { collectionAndTokenList } = useStores()
 
   const { modalBody, modalOpen, setModalBody, setModalOpen } =
     useModalProperties()
@@ -201,7 +186,7 @@ const CreateNftPage = observer(() => {
     setError: setNftError,
     setIsLoading: setIsNftLoading
   } = useCreateNft()
-
+  const { adaptive } = useMediaMui()
   const {
     register,
     handleSubmit,
@@ -218,10 +203,13 @@ const CreateNftPage = observer(() => {
     }
   })
 
+  const [choseTagValue, setChoseTagValue] = useState<string>('')
+
   const chosenTag = watch('tags')
   const chosenCategory = watch('category')
   const license = watch('license')
   const category = watch('category')
+  const description = watch('description')
 
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
     createNft({ ...data, tagsValue: chosenTags, licenseUrl })
@@ -261,6 +249,18 @@ const CreateNftPage = observer(() => {
     return licenseInfo[license?.title as license] ? licenseInfo[license?.title as license].src : 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
   }, [license])
 
+  const saveValue = (value: string | undefined) => {
+    if (value && !chosenTags.includes(value)) {
+      setChosenTags([...chosenTags, value])
+      console.log(choseTagValue)
+      resetField('tags')
+    }
+  }
+
+  useEffect(() => {
+    console.log(description)
+  }, [description])
+
   return (
     <>
       <MintModal
@@ -275,43 +275,58 @@ const CreateNftPage = observer(() => {
       <PageLayout css={{ paddingBottom: '$4' }}>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <TitleGroup>
-            <h3><Txt h3>Create New NFT</Txt></h3>
+            <h3><Txt h3 style={{ fontWeight: '600' }}>Create New EFT</Txt></h3>
             <SubTitle>
               <Txt primary1>
-                With Encrypted
                 <Tooltip
+                  placement={'bottomStart'}
                   content={(
-                    <Txt>
-                      Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin,
-                      which can only be accessed exclusively by the owner of the NFT.
+                    <Txt secondary1 css={{ fontSize: '14px' }}>
+                      Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT
                     </Txt>
                   )}
+                  css={{
+                    width: `${adaptive({
+                      sm: '300px',
+                      md: '400px',
+                      defaultValue: '544px'
+                    })}`
+                  }}
                 >
                   {' '}
-                  <Txt css={{ fontWeight: 700 }}>FileToken&#169;</Txt>
+                  <Txt css={{ color: '$blue500', cursor: 'pointer' }}>Encrypted FileToken&#169;</Txt>
                   {' '}
                 </Tooltip>
-                Technology on Filecoin storage.
+                on Filecoin network
               </Txt>
             </SubTitle>
           </TitleGroup>
 
           <FormControl>
-            <Label css={{ marginBottom: '$3' }}>Upload a preview picture</Label>
+            <Label css={{ marginBottom: '$1' }}>Upload a public preview picture</Label>
+            <Description>
+              <TextBold>Formats:</TextBold>
+              {' '}
+              JPG, PNG or GIF.
+              <TextBold> Max size:</TextBold>
+              {' '}
+              100 MB.
+            </Description>
             <ImageLoader
               registerProps={register('image', { required: true })}
+              resetField={resetField}
             />
           </FormControl>
 
           <FormControl>
-            <Label css={{ marginBottom: '$3' }}>Upload any file that will be encrypted and hidden by EFT&#169;</Label>
+            <Label css={{ marginBottom: '$1' }}>Upload any file that will be encrypted and hidden by EFT Protocol</Label>
             <Description>
               <TextBold>Formats:</TextBold>
               {' '}
-              Any
+              Any.
               <TextBold> Max size:</TextBold>
               {' '}
-              100 MB.
+              200 MB.
             </Description>
             <NftLoader
               registerProps={register('hiddenFile', { required: true })}
@@ -338,12 +353,15 @@ const CreateNftPage = observer(() => {
                   options: collectionMintOptions,
                   isLoading: isCollectionLoading
                 }}
+                onFocus={() => {
+                  collectionAndTokenList.reload()
+                }}
               />
-              <NavLink to={'../collection'}>
+              <a target={'_blank'} href={'/collection'} rel="noreferrer">
                 <AddCollectionButton>
                   <Icon src={PlusIcon} />
                 </AddCollectionButton>
-              </NavLink>
+              </a>
             </CollectionPickerContainer>
           </FormControl>
 
@@ -353,7 +371,14 @@ const CreateNftPage = observer(() => {
                 Description&nbsp;&nbsp;
                 <TextGray>(Optional)</TextGray>
               </Label>
-              {/* <LetterCounter>{description?.length}/1000</LetterCounter> */}
+              <LetterCounter
+                style={{
+                  color: description?.length > 1000 ? '#D81B60' : '#A7A8A9'
+                }}
+              >
+                {description?.length}
+                /1000
+              </LetterCounter>
             </LabelWithCounter>
 
             <TextArea
@@ -362,58 +387,79 @@ const CreateNftPage = observer(() => {
             />
           </FormControl>
 
-          <CategoryAndSubcategory>
-            <FormControl>
-              <Label>Category</Label>
-              <CollectionPickerContainer>
-                <ControlledComboBox<CreateNFTForm>
-                  name='category'
-                  control={control}
-                  placeholder={'Select a category'}
-                  rules={{ required: true }}
-                  comboboxProps={{
-                    options: categoryOptions
-                  }}
-                />
-              </CollectionPickerContainer>
-            </FormControl>
+          <FormControl>
+            <CategoryAndSubcategory>
+              <div>
+                <Label>Category</Label>
+                <CollectionPickerContainer>
+                  <ControlledComboBox<CreateNFTForm>
+                    name='category'
+                    control={control}
+                    placeholder={'Select a category'}
+                    rules={{ required: true }}
+                    size={'md'}
+                    comboboxProps={{
+                      options: categoryOptions
+                    }}
+                  />
+                </CollectionPickerContainer>
+              </div>
 
-            <FormControl>
-              <Label>
-                Subcategory&nbsp;&nbsp;
+              <div>
+                <Label>
+                  Subcategory&nbsp;&nbsp;
+                  <TextGray>(Optional)</TextGray>
+                </Label>
+                <CollectionPickerContainer>
+                  <ControlledComboBox<CreateNFTForm>
+                    name='subcategory'
+                    control={control}
+                    placeholder={'Select a subcategory'}
+                    rules={{ required: false }}
+                    isDisabled={!category}
+                    size={'md'}
+                    comboboxProps={{
+                      options: subcategoryOptions
+                    }}
+                  />
+                </CollectionPickerContainer>
+              </div>
+            </CategoryAndSubcategory>
+          </FormControl>
+
+          <FormControl size={'lg'}>
+            <LabelWithCounter>
+              <Label paddingL>
+                Tags&nbsp;&nbsp;
                 <TextGray>(Optional)</TextGray>
               </Label>
-              <CollectionPickerContainer>
-                <ControlledComboBox<CreateNFTForm>
-                  name='subcategory'
-                  control={control}
-                  placeholder={'Select a subcategory'}
-                  rules={{ required: false }}
-                  isDisabled={!category}
-                  comboboxProps={{
-                    options: subcategoryOptions
-                  }}
-                />
-              </CollectionPickerContainer>
-            </FormControl>
-          </CategoryAndSubcategory>
-
-          <FormControl>
-            <Label>
-              Tags&nbsp;&nbsp;
-              <TextGray>(Optional)</TextGray>
-            </Label>
+              <LetterCounter
+                style={{
+                  color: choseTagValue.length > 35 ? '#D81B60' : '#A7A8A9'
+                }}
+              >
+                {choseTagValue.length}
+                /40
+              </LetterCounter>
+            </LabelWithCounter>
             <ContentField>
               <ControlledComboBox<CreateNFTForm>
                 name='tags'
                 control={control}
                 placeholder={'Content tags'}
                 rules={{ required: false }}
+                rightContent={<Txt primary1 style={{ cursor: 'pointer', color: '#0090FF', fontSize: '14px' }}>Save</Txt>}
                 comboboxProps={{
                   options: tags?.filter((tag) => !chosenTags.includes(tag.title))
                 }}
+                onClickRightContent={(value) => {
+                  choseTagValue.length <= 35 && saveValue(value)
+                }}
                 onEnter={(value) => {
-                  if (value && !chosenTags.includes(value)) setChosenTags([...chosenTags, value])
+                  choseTagValue.length <= 35 && saveValue(value)
+                }}
+                onChange={(value) => {
+                  setChoseTagValue(value)
                 }}
               />
               {chosenTags.length > 0 && (
@@ -433,15 +479,15 @@ const CreateNftPage = observer(() => {
                 />
               )}
               {chosenTags.length <= 0 && (
-                <Description secondary>
+                <Description secondary style={{ paddingLeft: '8px' }}>
                   Tags make it easier to find the right content
                 </Description>
               )}
             </ContentField>
           </FormControl>
 
-          <FormControl>
-            <Label>License</Label>
+          <FormControl size={'lg'}>
+            <Label paddingL>License</Label>
             <ContentField>
               <ControlledComboBox<CreateNFTForm>
                 name='license'
@@ -452,21 +498,37 @@ const CreateNftPage = observer(() => {
                   options: licenseOptions
                 }}
               />
-              <Description secondary>
-                {licenseDescription}
+              <Description secondary style={{ marginBottom: '0', padding: '0 16px' }}>
+                <Txt style={{ fontWeight: '500', color: '#232528' }}>{licenseDescription.split(' ')[0]}</Txt>
+                &nbsp;
+                {licenseDescription.split(' ').slice(1, licenseDescription.split(' ').length).join(' ')}
+                <NFTLicense style={{ marginTop: '8px' }}>
+                  <Link
+                    iconRedirect
+                    style={{ fontWeight: '500' }}
+                    href={licenseUrl}
+                    target="_blank"
+                  >
+                    About CC Licenses
+                  </Link>
+                </NFTLicense>
               </Description>
-              <NFTLicense><Link href={licenseUrl} target="_blank" iconRedirect={true}>About CC Licenses</Link></NFTLicense>
             </ContentField>
           </FormControl>
 
-          <Button
-            primary
-            type='submit'
-            isDisabled={!isValid}
-            title={isValid ? undefined : 'Required fields must be filled'}
-          >
-            Mint
-          </Button>
+          <ButtonContainer>
+            <Button
+              primary
+              type='submit'
+              isDisabled={!isValid}
+              title={isValid ? undefined : 'Required fields must be filled'}
+              css={{
+                width: '320px'
+              }}
+            >
+              Mint
+            </Button>
+          </ButtonContainer>
         </Form>
       </PageLayout>
     </>

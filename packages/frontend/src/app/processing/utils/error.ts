@@ -1,4 +1,3 @@
-
 import { JsonRpcError, serializeError } from '@metamask/rpc-errors'
 import { BigNumber, Contract, ContractTransaction, Signer } from 'ethers'
 
@@ -13,8 +12,8 @@ enum ProviderErrorMessages {
 }
 
 enum ErrorMessages {
-  InsufficientBalance = 'Insufficient balance',
-  RejectedByUser = 'Contract call rejected by user'
+  InsufficientBalance = 'Balance too low for transaction',
+  RejectedByUser = 'Transaction rejected by user'
 }
 
 const stringifyContractError = (error: any) => {
@@ -42,7 +41,7 @@ const stringifyContractError = (error: any) => {
       message = data.message
     }
   } else {
-    message = `Contract call failed. Reason: ${serializedError.message}`
+    message = `Transaction failed. Reason: ${serializedError.message}`
   }
 
   return message

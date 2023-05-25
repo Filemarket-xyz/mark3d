@@ -30,6 +30,6 @@ export function assertTokenId(tokenId?: string): asserts tokenId {
 
 export function assertSeed(seed?: ArrayBuffer): asserts seed {
   if (!seed) {
-    throw new Error('Seed not found. Try to reconnect.')
+    throw new Error('FileWallet seed phrase not found. Try to reconnect.')
   }
 }

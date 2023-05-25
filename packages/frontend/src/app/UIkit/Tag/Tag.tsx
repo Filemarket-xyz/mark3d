@@ -16,6 +16,7 @@ export const TagStyle = styled(BlueText, {
   borderRadius: '20px',
   display: 'flex',
   gap: '10px',
+  border: '1px solid $gray300',
   '& img': {
     cursor: 'pointer'
   }

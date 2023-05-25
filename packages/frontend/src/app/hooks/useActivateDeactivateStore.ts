@@ -12,9 +12,11 @@ export function useActivateDeactivateRequireParams<Args extends any[]>(
     if (args.every(Boolean) && !store.isActivated) {
       activated.current = true
       store.activate(...(args as Args))
+      console.log('ACTIVATE')
     }
 
     return () => {
+      console.log('DEACTIVATE')
       if (activated.current) {
         activated.current = false
         store.deactivate()

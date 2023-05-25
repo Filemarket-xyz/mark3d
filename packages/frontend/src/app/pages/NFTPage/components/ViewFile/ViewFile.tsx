@@ -7,7 +7,7 @@ import { ViewFilesImage, ViewFilesText } from '../../helper/ViewFilesData/ViewFi
 import PreviewImg from '../../img/Preview.svg'
 
 const ViewFileStyle = styled('div', {
-  width: '130px',
+  width: '144px',
   height: '32px',
   boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.15)',
   borderRadius: '8px',
@@ -15,34 +15,17 @@ const ViewFileStyle = styled('div', {
   color: '#232528',
   opacity: '0.75',
   cursor: 'pointer',
+  display: 'flex',
+  justifyContent: 'flex-start',
   '&:hover': {
     opacity: '1'
-  },
-  variants: {
-    type: {
-      '3D': {
-        width: '118px'
-      },
-      another: {},
-      code: {},
-      document: {
-        width: '124px'
-      },
-      music: {
-        width: '132px'
-      },
-      picture: {},
-      rar: {},
-      video: {
-        width: '136px'
-      }
-    }
   },
   '& .container': {
     padding: '0 14.5px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: '10.5px',
     height: '100%'
   },
   position: 'absolute',
@@ -71,16 +54,18 @@ interface ViewFileProps {
 const ViewFile = ({ type, onClick, isPreviewView }: ViewFileProps) => {
   const text: string | undefined = useMemo(() => {
     if (!type) return
+
     return ViewFilesText[type]
   }, [type])
 
   const img: string | undefined = useMemo(() => {
     if (!type) return
+
     return ViewFilesImage[type]
   }, [type])
 
   return (
-    <ViewFileStyle type={type} onClick={onClick}>
+    <ViewFileStyle onClick={onClick}>
       <div className='container'>
         <img src={isPreviewView ? img : PreviewImg} />
         <Txt primary1>{isPreviewView ? text : 'Preview'}</Txt>

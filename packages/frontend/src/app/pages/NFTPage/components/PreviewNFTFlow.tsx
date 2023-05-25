@@ -62,11 +62,12 @@ interface PreviewNFTFlowProps {
 const SwiperStyled = styled(Swiper)
 
 const Image = styled('img', {
-  width: 'auto',
+  objectFit: 'none',
+  width: 'max-content',
   maxWidth: '80%',
-  height: '90%',
-  borderRadius: '$3',
-  objectFit: 'cover',
+  height: 'max-content',
+  maxHeight: '90%',
+  borderRadius: '20px',
   '@sm': {
     width: 290,
     height: 290
@@ -89,7 +90,6 @@ export const PreviewNFTFlow = ({
   const seed = useSeed(address)
   const [is3D, setIs3D] = useState<boolean | undefined>(undefined)
   const [isViewFile, setIsViewFile] = useState<boolean>(false)
-  const [isViewedMounted, setIsViewedMounted] = useState<boolean>(false)
 
   const typeFile: typeFiles | undefined = useMemo(() => {
     return hiddenFile ? fileToType(hiddenFile) : undefined
@@ -109,11 +109,14 @@ export const PreviewNFTFlow = ({
     const availableExtensionsImage: string[] = ['jpg', 'jpeg', 'png', 'gif', 'bmp']
     if (availableExtensions3D.includes(String(extensionFile))) {
       setIs3D(true)
+
       return canViewFile
     } else if (availableExtensionsImage.includes(String(extensionFile))) {
       setIs3D(false)
+
       return canViewFile
     }
+
     return false
   }, [hiddenFile, getFile, canViewFile])
 
@@ -182,7 +185,7 @@ export const PreviewNFTFlow = ({
   return (
     <CenterContainer>
       <SwiperStyled
-        navigation={true}
+        navigation
         modules={[Navigation, Pagination]}
         className={css.__swiper}
         allowTouchMove={false}
@@ -215,17 +218,13 @@ export const PreviewNFTFlow = ({
                           currentTarget.src = gradientPlaceholderImg
                         }}
                       />
-                      )
+                    )
                 ) : previewState?.state === PreviewState.LOADING ? (
                   <Loading size='xl' color={'white'} />
                 ) : previewState?.state === PreviewState.LOADING_ERROR ? (
-                  <>
-                    <ErrorMessage>{previewState?.data}</ErrorMessage>
-                  </>
+                  <ErrorMessage>{previewState?.data}</ErrorMessage>
                 ) : previewState?.state === PreviewState.EXTENSION_ERROR && (
-                  <>
-                    <ErrorMessage>{previewState?.data}</ErrorMessage>
-                  </>
+                  <ErrorMessage>{previewState?.data}</ErrorMessage>
                 )}
               </>
             )
@@ -235,6 +234,7 @@ export const PreviewNFTFlow = ({
                 {isLoading ? <Loading size='xl' color={'white'} /> : (
                   <Image
                     src={imageURL}
+                    style={{ cursor: 'pointer' }}
                     onError={({ currentTarget }) => {
                       currentTarget.onerror = null
                       currentTarget.src = gradientPlaceholderImg
@@ -249,7 +249,7 @@ export const PreviewNFTFlow = ({
                   />
                 )}
               </>
-              )}
+            )}
           {(isCanView && !isLoading) && <ViewFile isPreviewView={!isViewFile} type={typeFile} onClick={() => { setIsViewFile(value => !value); handleLoadClick() }} />}
         </SwiperSlide>
       </SwiperStyled>
