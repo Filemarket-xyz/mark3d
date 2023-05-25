@@ -1,11 +1,13 @@
 import { useDrop } from '@react-aria/dnd'
 import React, { SyntheticEvent, useEffect, useState } from 'react'
-import { UseFormRegisterReturn } from 'react-hook-form'
+import { UseFormRegisterReturn, UseFormResetField } from 'react-hook-form'
 
 import { styled } from '../../../../styles'
-import { TextBold } from '../../../pages/CreatePage/CreateCollectionPage'
+import { CreateNFTForm } from '../../../pages/CreatePage/CreateNFTPage'
 import { textVariant } from '../../../UIkit'
-import ImgIcon from './img/image-icon.svg'
+import CrossImage from '../NftLoader/img/cross.svg'
+import { CloseButton, CrossIcon, File } from '../NftLoader/NftLoader'
+import ImgIcon from './img/ImagePreview.svg'
 
 const Shade = styled('div', {
   width: '100%',
@@ -29,14 +31,6 @@ const Shade = styled('div', {
   }
 })
 
-const generateFileHoverStyles = () => {
-  const hoverFileStyles: any = {}
-  hoverFileStyles[`&:hover ${Shade.selector}`] = {
-    background: 'rgba(255,255,255, 0.3)'
-  }
-  return hoverFileStyles
-}
-
 const P = styled('p', {
   position: 'relative',
   transition: 'all 0.15s ease-in-out',
@@ -51,8 +45,8 @@ const P = styled('p', {
 })
 
 const ImageIcon = styled('img', {
-  width: 64,
-  height: 64,
+  width: 60,
+  height: 60,
   transition: 'all 0.15s ease-in-out',
   variants: {
     selected: {
@@ -64,69 +58,32 @@ const ImageIcon = styled('img', {
   }
 })
 
-const generateSelectedFileHoverStyles = () => {
-  const styles: any = {}
-  styles[`&:hover ${Shade.selector}`] = {
-    background: 'rgba(0, 0, 0, 0.5)'
-  }
-  styles[`&:hover ${ImageIcon.selector}`] = {
-    opacity: 1
-  }
-  styles[`&:hover ${P.selector}`] = {
-    opacity: 1
-  }
-  return styles
-}
-
-const File = styled('label', {
-  borderRadius: '$3',
-  display: 'inline-flex',
-  gap: '$4',
-  alignItems: 'center',
-  cursor: 'pointer',
-  '@sm': {
-    flexDirection: 'column',
-    alignItems: 'center',
-    display: 'flex'
-  },
-  variants: {
-    selected: {
-      true: {
-        ...generateSelectedFileHoverStyles()
-      }
-    }
-  },
-  ...generateFileHoverStyles()
-})
-
 const FileImageContainer = styled('div', {
   position: 'relative',
-  width: 160,
-  height: 152,
+  width: 320,
+  height: 160,
   backgroundColor: '$white',
   color: '$blue500',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  gap: '$2',
+  gap: '18px',
   flexDirection: 'column',
   borderRadius: '$3',
-  ...textVariant('primary1').true
+  ...textVariant('primary1').true,
+  variants: {
+    isImageUpload: {
+      true: {
+        height: '320px',
+        backgroundSize: 'contain !important'
+      }
+    }
+  }
 })
 
 const FileInput = styled('input', {
   display: 'none'
 })
-
-const FileDescriptionList = styled('ul', {
-  ...textVariant('secondary2').true,
-  color: '$gray500',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '$2'
-})
-
-const FileDescriptionItem = styled('li', {})
 
 interface ItemWithGetFileProperty {
   getFile: () => Promise<File>
@@ -134,6 +91,7 @@ interface ItemWithGetFileProperty {
 
 interface ImageLoaderProps {
   registerProps?: UseFormRegisterReturn
+  resetField: UseFormResetField<CreateNFTForm>
 }
 
 export default function ImageLoader(props: ImageLoaderProps) {
@@ -168,6 +126,7 @@ export default function ImageLoader(props: ImageLoaderProps) {
   useEffect(() => {
     if (!file) {
       setPreview(undefined)
+
       return
     }
 
@@ -181,15 +140,28 @@ export default function ImageLoader(props: ImageLoaderProps) {
     const target = e.target as HTMLInputElement
     if (!target.files || target.files.length === 0) {
       setFile(undefined)
+
       return
     }
     setFile(target.files[0])
   }
+
   return (
-    <File htmlFor='inputTag' selected={Boolean(preview)}>
+    <File htmlFor='inputTag' selected={Boolean(preview)} isImageUpload={!!file}>
+      {file && (
+        <CloseButton
+          onPress={() => {
+            props.resetField('image')
+            setFile(undefined)
+          }}
+        >
+          <CrossIcon src={CrossImage}></CrossIcon>
+        </CloseButton>
+      )}
       <FileImageContainer
         {...dropProps}
         ref={ref}
+        isImageUpload={!!file}
         css={{
           backgroundImage: `url('${preview}')`,
           backgroundSize: 'cover',
@@ -199,20 +171,8 @@ export default function ImageLoader(props: ImageLoaderProps) {
       >
         <Shade selected={Boolean(preview)}></Shade>
         <ImageIcon src={ImgIcon} selected={Boolean(preview)} />
-        <P selected={Boolean(preview)}>Choose photo</P>
+        <P selected={Boolean(preview)}>Choose Preview</P>
       </FileImageContainer>
-
-      <FileDescriptionList>
-        <FileDescriptionItem>
-          <TextBold>Recommended size:</TextBold> 300x300 px
-        </FileDescriptionItem>
-        <FileDescriptionItem>
-          <TextBold>Formats:</TextBold> JPG, PNG, or GIF
-        </FileDescriptionItem>
-        <FileDescriptionItem>
-          <TextBold>Max size:</TextBold> 100 MB
-        </FileDescriptionItem>
-      </FileDescriptionList>
       <FileInput
         id='inputTag'
         type='file'

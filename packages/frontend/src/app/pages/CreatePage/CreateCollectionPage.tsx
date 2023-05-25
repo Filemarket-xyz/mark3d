@@ -23,12 +23,25 @@ export const Title = styled('h1', {
 
 export const Label = styled('label', {
   ...textVariant('primary1').true,
+  lineHeight: '16px',
   marginBottom: '$2',
-  color: '$blue900',
-  display: 'block'
+  color: '$gray800',
+  display: 'block',
+  variants: {
+    paddingL: {
+      true: {
+        paddingLeft: '$3',
+        '@sm': {
+          paddingLeft: 0
+        }
+      }
+    }
+  }
 })
 
 export const TextBold = styled('span', {
+  ...textVariant('primary1').true,
+  fontSize: '12px',
   fontWeight: 600
 })
 
@@ -49,9 +62,21 @@ export const LetterCounter = styled('span', {
 })
 
 export const Form = styled('form', {
-  maxWidth: '$breakpoints$sm',
+  maxWidth: 'calc($breakpoints$sm + 32px)',
   marginLeft: 'auto',
   marginRight: 'auto'
+})
+
+export const ButtonContainer = styled('div', {
+  paddingTop: '$3',
+  paddingLeft: '$3',
+  width: '100%',
+  display: 'flex',
+  justifyContent: 'flex-start',
+  '@sm': {
+    paddingLeft: 0,
+    justifyContent: 'center'
+  }
 })
 
 export interface CreateCollectionForm {
@@ -66,7 +91,8 @@ export default function CreateCollectionPage() {
     register,
     handleSubmit,
     formState: { isValid },
-    getValues
+    getValues,
+    resetField
   } = useForm<CreateCollectionForm>()
 
   const {
@@ -117,10 +143,10 @@ export default function CreateCollectionPage() {
     <>
       <MintModal
         body={modalBody ?? <></>}
+        open={modalOpen}
         handleClose={() => {
           setModalOpen(false)
         }}
-        open={modalOpen}
       />
       <PageLayout
         css={{
@@ -135,6 +161,7 @@ export default function CreateCollectionPage() {
             <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
             <ImageLoader
               registerProps={register('image', { required: true })}
+              resetField={resetField}
             />
           </FormControl>
 
@@ -157,9 +184,13 @@ export default function CreateCollectionPage() {
           <FormControl>
             <LabelWithCounter>
               <Label>
-                Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
+                Description&nbsp;&nbsp;
+                <TextGray>(Optional)</TextGray>
               </Label>
-              <LetterCounter>{textareaLength}/1000</LetterCounter>
+              <LetterCounter>
+                {textareaLength}
+                /1000
+              </LetterCounter>
             </LabelWithCounter>
 
             <TextArea
@@ -173,14 +204,16 @@ export default function CreateCollectionPage() {
             />
           </FormControl>
 
-          <Button
-            type='submit'
-            primary
-            isDisabled={!isValid}
-            title={isValid ? undefined : 'Required fields must be filled'}
-          >
-            Mint
-          </Button>
+          <ButtonContainer>
+            <Button
+              primary
+              type='submit'
+              isDisabled={!isValid}
+              title={isValid ? undefined : 'Required fields must be filled'}
+            >
+              Mint
+            </Button>
+          </ButtonContainer>
         </Form>
       </PageLayout>
     </>

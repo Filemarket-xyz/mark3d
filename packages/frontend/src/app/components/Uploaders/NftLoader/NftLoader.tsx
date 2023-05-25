@@ -4,13 +4,13 @@ import { UseFormRegisterReturn, UseFormResetField } from 'react-hook-form'
 import { styled } from '../../../../styles'
 import { CreateNFTForm } from '../../../pages/CreatePage/CreateNFTPage'
 import { Button, textVariant } from '../../../UIkit'
-import BoxImage from './img/box.svg'
 import CrossImage from './img/cross.svg'
+import BoxImage from './img/LoadFile.svg'
 import SuccessImage from './img/Success.svg'
 
 const Box = styled('img', {
-  width: 80,
-  height: 80
+  width: 48,
+  height: 64
 })
 
 const FileInput = styled('input', {
@@ -20,7 +20,8 @@ const FileInput = styled('input', {
 const BoxLabel = styled('span', {
   ...textVariant('primary1').true,
   color: '$blue500',
-  fontWeight: 600
+  fontWeight: 600,
+  textAlign: 'center'
 })
 
 export const WhiteShade = styled('div', {
@@ -49,17 +50,15 @@ const generateFileHoverStyles = () => {
   hoverFileStyles[`&:hover ${WhiteShade.selector}`] = {
     background: 'rgba(255,255,255, 0.3)'
   }
+
   return hoverFileStyles
 }
 
-const File = styled('label', {
-  width: '100%',
-  height: '232px',
+export const File = styled('label', {
+  width: '320px',
+  height: '160px',
   backgroundColor: '$white',
   borderRadius: '16px',
-  backgroundImage: 'url("/img/box.svg")',
-  backgroundSize: '56px 45px',
-  backgroundPosition: 'center',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -68,24 +67,34 @@ const File = styled('label', {
   marginBottom: '$2',
   cursor: 'pointer',
   position: 'relative',
-  ...generateFileHoverStyles()
+  border: '1px solid $gray300',
+  boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
+  ...generateFileHoverStyles(),
+  variants: {
+    isImageUpload: {
+      true: {
+        height: '320px'
+      }
+    }
+  }
 })
 
-const CloseButton = styled(Button, {
+export const CloseButton = styled(Button, {
   width: 48,
   height: 48,
   position: 'absolute',
-  top: '$3',
-  right: '$3',
+  top: '$2',
+  right: '$2',
   padding: 0,
   minWidth: 0,
   borderRadius: '$3',
   backgroundColor: '$white',
   zIndex: 2,
-  boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)'
+  border: '1px solid $gray300',
+  boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)'
 })
 
-const CrossIcon = styled('img', {
+export const CrossIcon = styled('img', {
   width: 16,
   height: 16,
   objectFit: 'contain'
@@ -116,8 +125,10 @@ export default function NftLoader(props: NftLoaderProps) {
       <WhiteShade></WhiteShade>
       <Box src={fileChosen ? SuccessImage : BoxImage} />
       {fileChosen ? (
-        <BoxLabel css={{ color: '$gray500' }}>
-          {fileChosen.name} selected
+        <BoxLabel css={{ color: '$gray600' }}>
+          {fileChosen.name}
+          {' '}
+          uploaded
         </BoxLabel>
       ) : (
         <BoxLabel>Choose file</BoxLabel>
