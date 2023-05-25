@@ -23,7 +23,15 @@ const DescriptionSectionStyle = styled(GridBlock, {
 const Pre = styled('pre', {
   ...textVariant('body4').true,
   color: '$gray800',
-  fontWeight: 400
+  fontWeight: 400,
+  whiteSpace: '-moz-pre-wrap', /* Mozilla, supported since 1999 */
+  // eslint-disable-next-line no-dupe-keys
+  whiteSpace: '-pre-wrap', /* Opera */
+  // eslint-disable-next-line no-dupe-keys
+  whiteSpace: '-o-pre-wrap', /* Opera */
+  // eslint-disable-next-line no-dupe-keys
+  whiteSpace: 'pre-wrap', /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
+  wordWrap: 'break-word' /* IE 5.5+ */
 })
 
 const DescriptionSection = () => {
