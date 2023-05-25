@@ -17,7 +17,7 @@ export const inputStyles = {
   borderRadius: '$3',
   height: 48,
   paddingLR: '$3',
-  outline: 'none',
+  outline: '1px solid $gray300',
   ...textVariant('secondary1').true,
   color: '$blue900',
   border: '2px solid transparent',
@@ -41,9 +41,6 @@ export const inputStyles = {
     isError: {
       true: {
         borderColor: '$red'
-      },
-      false: {
-        borderColor: '$black'
       }
     },
     isDisabledFocusStyle: {
