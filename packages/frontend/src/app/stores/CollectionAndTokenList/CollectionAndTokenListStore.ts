@@ -10,6 +10,7 @@ import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsS
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { lastItem } from '../../utils/structs'
 import { ErrorStore } from '../Error/ErrorStore'
 
 export class CollectionAndTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
@@ -32,24 +33,49 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
     })
   }
 
-  private request(address: string) {
-    storeRequest<TokensResponse>(
+  setData(data: TokensResponse) {
+    if (data.collections) {
+      this.collections = data.collections
+    }
+    if (data.tokens) {
+      this.tokens = data.tokens
+    }
+  }
+
+  addTokens(tokens?: Token[]) {
+    if (tokens) {
+      this.tokens.push(...tokens)
+    }
+  }
+
+  private request() {
+    storeRequest(
       this,
-      api.tokens.tokensDetail(address),
-      resp => {
-        if (resp.collections) {
-          this.collections = resp.collections
-        }
-        if (resp.tokens) {
-          this.tokens = resp.tokens
-        }
-      })
+      api.tokens.tokensDetail(this.address, {
+        // collections?
+        tokenLimit: 20
+      }),
+      data => this.setData(data)
+    )
+  }
+
+  requestMoreTokens() {
+    const { tokenId, collectionAddress } = lastItem(this.tokens)
+    storeRequest(
+      this,
+      api.tokens.tokensDetail(this.address, {
+        lastTokenId: tokenId,
+        lastTokenCollectionAddress: collectionAddress,
+        tokenLimit: 20
+      }),
+      ({ tokens }) => this.addTokens(tokens)
+    )
   }
 
   activate(address: string): void {
     this.isActivated = true
     this.address = address
-    this.request(address)
+    this.request()
   }
 
   deactivate(): void {
@@ -62,7 +88,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   }
 
   reload(): void {
-    this.request(this.address)
+    this.request()
   }
 
   get nftCards(): NFTCardProps[] {

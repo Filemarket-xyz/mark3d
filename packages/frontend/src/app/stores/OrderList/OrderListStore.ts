@@ -13,6 +13,7 @@ import {
   storeRequest,
   storeReset
 } from '../../utils/store'
+import { lastItem } from '../../utils/structs'
 import { ErrorStore } from '../Error/ErrorStore'
 
 /**
@@ -54,7 +55,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
   }
 
   requestMore() {
-    const lastOrderId = this.data[this.data.length - 1].order?.id
+    const lastOrderId = lastItem(this.data)?.order?.id
     storeRequest(
       this,
       api.orders.allActiveList({ lastOrderId, limit: 20 }),
