@@ -13,8 +13,10 @@ import {
   storeRequest,
   storeReset
 } from '../../utils/store'
+import { lastItem } from '../../utils/structs'
 import { formatCurrency } from '../../utils/web3/currency'
 import { ErrorStore } from '../Error/ErrorStore'
+import { transferMock } from '../TransfersHistory/transferMock'
 
 const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
   const eventOptions =
@@ -46,7 +48,7 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
   isLoading = false
   isActivated = false
 
-  data: TransfersResponseV2 = {}
+  data: TransfersResponseV2 = transferMock
   address = ''
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
@@ -56,20 +58,48 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
     })
   }
 
-  private request(address: string) {
+  setData(data: TransfersResponseV2) {
+    this.data = data
+  }
+
+  addData(data: TransfersResponseV2) {
+    this.data.incoming?.push(...(data.incoming ?? []))
+    this.data.outgoing?.push(...(data.outgoing ?? []))
+  }
+
+  private request() {
     storeRequest<TransfersResponseV2>(
       this,
-      api.v2.transfersDetail(address),
-      (resp) => {
-        this.data = resp
-      }
+      api.v2.transfersDetail(this.address, { outgoingLimit: 10, incomingLimit: 10 }),
+      (data) => this.setData(data)
+    )
+  }
+
+  requestMore() {
+    let lastIncomingTransferId
+    let lastOutgoingTransferId
+    if (this.data.incoming) {
+      lastIncomingTransferId = lastItem(this.data.incoming).transfer?.id
+    }
+    if (this.data.outgoing) {
+      lastOutgoingTransferId = lastItem(this.data.outgoing).transfer?.id
+    }
+    storeRequest<TransfersResponseV2>(
+      this,
+      api.v2.transfersDetail(this.address, {
+        lastIncomingTransferId,
+        lastOutgoingTransferId,
+        outgoingLimit: 10,
+        incomingLimit: 10
+      }),
+      (data) => this.addData(data)
     )
   }
 
   activate(address: string): void {
     this.isActivated = true
     this.address = address
-    this.request(address)
+    this.request()
   }
 
   deactivate(): void {
@@ -82,7 +112,7 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
   }
 
   reload(): void {
-    this.request(this.address)
+    this.request()
   }
 
   get transferCards(): TransferCardProps[] {
