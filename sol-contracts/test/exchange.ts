@@ -174,8 +174,8 @@ describe("Trade token with whitelist", async () => {
 
     const deadline = await exchangeInstance.whitelistDeadlines(collectionInstance.address);
     const discount = await exchangeInstance.whitelistDiscounts(collectionInstance.address);
-    await expect(deadline).to.equal(BN.from(start));
-    await expect(discount).to.equal(BN.from(5000));
+    expect(deadline).to.equal(BN.from(start));
+    expect(discount).to.equal(BN.from(5000));
   });
 
   it("whitelist deadline exceeds", async () => {
@@ -208,8 +208,8 @@ describe("Trade token with whitelist", async () => {
 
     const deadline = await exchangeInstance.whitelistDeadlines(collectionInstance.address);
     const discount = await exchangeInstance.whitelistDiscounts(collectionInstance.address);
-    await expect(deadline).to.equal(BN.from(start + 30));
-    await expect(discount).to.equal(BN.from(5000));
+    expect(deadline).to.equal(BN.from(start + 30));
+    expect(discount).to.equal(BN.from(5000));
   });
 
   it("invalid signature", async () => {

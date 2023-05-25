@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/interfaces/IERC2981.sol";
 
 import "./Mark3dAccessToken.sol";
 import "./IFraudDecider.sol";
 import "./IEncryptedFileToken.sol";
-import "./IEncryptedFileTokenUpgradeable.sol";
 import "./IEncryptedFileTokenCallbackReceiver.sol";
 
-contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721EnumerableUpgradeable, OwnableUpgradeable, IERC2981 {
+contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IERC2981 {
     /// @dev TokenData - struct with basic token data
     struct TokenData {
         uint256 id;             // token id
@@ -35,17 +34,16 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     }
 
     uint256 public constant PERCENT_MULTIPLIER = 10000;
+    uint256 public constant ROYALTY_CEILING = 5000;            // 50%
     
-    uint256 public accessTokenId;                              // access token id
-    Mark3dAccessToken public accessToken;                      // Access token contract address
     bytes public collectionData;                               // collection additional data
     string private contractMetaUri;                            // contract-level metadata
     mapping(uint256 => string) public tokenUris;               // mapping of token metadata uri
     mapping(uint256 => bytes) public tokenData;                // mapping of token additional data
     mapping(uint256 => uint256) private royalties;             // mapping of token to royalty
+    uint256 public defaultRoyalty;                             // default royalty for collection
     address public royaltyReceiver;
     uint256 public tokensCount;                                // count of minted tokens
-    uint256 public tokensLimit;                                // mint limit
     mapping(uint256 => TransferInfo) private transfers;        // transfer details
     mapping(uint256 => uint256) public transferCounts;         // count of transfers per transfer
     bool private fraudLateDecisionEnabled;                     // false if fraud decision is instant
@@ -53,57 +51,42 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     uint256 public finalizeTransferTimeout;                    // Time before transfer finalizes automatically 
     uint256 private salesStartTimestamp;                       // Time when users can start transfer tokens 
 
-    /// @dev modifier for checking if call is from the access token contract
-    modifier onlyAccessToken() {
-        require(_msgSender() == address(accessToken), "FilemarketCollectionV2: allowed to call only from access token");
-        _;
-    }
-
-    /// @dev initialize function
+    /// @dev consturct
     /// @param name - name of the token
     /// @param symbol - symbol of the token
     /// @param _contractMetaUri - contract-level metadata uri
-    /// @param _accessToken - access token contract address
-    /// @param _accessTokenId - access token id
     /// @param _owner - collection creator
     /// @param _data - additional collection data
     /// @param _fraudDecider - fraud decider instance
     /// @param _fraudLateDecisionEnabled - if fraud decision is not instant
-    function initialize(
+    constructor(
         string memory name,
         string memory symbol,
         string memory _contractMetaUri,
-        Mark3dAccessToken _accessToken,
-        uint256 _accessTokenId,
         address _owner,
+        uint256 _defaultRoyalty,
         address _royaltyReceiver,
         bytes memory _data,
         IFraudDecider _fraudDecider,
         bool _fraudLateDecisionEnabled
-    ) external initializer {
-        __ERC721_init(name, symbol);
-
+    ) ERC721(name, symbol) {
         tokensCount = 0;
         contractMetaUri = _contractMetaUri;
-        accessTokenId = _accessTokenId;
-        accessToken = _accessToken;
         collectionData = _data;
-        tokensLimit = 10000;
         fraudDecider_ = _fraudDecider;
         fraudLateDecisionEnabled = _fraudLateDecisionEnabled;
         finalizeTransferTimeout = 24 hours;
         salesStartTimestamp = block.timestamp - 1 minutes;
         royaltyReceiver = _royaltyReceiver;
+        defaultRoyalty = _defaultRoyalty;
         _transferOwnership(_owner);
     }
 
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721EnumerableUpgradeable, IERC165Upgradeable, IERC165) returns (bool) {
-        return
-        interfaceId == type(IEncryptedFileTokenUpgradeable).interfaceId ||
-        interfaceId == type(IEncryptedFileToken).interfaceId ||
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Enumerable, IERC165) returns (bool) {
+        return interfaceId == type(IEncryptedFileToken).interfaceId ||
         super.supportsInterface(interfaceId);
     }
 
@@ -134,11 +117,10 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         address to,
         uint256 id,
         string memory metaUri,
-        bytes memory _data,
-        uint256 royalty
+        uint256 royalty,
+        bytes memory _data
     ) external onlyOwner {
-        require(bytes(metaUri).length > 0, "FilemarketCollectionV2: empty meta uri");
-        require(id < tokensLimit, "FilemarketCollectionV2: limit reached");
+        require(bytes(metaUri).length > 0, "PublicCollection: empty meta uri");
         _mint(to, id, metaUri, _data, royalty);
     }
 
@@ -150,13 +132,12 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     function mintWithoutId(
         address to,
         string memory metaUri,
-        bytes memory _data,
-        uint256 royalty
-    ) external onlyOwner returns (uint256) {
-        require(bytes(metaUri).length > 0, "FilemarketCollectionV2: empty meta uri");
+        uint256 royalty,
+        bytes memory _data
+    ) external returns (uint256) {
+        require(bytes(metaUri).length > 0, "PublicCollection: empty meta uri");
         uint256 id = tokensCount;
-        require(id < tokensLimit, "FilemarketCollectionV2: limit reached");
-        _mint(to, id, metaUri, _data, royalty);
+        _mint(to, tokensCount, metaUri, _data, royalty);
         return id;
     }
 
@@ -167,12 +148,11 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     /// @param _data - additional token data list
     /// @param royalty - royalty percentage * 1000
     function mintBatch(address to, uint256 count, string[] memory metaUris, bytes[] memory _data, uint256[] memory royalty) external onlyOwner {
-        require(count == metaUris.length, "FilemarketCollectionV2: metaUri list length must be equal to count");
-        require(count == _data.length, "FilemarketCollectionV2: _data list length must be equal to count");
-        require(count == royalty.length, "FilemarketCollectionV2: royalty list length must be equal to count");
+        require(count == metaUris.length, "PublicCollection: metaUri list length must be equal to count");
+        require(count == _data.length, "PublicCollection: _data list length must be equal to count");
+        require(count == royalty.length, "PublicCollection: royalty list length must be equal to count");
         uint256 id = tokensCount;
         for (uint256 i = 0; i < count; i++) {
-            require(id < tokensLimit, "FilemarketCollectionV2: limit reached");
             _mint(to, id, metaUris[i], _data[i], royalty[i]);
             id++;
         }
@@ -181,7 +161,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     /// @dev burn function
     /// @param id - token id
     function burn(uint256 id) external {
-        require(ownerOf(id) == _msgSender(), "FilemarketCollectionV2: not an owner of token");
+        require(ownerOf(id) == _msgSender(), "PublicCollection: not an owner of token");
         _burn(id);
     }
 
@@ -198,8 +178,8 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         bytes calldata data,
         IEncryptedFileTokenCallbackReceiver callbackReceiver
     ) external {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "FilemarketCollectionV2: caller is not token owner or approved");
-        require(transfers[tokenId].initiator == address(0), "FilemarketCollectionV2: transfer for this token was already created");
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "PublicCollection: caller is not token owner or approved");
+        require(transfers[tokenId].initiator == address(0), "PublicCollection: transfer for this token was already created");
         transfers[tokenId] = TransferInfo(tokenId, _msgSender(), _msgSender(), to,
             callbackReceiver, data, bytes(""), bytes(""), false, 0, 0);
         transferCounts[tokenId]++;
@@ -214,9 +194,9 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         uint256 tokenId,
         IEncryptedFileTokenCallbackReceiver callbackReceiver
     ) external {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "FilemarketCollectionV2: caller is not token owner or approved");
-        require(transfers[tokenId].initiator == address(0), "FilemarketCollectionV2: transfer for this token was already created");
-        require(owner() == _msgSender() || block.timestamp > salesStartTimestamp, "FilemarketCollectionV2: transfer can't be done before sales start day");
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "PublicCollection: caller is not token owner or approved");
+        require(transfers[tokenId].initiator == address(0), "PublicCollection: transfer for this token was already created");
+        require(owner() == _msgSender() || block.timestamp > salesStartTimestamp, "PublicCollection: transfer can't be done before sales start day");
         transfers[tokenId] = TransferInfo(tokenId, _msgSender(), ownerOf(tokenId), address(0),
             callbackReceiver, bytes(""), bytes(""), bytes(""), false, 0, 0);
         transferCounts[tokenId]++;
@@ -233,11 +213,11 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         bytes calldata publicKey,
         bytes calldata data
     ) external {
-        require(publicKey.length > 0, "FilemarketCollectionV2: empty public key");
+        require(publicKey.length > 0, "PublicCollection: empty public key");
         TransferInfo storage info = transfers[tokenId];
-        require(info.initiator != address(0), "FilemarketCollectionV2: transfer for this token wasn't created");
-        require(_msgSender() == info.initiator, "FilemarketCollectionV2: permission denied");
-        require(info.to == address(0), "FilemarketCollectionV2: draft already complete");
+        require(info.initiator != address(0), "PublicCollection: transfer for this token wasn't created");
+        require(_msgSender() == info.initiator, "PublicCollection: permission denied");
+        require(info.to == address(0), "PublicCollection: draft already complete");
         info.to = to;
         info.data = data;
         info.publicKey = publicKey;
@@ -250,12 +230,12 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
      * @dev See {IEncryptedFileToken-setTransferPublicKey}.
      */
     function setTransferPublicKey(uint256 tokenId, bytes calldata publicKey, uint256 transferNumber) external {
-        require(publicKey.length > 0, "FilemarketCollectionV2: empty public key");
+        require(publicKey.length > 0, "PublicCollection: empty public key");
         TransferInfo storage info = transfers[tokenId];
-        require(info.initiator != address(0), "FilemarketCollectionV2: transfer for this token wasn't created");
-        require(info.to == _msgSender(), "FilemarketCollectionV2: permission denied");
-        require(info.publicKey.length == 0, "FilemarketCollectionV2: public key was already set");
-        require(transferNumber == transferCounts[tokenId], "FilemarketCollectionV2: the transfer is not the latest transfer of this token");
+        require(info.initiator != address(0), "PublicCollection: transfer for this token wasn't created");
+        require(info.to == _msgSender(), "PublicCollection: permission denied");
+        require(info.publicKey.length == 0, "PublicCollection: public key was already set");
+        require(transferNumber == transferCounts[tokenId], "PublicCollection: the transfer is not the latest transfer of this token");
         info.publicKey = publicKey;
         info.publicKeySetAt = block.timestamp;
         emit TransferPublicKeySet(tokenId, publicKey);
@@ -265,12 +245,12 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
      * @dev See {IEncryptedFileToken-approveTransfer}.
      */
     function approveTransfer(uint256 tokenId, bytes calldata encryptedPassword) external {
-        require(encryptedPassword.length > 0, "FilemarketCollectionV2: empty password");
+        require(encryptedPassword.length > 0, "PublicCollection: empty password");
         TransferInfo storage info = transfers[tokenId];
-        require(info.initiator != address(0), "FilemarketCollectionV2: transfer for this token wasn't created");
-        require(ownerOf(tokenId) == _msgSender(), "FilemarketCollectionV2: permission denied");
-        require(info.publicKey.length != 0, "FilemarketCollectionV2: public key wasn't set yet");
-        require(info.encryptedPassword.length == 0, "FilemarketCollectionV2: encrypted password was already set");
+        require(info.initiator != address(0), "PublicCollection: transfer for this token wasn't created");
+        require(ownerOf(tokenId) == _msgSender(), "PublicCollection: permission denied");
+        require(info.publicKey.length != 0, "PublicCollection: public key wasn't set yet");
+        require(info.encryptedPassword.length == 0, "PublicCollection: encrypted password was already set");
         info.encryptedPassword = encryptedPassword;
         info.passwordSetAt = block.timestamp;
         emit TransferPasswordSet(tokenId, encryptedPassword);
@@ -281,11 +261,11 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
      */
     function finalizeTransfer(uint256 tokenId) external {
         TransferInfo storage info = transfers[tokenId];
-        require(info.initiator != address(0), "FilemarketCollectionV2: transfer for this token wasn't created");
-        require(info.encryptedPassword.length != 0, "FilemarketCollectionV2: encrypted password wasn't set yet");
-        require(!info.fraudReported, "FilemarketCollectionV2: fraud was reported");
+        require(info.initiator != address(0), "PublicCollection: transfer for this token wasn't created");
+        require(info.encryptedPassword.length != 0, "PublicCollection: encrypted password wasn't set yet");
+        require(!info.fraudReported, "PublicCollection: fraud was reported");
         require(info.to == _msgSender() ||
-            (info.passwordSetAt + 24 hours < block.timestamp && info.from == _msgSender()), "FilemarketCollectionV2: permission denied");
+            (info.passwordSetAt + 24 hours < block.timestamp && info.from == _msgSender()), "PublicCollection: permission denied");
         _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
         if (address(info.callbackReceiver) != address(0)) {
             info.callbackReceiver.transferFinished(tokenId);
@@ -301,17 +281,17 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         uint256 tokenId,
         bytes calldata privateKey
     ) external {
-        require(privateKey.length > 0, "FilemarketCollectionV2: private key is empty");
+        require(privateKey.length > 0, "PublicCollection: private key is empty");
         TransferInfo storage info = transfers[tokenId];
-        require(info.initiator != address(0), "FilemarketCollectionV2: transfer for this token wasn't created");
-        require(info.to == _msgSender(), "FilemarketCollectionV2: permission denied");
-        require(info.encryptedPassword.length != 0, "FilemarketCollectionV2: encrypted password wasn't set yet");
-        require(!info.fraudReported, "FilemarketCollectionV2: fraud was already reported");
+        require(info.initiator != address(0), "PublicCollection: transfer for this token wasn't created");
+        require(info.to == _msgSender(), "PublicCollection: permission denied");
+        require(info.encryptedPassword.length != 0, "PublicCollection: encrypted password wasn't set yet");
+        require(!info.fraudReported, "PublicCollection: fraud was already reported");
 
         info.fraudReported = true;
         (bool decided, bool approve) = fraudDecider_.decide(tokenId,
             tokenUris[tokenId], info.publicKey, privateKey, info.encryptedPassword);
-        require(fraudLateDecisionEnabled || decided, "FilemarketCollectionV2: late decision disabled");
+        require(fraudLateDecisionEnabled || decided, "PublicCollection: late decision disabled");
         emit TransferFraudReported(tokenId);
 
         if (decided) {
@@ -333,11 +313,11 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         uint256 tokenId,
         bool approve
     ) external {
-        require(fraudLateDecisionEnabled, "FilemarketCollectionV2: late decision disabled");
+        require(fraudLateDecisionEnabled, "PublicCollection: late decision disabled");
         TransferInfo storage info = transfers[tokenId];
-        require(info.initiator != address(0), "FilemarketCollectionV2: transfer for this token wasn't created");
-        require(_msgSender() == address(fraudDecider_), "FilemarketCollectionV2: permission denied");
-        require(info.fraudReported, "FilemarketCollectionV2: fraud was not reported");
+        require(info.initiator != address(0), "PublicCollection: transfer for this token wasn't created");
+        require(_msgSender() == address(fraudDecider_), "PublicCollection: permission denied");
+        require(info.fraudReported, "PublicCollection: fraud was not reported");
         if (address(info.callbackReceiver) != address(0)) {
             info.callbackReceiver.transferFraudDetected(tokenId, approve);
         }
@@ -358,11 +338,11 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         uint256 tokenId
     ) external {
         TransferInfo storage info = transfers[tokenId];
-        require(info.initiator != address(0), "FilemarketCollectionV2: transfer for this token wasn't created");
-        require(!info.fraudReported, "FilemarketCollectionV2: fraud reported");
+        require(info.initiator != address(0), "PublicCollection: transfer for this token wasn't created");
+        require(!info.fraudReported, "PublicCollection: fraud reported");
         require(_msgSender() == ownerOf(tokenId) || (info.to == address(0) && _msgSender() == info.initiator) ||
             (info.publicKeySetAt + 24 hours < block.timestamp && info.passwordSetAt == 0 && info.to == _msgSender()),
-            "FilemarketCollectionV2: permission denied");
+            "PublicCollection: permission denied");
         if (address(info.callbackReceiver) != address(0)) {
             info.callbackReceiver.transferCancelled(tokenId);
         }
@@ -371,26 +351,26 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     }
 
     /// @dev function for transferring minting rights for collection
-    function transferOwnership(address to) public virtual override onlyAccessToken {
+    function transferOwnership(address to) public virtual override onlyOwner {
         _transferOwnership(to);
     }
     
     function safeTransferFrom(address, address, uint256,
-        bytes memory) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IEncryptedFileTokenUpgradeable) {
+        bytes memory) public virtual override(ERC721, IERC721, IEncryptedFileToken) {
         revert("common transfer disabled");
     }
 
     function safeTransferFrom(address, address,
-        uint256) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IEncryptedFileTokenUpgradeable) {
+        uint256) public virtual override(ERC721, IERC721, IEncryptedFileToken) {
         revert("common transfer disabled");
     }
 
     function transferFrom(address, address,
-        uint256) public virtual override(ERC721Upgradeable, IERC721Upgradeable, IEncryptedFileTokenUpgradeable) {
+        uint256) public virtual override(ERC721, IERC721, IEncryptedFileToken) {
         revert("common transfer disabled");
     }
 
-    function setRoyaltyReceiver(address newAddress) external onlyAccessToken {
+    function setRoyaltyReceiver(address newAddress) external onlyOwner {
         royaltyReceiver = newAddress;
     }
 
@@ -409,8 +389,8 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
     /// @param data - additional token data
     /// @param royalty - royalty percentage * 1000
     function _mint(address to, uint256 id, string memory metaUri, bytes memory data, uint256 royalty) internal {
-        require(id == tokensCount, "FilemarketCollectionV2: wrong id");
-        require(royalty < PERCENT_MULTIPLIER && royalty >= 0, "FilemarketCollectionV2: royalty cannot be more than 100% or less than 0");
+        require(id == tokensCount, "PublicCollection: wrong id");
+        require(royalty <= ROYALTY_CEILING, "PublicCollection: royalty too high");
         tokensCount++;
         _safeMint(to, id);
         tokenUris[id] = metaUri;
@@ -418,15 +398,6 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         royalties[id] = royalty;
     }
     
-
-    function _afterTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual override {
-        super._afterTokenTransfer(from, to, tokenId);
-        accessToken.updateCollectionIndex(from, to, accessTokenId);
-    }
 
     function royaltyInfo(uint256 tokenId, uint256 salePrice) public view override returns (address receiver, uint256 royaltyAmount) {
         require(tokenId < tokensCount, "ERC2981Royalties: Token does not exist");

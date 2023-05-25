@@ -24,11 +24,13 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
         bool fulfilled;
     }
 
+    event FeeChanged(uint256 newFee);
+    
     uint256 public constant PERCENT_MULTIPLIER = 10000;
-
+    uint256 public constant royaltyCeiling = PERCENT_MULTIPLIER;
+    
     uint256 public fee;               // fee as percentage * PERCENT_MULTIPLIER / 100
     uint256 public accumulatedFees;
-
     IERC20[] public tokensReceived; // array to track what ERC20 tokens we received
     mapping(IERC20 => uint256) public accumulatedFeesERC20;
 
@@ -37,15 +39,12 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
 
     mapping(IEncryptedFileToken => mapping(uint256 => Order)) public orders;
 
-    event FeeChanged(uint256 newFee);
 
-    constructor(uint256 _fee) {
-        require(_fee <= PERCENT_MULTIPLIER, "FilemarketExchangeV2: fee cannot be more than 100%");
-        fee = _fee;
+    constructor() {
     }
 
     function setFee(uint256 _fee) external onlyOwner {
-        require(_fee <= PERCENT_MULTIPLIER, "FilemarketExchangeV2: fee cannot be more than 100%");
+        require(_fee <= PERCENT_MULTIPLIER / 2, "FilemarketExchangeV2: fee cannot be more than 50%");
         fee = _fee;
         emit FeeChanged(_fee);
     }
@@ -90,7 +89,8 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
     function fulfillOrder(
         IEncryptedFileToken token,
         bytes calldata publicKey,
-        uint256 tokenId
+        uint256 tokenId,
+        bytes calldata data
     ) external payable {
         Order storage order = orders[token][tokenId];
         require(order.price != 0, "FilemarketExchangeV2: order doesn't exist");
@@ -105,14 +105,15 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
         }
         order.receiver = payable(_msgSender());
         order.fulfilled = true;
-        order.token.completeTransferDraft(order.tokenId, order.receiver, publicKey, bytes(""));
-    }
+        order.token.completeTransferDraft(order.tokenId, order.receiver, publicKey, data);
+    } 
 
     function fulfillOrderWhitelisted(
         IEncryptedFileToken token,
         bytes calldata publicKey,
         uint256 tokenId,
-        bytes calldata signature
+        bytes calldata signature,
+        bytes calldata data
     ) external payable {
         Order storage order = orders[token][tokenId];
         require(order.price != 0, "FilemarketExchangeV2: order doesn't exist");
@@ -121,9 +122,9 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
         require(whitelistDeadlines[token] > block.timestamp, "FilemarketExchangeV2: whitelist deadline exceeds");
         bytes32 address_bytes = bytes32(uint256(uint160(_msgSender())));
         require(address_bytes.toEthSignedMessageHash().recover(signature) == owner(), "FilemarketExchangeV2: whitelist invalid signature");
+        
         uint256 discount = (order.price*whitelistDiscounts[token])/PERCENT_MULTIPLIER;
         uint256 discount_price = order.price - discount;
-
         if (order.currency != IERC20(address(0))) {
             require(order.currency.allowance(_msgSender(), address(this)) >= discount_price, "FilemarketExchangeV2: allowance must be >= price with discount");
             order.currency.safeTransferFrom(_msgSender(), address(this), discount_price);
@@ -132,7 +133,7 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
         }
         order.receiver = payable(_msgSender());
         order.fulfilled = true;
-        order.token.completeTransferDraft(order.tokenId, order.receiver, publicKey, bytes(""));
+        order.token.completeTransferDraft(order.tokenId, order.receiver, publicKey, data);
     }
 
     function cancelOrder(
@@ -159,26 +160,10 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
         require(order.price != 0, "FilemarketExchangeV2: order doesn't exist");
         require(order.fulfilled, "FilemarketExchangeV2: order wasn't fulfilled");
         
-        uint256 feeAmount = (order.price * fee) / PERCENT_MULTIPLIER;
-        uint256 receiverAmount = order.price - feeAmount;
-
-        if (order.currency != IERC20(address(0))) {
-            if (accumulatedFeesERC20[order.currency] == 0) {
-                tokensReceived.push(order.currency);
-            }
-            accumulatedFeesERC20[order.currency] += feeAmount;
-        } else {
-            accumulatedFees += feeAmount;
-        }
-        
-        try IERC2981(_msgSender()).royaltyInfo(tokenId, order.price) returns (address receiver, uint royaltyAmount) {
-            if (receiver != address(0) && royaltyAmount > 0) {
-                receiverAmount -= royaltyAmount;
-                safeTransferCurrency(order.currency, payable(receiver), royaltyAmount);
-            }
-        } catch {}
-            
+        uint256 receiverAmount = calculateFee(order.price, order.currency);
+        receiverAmount = payoffRoyalty(tokenId, receiverAmount, order.currency, receiverAmount);
         safeTransferCurrency(order.currency, order.initiator, receiverAmount);
+
         delete orders[IEncryptedFileToken(_msgSender())][tokenId];
     }
 
@@ -189,9 +174,39 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
         if (approved) {
             safeTransferCurrency(order.currency, order.receiver, order.price);
         } else {
-            safeTransferCurrency(order.currency, order.initiator, order.price);
+            uint256 receiverAmount = calculateFee(order.price, order.currency);
+            receiverAmount = payoffRoyalty(tokenId, receiverAmount, order.currency, receiverAmount);
+            safeTransferCurrency(order.currency, order.initiator, receiverAmount);
         }
         delete orders[IEncryptedFileToken(_msgSender())][tokenId];
+    }
+
+    function payoffRoyalty(uint256 tokenId, uint256 price, IERC20 currency, uint256 finalAmount) internal returns (uint256) {
+        try IERC2981(_msgSender()).royaltyInfo(tokenId, price) returns (address receiver, uint royaltyAmount) {
+            require(royaltyAmount < royaltyCeiling, "FilemarketExchangeV2: royalty % is too high");
+            if (receiver != address(0) && royaltyAmount > 0) {
+                finalAmount -= royaltyAmount;
+                safeTransferCurrency(currency, payable(receiver), royaltyAmount);
+            }
+        } catch {}
+
+        return finalAmount;
+    }
+
+    function calculateFee(uint256 price, IERC20 currency) internal returns (uint256){
+        uint256 feeAmount = (price * fee) / PERCENT_MULTIPLIER;
+        uint256 receiverAmount = price - feeAmount;
+
+        if (currency != IERC20(address(0))) {
+            if (accumulatedFeesERC20[currency] == 0) {
+                tokensReceived.push(currency);
+            }
+            accumulatedFeesERC20[currency] += feeAmount;
+        } else {
+            accumulatedFees += feeAmount;
+        }
+
+        return receiverAmount;
     }
 
     function safeTransferCurrency(IERC20 currency, address payable to, uint256 amount) internal {
@@ -214,7 +229,11 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
         if (tokensReceived.length > 0) {
             for (uint i = 0; i < tokensReceived.length; i++) {
                 IERC20 token = tokensReceived[i];
-                token.safeTransfer(to, accumulatedFeesERC20[token]);
+                uint256 feeAmount = accumulatedFeesERC20[token];
+                if (feeAmount > 0) {
+                  accumulatedFeesERC20[token] = 0;
+                  token.safeTransfer(to, feeAmount);
+                }
             }
         }
     }
