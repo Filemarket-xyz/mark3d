@@ -20,6 +20,7 @@ import {
   storeRequest,
   storeReset
 } from '../../utils/store'
+import { lastItem } from '../../utils/structs'
 import { formatCurrency } from '../../utils/web3/currency'
 import { ErrorStore } from '../Error/ErrorStore'
 
@@ -66,6 +67,8 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
         columnName: 'Object',
         value: (
           <Badge
+            small
+            wrapperProps={{ css: { padding: 0 } }}
             image={{
               borderRadius: 'roundedSquare',
               url: getHttpLinkFromIpfsString(transfer.collection?.image ?? '')
@@ -74,8 +77,6 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
               value: reduceAddress(transfer.collection?.owner ?? '—'),
               title: transfer.collection?.name ?? '—'
             }}
-            small
-            wrapperProps={{ css: { padding: 0 } }}
           />
         ),
         cellAttributes: {
@@ -95,16 +96,15 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
       {
         columnName: 'Price',
         value: (
-          <>
-            <PriceContainer>
-              <Price>
-                {transfer.order?.price !== undefined
-                  ? formatCurrency(transfer.order.price)
-                  : '—'}
-              </Price>
-              <EthImg src={ethIcon} />
-            </PriceContainer>
-          </>
+          <PriceContainer>
+            <Price>
+              {transfer.order?.price !== undefined
+                ? formatCurrency(transfer.order.price)
+                : '—'
+              }
+            </Price>
+            <EthImg src={ethIcon} />
+          </PriceContainer>
         )
       },
       {
@@ -144,20 +144,48 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
     })
   }
 
-  private request(profileAddress: string) {
-    storeRequest<TransfersResponseV2>(
+  setData(data: TransfersResponseV2) {
+    this.data = data
+  }
+
+  addData(data: TransfersResponseV2) {
+    this.data.incoming?.push(...(data.incoming ?? []))
+    this.data.outgoing?.push(...(data.outgoing ?? []))
+  }
+
+  private request() {
+    storeRequest(
       this,
-      api.v2.transfersHistoryDetail(profileAddress),
-      (resp) => {
-        this.data = resp
-      }
+      api.v2.transfersHistoryDetail(this.collectionAddress, { outgoingLimit: 10, incomingLimit: 10 }),
+      (data) => this.setData(data)
+    )
+  }
+
+  requestMore() {
+    let lastIncomingTransferId
+    let lastOutgoingTransferId
+    if (this.data.incoming) {
+      lastIncomingTransferId = lastItem(this.data.incoming).transfer?.id
+    }
+    if (this.data.outgoing) {
+      lastOutgoingTransferId = lastItem(this.data.outgoing).transfer?.id
+    }
+    storeRequest(
+      this,
+      api.v2.transfersHistoryDetail(this.collectionAddress, {
+        lastIncomingTransferId,
+        lastOutgoingTransferId,
+        outgoingLimit: 10,
+        incomingLimit: 10
+      }),
+      (data) => this.addData(data)
     )
   }
 
   activate(collectionAddress: string): void {
     this.isActivated = true
     this.collectionAddress = collectionAddress
-    this.request(collectionAddress)
+    this.request()
   }
 
   deactivate(): void {
@@ -170,7 +198,7 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
   }
 
   reload(): void {
-    this.request(this.collectionAddress)
+    this.request()
   }
 
   get tableRows(): ITableRow[] {

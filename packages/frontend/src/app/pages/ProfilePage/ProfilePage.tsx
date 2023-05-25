@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi'
 
 import { styled } from '../../../styles'
 import { useCollectionAndTokenListStore } from '../../hooks'
-import { useTransfersHistory } from '../../hooks/useTransfersHistory'
+import { useTransfersHistoryStore } from '../../hooks/useTransfersHistory'
 import { useUserTransferStore } from '../../hooks/useUserTransfers'
 import { Container, gradientPlaceholderImg, textVariant } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
@@ -78,7 +78,7 @@ const ProfilePage = observer(() => {
   const { profileAddress } = useParams<Params>()
   const { address: currentAddress } = useAccount()
 
-  const { tableRows: table } = useTransfersHistory(profileAddress)
+  const { tableRows: table } = useTransfersHistoryStore(profileAddress)
 
   const { tokens: nfts } = useCollectionAndTokenListStore(profileAddress)
 
