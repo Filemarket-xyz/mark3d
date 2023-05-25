@@ -6,6 +6,9 @@ import GreenStar from '../../../assets/img/GetAccessPage/GreenStar.svg'
 import Mainnet from '../../../assets/img/GetAccessPage/Mainnet.svg'
 import { styled } from '../../../styles'
 import EmailForm from '../MainPage/components/EmailForm/EmailForm'
+import DiscordGetAccess from './img/DiscordGetAccess.svg'
+import LinkdGetAccess from './img/LinkdGetAccess.svg'
+import TwitterGetAccess from './img/TwitterGetAccess.svg'
 
 const GetAccessPageStyle = styled('div', {
   height: '100vh',
@@ -13,10 +16,8 @@ const GetAccessPageStyle = styled('div', {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  flexDirection: 'column',
   background: '#F9F9F9',
-  '& img': {
-    position: 'absolute'
-  },
   '& .fourthImg': {
     top: '-47px',
     left: '-66px'
@@ -76,6 +77,12 @@ export const MainBlock = styled('div', {
 const Container = styled('div', {
   width: '777px',
   position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  '& img': {
+    position: 'absolute'
+  },
   '@lg': {
     width: '600px'
   },
@@ -84,6 +91,19 @@ const Container = styled('div', {
   },
   '@sm': {
     width: '300px'
+  }
+})
+
+const IconsBlock = styled('div', {
+  display: 'flex',
+  position: 'absolute',
+  bottom: '76px',
+  gap: '24px',
+  '& a': {
+    cursor: 'pointer'
+  },
+  '& a:hover': {
+    filter: 'brightness(115%)'
   }
 })
 
@@ -99,6 +119,11 @@ const GetAccessPage = () => {
           <img className={'fourthImg'} src={Mainnet} />
         </MainBlock>
       </Container>
+      <IconsBlock>
+        <a href='https://twitter.com/filemarket_xyz' target={'_blank'} rel="noreferrer"><img src={DiscordGetAccess} alt='discord icon' /></a>
+        <a href='https://discord.gg/9pe5CUqqz4' target={'_blank'} rel="noreferrer"><img src={TwitterGetAccess} alt='twitter icon' /></a>
+        <a href='https://www.linkedin.com/company/filemarketxyz/' target={'_blank'} rel="noreferrer"><img src={LinkdGetAccess} alt='linkedin icon' /></a>
+      </IconsBlock>
     </GetAccessPageStyle>
   )
 }
