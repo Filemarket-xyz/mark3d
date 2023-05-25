@@ -56,6 +56,7 @@ export default function PostfixedInput(props: PrefixedInputProps) {
           flexGrow: 1,
           height: '100%',
           boxShadow: 'none',
+          outline: 'none',
           '&:focus': {
             boxShadow: 'none',
             outline: 'none',
