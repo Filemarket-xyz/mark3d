@@ -54,7 +54,7 @@ const generateFileHoverStyles = () => {
   return hoverFileStyles
 }
 
-const File = styled('label', {
+export const File = styled('label', {
   width: '320px',
   height: '160px',
   backgroundColor: '$white',
@@ -69,10 +69,17 @@ const File = styled('label', {
   position: 'relative',
   border: '1px solid $gray300',
   boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
-  ...generateFileHoverStyles()
+  ...generateFileHoverStyles(),
+  variants: {
+    isImageUpload: {
+      true: {
+        height: '320px'
+      }
+    }
+  }
 })
 
-const CloseButton = styled(Button, {
+export const CloseButton = styled(Button, {
   width: 48,
   height: 48,
   position: 'absolute',
@@ -87,7 +94,7 @@ const CloseButton = styled(Button, {
   boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)'
 })
 
-const CrossIcon = styled('img', {
+export const CrossIcon = styled('img', {
   width: 16,
   height: 16,
   objectFit: 'contain'

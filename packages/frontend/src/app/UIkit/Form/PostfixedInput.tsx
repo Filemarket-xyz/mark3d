@@ -8,22 +8,23 @@ import { Input, inputStyles } from './Input'
 const InputWithPrefix = styled('div', {
   ...inputStyles,
   boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
-  border: '1px solid $gray300',
+  outline: '1px solid $gray300',
   width: '100%',
   display: 'flex',
   gap: '$2',
   alignItems: 'center',
+  transition: 'outline-width 0.3s',
   '&:hover': {
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    border: '1px solid #38BCC9'
+    outline: '1px solid #38BCC9'
   },
   '&:focus': {
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    border: '3px solid #38BCC9'
+    outline: '3px solid #38BCC9'
   },
   '&:focus-within': {
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    border: '3px solid #38BCC9'
+    outline: '3px solid #38BCC9'
   }
 })
 
@@ -54,10 +55,11 @@ export default function PostfixedInput(props: PrefixedInputProps) {
           height: '100%',
           boxShadow: 'none',
           '&:focus': {
-            boxShadow: 'none'
+            boxShadow: 'none',
+            outline: 'none'
           },
           '&:hover': {
-            border: 'none',
+            outline: 'none',
             boxShadow: 'none'
           }
         }}

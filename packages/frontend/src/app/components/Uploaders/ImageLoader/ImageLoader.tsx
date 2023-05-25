@@ -1,9 +1,12 @@
 import { useDrop } from '@react-aria/dnd'
 import React, { SyntheticEvent, useEffect, useState } from 'react'
-import { UseFormRegisterReturn } from 'react-hook-form'
+import { UseFormRegisterReturn, UseFormResetField } from 'react-hook-form'
 
 import { styled } from '../../../../styles'
+import { CreateNFTForm } from '../../../pages/CreatePage/CreateNFTPage'
 import { textVariant } from '../../../UIkit'
+import CrossImage from '../NftLoader/img/cross.svg'
+import { CloseButton, CrossIcon, File } from '../NftLoader/NftLoader'
 import ImgIcon from './img/ImagePreview.svg'
 
 const Shade = styled('div', {
@@ -27,15 +30,6 @@ const Shade = styled('div', {
     }
   }
 })
-
-const generateFileHoverStyles = () => {
-  const hoverFileStyles: any = {}
-  hoverFileStyles[`&:hover ${Shade.selector}`] = {
-    background: 'rgba(255,255,255, 0.3)'
-  }
-
-  return hoverFileStyles
-}
 
 const P = styled('p', {
   position: 'relative',
@@ -64,43 +58,6 @@ const ImageIcon = styled('img', {
   }
 })
 
-const generateSelectedFileHoverStyles = () => {
-  const styles: any = {}
-  styles[`&:hover ${Shade.selector}`] = {
-    background: 'rgba(0, 0, 0, 0.5)'
-  }
-  styles[`&:hover ${ImageIcon.selector}`] = {
-    opacity: 1
-  }
-  styles[`&:hover ${P.selector}`] = {
-    opacity: 1
-  }
-
-  return styles
-}
-
-const File = styled('label', {
-  borderRadius: '$3',
-  display: 'inline-flex',
-  gap: '18px',
-  alignItems: 'center',
-  cursor: 'pointer',
-  border: '1px solid $gray300',
-  boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
-  '@sm': {
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
-  variants: {
-    selected: {
-      true: {
-        ...generateSelectedFileHoverStyles()
-      }
-    }
-  },
-  ...generateFileHoverStyles()
-})
-
 const FileImageContainer = styled('div', {
   position: 'relative',
   width: 320,
@@ -113,7 +70,15 @@ const FileImageContainer = styled('div', {
   gap: '18px',
   flexDirection: 'column',
   borderRadius: '$3',
-  ...textVariant('primary1').true
+  ...textVariant('primary1').true,
+  variants: {
+    isImageUpload: {
+      true: {
+        height: '320px',
+        backgroundSize: 'contain !important'
+      }
+    }
+  }
 })
 
 const FileInput = styled('input', {
@@ -126,6 +91,7 @@ interface ItemWithGetFileProperty {
 
 interface ImageLoaderProps {
   registerProps?: UseFormRegisterReturn
+  resetField: UseFormResetField<CreateNFTForm>
 }
 
 export default function ImageLoader(props: ImageLoaderProps) {
@@ -181,10 +147,21 @@ export default function ImageLoader(props: ImageLoaderProps) {
   }
 
   return (
-    <File htmlFor='inputTag' selected={Boolean(preview)}>
+    <File htmlFor='inputTag' selected={Boolean(preview)} isImageUpload={!!file}>
+      {file && (
+        <CloseButton
+          onPress={() => {
+            props.resetField('image')
+            setFile(undefined)
+          }}
+        >
+          <CrossIcon src={CrossImage}></CrossIcon>
+        </CloseButton>
+      )}
       <FileImageContainer
         {...dropProps}
         ref={ref}
+        isImageUpload={!!file}
         css={{
           backgroundImage: `url('${preview}')`,
           backgroundSize: 'cover',

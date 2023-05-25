@@ -22,17 +22,18 @@ export const inputStyles = {
   color: '$blue900',
   border: '2px solid transparent',
   boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)',
-  transition: 'all 0.5s',
+  transition: 'outline-width 0.5s',
   '&:placeholder': {
-    color: '$gray400'
+    color: '#656668'
   },
   '&:hover': {
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    border: '1px solid #38BCC9'
+    outline: '1px solid #38BCC9'
   },
   '&:focus': {
+    transition: 'outline-width 0.1s',
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    border: '3px solid #38BCC9'
+    outline: '3px solid #38BCC9'
   },
   width: '100%',
   variants: {

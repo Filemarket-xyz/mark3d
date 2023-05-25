@@ -47,6 +47,7 @@ const Description = styled('div', {
     secondary: {
       true: {
         ...textVariant('primary1').true,
+        fontSize: '14px',
         fontWeight: '400'
       }
     }
@@ -111,8 +112,7 @@ const CategoryAndSubcategory = styled('div', {
   display: 'flex',
   gap: '30px',
   '@sm': {
-    flexDirection: 'column',
-    gap: 0
+    flexDirection: 'column'
   }
 })
 
@@ -203,6 +203,8 @@ const CreateNftPage = observer(() => {
     }
   })
 
+  const [choseTagValue, setChoseTagValue] = useState<string>('')
+
   const chosenTag = watch('tags')
   const chosenCategory = watch('category')
   const license = watch('license')
@@ -250,9 +252,14 @@ const CreateNftPage = observer(() => {
   const saveValue = (value: string | undefined) => {
     if (value && !chosenTags.includes(value)) {
       setChosenTags([...chosenTags, value])
+      console.log(choseTagValue)
       resetField('tags')
     }
   }
+
+  useEffect(() => {
+    console.log(description)
+  }, [description])
 
   return (
     <>
@@ -307,6 +314,7 @@ const CreateNftPage = observer(() => {
             </Description>
             <ImageLoader
               registerProps={register('image', { required: true })}
+              resetField={resetField}
             />
           </FormControl>
 
@@ -420,22 +428,39 @@ const CreateNftPage = observer(() => {
           </FormControl>
 
           <FormControl size={'lg'}>
-            <Label paddingL>
-              Tags&nbsp;&nbsp;
-              <TextGray>(Optional)</TextGray>
-            </Label>
+            <LabelWithCounter>
+              <Label paddingL>
+                Tags&nbsp;&nbsp;
+                <TextGray>(Optional)</TextGray>
+              </Label>
+              <LetterCounter
+                style={{
+                  color: choseTagValue.length > 35 ? '#D81B60' : '#A7A8A9'
+                }}
+              >
+                {choseTagValue.length}
+                /40
+              </LetterCounter>
+            </LabelWithCounter>
             <ContentField>
               <ControlledComboBox<CreateNFTForm>
                 name='tags'
                 control={control}
                 placeholder={'Content tags'}
                 rules={{ required: false }}
-                rightContent={<Txt primary1 style={{ cursor: 'pointer', color: '#0090FF' }}>Save</Txt>}
+                rightContent={<Txt primary1 style={{ cursor: 'pointer', color: '#0090FF', fontSize: '14px' }}>Save</Txt>}
                 comboboxProps={{
                   options: tags?.filter((tag) => !chosenTags.includes(tag.title))
                 }}
-                onClickRightContent={saveValue}
-                onEnter={saveValue}
+                onClickRightContent={(value) => {
+                  choseTagValue.length <= 35 && saveValue(value)
+                }}
+                onEnter={(value) => {
+                  choseTagValue.length <= 35 && saveValue(value)
+                }}
+                onChange={(value) => {
+                  setChoseTagValue(value)
+                }}
               />
               {chosenTags.length > 0 && (
                 <TagsSection
@@ -454,7 +479,7 @@ const CreateNftPage = observer(() => {
                 />
               )}
               {chosenTags.length <= 0 && (
-                <Description secondary>
+                <Description secondary style={{ paddingLeft: '8px' }}>
                   Tags make it easier to find the right content
                 </Description>
               )}
@@ -476,7 +501,7 @@ const CreateNftPage = observer(() => {
               <Description secondary style={{ marginBottom: '0', padding: '0 16px' }}>
                 <Txt style={{ fontWeight: '500', color: '#232528' }}>{licenseDescription.split(' ')[0]}</Txt>
                 &nbsp;
-                {licenseDescription.split(' ').slice(1, licenseDescription.split(' ').length - 1).join(' ')}
+                {licenseDescription.split(' ').slice(1, licenseDescription.split(' ').length).join(' ')}
                 <NFTLicense style={{ marginTop: '8px' }}>
                   <Link
                     iconRedirect
