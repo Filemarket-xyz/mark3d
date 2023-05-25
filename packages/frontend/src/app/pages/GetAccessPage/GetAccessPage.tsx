@@ -24,7 +24,7 @@ const GetAccessPageStyle = styled('div', {
   },
   '& .firstImg': {
     bottom: '-30px',
-    right: '-81px'
+    right: '-90px'
   },
   '& .secondImg': {
     bottom: '-160px',
