@@ -7,7 +7,7 @@ import { TransferCard } from '../../../components/MarketCard/TransferCard'
 import Plug from '../../../components/Plug/Plug'
 import { useUserTransferStore } from '../../../hooks/useUserTransfers'
 import { Button, InfiniteScroll, Txt } from '../../../UIkit'
-import { Params } from '../../../utils/router/Params'
+import { Params } from '../../../utils/router'
 
 const TransfersSection: React.FC = observer(() => {
   const { address: currentAddress } = useAccount()

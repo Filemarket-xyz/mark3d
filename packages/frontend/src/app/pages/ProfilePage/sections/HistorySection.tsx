@@ -6,7 +6,7 @@ import Plug from '../../../components/Plug/Plug'
 import { ITableColumn } from '../../../components/Table/TableBuilder'
 import { useTransfersHistoryStore } from '../../../hooks/useTransfersHistory'
 import { Button, InfiniteScroll, Txt } from '../../../UIkit'
-import { Params } from '../../../utils/router/Params'
+import { Params } from '../../../utils/router'
 import { HistoryTableBuilder } from './HistoryTableBuilder'
 
 const columns: ITableColumn[] = [

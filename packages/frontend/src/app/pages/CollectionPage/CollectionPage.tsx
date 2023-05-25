@@ -9,7 +9,7 @@ import Tabs from '../../UIkit/Tabs/Tabs'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { Params } from '../../utils/router/Params'
+import { Params } from '../../utils/router'
 
 const Background = styled('div', {
   background: '$gradients$background',

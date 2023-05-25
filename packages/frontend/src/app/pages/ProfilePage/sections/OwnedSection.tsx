@@ -8,7 +8,7 @@ import { NFTCard } from '../../../components'
 import Plug from '../../../components/Plug/Plug'
 import { useCollectionAndTokenListStore } from '../../../hooks'
 import { Button, InfiniteScroll, NavButton, Txt } from '../../../UIkit'
-import { Params } from '../../../utils/router/Params'
+import { Params } from '../../../utils/router'
 
 const NoNftContainer = styled('div', {
   gridColumn: '1/-1',

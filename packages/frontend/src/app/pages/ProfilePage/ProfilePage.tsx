@@ -12,7 +12,7 @@ import { Container, gradientPlaceholderImg, textVariant } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { Params } from '../../utils/router/Params'
+import { Params } from '../../utils/router'
 
 const Background = styled('div', {
   background: '$gradients$background',
@@ -110,33 +110,31 @@ const ProfilePage = observer(() => {
   }, [nfts, table, transferCards])
 
   return (
-    <>
-      <GrayOverlay>
-        <Background />
+    <GrayOverlay>
+      <Background />
 
-        <Container>
-          <Profile>
-            <ProfileHeader>
-              <ProfileImage
-                src={getProfileImageUrl(profileAddress ?? '')}
-                onError={({ currentTarget }) => {
-                  currentTarget.onerror = null
-                  currentTarget.src = gradientPlaceholderImg
-                }}
-              />
-              <ProfileName>{reduceAddress(profileAddress ?? '')}</ProfileName>
-            </ProfileHeader>
-          </Profile>
-        </Container>
+      <Container>
+        <Profile>
+          <ProfileHeader>
+            <ProfileImage
+              src={getProfileImageUrl(profileAddress ?? '')}
+              onError={({ currentTarget }) => {
+                currentTarget.onerror = null
+                currentTarget.src = gradientPlaceholderImg
+              }}
+            />
+            <ProfileName>{reduceAddress(profileAddress ?? '')}</ProfileName>
+          </ProfileHeader>
+        </Profile>
+      </Container>
 
-        <Inventory>
-          <TabsContainer>
-            <Tabs tabs={tabs} />
-          </TabsContainer>
-          <Outlet />
-        </Inventory>
-      </GrayOverlay>
-    </>
+      <Inventory>
+        <TabsContainer>
+          <Tabs tabs={tabs} />
+        </TabsContainer>
+        <Outlet />
+      </Inventory>
+    </GrayOverlay>
   )
 })
 
