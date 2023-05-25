@@ -91,7 +91,8 @@ export default function CreateCollectionPage() {
     register,
     handleSubmit,
     formState: { isValid },
-    getValues
+    getValues,
+    resetField
   } = useForm<CreateCollectionForm>()
 
   const {
@@ -160,6 +161,7 @@ export default function CreateCollectionPage() {
             <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
             <ImageLoader
               registerProps={register('image', { required: true })}
+              resetField={resetField}
             />
           </FormControl>
 
