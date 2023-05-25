@@ -106,6 +106,7 @@ interface ComboboxProps<T extends FieldValues> {
   rightContent?: ReactNode
   onClickRightContent?: (value?: string) => void
   onFocus?: (event: React.SyntheticEvent<Element, Event>) => void
+  onChangeDop?: (value: string) => void
   size?: 'md'
 }
 
@@ -121,6 +122,7 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
     options: props.options,
     autoComplete: true,
     clearOnBlur: true,
+    clearOnEscape: true,
     getOptionLabel: (option) => option.title,
     isOptionEqualToValue: (option1, option2) => option1?.id === option2?.id,
     ...props.otherFieldProps,
@@ -164,13 +166,23 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && inputValue) {
-      props.onEnter?.(inputValue as string)
-      // @ts-expect-error
-      event.target.blur()
+    if (event.key === 'Enter') {
       event.preventDefault()
+      if (inputValue && inputValue.length <= 35) {
+        props.onEnter?.(inputValue as string)
+        // @ts-expect-error
+        event.target.blur()
 
-      return false
+        props.onChangeDop?.('')
+
+        return false
+      }
+    }
+  }
+
+  const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== 'Enter') {
+      props.onChangeDop?.(inputValue as string)
     }
   }
 
@@ -190,7 +202,8 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
           postfix={props.rightContent ?? <img width={24} height={24} src={bottomArrow} />}
           inputProps={{
             ...getInputProps(),
-            onKeyDown: handleKeyDown
+            onKeyDown: handleKeyDown,
+            onKeyUp: handleKeyUp
           }}
           postfixProps={{
             onClick: (event: React.MouseEvent<HTMLInputElement>) => {
@@ -222,6 +235,7 @@ export interface ControlledComboboxProps<T extends FieldValues> {
   rightContent?: ReactNode
   onClickRightContent?: (value?: string) => void
   onFocus?: (event: React.SyntheticEvent<Element, Event>) => void
+  onChange?: (value: string) => void
   size?: 'md'
 }
 
@@ -245,6 +259,7 @@ export const ControlledComboBox = <T extends FieldValues>(
         onEnter={props.onEnter}
         onClickRightContent={props.onClickRightContent}
         onFocus={props.onFocus}
+        onChangeDop={props.onChange}
       />
     )}
   />
