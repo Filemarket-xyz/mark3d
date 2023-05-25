@@ -3,7 +3,7 @@ import * as React from 'react'
 
 import { styled } from '../../../styles'
 import { textVariant } from '../Txt'
-import { Input, inputStyles } from './Input'
+import { glow, Input, inputStyles } from './Input'
 
 const InputWithPrefix = styled('div', {
   ...inputStyles,
@@ -20,11 +20,13 @@ const InputWithPrefix = styled('div', {
   },
   '&:focus': {
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    outline: '3px solid #38BCC9'
+    outline: '3px solid #38BCC9',
+    animation: `${glow} 800ms ease-out infinite alternate`
   },
   '&:focus-within': {
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    outline: '3px solid #38BCC9'
+    outline: '3px solid #38BCC9',
+    animation: `${glow} 800ms ease-out infinite alternate`
   }
 })
 
@@ -56,7 +58,8 @@ export default function PostfixedInput(props: PrefixedInputProps) {
           boxShadow: 'none',
           '&:focus': {
             boxShadow: 'none',
-            outline: 'none'
+            outline: 'none',
+            animation: 'none'
           },
           '&:hover': {
             outline: 'none',

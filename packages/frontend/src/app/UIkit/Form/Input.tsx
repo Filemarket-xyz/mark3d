@@ -1,16 +1,16 @@
-import { styled } from '../../../styles'
+import { keyframes, styled } from '../../../styles'
 import { textVariant } from '../Txt'
 
-// const glow = keyframes({
-//   '0%': {
-//     borderColor: '#393',
-//     boxShadow: '0 0 5px rgba(0,255,0,.2), inset 0 0 5px rgba(0,255,0,.1), 0 2px 0 #000'
-//   },
-//   '100%': {
-//     borderColor: '#6f6',
-//     boxShadow: '0 0 20px rgba(0,255,0,.6), inset 0 0 10px rgba(0,255,0,.4), 0 2px 0 #000'
-//   }
-// })
+export const glow = keyframes({
+  '0%': {
+    outline: '#38BCC9',
+    boxShadow: '0px 0px 10px rgba(2, 143, 255, 0.5)'
+  },
+  '100%': {
+    outline: '#088DFA',
+    boxShadow: '0px 0px 15px #028FFF'
+  }
+})
 
 export const inputStyles = {
   backgroundColor: '$white',
@@ -33,7 +33,8 @@ export const inputStyles = {
   '&:focus': {
     transition: 'outline-width 0.1s',
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    outline: '3px solid #38BCC9'
+    outline: '3px solid #38BCC9',
+    animation: `${glow} 800ms ease-out infinite alternate`
   },
   width: '100%',
   variants: {
