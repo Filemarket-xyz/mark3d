@@ -48,7 +48,8 @@ const Description = styled('div', {
       true: {
         ...textVariant('primary1').true,
         fontSize: '14px',
-        fontWeight: '400'
+        fontWeight: '400',
+        marginBottom: '0'
       }
     }
   }
@@ -498,7 +499,7 @@ const CreateNftPage = observer(() => {
                   options: licenseOptions
                 }}
               />
-              <Description secondary style={{ marginBottom: '0', padding: '0 16px' }}>
+              <Description secondary style={{ marginBottom: '8px', padding: '0 16px' }}>
                 <Txt style={{ fontWeight: '500', color: '#232528' }}>{licenseDescription.split(' ')[0]}</Txt>
                 &nbsp;
                 {licenseDescription.split(' ').slice(1, licenseDescription.split(' ').length).join(' ')}
