@@ -8,22 +8,22 @@ import NftSection from './NftSection'
 export const marketRoutes: RouteObject[] = [
   {
     path: '',
-    element: <Navigate to={'nfts'} />
+    element: <Navigate to={'efts'} />,
   },
   {
-    path: 'nfts',
-    element: <NftSection />
+    path: 'efts',
+    element: <NftSection />,
   },
   {
     path: 'collections',
-    element: <CollectionSection />
+    element: <CollectionSection />,
   },
   {
     path: 'creators',
-    element: <CreatorSection />
+    element: <CreatorSection />,
   },
   {
     path: 'namespaces',
-    element: <NamespaceSection />
-  }
+    element: <NamespaceSection />,
+  },
 ]

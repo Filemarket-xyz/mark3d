@@ -18,7 +18,7 @@ const NoNftContainer = styled('div', {
   alignItems: 'center',
   flexDirection: 'column',
   gap: '$3',
-  width: '100%'
+  width: '100%',
 })
 
 export const OwnedSection = observer(() => {
@@ -32,8 +32,8 @@ export const OwnedSection = observer(() => {
       return (
         <>
           <Plug
-            header={'You don`t have any NFTs '}
-            mainText={'Create your own NFT or go to the market to find something amazing'}
+            header={'You don`t have any EFTs '}
+            mainText={'Create your own EFT or go to the market to find something amazing'}
             buttonsBlock={(
               <>
                 <Button primary onClick={() => navigate('/market')}>
@@ -47,10 +47,10 @@ export const OwnedSection = observer(() => {
           />
           <NavButton
             primary
-            to={'/create/nft'}
+            to={'/create/eft'}
             css={{ textDecoration: 'none', marginBottom: '$3' }}
           >
-            Create NFT
+            Create EFT
           </NavButton>
         </>
       )
@@ -58,8 +58,8 @@ export const OwnedSection = observer(() => {
 
     return (
       <Plug
-        header={'You don`t have any NFTs '}
-        mainText={'Create your own NFT or go to the market to find something amazing'}
+        header={'You don`t have any EFTs '}
+        mainText={'Create your own EFT or go to the market to find something amazing'}
         buttonsBlock={(
           <>
             <Button primary onClick={() => navigate('/market')}>

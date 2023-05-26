@@ -54,36 +54,36 @@ import vx5 from './images/Voxels/5.jpg'
 export const columns: ITableColumn[] = [
   {
     name: 'Name',
-    hide: false
+    hide: false,
   },
   {
     name: 'Type',
-    hide: false
+    hide: false,
   },
   {
     name: 'Blockchains',
-    hide: 'sm'
+    hide: 'sm',
   },
   {
     name: '3D formats compatibility',
-    hide: 'md'
+    hide: 'md',
   },
   {
     name: 'Max file size',
-    hide: 'lg'
+    hide: 'lg',
   },
   {
-    name: 'Show NFTs',
-    hide: 'lg'
+    name: 'Show EFTs',
+    hide: 'lg',
   },
   {
-    name: 'Create NFTs',
-    hide: 'lg'
+    name: 'Create EFTs',
+    hide: 'lg',
   },
   {
     name: 'Visual quality',
-    hide: 'lg'
-  }
+    hide: 'lg',
+  },
 ]
 
 export const rows: ITableRow[] = [
@@ -91,19 +91,19 @@ export const rows: ITableRow[] = [
     cells: [
       {
         columnName: 'Name',
-        value: 'Decentraland'
+        value: 'Decentraland',
       },
       {
         columnName: 'Type',
-        value: 'Separated World'
+        value: 'Separated World',
       },
       {
         columnName: 'Blockchains',
-        value: 'Etherium, Polygon'
+        value: 'Etherium, Polygon',
       },
       {
         columnName: '3D formats compatibility',
-        value: '.glb, .gltf'
+        value: '.glb, .gltf',
       },
       {
         columnName: 'Max file size',
@@ -113,20 +113,20 @@ export const rows: ITableRow[] = [
             <br />
             200 files per parcel
           </>
-        )
+        ),
       },
       {
-        columnName: 'Show NFTs',
-        value: true
+        columnName: 'Show EFTs',
+        value: true,
       },
       {
-        columnName: 'Create NFTs',
-        value: true
+        columnName: 'Create EFTs',
+        value: true,
       },
       {
         columnName: 'Visual quality',
-        value: 'coming soon'
-      }
+        value: 'coming soon',
+      },
     ],
     additionalData: {
       title: 'Decentraland',
@@ -134,45 +134,45 @@ export const rows: ITableRow[] = [
         description:
           'The Decentraland Metaverse is a decentralised virtual reality platform built on the Ethereum blockchain. Decentraland is accessed through a browser, desktop version or VR headset, which allows the visitor to be in a space with a 360-degree view.',
         imageURLS: [dc1, dc2, dc3, dc4, dc5, dc6, dc7, dc8],
-        link: 'https://decentraland.org/'
-      }
-    }
+        link: 'https://decentraland.org/',
+      },
+    },
   },
 
   {
     cells: [
       {
         columnName: 'Name',
-        value: 'Voxels'
+        value: 'Voxels',
       },
       {
         columnName: 'Type',
-        value: 'Separated World'
+        value: 'Separated World',
       },
       {
         columnName: 'Blockchains',
-        value: 'Etherium, Polygon'
+        value: 'Etherium, Polygon',
       },
       {
         columnName: '3D formats compatibility',
-        value: '.vox'
+        value: '.vox',
       },
       {
         columnName: 'Max file size',
-        value: 'no data'
+        value: 'no data',
       },
       {
-        columnName: 'Show NFTs',
-        value: true
+        columnName: 'Show EFTs',
+        value: true,
       },
       {
-        columnName: 'Create NFTs',
-        value: 'no data'
+        columnName: 'Create EFTs',
+        value: 'no data',
       },
       {
         columnName: 'Visual quality',
-        value: 'coming soon'
-      }
+        value: 'coming soon',
+      },
     ],
     additionalData: {
       title: 'Voxels',
@@ -180,75 +180,75 @@ export const rows: ITableRow[] = [
         description:
           'The Voxels, formerly known as Cryptovoxels, is a virtual world built on the Ethereum blockchain. The players of the Voxels metaverse can create customised avatars, buy digital land and interact with other players',
         imageURLS: [vx1, vx2, vx3, vx4, vx5],
-        link: 'https://www.voxels.com/'
-      }
-    }
+        link: 'https://www.voxels.com/',
+      },
+    },
   },
 
   {
     cells: [
       {
         columnName: 'Name',
-        value: 'The sandbox'
+        value: 'The sandbox',
       },
       {
         columnName: 'Type',
-        value: 'Separated parcels'
+        value: 'Separated parcels',
       },
       {
         columnName: 'Blockchains',
-        value: 'Ethereum, Polygon'
+        value: 'Ethereum, Polygon',
       },
       {
         columnName: '3D formats compatibility',
-        value: '.vox'
+        value: '.vox',
       },
       {
         columnName: 'Max file size',
-        value: 'no data'
+        value: 'no data',
       },
       {
-        columnName: 'Show NFTs',
-        value: true
+        columnName: 'Show EFTs',
+        value: true,
       },
       {
-        columnName: 'Create NFTs',
-        value: true
+        columnName: 'Create EFTs',
+        value: true,
       },
       {
         columnName: 'Visual quality',
-        value: 'coming soon'
-      }
+        value: 'coming soon',
+      },
     ],
     additionalData: {
       title: 'The sandbox',
 
       content: {
         description:
-          'The Sandbox Game is a decentralised gaming virtual world built on the Ethereum blockchain. It allows non-tech-savvy users to create, sell, use, and monetise their VOX NFTs. The game is a vast map divided into parcels of land that are not connected.',
+          'The Sandbox Game is a decentralised gaming virtual world built on the Ethereum blockchain. It allows non-tech-savvy users to create, sell, use, and monetise their VOX EFTs. The game is a vast map divided into parcels of land that are not connected.',
         imageURLS: [],
-        link: 'https://www.sandbox.game/en/'
-      }
-    }
+        link: 'https://www.sandbox.game/en/',
+      },
+    },
   },
 
   {
     cells: [
       {
         columnName: 'Name',
-        value: 'Spatial'
+        value: 'Spatial',
       },
       {
         columnName: 'Type',
-        value: 'Separated spaces'
+        value: 'Separated spaces',
       },
       {
         columnName: 'Blockchains',
-        value: 'Ethereum, Solana'
+        value: 'Ethereum, Solana',
       },
       {
         columnName: '3D formats compatibility',
-        value: '.glb, .gltf, .fbx, .obj, .dae, .pcd, '
+        value: '.glb, .gltf, .fbx, .obj, .dae, .pcd, ',
       },
       {
         columnName: 'Max file size',
@@ -262,66 +262,66 @@ export const rows: ITableRow[] = [
             <br />
             500mb for .zip files
           </>
-        )
+        ),
       },
       {
-        columnName: 'Show NFTs',
-        value: true
+        columnName: 'Show EFTs',
+        value: true,
       },
       {
-        columnName: 'Create NFTs',
-        value: false
+        columnName: 'Create EFTs',
+        value: false,
       },
       {
         columnName: 'Visual quality',
-        value: 'coming soon'
-      }
+        value: 'coming soon',
+      },
     ],
     additionalData: {
       title: 'Spatial',
       content: {
         description:
-          'Spatial is a virtual reality platform with high image quality helping creators and brands build their own virtual spaces and show their NFTs.',
+          'Spatial is a virtual reality platform with high image quality helping creators and brands build their own virtual spaces and show their EFTs.',
         imageURLS: [sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8, sp9, sp10],
-        link: 'https://spatial.io/'
-      }
-    }
+        link: 'https://spatial.io/',
+      },
+    },
   },
 
   {
     cells: [
       {
         columnName: 'Name',
-        value: 'Somnium Space'
+        value: 'Somnium Space',
       },
       {
         columnName: 'Type',
-        value: 'Separated spaces'
+        value: 'Separated spaces',
       },
       {
         columnName: 'Blockchains',
-        value: 'Ethereum, Solana'
+        value: 'Ethereum, Solana',
       },
       {
         columnName: '3D formats compatibility',
-        value: '.glb, .gltf'
+        value: '.glb, .gltf',
       },
       {
         columnName: 'Max file size',
-        value: 'no data'
+        value: 'no data',
       },
       {
-        columnName: 'Show NFTs',
-        value: true
+        columnName: 'Show EFTs',
+        value: true,
       },
       {
-        columnName: 'Create NFTs',
-        value: 'no data'
+        columnName: 'Create EFTs',
+        value: 'no data',
       },
       {
         columnName: 'Visual quality',
-        value: 'coming soon'
-      }
+        value: 'coming soon',
+      },
     ],
     additionalData: {
       title: 'Somnium Space',
@@ -329,91 +329,91 @@ export const rows: ITableRow[] = [
         description:
           'Somnium Space is an open-source virtual reality world built on the Ethereum blockchain. It provides social activities and allows users to buy digital land, buildings, and other in-game assets.',
         imageURLS: [sm1],
-        link: 'https://somniumspace.com/'
-      }
-    }
+        link: 'https://somniumspace.com/',
+      },
+    },
   },
 
   {
     cells: [
       {
         columnName: 'Name',
-        value: 'OnCyber'
+        value: 'OnCyber',
       },
       {
         columnName: 'Type',
-        value: 'Separated spaces'
+        value: 'Separated spaces',
       },
       {
         columnName: 'Blockchains',
-        value: 'Ethereum, Polygon, Solana, Tezos, Klaytn'
+        value: 'Ethereum, Polygon, Solana, Tezos, Klaytn',
       },
       {
         columnName: '3D formats compatibility',
-        value: '.glb, .gltf'
+        value: '.glb, .gltf',
       },
       {
         columnName: 'Max file size',
-        value: <>40mb</>
+        value: <>40mb</>,
       },
       {
-        columnName: 'Show NFTs',
-        value: true
+        columnName: 'Show EFTs',
+        value: true,
       },
       {
-        columnName: 'Create NFTs',
-        value: false
+        columnName: 'Create EFTs',
+        value: false,
       },
       {
         columnName: 'Visual quality',
-        value: 'coming soon'
-      }
+        value: 'coming soon',
+      },
     ],
     additionalData: {
       title: 'OnCyber',
       content: {
         description:
-          'Oncyber is a free virtual reality platform with high image quality that aims to help 3D artists to display their NFTs with fully immersive 3D experiences',
+          'Oncyber is a free virtual reality platform with high image quality that aims to help 3D artists to display their EFTs with fully immersive 3D experiences',
         imageURLS: [oc1, oc2],
-        link: 'https://oncyber.io/'
-      }
-    }
+        link: 'https://oncyber.io/',
+      },
+    },
   },
 
   {
     cells: [
       {
         columnName: 'Name',
-        value: 'Viverse'
+        value: 'Viverse',
       },
       {
         columnName: 'Type',
-        value: 'Separated spaces'
+        value: 'Separated spaces',
       },
       {
         columnName: 'Blockchains',
-        value: 'Ethereum, Polygon'
+        value: 'Ethereum, Polygon',
       },
       {
         columnName: '3D formats compatibility',
-        value: '.glb, .gltf'
+        value: '.glb, .gltf',
       },
       {
         columnName: 'Max file size',
-        value: '50mb'
+        value: '50mb',
       },
       {
-        columnName: 'Show NFTs',
-        value: true
+        columnName: 'Show EFTs',
+        value: true,
       },
       {
-        columnName: 'Create NFTs',
-        value: false
+        columnName: 'Create EFTs',
+        value: false,
       },
       {
         columnName: 'Visual quality',
-        value: 'coming soon'
-      }
+        value: 'coming soon',
+      },
     ],
     additionalData: {
       title: 'Viverse',
@@ -421,45 +421,45 @@ export const rows: ITableRow[] = [
         description:
           'Viverse is a decentralised virtual reality platform focused on social activity and private digital life',
         imageURLS: [vv1, vv2, vv3, vv4],
-        link: 'https://www.viverse.com/us'
-      }
-    }
+        link: 'https://www.viverse.com/us',
+      },
+    },
   },
 
   {
     cells: [
       {
         columnName: 'Name',
-        value: 'Arhead'
+        value: 'Arhead',
       },
       {
         columnName: 'Type',
-        value: 'Separated spaces'
+        value: 'Separated spaces',
       },
       {
         columnName: 'Blockchains',
-        value: 'Polygon, (coming soon NEAR)'
+        value: 'Polygon, (coming soon NEAR)',
       },
       {
         columnName: '3D formats compatibility',
-        value: '.glb, .gltf, .fbx'
+        value: '.glb, .gltf, .fbx',
       },
       {
         columnName: 'Max file size',
-        value: '50mb, 10mb for images, 300mb for videos'
+        value: '50mb, 10mb for images, 300mb for videos',
       },
       {
-        columnName: 'Show NFTs',
-        value: false
+        columnName: 'Show EFTs',
+        value: false,
       },
       {
-        columnName: 'Create NFTs',
-        value: false
+        columnName: 'Create EFTs',
+        value: false,
       },
       {
         columnName: 'Visual quality',
-        value: 'coming soon'
-      }
+        value: 'coming soon',
+      },
     ],
     additionalData: {
       title: 'Arhead',
@@ -467,45 +467,45 @@ export const rows: ITableRow[] = [
         description:
           'Arhead is a creators driven virtual platform to produce content, spaces and events in the metaverse with high image quality',
         imageURLS: [ah1, ah2, ah3, ah4],
-        link: 'https://arhead.io/'
-      }
-    }
+        link: 'https://arhead.io/',
+      },
+    },
   },
 
   {
     cells: [
       {
         columnName: 'Name',
-        value: '3XR'
+        value: '3XR',
       },
       {
         columnName: 'Type',
-        value: 'Separated spaces'
+        value: 'Separated spaces',
       },
       {
         columnName: 'Blockchains',
-        value: 'NEAR'
+        value: 'NEAR',
       },
       {
         columnName: '3D formats compatibility',
-        value: '.glb, .gltf'
+        value: '.glb, .gltf',
       },
       {
         columnName: 'Max file size',
-        value: 'no data'
+        value: 'no data',
       },
       {
-        columnName: 'Show NFTs',
-        value: true
+        columnName: 'Show EFTs',
+        value: true,
       },
       {
-        columnName: 'Create NFTs',
-        value: true
+        columnName: 'Create EFTs',
+        value: true,
       },
       {
         columnName: 'Visual quality',
-        value: 'coming soon'
-      }
+        value: 'coming soon',
+      },
     ],
     additionalData: {
       title: '3XR',
@@ -513,45 +513,45 @@ export const rows: ITableRow[] = [
         description:
           '3XR is a virtual shop which is connecting the spatial web with digital tokens where you can mint your own gallery',
         imageURLS: [xr1, xr2, xr3, xr4],
-        link: 'https://3xr.space/'
-      }
-    }
+        link: 'https://3xr.space/',
+      },
+    },
   },
 
   {
     cells: [
       {
         columnName: 'Name',
-        value: 'Varjo Reality Cloud'
+        value: 'Varjo Reality Cloud',
       },
       {
         columnName: 'Type',
-        value: 'Set of tools'
+        value: 'Set of tools',
       },
       {
         columnName: 'Blockchains',
-        value: false
+        value: false,
       },
       {
         columnName: '3D formats compatibility',
-        value: '.glb, .gltf'
+        value: '.glb, .gltf',
       },
       {
         columnName: 'Max file size',
-        value: 'no data'
+        value: 'no data',
       },
       {
-        columnName: 'Show NFTs',
-        value: 'no data'
+        columnName: 'Show EFTs',
+        value: 'no data',
       },
       {
-        columnName: 'Create NFTs',
-        value: 'no data'
+        columnName: 'Create EFTs',
+        value: 'no data',
       },
       {
         columnName: 'Visual quality',
-        value: 'coming soon'
-      }
+        value: 'coming soon',
+      },
     ],
     additionalData: {
       title: 'Varjo Reality Cloud',
@@ -559,54 +559,54 @@ export const rows: ITableRow[] = [
         description:
           'The Varjo Reality Cloud platform drastically simplifies VR and XR software use, and the hardware required to run it, empowering professionals of all skill levels to engage in the future of virtual collaboration.',
         imageURLS: [],
-        link: 'https://varjo.com/products/realitycloud/'
-      }
-    }
+        link: 'https://varjo.com/products/realitycloud/',
+      },
+    },
   },
 
   {
     cells: [
       {
         columnName: 'Name',
-        value: 'Nvidia Omniverse'
+        value: 'Nvidia Omniverse',
       },
       {
         columnName: 'Type',
-        value: 'Set of tools'
+        value: 'Set of tools',
       },
       {
         columnName: 'Blockchains',
-        value: 'no data'
+        value: 'no data',
       },
       {
         columnName: '3D formats compatibility',
-        value: '.usd, .usdz'
+        value: '.usd, .usdz',
       },
       {
         columnName: 'Max file size',
-        value: 'no data'
+        value: 'no data',
       },
       {
-        columnName: 'Show NFTs',
-        value: 'no data'
+        columnName: 'Show EFTs',
+        value: 'no data',
       },
       {
-        columnName: 'Create NFTs',
-        value: 'no data'
+        columnName: 'Create EFTs',
+        value: 'no data',
       },
       {
         columnName: 'Visual quality',
-        value: 'coming soon'
-      }
+        value: 'coming soon',
+      },
     ],
     additionalData: {
       title: 'Nvidia Omniverse',
       content: {
         description:
-          'The Sandbox Game is a decentralised gaming virtual world built on the Ethereum blockchain. It allows non-tech-savvy users to create, sell, use, and monetise their VOX NFTs. The game is a vast map divided into parcels of land that are not connected.',
+          'The Sandbox Game is a decentralised gaming virtual world built on the Ethereum blockchain. It allows non-tech-savvy users to create, sell, use, and monetise their VOX EFTs. The game is a vast map divided into parcels of land that are not connected.',
         imageURLS: [sb1, sb2, sb3, sb4],
-        link: 'https://www.nvidia.com/en-us/omniverse/'
-      }
-    }
-  }
+        link: 'https://www.nvidia.com/en-us/omniverse/',
+      },
+    },
+  },
 ]

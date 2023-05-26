@@ -17,15 +17,15 @@ export interface ButtonFulfillOrderProps {
 export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
   tokenFullId,
   order,
-  callback
+  callback,
 }) => {
   const { fulfillOrder, ...statuses } = useFulfillOrder(tokenFullId, order?.price)
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
-    okMsg: 'Order fulfilled! Now wait until owner of the NFT transfers you hidden files. ' +
+    okMsg: 'Order fulfilled! Now wait until owner of the EFT transfers you hidden files. ' +
       'After that, check the hidden files and finalize the transfer',
-    loadingMsg: 'Fulfilling order'
+    loadingMsg: 'Fulfilling order',
   })
 
   const onPress = async () => {
@@ -40,8 +40,8 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
         primary
         fullWidth
         borderRadiusSecond
-        onPress={onPress}
         isDisabled={isLoading}
+        onPress={onPress}
       >
         Buy now
       </Button>

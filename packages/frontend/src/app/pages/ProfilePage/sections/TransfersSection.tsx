@@ -35,15 +35,19 @@ const TransfersSection = observer(() => {
           ))}
         </CardsContainer>
       ) : (
-        <Plug header={'You don`t have any activity'}
-              mainText={'Get started by creating your own NFT or go to the market to find something amazing'}
-              buttonsBlock={<>
-                <Button primary onClick={() => { navigate('/market') }}>
-                  <Txt primary1>3D Market</Txt>
-                </Button>
-                <Button onClick={() => { navigate('/create') }}>
-                  <Txt primary1>Create</Txt>
-                </Button></>}
+        <Plug
+          header={'You don`t have any activity'}
+          mainText={'Get started by creating your own EFT or go to the market to find something amazing'}
+          buttonsBlock={(
+            <>
+              <Button primary onClick={() => { navigate('/market') }}>
+                <Txt primary1>3D Market</Txt>
+              </Button>
+              <Button onClick={() => { navigate('/create') }}>
+                <Txt primary1>Create</Txt>
+              </Button>
+            </>
+          )}
         />
       )}
     </>

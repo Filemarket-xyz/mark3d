@@ -223,7 +223,7 @@ const CreateNftPage = observer(() => {
   useAfterDidMountEffect(() => {
     if (isNftLoading) {
       setModalOpen(true)
-      setModalBody(<InProgressBody text='NFT is being minted' />)
+      setModalBody(<InProgressBody text='EFT is being minted' />)
     } else if (nftError) {
       setModalOpen(true)
       setModalBody(<ErrorBody message={extractMessageFromError(nftError)} />)
@@ -231,7 +231,7 @@ const CreateNftPage = observer(() => {
       setModalOpen(true)
       setModalBody(
         <SuccessNavBody
-          buttonText='View NFT'
+          buttonText='View EFT'
           link={`/collection/${nftResult.receipt.to}/${nftResult.tokenId}`}
         />
       )

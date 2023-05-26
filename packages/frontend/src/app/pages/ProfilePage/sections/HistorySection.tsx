@@ -16,7 +16,7 @@ import { HistoryTableBuilder } from './HistoryTableBuilder'
 export const Wrapper = styled(TableBody, {
   gap: '$2',
   paddingTop: 28,
-  paddingBottom: '$3'
+  paddingBottom: '$3',
 })
 
 export const ItemShareButton = styled(NavButton, {
@@ -30,7 +30,7 @@ export const ItemShareButton = styled(NavButton, {
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center',
   borderRadius: 0,
-  margin: '$3'
+  margin: '$3',
 })
 
 export const RowCellStyled = styled(RowCell, {
@@ -40,10 +40,10 @@ export const RowCellStyled = styled(RowCell, {
   variants: {
     title: {
       true: {
-        fontSize: '$primary3'
-      }
-    }
-  }
+        fontSize: '$primary3',
+      },
+    },
+  },
 })
 
 const cols: ITableColumn[] = [
@@ -52,14 +52,14 @@ const cols: ITableColumn[] = [
   { name: 'From', hide: 'md' },
   { name: 'To', hide: 'md' },
   { name: 'Price', hide: 'sm' },
-  { name: 'Date', hide: 'lg' }
+  { name: 'Date', hide: 'lg' },
 ]
 
 export const EmptyTablePlaceholder = styled('div', {
   flex: 'center',
   justifyContent: 'center',
   color: '$gray500',
-  paddingBottom: '$3'
+  paddingBottom: '$3',
 })
 
 export const HistorySection = observer(() => {
@@ -75,13 +75,19 @@ export const HistorySection = observer(() => {
       ) : tableRows.length ? (
         <Wrapper>{historyTableBuilder.renderRows()}</Wrapper>
       ) : (
-        <Plug header={'You don`t have any NFTs '}
-              mainText={'Create your own NFT or go to the market to find something amazing'}
-              buttonsBlock={<>
-                <Button primary onClick={() => { navigate('/market') }}>
-                  <Txt primary1>3D Market</Txt></Button>
-                <Button primary onClick={() => { navigate('/create') }}>
-                  <Txt primary1>Create</Txt></Button></>}
+        <Plug
+          header={'You don`t have any EFTs '}
+          mainText={'Create your own EFT or go to the market to find something amazing'}
+          buttonsBlock={(
+            <>
+              <Button primary onClick={() => { navigate('/market') }}>
+                <Txt primary1>3D Market</Txt>
+              </Button>
+              <Button primary onClick={() => { navigate('/create') }}>
+                <Txt primary1>Create</Txt>
+              </Button>
+            </>
+          )}
         />
       )}
     </>

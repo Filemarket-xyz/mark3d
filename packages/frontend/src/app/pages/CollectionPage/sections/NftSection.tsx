@@ -15,12 +15,12 @@ export const CardsContainer = styled('div', {
   gap: '$4',
   justifyContent: 'normal',
   '@md': {
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   '@sm': {
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
-  paddingBottom: '$3'
+  paddingBottom: '$3',
 })
 
 const NoNftContainer = styled('div', {
@@ -30,13 +30,13 @@ const NoNftContainer = styled('div', {
   alignItems: 'center',
   flexDirection: 'column',
   gap: '$3',
-  width: '100%'
+  width: '100%',
 })
 
 const NftSection = observer(() => {
   const {
     isLoading,
-    nftCards
+    nftCards,
   } = useCollectionTokenListStore()
   const navigate = useNavigate()
 
@@ -52,7 +52,7 @@ const NftSection = observer(() => {
             header={'There\'s not one thing'}
             mainText={'Be the first and create your first EFT'}
             buttonsBlock={(
-              <Button primary onClick={() => navigate('/create/nft')}>
+              <Button primary onClick={() => navigate('/create/eft')}>
                 <Txt primary1>Create</Txt>
               </Button>
             )}
