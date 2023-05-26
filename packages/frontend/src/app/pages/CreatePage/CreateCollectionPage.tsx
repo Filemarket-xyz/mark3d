@@ -73,9 +73,14 @@ export const ButtonContainer = styled('div', {
   width: '100%',
   display: 'flex',
   justifyContent: 'flex-start',
+  paddingBottom: '90px',
+  '@md': {
+    paddingBottom: '70px'
+  },
   '@sm': {
     paddingLeft: 0,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingBottom: '45px'
   }
 })
 
