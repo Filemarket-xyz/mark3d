@@ -23,7 +23,9 @@ const DescriptionSectionStyle = styled(GridBlock, {
 const Pre = styled('pre', {
   ...textVariant('body4').true,
   color: '$gray800',
-  fontWeight: 400
+  fontWeight: 400,
+  whiteSpace: 'pre-wrap',
+  wordWrap: 'break-word'
 })
 
 const DescriptionSection = () => {
