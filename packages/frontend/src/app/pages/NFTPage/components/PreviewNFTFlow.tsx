@@ -14,6 +14,7 @@ import { HiddenFileMetaData } from '../../../../swagger/Api'
 import { typeFiles } from '../../../components/MarketCard/helper/data'
 import { fileToExtension, fileToType } from '../../../components/MarketCard/helper/fileToType'
 import { useStores } from '../../../hooks'
+import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeed } from '../../../processing/SeedProvider/useSeed'
 import { DecryptResult } from '../../../processing/types'
 import { gradientPlaceholderImg, textVariant } from '../../../UIkit'
@@ -61,16 +62,16 @@ interface PreviewNFTFlowProps {
 
 const SwiperStyled = styled(Swiper)
 
-const Image = styled('img', {
-  objectFit: 'none',
+const ImageStyle = styled('img', {
   width: 'max-content',
-  maxWidth: '80%',
+  maxWidth: '500px',
   height: 'max-content',
-  maxHeight: '90%',
+  maxHeight: '500px',
   borderRadius: '20px',
   '@sm': {
-    width: 290,
-    height: 290
+    maxWidth: 358,
+    maxHeight: 358,
+    marginTop: '-10px'
   }
 })
 
@@ -85,11 +86,24 @@ export const PreviewNFTFlow = ({
     state: PreviewState
     data?: string
   }>()
+  const { adaptive } = useMediaMui()
+  const [isObjectFit, setIsObjectFit] = useState<boolean>(false)
   const { address, isConnected } = useAccount()
   const { tokenMetaStore, tokenStore } = useStores()
   const seed = useSeed(address)
   const [is3D, setIs3D] = useState<boolean | undefined>(undefined)
   const [isViewFile, setIsViewFile] = useState<boolean>(false)
+
+  useEffect(() => {
+    const img = new Image()
+    img.onload = function() {
+      setIsObjectFit(img.width > parseInt(adaptive({
+        sm: '358',
+        defaultValue: '500'
+      })))
+    }
+    img.src = imageURL
+  }, [imageURL])
 
   const typeFile: typeFiles | undefined = useMemo(() => {
     return hiddenFile ? fileToType(hiddenFile) : undefined
@@ -211,8 +225,9 @@ export const PreviewNFTFlow = ({
                     </model-viewer>
                   )
                     : (
-                      <Image
+                      <ImageStyle
                         src={previewState.data}
+                        style={{ objectFit: `${isObjectFit ? 'initial' : 'none'}` }}
                         onError={({ currentTarget }) => {
                           currentTarget.onerror = null
                           currentTarget.src = gradientPlaceholderImg
@@ -232,9 +247,9 @@ export const PreviewNFTFlow = ({
             : (
               <>
                 {isLoading ? <Loading size='xl' color={'white'} /> : (
-                  <Image
+                  <ImageStyle
                     src={imageURL}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', objectFit: `${isObjectFit ? 'initial' : 'none'}` }}
                     onError={({ currentTarget }) => {
                       currentTarget.onerror = null
                       currentTarget.src = gradientPlaceholderImg
