@@ -7,9 +7,8 @@ import { styled } from '../../../../styles'
 import { NFTCard } from '../../../components'
 import Plug from '../../../components/Plug/Plug'
 import { useCollectionAndTokenListStore } from '../../../hooks'
-import { Button, InfiniteScroll, NavButton, Txt } from '../../../UIkit'
+import { Button, InfiniteScroll, NavButton, nftCardListCss, Txt } from '../../../UIkit'
 import { Params } from '../../../utils/router'
-import { cardsContainerCss } from '../../MarketPage/NftSection'
 
 const NoNftContainer = styled('div', {
   gridColumn: '1/-1',
@@ -18,7 +17,7 @@ const NoNftContainer = styled('div', {
   alignItems: 'center',
   flexDirection: 'column',
   gap: '$3',
-  width: '100%'
+  width: '100%',
 })
 
 export const OwnedSection: React.FC = observer(() => {
@@ -36,7 +35,7 @@ export const OwnedSection: React.FC = observer(() => {
         isLoading={collectionAndTokenListStore.isLoading}
         currentItemCount={collectionAndTokenListStore.nftCards.length}
         render={({ index }) => <NFTCard {...collectionAndTokenListStore.nftCards[index]} key={index} />}
-        listCss={cardsContainerCss}
+        listCss={nftCardListCss}
       />
       {!collectionAndTokenListStore.nftCards.length && !collectionAndTokenListStore.isLoading && (
         <NoNftContainer>

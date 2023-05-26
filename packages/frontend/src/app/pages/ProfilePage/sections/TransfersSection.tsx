@@ -6,9 +6,8 @@ import { useAccount } from 'wagmi'
 import { TransferCard } from '../../../components/MarketCard/TransferCard'
 import Plug from '../../../components/Plug/Plug'
 import { useUserTransferStore } from '../../../hooks/useUserTransfers'
-import { Button, InfiniteScroll, Txt } from '../../../UIkit'
+import { Button, InfiniteScroll, nftCardListCss, Txt } from '../../../UIkit'
 import { Params } from '../../../utils/router'
-import { cardsContainerCss } from '../../MarketPage/NftSection'
 
 const TransfersSection: React.FC = observer(() => {
   const { address: currentAddress } = useAccount()
@@ -31,7 +30,7 @@ const TransfersSection: React.FC = observer(() => {
         isLoading={userTransferStore.isLoading}
         currentItemCount={userTransferStore.transferCards.length}
         render={({ index }) => <TransferCard {...userTransferStore.transferCards[index]} key={index} />}
-        listCss={cardsContainerCss}
+        listCss={nftCardListCss}
       />
       {!userTransferStore.transferCards.length && !userTransferStore.isLoading && (
         <Plug
