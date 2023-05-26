@@ -51,7 +51,7 @@ const MainInfo = styled(PageLayout, {
   gridTemplateColumns: '3fr 1fr',
   columnGap: '$4',
   minHeight: '100%',
-  height: '100%',
+  height: 'max-content',
   borderRadius: '$6 $6 0 0',
   top: '-$6',
   boxShadow: '$footer',
@@ -65,13 +65,13 @@ const MainInfo = styled(PageLayout, {
 
 const GridLayout = styled('div', {
   display: 'grid',
-  gap: '3rem',
+  gap: '32px',
   position: 'relative',
   columnGap: '$4',
   height: '100%',
   gridTemplateColumns: '3fr 1fr',
   // eslint-disable-next-line
-  gridTemplateAreas: "'GridBlock Control' 'HomeLand HomeLand' 'Tags Tags' 'Description Description'",
+  gridTemplateAreas: "'GridBlock Control'",
   '@md': {
     gridTemplateAreas: "'BaseInfo' 'Control' 'HomeLand' 'Tags' 'Description'",
     gridTemplateColumns: 'unset'
@@ -91,7 +91,10 @@ const GridBlockSection = styled(GridBlock, {
 const ControlFileSection = styled('div', {
   display: 'flex',
   flexDirection: 'column',
-  gap: '16px',
+  gap: '16px'
+})
+
+const ControlStickyBlock = styled('div', {
   position: 'sticky',
   top: '125px',
   '@md': {
@@ -170,13 +173,17 @@ const NFTPage = observer(() => {
               </>
             )}
           <ControlFileSection style={{ gridArea: 'Control' }}>
-            <ControlSection />
-            <FileInfoSection
-              isOwner={isOwner}
-              canViewHiddenFiles={canViewHiddenFiles}
-              files={files}
-              filesMeta={tokenStore.data?.hiddenFileMeta ? [tokenStore.data?.hiddenFileMeta] : []}
-            />
+            <ControlStickyBlock>
+              <ControlSection />
+              {(transferStore.data || isOwner) && (
+                <FileInfoSection
+                  isOwner={isOwner}
+                  canViewHiddenFiles={canViewHiddenFiles}
+                  files={files}
+                  filesMeta={tokenStore.data?.hiddenFileMeta ? [tokenStore.data?.hiddenFileMeta] : []}
+                />
+              )}
+            </ControlStickyBlock>
           </ControlFileSection>
         </GridLayout>
       </MainInfo>

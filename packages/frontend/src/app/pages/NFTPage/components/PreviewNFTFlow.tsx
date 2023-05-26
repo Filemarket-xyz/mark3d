@@ -94,13 +94,16 @@ export const PreviewNFTFlow = ({
   const [is3D, setIs3D] = useState<boolean | undefined>(undefined)
   const [isViewFile, setIsViewFile] = useState<boolean>(false)
 
+  const [isFullScreen, setIsFullScreen] = useState<boolean>()
+
   useEffect(() => {
     const img = new Image()
     img.onload = function() {
       setIsObjectFit(img.width > parseInt(adaptive({
         sm: '358',
         defaultValue: '500'
-      })))
+      }))
+      )
     }
     img.src = imageURL
   }, [imageURL])
@@ -227,7 +230,7 @@ export const PreviewNFTFlow = ({
                     : (
                       <ImageStyle
                         src={previewState.data}
-                        style={{ objectFit: `${isObjectFit ? 'initial' : 'none'}` }}
+                        style={{ objectFit: `${(isObjectFit && !isFullScreen) ? 'initial' : 'none'}` }}
                         onError={({ currentTarget }) => {
                           currentTarget.onerror = null
                           currentTarget.src = gradientPlaceholderImg
@@ -249,7 +252,7 @@ export const PreviewNFTFlow = ({
                 {isLoading ? <Loading size='xl' color={'white'} /> : (
                   <ImageStyle
                     src={imageURL}
-                    style={{ cursor: 'pointer', objectFit: `${isObjectFit ? 'initial' : 'none'}` }}
+                    style={{ cursor: 'pointer', objectFit: `${(isObjectFit && !isFullScreen) ? 'initial' : 'none'}` }}
                     onError={({ currentTarget }) => {
                       currentTarget.onerror = null
                       currentTarget.src = gradientPlaceholderImg
@@ -257,8 +260,10 @@ export const PreviewNFTFlow = ({
                     onClick={(e) => {
                       if (screenfull.isFullscreen) {
                         screenfull.exit()
+                        setIsFullScreen(false)
                       } else if (screenfull.isEnabled) {
                         screenfull.request(e.target as Element)
+                        setIsFullScreen(true)
                       }
                     }}
                   />
