@@ -41,6 +41,7 @@ module.exports = {
     '@typescript-eslint/no-floating-promises': 'off',
     '@typescript-eslint/no-invalid-void-type': 'off',
     '@typescript-eslint/indent': ['warn', 2],
+    '@typescript-eslint/comma-dangle': ['warn', 'always-multiline'],
 
     // react
     'react/react-in-jsx-scope': 'off',
@@ -95,7 +96,7 @@ module.exports = {
     }],
     'no-void': 'off',
     'newline-before-return': 'warn',
-    'no-extra-boolean-cast': 'off'
+    'no-extra-boolean-cast': 'off',
   },
   settings: {
     react: {
