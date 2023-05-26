@@ -41,7 +41,6 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
     mapping(uint256 => string) public tokenUris;               // mapping of token metadata uri
     mapping(uint256 => bytes) public tokenData;                // mapping of token additional data
     mapping(uint256 => uint256) private royalties;             // mapping of token to royalty
-    uint256 public defaultRoyalty;                             // default royalty for collection
     address public royaltyReceiver;
     uint256 public tokensCount;                                // count of minted tokens
     mapping(uint256 => TransferInfo) private transfers;        // transfer details
@@ -64,7 +63,6 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
         string memory symbol,
         string memory _contractMetaUri,
         address _owner,
-        uint256 _defaultRoyalty,
         address _royaltyReceiver,
         bytes memory _data,
         IFraudDecider _fraudDecider,
@@ -78,7 +76,6 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
         finalizeTransferTimeout = 24 hours;
         salesStartTimestamp = block.timestamp - 1 minutes;
         royaltyReceiver = _royaltyReceiver;
-        defaultRoyalty = _defaultRoyalty;
         _transferOwnership(_owner);
     }
 

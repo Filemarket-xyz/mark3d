@@ -32,7 +32,6 @@ describe("Trade token", async () => {
       "MARK3D",
       "",
       accounts[1].getAddress(),
-      BN.from(1000),
       accounts[5].getAddress(),
       "0x",
       fraudDecider.address,
@@ -138,7 +137,7 @@ describe("Trade token with whitelist", async () => {
   let start: number;
 
   before(async () => {
-    start = Math.round(Date.now() / 1000) + 10000;
+    start = Math.round(Date.now() / 1000) + 20000;
     accounts = await ethers.getSigners();
 
     const fraudDeciderFactory = new FraudDeciderWeb2__factory(accounts[0]);
@@ -151,7 +150,6 @@ describe("Trade token with whitelist", async () => {
       "MARK3D",
       "",
       accounts[1].getAddress(),
-      BN.from(1000),
       accounts[5].getAddress(),
       "0x",
       fraudDecider.address,
@@ -390,7 +388,6 @@ describe("Trade token with fraud not approved", async () => {
       "MARK3D",
       "",
       accounts[1].getAddress(),
-      BN.from(1000),
       accounts[5].getAddress(),
       "0x",
       fraudDecider.address,
@@ -495,7 +492,6 @@ describe("Trade token with fraud approved", async () => {
       "MARK3D",
       "",
       accounts[1].getAddress(),
-      BN.from(1000),
       accounts[5].getAddress(),
       "0x",
       fraudDecider.address,
