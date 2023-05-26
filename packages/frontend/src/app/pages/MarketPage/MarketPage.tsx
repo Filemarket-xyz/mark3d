@@ -3,11 +3,10 @@ import { Outlet } from 'react-router'
 
 import { styled } from '../../../styles'
 import { useOpenOrderListStore } from '../../hooks/useOrdersListStore'
-import { PageLayout } from '../../UIkit'
-import Tabs from '../../UIkit/Tabs/Tabs'
+import { PageLayout, Tabs } from '../../UIkit'
 
 const TabsContainer = styled('div', {
-  marginBottom: '$4'
+  marginBottom: '$4',
 })
 
 const MarketPage = observer(() => {
@@ -17,12 +16,13 @@ const MarketPage = observer(() => {
     <PageLayout>
       <TabsContainer>
         <Tabs
+          textAlign='left'
           tabs={[
             {
               name: 'EFTs',
               url: '/market/nfts',
-              amount: nftCards?.length
-            }
+              amount: nftCards?.length,
+            },
           ]}
         />
       </TabsContainer>

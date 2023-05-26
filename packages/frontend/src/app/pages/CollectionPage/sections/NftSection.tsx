@@ -15,12 +15,12 @@ export const CardsContainer = styled('div', {
   gap: '$4',
   justifyContent: 'normal',
   '@md': {
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   '@sm': {
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
-  paddingBottom: '$3'
+  paddingBottom: '$3',
 })
 
 const NoNftContainer = styled('div', {
@@ -30,13 +30,13 @@ const NoNftContainer = styled('div', {
   alignItems: 'center',
   flexDirection: 'column',
   gap: '$3',
-  width: '100%'
+  width: '100%',
 })
 
 const NftSection = observer(() => {
   const {
     isLoading,
-    nftCards
+    nftCards,
   } = useCollectionTokenListStore()
   const navigate = useNavigate()
 
