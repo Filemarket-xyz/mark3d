@@ -8,7 +8,7 @@ export const {
   getCssText,
   theme,
   createTheme,
-  config
+  config,
 } = createStitches({
   theme: {
     colors: {
@@ -41,7 +41,7 @@ export const {
       red: '#D81B60',
 
       gradient0: '#38BCC9',
-      gradient1: '#088DFA'
+      gradient1: '#088DFA',
     },
 
     space: {
@@ -50,7 +50,7 @@ export const {
       3: '16px', // самый ходовой
       4: '32px',
       5: '40px',
-      6: '80px'
+      6: '80px',
     },
 
     fonts: {
@@ -59,7 +59,7 @@ export const {
       button: 'Montserrat, sans-serif',
       primary: 'Montserrat, sans-serif',
       secondary: 'Inter, sans-serif',
-      ternary: 'Space Grotesk, sans-serif'
+      ternary: 'Space Grotesk, sans-serif',
     },
 
     // 1rem = 16px
@@ -89,7 +89,7 @@ export const {
 
       ternary1: '2.5rem', // 40px
       ternary2: '2rem', // 32px
-      ternary3: '1.5rem' // 24px
+      ternary3: '1.5rem', // 24px
     },
 
     fontWeights: {
@@ -98,7 +98,7 @@ export const {
       button: 600,
       primary: 600,
       secondary: 400,
-      ternary: 700
+      ternary: 700,
     },
 
     lineHeights: {
@@ -125,7 +125,7 @@ export const {
 
       ternary1: '48px',
       ternary2: '48px',
-      ternary3: '30px'
+      ternary3: '30px',
     },
 
     radii: {
@@ -133,7 +133,7 @@ export const {
       2: '12px',
       3: '16px',
       4: '32px',
-      6: '80px'
+      6: '80px',
     },
 
     shadows: {
@@ -142,65 +142,65 @@ export const {
       hover: '0px 2px 15px rgba(19, 19, 45, 0.2)',
       header: '0px 4px 15px rgba(19, 19, 45, 0.05)',
       footer: '0px -4px 15px rgba(19, 19, 45, 0.05)',
-      low: '0px 4px 15px rgba(19, 19, 45, 0.1)'
+      low: '0px 4px 15px rgba(19, 19, 45, 0.1)',
     },
 
     breakpoints: {
-      smx: '400px',
+      xs: '400px',
       sm: '600px',
       md: '900px',
       lg: '1200px',
-      xl: '1536px'
+      xl: '1536px',
     },
 
     gradients: {
       main: 'linear-gradient(90deg, $colors$gradient0 0%, $colors$gradient1 100%)',
-      background: 'linear-gradient(291.31deg, #0291FC 0%, #4AC6D1 100%)'
+      background: 'linear-gradient(291.31deg, #0291FC 0%, #4AC6D1 100%)',
     },
 
     layout: {
       navBarHeight: '80px',
-      bannerHeight: '36px'
-    }
+      bannerHeight: '36px',
+    },
   },
 
   media: {
-    smx: '(max-width: 400px)',
+    xs: '(max-width: 400px)',
     sm: '(max-width: 600px)',
     mdx: '(max-width: 700px)',
     md: '(max-width: 900px)',
     lg: '(max-width: 1200px)',
     xl: '(max-width: 1536px)',
 
-    smxUp: '(min-width: 400px)',
+    xsUp: '(min-width: 400px)',
     smUp: '(min-width: 600px)',
     mdxUp: '(min-width: 700px)',
     mdUp: '(min-width: 900px)',
     lgUp: '(min-width: 1200px)',
-    xlUp: '(min-width: 1536px)'
+    xlUp: '(min-width: 1536px)',
   },
 
   utils: {
     focusRing: (color: string) => ({
       outline: `2px solid ${color}`,
-      outlineOffset: '2px'
+      outlineOffset: '2px',
     }),
     paddingLR: (padding: PropertyValue<'paddingLeft'>) => ({
       paddingLeft: padding,
-      paddingRight: padding
+      paddingRight: padding,
     }),
     paddingTB: (padding: PropertyValue<'paddingTop'>) => ({
       paddingTop: padding,
-      paddingBottom: padding
+      paddingBottom: padding,
     }),
     dflex: (value: PropertyValue<'alignItems'>) => ({
       display: 'flex',
       alignItems: value,
-      justifyContent: value
+      justifyContent: value,
     }),
     size: (value: PropertyValue<'width'>) => ({
       width: value,
-      height: value
-    })
-  }
+      height: value,
+    }),
+  },
 })
