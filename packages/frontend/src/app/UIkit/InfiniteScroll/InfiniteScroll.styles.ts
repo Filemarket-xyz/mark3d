@@ -6,5 +6,5 @@ export const StyledInnerDiv = styled('div')
 
 export const StyledTrigger = styled('span', {
   position: 'absolute',
-  bottom: triggerOffset
+  bottom: triggerOffset,
 })

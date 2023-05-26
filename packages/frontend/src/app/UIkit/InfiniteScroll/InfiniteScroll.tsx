@@ -22,11 +22,11 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   hasMore,
   isLoading,
   fetchMore,
-  listCss
+  listCss,
 }) => {
   const loadingTriggerRef = useRef<HTMLSpanElement>(null)
   const { outerRef, innerRef, items } = useVirtual<HTMLDivElement, HTMLDivElement>({
-    itemCount: currentItemCount
+    itemCount: currentItemCount,
   })
 
   const observerCallback = useCallback<IntersectionObserverCallback>(([target]) => {
@@ -52,7 +52,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
         css={{
           ...listCss,
           position: 'relative',
-          height: 'auto !important'
+          height: 'auto !important',
         }}
       >
         {/* items.length may be incorrect at first render if there was a larger value at the previous render */}

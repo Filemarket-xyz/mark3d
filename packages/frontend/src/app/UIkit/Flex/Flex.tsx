@@ -13,16 +13,19 @@ interface FlexProps extends PropsWithChildren {
   flexWrap?: CSS['flexWrap']
   w100?: boolean
   h100?: boolean
+  className?: string
 }
 
-export const Flex: React.FC<FlexProps> = ({ children, h100, w100, css, ...props }) => {
+export const Flex: React.FC<FlexProps> = ({ children, h100, w100, css, className, ...props }) => {
   return (
-    <StyledDiv css={{
-      ...props,
-      ...css,
-      height: h100 ? '100%' : undefined,
-      width: w100 ? '100%' : undefined
-    }}
+    <StyledDiv
+      className={className}
+      css={{
+        ...props,
+        ...css,
+        height: h100 ? '100%' : undefined,
+        width: w100 ? '100%' : undefined,
+      }}
     >
       {children}
     </StyledDiv>
