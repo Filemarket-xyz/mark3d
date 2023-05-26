@@ -89,13 +89,14 @@ const GridBlockSection = styled(GridBlock, {
 })
 
 const ControlFileSection = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '16px'
+  height: '100%'
 })
 
 const ControlStickyBlock = styled('div', {
   position: 'sticky',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
   top: '125px',
   '@md': {
     position: 'relative',
