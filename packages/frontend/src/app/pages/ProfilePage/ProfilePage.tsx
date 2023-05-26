@@ -60,6 +60,7 @@ const GrayOverlay = styled('div', {
 
 const Inventory = styled(Container, {
   paddingTop: '$4',
+  paddingBottom: 48,
   backgroundColor: '$white',
   borderRadius: '$6 $6 0 0',
   '@md': {
