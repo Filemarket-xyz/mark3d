@@ -25,19 +25,21 @@ func (s *service) GetTransfers(
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	incomingTransfers, err := s.repository.GetActiveIncomingTransfersByAddress(ctx, tx, address, lastIncomingTransferId, incomingLimit)
+	incomingTransfers, incomingTotal, err := s.repository.GetActiveIncomingTransfersByAddress(ctx, tx, address, lastIncomingTransferId, incomingLimit)
 	if err != nil {
 		log.Println("get active incoming transfers failed: ", err)
 		return nil, internalError
 	}
-	outgoingTransfers, err := s.repository.GetActiveOutgoingTransfersByAddress(ctx, tx, address, lastOutgoingTransferId, outgoingLimit)
+	outgoingTransfers, outgoingTotal, err := s.repository.GetActiveOutgoingTransfersByAddress(ctx, tx, address, lastOutgoingTransferId, outgoingLimit)
 	if err != nil {
 		log.Println("get active outgoing transfers failed: ", err)
 		return nil, internalError
 	}
 	return &models.TransfersResponse{
-		Incoming: domain.MapSlice(incomingTransfers, domain.TransferToModel),
-		Outgoing: domain.MapSlice(outgoingTransfers, domain.TransferToModel),
+		Incoming:      domain.MapSlice(incomingTransfers, domain.TransferToModel),
+		IncomingTotal: incomingTotal,
+		Outgoing:      domain.MapSlice(outgoingTransfers, domain.TransferToModel),
+		OutgoingTotal: outgoingTotal,
 	}, nil
 }
 
@@ -56,19 +58,21 @@ func (s *service) GetTransfersHistory(
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	incomingTransfers, err := s.repository.GetIncomingTransfersByAddress(ctx, tx, address, lastIncomingTransferId, incomingLimit)
+	incomingTransfers, incomingTotal, err := s.repository.GetIncomingTransfersByAddress(ctx, tx, address, lastIncomingTransferId, incomingLimit)
 	if err != nil {
 		log.Println("get incoming transfers failed: ", err)
 		return nil, internalError
 	}
-	outgoingTransfers, err := s.repository.GetOutgoingTransfersByAddress(ctx, tx, address, lastOutgoingTransferId, outgoingLimit)
+	outgoingTransfers, outgoingTotal, err := s.repository.GetOutgoingTransfersByAddress(ctx, tx, address, lastOutgoingTransferId, outgoingLimit)
 	if err != nil {
 		log.Println("get outgoing transfers failed: ", err)
 		return nil, internalError
 	}
 	return &models.TransfersResponse{
-		Incoming: domain.MapSlice(incomingTransfers, domain.TransferToModel),
-		Outgoing: domain.MapSlice(outgoingTransfers, domain.TransferToModel),
+		Incoming:      domain.MapSlice(incomingTransfers, domain.TransferToModel),
+		IncomingTotal: incomingTotal,
+		Outgoing:      domain.MapSlice(outgoingTransfers, domain.TransferToModel),
+		OutgoingTotal: outgoingTotal,
 	}, nil
 }
 
@@ -104,12 +108,12 @@ func (s *service) GetTransfersV2(
 		return nil, internalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
-	incomingTransfers, err := s.repository.GetActiveIncomingTransfersByAddress(ctx, tx, address, lastIncomingTransferId, incomingLimit)
+	incomingTransfers, incomingTotal, err := s.repository.GetActiveIncomingTransfersByAddress(ctx, tx, address, lastIncomingTransferId, incomingLimit)
 	if err != nil {
 		log.Println("get active incoming transfers failed: ", err)
 		return nil, internalError
 	}
-	outgoingTransfers, err := s.repository.GetActiveOutgoingTransfersByAddress(ctx, tx, address, lastOutgoingTransferId, outgoingLimit)
+	outgoingTransfers, outgoingTotal, err := s.repository.GetActiveOutgoingTransfersByAddress(ctx, tx, address, lastOutgoingTransferId, outgoingLimit)
 	if err != nil {
 		log.Println("get active outgoing transfers failed: ", err)
 		return nil, internalError
@@ -162,8 +166,10 @@ func (s *service) GetTransfersV2(
 		}
 	}
 	return &models.TransfersResponseV2{
-		Incoming: incoming,
-		Outgoing: outgoing,
+		Incoming:      incoming,
+		IncomingTotal: incomingTotal,
+		Outgoing:      outgoing,
+		OutgoingTotal: outgoingTotal,
 	}, nil
 }
 
@@ -181,12 +187,12 @@ func (s *service) GetTransfersHistoryV2(
 		return nil, internalError
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
-	incomingTransfers, err := s.repository.GetIncomingTransfersByAddress(ctx, tx, address, lastIncomingTransferId, incomingLimit)
+	incomingTransfers, incomingTotal, err := s.repository.GetIncomingTransfersByAddress(ctx, tx, address, lastIncomingTransferId, incomingLimit)
 	if err != nil {
 		log.Println("get incoming transfers failed: ", err)
 		return nil, internalError
 	}
-	outgoingTransfers, err := s.repository.GetOutgoingTransfersByAddress(ctx, tx, address, lastOutgoingTransferId, outgoingLimit)
+	outgoingTransfers, outgoingTotal, err := s.repository.GetOutgoingTransfersByAddress(ctx, tx, address, lastOutgoingTransferId, outgoingLimit)
 	if err != nil {
 		log.Println("get outgoing transfers failed: ", err)
 		return nil, internalError
@@ -239,8 +245,10 @@ func (s *service) GetTransfersHistoryV2(
 		}
 	}
 	return &models.TransfersResponseV2{
-		Incoming: incoming,
-		Outgoing: outgoing,
+		Incoming:      incoming,
+		IncomingTotal: incomingTotal,
+		Outgoing:      outgoing,
+		OutgoingTotal: outgoingTotal,
 	}, nil
 }
 

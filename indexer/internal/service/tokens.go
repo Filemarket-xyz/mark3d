@@ -65,7 +65,7 @@ func (s *service) GetCollectionTokens(
 	address common.Address,
 	lastTokenId *big.Int,
 	limit int,
-) ([]*models.Token, *models.ErrorResponse) {
+) (*models.TokensByCollectionResponse, *models.ErrorResponse) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
@@ -73,12 +73,15 @@ func (s *service) GetCollectionTokens(
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	tokens, err := s.repository.GetCollectionTokens(ctx, tx, address, lastTokenId, limit)
+	tokens, total, err := s.repository.GetCollectionTokens(ctx, tx, address, lastTokenId, limit)
 	if err != nil {
 		log.Println("get collection tokens failed: ", err)
 		return nil, internalError
 	}
-	return domain.MapSlice(tokens, domain.TokenToModel), nil
+	return &models.TokensByCollectionResponse{
+		Tokens: domain.MapSlice(tokens, domain.TokenToModel),
+		Total:  total,
+	}, nil
 }
 
 func (s *service) GetTokensByAddress(
@@ -97,13 +100,13 @@ func (s *service) GetTokensByAddress(
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	collections, err := s.repository.GetCollectionsByOwnerAddress(ctx, tx, address, lastCollectionAddress, collectionLimit)
+	collections, collectionsTotal, err := s.repository.GetCollectionsByOwnerAddress(ctx, tx, address, lastCollectionAddress, collectionLimit)
 	if err != nil {
 		log.Println("get collections by address failed: ", err)
 		return nil, internalError
 	}
 
-	tokens, err := s.repository.GetTokensByAddress(ctx, tx, address, lastTokenCollectionAddress, lastTokenId, tokenLimit)
+	tokens, tokensTotal, err := s.repository.GetTokensByAddress(ctx, tx, address, lastTokenCollectionAddress, lastTokenId, tokenLimit)
 	if err != nil {
 		log.Println("get tokens by address failed: ", err)
 		return nil, internalError
@@ -122,7 +125,9 @@ func (s *service) GetTokensByAddress(
 		tokensRes[i].PendingTransferID, tokensRes[i].PendingOrderID = transfer.Id, transfer.OrderId
 	}
 	return &models.TokensResponse{
-		Collections: domain.MapSlice(collections, domain.CollectionToModel),
-		Tokens:      tokensRes,
+		Collections:      domain.MapSlice(collections, domain.CollectionToModel),
+		CollectionsTotal: collectionsTotal,
+		Tokens:           tokensRes,
+		TokensTotal:      tokensTotal,
 	}, nil
 }

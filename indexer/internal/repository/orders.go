@@ -19,10 +19,10 @@ func (p *postgres) GetAllActiveOrders(
 	tx pgx.Tx,
 	lastOrderId *int64,
 	limit int,
-) ([]*domain.Order, error) {
+) ([]*domain.Order, uint64, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT o.id, o.transfer_id, o.price 
+		SELECT o.id, o.transfer_id, o.price, COUNT(*) OVER() AS total
 		FROM orders AS o 
     	JOIN transfers t on o.transfer_id = t.id 
 		WHERE NOT (
@@ -48,35 +48,36 @@ func (p *postgres) GetAllActiveOrders(
 
 	rows, err := tx.Query(ctx, query, lastOrderIdParam, limit)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 	var (
-		res []*domain.Order
-		ids []int64
+		res   []*domain.Order
+		ids   []int64
+		total uint64
 	)
 	for rows.Next() {
 		var price string
 		o := &domain.Order{}
-		if err := rows.Scan(&o.Id, &o.TransferId, &price); err != nil {
-			return nil, err
+		if err := rows.Scan(&o.Id, &o.TransferId, &price, &total); err != nil {
+			return nil, 0, err
 		}
 		var ok bool
 		o.Price, ok = big.NewInt(0).SetString(price, 10)
 		if !ok {
-			return nil, fmt.Errorf("failed to parse big int: %s", price)
+			return nil, 0, fmt.Errorf("failed to parse big int: %s", price)
 		}
 
 		res, ids = append(res, o), append(ids, o.Id)
 	}
 	statuses, err := p.getOrderStatuses(ctx, tx, ids)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	for _, t := range res {
 		t.Statuses = statuses[t.Id]
 	}
-	return res, nil
+	return res, total, nil
 }
 
 func (p *postgres) GetIncomingOrdersByAddress(

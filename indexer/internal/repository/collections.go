@@ -10,17 +10,17 @@ import (
 	"strings"
 )
 
-// GetCollectionsByOwnerAddress returns owned collection or collections of owned tokens
+// GetCollectionsByOwnerAddress returns owned collections or collections of owned tokens
 func (p *postgres) GetCollectionsByOwnerAddress(
 	ctx context.Context,
 	tx pgx.Tx,
 	address common.Address,
 	lastCollectionAddress *common.Address,
 	limit int,
-) ([]*domain.Collection, error) {
+) ([]*domain.Collection, uint64, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT address,creator,owner,name,token_id,meta_uri,description,image 
+		SELECT address,creator,owner,name,token_id,meta_uri,description,image, COUNT(*) OVER() AS total
 		FROM collections AS c 
 		WHERE (owner=$1 OR 
             EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)) AND
@@ -43,16 +43,17 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 		limit,
 	)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 	var res []*domain.Collection
+	var total uint64
 	for rows.Next() {
 		var collectionAddress, creator, owner, tokenId string
 		c := &domain.Collection{}
 		if err := rows.Scan(&collectionAddress, &creator, &owner, &c.Name,
-			&tokenId, &c.MetaUri, &c.Description, &c.Image); err != nil {
-			return nil, err
+			&tokenId, &c.MetaUri, &c.Description, &c.Image, &total); err != nil {
+			return nil, 0, err
 		}
 
 		c.Address = common.HexToAddress(collectionAddress)
@@ -62,11 +63,11 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 		var ok bool
 		c.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
 		if !ok {
-			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
+			return nil, 0, fmt.Errorf("failed to parse big int: %s", tokenId)
 		}
 		res = append(res, c)
 	}
-	return res, nil
+	return res, total, nil
 }
 
 func (p *postgres) GetCollection(ctx context.Context,

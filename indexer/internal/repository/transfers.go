@@ -18,7 +18,7 @@ func (p *postgres) GetIncomingTransfersByAddress(
 	address common.Address,
 	lastTransferId *int64,
 	limit int,
-) ([]*domain.Transfer, error) {
+) ([]*domain.Transfer, uint64, error) {
 	// language=PostgreSQL
 	query := `
 		SELECT 
@@ -31,7 +31,8 @@ func (p *postgres) GetIncomingTransfersByAddress(
 			COALESCE(o.id, 0),
 			t.public_key,
 			t.encrypted_password,
-			t.number
+			t.number,
+			COUNT(*) OVER() AS total
 		FROM transfers AS t 
         LEFT JOIN orders o on t.id = o.transfer_id
         WHERE t.to_address=$1 AND t.id < $2
@@ -52,13 +53,14 @@ func (p *postgres) GetIncomingTransfersByAddress(
 		limit,
 	)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
 	var (
-		res []*domain.Transfer
-		ids []int64
+		res   []*domain.Transfer
+		ids   []int64
+		total uint64
 	)
 	for rows.Next() {
 		var collectionAddress, tokenId, from, to, number string
@@ -75,9 +77,10 @@ func (p *postgres) GetIncomingTransfersByAddress(
 			&t.PublicKey,
 			&t.EncryptedPassword,
 			&number,
+			&total,
 		)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 
 		t.CollectionAddress = common.HexToAddress(collectionAddress)
@@ -87,24 +90,24 @@ func (p *postgres) GetIncomingTransfersByAddress(
 		var ok bool
 		t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
 		if !ok {
-			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
+			return nil, 0, fmt.Errorf("failed to parse big int: %s", tokenId)
 		}
 
 		t.Number, ok = big.NewInt(0).SetString(number, 10)
 		if !ok {
-			return nil, fmt.Errorf("failed to parse big int: %s", number)
+			return nil, 0, fmt.Errorf("failed to parse big int: %s", number)
 		}
 
 		res, ids = append(res, t), append(ids, t.Id)
 	}
 	statuses, err := p.getTransferStatuses(ctx, tx, ids)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	for _, t := range res {
 		t.Statuses = statuses[t.Id]
 	}
-	return res, nil
+	return res, total, nil
 }
 
 func (p *postgres) GetOutgoingTransfersByAddress(
@@ -113,7 +116,7 @@ func (p *postgres) GetOutgoingTransfersByAddress(
 	address common.Address,
 	lastTransferId *int64,
 	limit int,
-) ([]*domain.Transfer, error) {
+) ([]*domain.Transfer, uint64, error) {
 	// language=PostgreSQL
 	query := `
 		SELECT 
@@ -126,7 +129,8 @@ func (p *postgres) GetOutgoingTransfersByAddress(
 			COALESCE(o.id, 0),
 			t.public_key,
 			t.encrypted_password,
-			t.number
+			t.number,
+			COUNT(*) OVER() AS total
 		FROM transfers AS t 
         LEFT JOIN orders o on t.id = o.transfer_id 
 		WHERE t.from_address=$1 AND t.id < $2
@@ -148,13 +152,14 @@ func (p *postgres) GetOutgoingTransfersByAddress(
 		limit,
 	)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
 	var (
-		res []*domain.Transfer
-		ids []int64
+		res   []*domain.Transfer
+		ids   []int64
+		total uint64
 	)
 	for rows.Next() {
 		var collectionAddress, tokenId, from, to, number string
@@ -171,9 +176,10 @@ func (p *postgres) GetOutgoingTransfersByAddress(
 			&t.PublicKey,
 			&t.EncryptedPassword,
 			&number,
+			&total,
 		)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 
 		t.CollectionAddress = common.HexToAddress(collectionAddress)
@@ -183,26 +189,26 @@ func (p *postgres) GetOutgoingTransfersByAddress(
 		var ok bool
 		t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
 		if !ok {
-			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
+			return nil, 0, fmt.Errorf("failed to parse big int: %s", tokenId)
 		}
 
 		t.Number, ok = big.NewInt(0).SetString(number, 10)
 		if !ok {
-			return nil, fmt.Errorf("failed to parse big int: %s", number)
+			return nil, 0, fmt.Errorf("failed to parse big int: %s", number)
 		}
 
 		res, ids = append(res, t), append(ids, t.Id)
 	}
 	statuses, err := p.getTransferStatuses(ctx, tx, ids)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	for _, t := range res {
 		t.Statuses = statuses[t.Id]
 	}
 
-	return res, nil
+	return res, total, nil
 }
 
 func (p *postgres) GetActiveIncomingTransfersByAddress(
@@ -211,7 +217,7 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 	address common.Address,
 	lastTransferId *int64,
 	limit int,
-) ([]*domain.Transfer, error) {
+) ([]*domain.Transfer, uint64, error) {
 	// language=PostgreSQL
 	query := `
 		SELECT 
@@ -224,7 +230,8 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 			COALESCE(o.id, 0), 
 			t.public_key, 
 			t.encrypted_password,
-			t.number
+			t.number,
+			COUNT(*) OVER() AS total
 		FROM transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
 		WHERE 
@@ -262,19 +269,20 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 		limit,
 	)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
 	var (
-		res []*domain.Transfer
-		ids []int64
+		res   []*domain.Transfer
+		ids   []int64
+		total uint64
 	)
 	for rows.Next() {
 		var collectionAddress, tokenId, from, to, number string
 		t := &domain.Transfer{}
 
-		err := rows.Scan(
+		if err := rows.Scan(
 			&t.Id,
 			&collectionAddress,
 			&tokenId,
@@ -285,9 +293,9 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 			&t.PublicKey,
 			&t.EncryptedPassword,
 			&number,
-		)
-		if err != nil {
-			return nil, err
+			&total,
+		); err != nil {
+			return nil, 0, err
 		}
 
 		t.CollectionAddress = common.HexToAddress(collectionAddress)
@@ -297,24 +305,24 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 		var ok bool
 		t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
 		if !ok {
-			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
+			return nil, 0, fmt.Errorf("failed to parse big int: %s", tokenId)
 		}
 
 		t.Number, ok = big.NewInt(0).SetString(number, 10)
 		if !ok {
-			return nil, fmt.Errorf("failed to parse big int: %s", number)
+			return nil, 0, fmt.Errorf("failed to parse big int: %s", number)
 		}
 
 		res, ids = append(res, t), append(ids, t.Id)
 	}
 	statuses, err := p.getTransferStatuses(ctx, tx, ids)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	for _, t := range res {
 		t.Statuses = statuses[t.Id]
 	}
-	return res, nil
+	return res, total, nil
 }
 
 func (p *postgres) GetActiveOutgoingTransfersByAddress(
@@ -323,7 +331,7 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(
 	address common.Address,
 	lastTransferId *int64,
 	limit int,
-) ([]*domain.Transfer, error) {
+) ([]*domain.Transfer, uint64, error) {
 	// language=PostgreSQL
 	query := `
 		SELECT 
@@ -336,7 +344,8 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(
 			COALESCE(o.id, 0), 
 			t.public_key, 
 			t.encrypted_password,
-			t.number
+			t.number,
+			COUNT(*) OVER() AS total
 		FROM 
 			transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
@@ -375,13 +384,14 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(
 		limit,
 	)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
 	var (
-		res []*domain.Transfer
-		ids []int64
+		res   []*domain.Transfer
+		ids   []int64
+		total uint64
 	)
 	for rows.Next() {
 		var collectionAddress, tokenId, from, to, number string
@@ -398,9 +408,10 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(
 			&t.PublicKey,
 			&t.EncryptedPassword,
 			&number,
+			&total,
 		)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 
 		t.CollectionAddress = common.HexToAddress(collectionAddress)
@@ -410,24 +421,24 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(
 		var ok bool
 		t.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
 		if !ok {
-			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
+			return nil, 0, fmt.Errorf("failed to parse big int: %s", tokenId)
 		}
 
 		t.Number, ok = big.NewInt(0).SetString(number, 10)
 		if !ok {
-			return nil, fmt.Errorf("failed to parse big int: %s", number)
+			return nil, 0, fmt.Errorf("failed to parse big int: %s", number)
 		}
 
 		res, ids = append(res, t), append(ids, t.Id)
 	}
 	statuses, err := p.getTransferStatuses(ctx, tx, ids)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	for _, t := range res {
 		t.Statuses = statuses[t.Id]
 	}
-	return res, nil
+	return res, total, nil
 }
 
 func (p *postgres) getTransferStatuses(

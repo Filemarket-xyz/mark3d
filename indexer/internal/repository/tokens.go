@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/ethereum/go-ethereum/log"
 	"math/big"
 	"strings"
 
@@ -21,12 +22,12 @@ func (p *postgres) GetCollectionTokens(
 	collectionAddress common.Address,
 	lastTokenId *big.Int,
 	limit int,
-) ([]*domain.Token, error) {
+) ([]*domain.Token, uint64, error) {
 	// language=PostgreSQL
 	query := `
 		SELECT 
 		    t.token_id, t.owner, t.meta_uri, t.creator, t.mint_transaction_timestamp, t.mint_transaction_hash,
-		    c.name
+		    c.name, COUNT(*) OVER() as total
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
 		WHERE t.collection_address=$1 AND t.token_id > $2
@@ -34,6 +35,7 @@ func (p *postgres) GetCollectionTokens(
 		LIMIT $3
 	`
 	var res []*domain.Token
+	var total uint64
 	lastTokenIdStr := ""
 	if lastTokenId != nil && lastTokenId.Cmp(big.NewInt(0)) != 0 {
 		lastTokenIdStr = lastTokenId.String()
@@ -43,7 +45,7 @@ func (p *postgres) GetCollectionTokens(
 		limit = 10000
 	}
 
-	err := func(res *[]*domain.Token, query string) error {
+	err := func(res *[]*domain.Token, total *uint64, query string) error {
 		rows, err := tx.Query(ctx, query,
 			strings.ToLower(collectionAddress.String()),
 			lastTokenIdStr,
@@ -58,8 +60,16 @@ func (p *postgres) GetCollectionTokens(
 			var tokenId, owner, creator, mintTxHash string
 			t := &domain.Token{}
 
-			err := rows.Scan(&tokenId, &owner, &t.MetaUri, &creator, &t.MintTxTimestamp, &mintTxHash, &t.CollectionName)
-			if err != nil {
+			if err := rows.Scan(
+				&tokenId,
+				&owner,
+				&t.MetaUri,
+				&creator,
+				&t.MintTxTimestamp,
+				&mintTxHash,
+				&t.CollectionName,
+				total,
+			); err != nil {
 				return err
 			}
 
@@ -77,19 +87,23 @@ func (p *postgres) GetCollectionTokens(
 			*res = append(*res, t)
 		}
 		return rows.Err()
-	}(&res, query)
+	}(&res, &total, query)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	for _, r := range res {
 		metadata, err := p.GetMetadata(ctx, tx, r.CollectionAddress, r.TokenId)
 		if err != nil {
-			return nil, err
+			if errors.Is(err, pgx.ErrNoRows) {
+				log.Warn(fmt.Sprintf("couldn't get metadata for token with collection address: %s, tokenId: %s", r.CollectionAddress, r.TokenId.String()))
+				metadata = domain.NewPlaceholderMetadata()
+			}
+			return nil, 0, err
 		}
 		r.Metadata = metadata
 	}
-	return res, nil
+	return res, total, nil
 }
 
 func (p *postgres) GetTokensByAddress(
@@ -99,13 +113,13 @@ func (p *postgres) GetTokensByAddress(
 	lastCollectionAddress *common.Address,
 	lastTokenId *big.Int,
 	limit int,
-) ([]*domain.Token, error) {
+) ([]*domain.Token, uint64, error) {
 	// language=PostgreSQL
 	query := `
 		SELECT 
 		    t.collection_address, t.token_id, t.meta_uri, t.creator, 
 		    t.mint_transaction_timestamp, t.mint_transaction_hash,
-		    c.name
+		    c.name, COUNT(*) OVER() AS total
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
 		WHERE t.owner=$1 AND (t.collection_address, t.token_id) > ($2, $3)
@@ -113,6 +127,7 @@ func (p *postgres) GetTokensByAddress(
 		LIMIT $4
 	`
 	var res []*domain.Token
+	var total uint64
 
 	lastCollectionAddressStr := ""
 	if lastCollectionAddress != nil {
@@ -128,7 +143,7 @@ func (p *postgres) GetTokensByAddress(
 		limit = 10000
 	}
 
-	err := func(res *[]*domain.Token, query string) error {
+	err := func(res *[]*domain.Token, total *uint64, query string) error {
 		rows, err := tx.Query(ctx, query,
 			strings.ToLower(ownerAddress.String()),
 			lastCollectionAddressStr,
@@ -152,6 +167,7 @@ func (p *postgres) GetTokensByAddress(
 				&t.MintTxTimestamp,
 				&mintTxHash,
 				&t.CollectionName,
+				total,
 			); err != nil {
 				return err
 			}
@@ -170,19 +186,23 @@ func (p *postgres) GetTokensByAddress(
 			*res = append(*res, t)
 		}
 		return rows.Err()
-	}(&res, query)
+	}(&res, &total, query)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	for _, r := range res {
 		metadata, err := p.GetMetadata(ctx, tx, r.CollectionAddress, r.TokenId)
 		if err != nil {
-			return nil, err
+			if errors.Is(err, pgx.ErrNoRows) {
+				log.Warn(fmt.Sprintf("couldn't get metadata for token with collection address: %s, tokenId: %s", r.CollectionAddress, r.TokenId.String()))
+				metadata = domain.NewPlaceholderMetadata()
+			}
+			return nil, 0, err
 		}
 		r.Metadata = metadata
 	}
-	return res, nil
+	return res, total, nil
 }
 
 func (p *postgres) GetToken(
