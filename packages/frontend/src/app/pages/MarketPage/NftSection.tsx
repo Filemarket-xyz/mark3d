@@ -1,4 +1,3 @@
-import { CSS } from '@stitches/react'
 import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -7,25 +6,11 @@ import { styled } from '../../../styles'
 import { NFTCard } from '../../components'
 import Plug from '../../components/Plug/Plug'
 import { useOpenOrderListStore } from '../../hooks/useOrdersListStore'
-import { Button, InfiniteScroll, Txt } from '../../UIkit'
-
-export const cardsContainerCss: CSS = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  alignItems: 'center',
-  gap: '$4',
-  '@md': {
-    justifyContent: 'space-around'
-  },
-  '@sm': {
-    justifyContent: 'center'
-  },
-  paddingBottom: '$3'
-}
+import { Button, InfiniteScroll, nftCardListCss, Txt } from '../../UIkit'
 
 export const CardsContainer = styled('div', {
   justifyContent: 'normal',
-  ...cardsContainerCss
+  ...nftCardListCss,
 })
 
 const NftSection: React.FC = observer(() => {
@@ -41,7 +26,7 @@ const NftSection: React.FC = observer(() => {
         currentItemCount={openOrderListStore.nftCards.length}
         fetchMore={() => openOrderListStore.requestMore()}
         render={({ index }) => <NFTCard {...openOrderListStore.nftCards[index]} key={index} />}
-        listCss={cardsContainerCss}
+        listCss={nftCardListCss}
       />
       {!openOrderListStore.nftCards.length && !openOrderListStore.isLoading && (
         <Plug

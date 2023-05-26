@@ -11,7 +11,7 @@ import {
   IStoreRequester,
   RequestContext,
   storeRequest,
-  storeReset
+  storeReset,
 } from '../../utils/store'
 import { lastItem } from '../../utils/structs'
 import { ErrorStore } from '../Error/ErrorStore'
@@ -34,7 +34,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
     makeAutoObservable(this, {
-      errorStore: false
+      errorStore: false,
     })
   }
 
@@ -50,7 +50,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
     storeRequest(
       this,
       api.orders.allActiveList({ limit: 20 }),
-      (data) => this.setData(data)
+      (data) => this.setData(data),
     )
   }
 
@@ -59,7 +59,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
     storeRequest(
       this,
       api.orders.allActiveList({ lastOrderId, limit: 20 }),
-      (data) => this.addData(data)
+      (data) => this.addData(data),
     )
   }
 
@@ -86,22 +86,22 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
       .filter(({ order }) => order?.statuses?.[0]?.status === OrderStatus.Created)
       .map(
         ({ token, order }) => ({
-          collectionAddress: token?.collectionAddress ?? '',
+          collectionName: token?.collectionName ?? '',
           hiddenFile: token?.hiddenFileMeta,
           imageURL: token?.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
           title: token?.name ?? '—',
           user: {
             img: getProfileImageUrl(token?.owner ?? ''),
-            username: reduceAddress(token?.owner ?? '')
+            address: reduceAddress(token?.owner ?? ''),
           },
           button: {
             link: `/collection/${token?.collectionAddress}/${token?.tokenId}`,
-            text: 'View & Buy'
+            text: 'View & Buy',
           },
           priceUsd: order?.priceUsd,
           price: order?.price,
-          orderId: order?.id
-        })
+          orderId: order?.id,
+        }),
       )
   }
 }

@@ -2,7 +2,7 @@ import { utils } from 'ethers/lib.esm'
 import { makeAutoObservable } from 'mobx'
 
 import { Collection, Token, TokensResponse } from '../../../swagger/Api'
-import { NFTCardProps } from '../../components/MarketCard/NFTCard'
+import { NFTCardProps } from '../../components/MarketCard/NFTCard/NFTCard'
 import { api } from '../../config/api'
 import { gradientPlaceholderImg } from '../../UIkit'
 import { ComboBoxOption } from '../../UIkit/Form/Combobox'
@@ -29,7 +29,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
     makeAutoObservable(this, {
-      errorStore: false
+      errorStore: false,
     })
   }
 
@@ -53,9 +53,9 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
       this,
       api.tokens.tokensDetail(this.address, {
         // collections?
-        tokenLimit: 20
+        tokenLimit: 20,
       }),
-      data => this.setData(data)
+      data => this.setData(data),
     )
   }
 
@@ -66,9 +66,9 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
       api.tokens.tokensDetail(this.address, {
         lastTokenId: tokenId,
         lastTokenCollectionAddress: collectionAddress,
-        tokenLimit: 20
+        tokenLimit: 20,
       }),
-      ({ tokens }) => this.addTokens(tokens)
+      ({ tokens }) => this.addTokens(tokens),
     )
   }
 
@@ -95,17 +95,17 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
     const tokens = this.tokens ?? []
 
     return tokens.map((token) => ({
-      collectionAddress: token.collectionAddress ?? '',
+      collectionName: token.collectionName ?? '',
       imageURL: token.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
       title: token.name ?? '—',
       user: {
         img: getProfileImageUrl(token.owner ?? ''),
-        username: reduceAddress(token.owner ?? '')
+        address: reduceAddress(token.owner ?? ''),
       },
       button: {
         text: 'Go to page',
-        link: `/collection/${token.collectionAddress}/${token.tokenId}`
-      }
+        link: `/collection/${token.collectionAddress}/${token.tokenId}`,
+      },
     }))
   }
 
@@ -119,7 +119,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
       .filter(collection => collection.owner && utils.getAddress(collection.owner) === utils.getAddress(this.address))
       .map(collection => ({
         title: collection.name ?? '',
-        id: collection.address ?? ''
+        id: collection.address ?? '',
       }))
   }
 }
