@@ -138,9 +138,14 @@ func (s *service) GetAllActiveOrders(
 		return nil, internalError
 	}
 
-	orders, total, err := s.repository.GetAllActiveOrders(ctx, tx, lastOrderId, limit)
+	orders, err := s.repository.GetAllActiveOrders(ctx, tx, lastOrderId, limit)
 	if err != nil {
 		log.Println("get all active orders failed", err)
+		return nil, internalError
+	}
+	total, err := s.repository.GetAllActiveOrdersTotal(ctx, tx, lastOrderId)
+	if err != nil {
+		log.Println("get all active orders total failed", err)
 		return nil, internalError
 	}
 

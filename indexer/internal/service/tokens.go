@@ -73,9 +73,14 @@ func (s *service) GetCollectionTokens(
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	tokens, total, err := s.repository.GetCollectionTokens(ctx, tx, address, lastTokenId, limit)
+	tokens, err := s.repository.GetCollectionTokens(ctx, tx, address, lastTokenId, limit)
 	if err != nil {
 		log.Println("get collection tokens failed: ", err)
+		return nil, internalError
+	}
+	total, err := s.repository.GetCollectionTokensTotal(ctx, tx, address, lastTokenId)
+	if err != nil {
+		log.Println("get collection tokens total failed: ", err)
 		return nil, internalError
 	}
 	return &models.TokensByCollectionResponse{
@@ -100,18 +105,28 @@ func (s *service) GetTokensByAddress(
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	collections, collectionsTotal, err := s.repository.GetCollectionsByOwnerAddress(ctx, tx, address, lastCollectionAddress, collectionLimit)
+	collections, err := s.repository.GetCollectionsByOwnerAddress(ctx, tx, address, lastCollectionAddress, collectionLimit)
 	if err != nil {
 		log.Println("get collections by address failed: ", err)
 		return nil, internalError
 	}
+	collectionsTotal, err := s.repository.GetCollectionsByOwnerAddressTotal(ctx, tx, address, lastCollectionAddress)
+	if err != nil {
+		log.Println("get collections total by address failed: ", err)
+		return nil, internalError
+	}
 
-	tokens, tokensTotal, err := s.repository.GetTokensByAddress(ctx, tx, address, lastTokenCollectionAddress, lastTokenId, tokenLimit)
+	tokens, err := s.repository.GetTokensByAddress(ctx, tx, address, lastTokenCollectionAddress, lastTokenId, tokenLimit)
 	if err != nil {
 		log.Println("get tokens by address failed: ", err)
 		return nil, internalError
 	}
 	tokensRes := domain.MapSlice(tokens, domain.TokenToModel)
+	tokensTotal, err := s.repository.GetTokensByAddressTotal(ctx, tx, address, lastCollectionAddress, lastTokenId)
+	if err != nil {
+		log.Println("get tokens by address total failed: ", err)
+		return nil, internalError
+	}
 
 	for i, t := range tokens {
 		transfer, err := s.repository.GetActiveTransfer(ctx, tx, t.CollectionAddress, t.TokenId)

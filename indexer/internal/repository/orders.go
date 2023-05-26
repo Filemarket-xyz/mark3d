@@ -19,10 +19,10 @@ func (p *postgres) GetAllActiveOrders(
 	tx pgx.Tx,
 	lastOrderId *int64,
 	limit int,
-) ([]*domain.Order, uint64, error) {
+) ([]*domain.Order, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT o.id, o.transfer_id, o.price, COUNT(*) OVER() AS total
+		SELECT o.id, o.transfer_id, o.price
 		FROM orders AS o 
     	JOIN transfers t on o.transfer_id = t.id 
 		WHERE NOT (
@@ -48,36 +48,70 @@ func (p *postgres) GetAllActiveOrders(
 
 	rows, err := tx.Query(ctx, query, lastOrderIdParam, limit)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	defer rows.Close()
 	var (
-		res   []*domain.Order
-		ids   []int64
-		total uint64
+		res []*domain.Order
+		ids []int64
 	)
 	for rows.Next() {
 		var price string
 		o := &domain.Order{}
-		if err := rows.Scan(&o.Id, &o.TransferId, &price, &total); err != nil {
-			return nil, 0, err
+		if err := rows.Scan(&o.Id, &o.TransferId, &price); err != nil {
+			return nil, err
 		}
 		var ok bool
 		o.Price, ok = big.NewInt(0).SetString(price, 10)
 		if !ok {
-			return nil, 0, fmt.Errorf("failed to parse big int: %s", price)
+			return nil, fmt.Errorf("failed to parse big int: %s", price)
 		}
 
 		res, ids = append(res, o), append(ids, o.Id)
 	}
 	statuses, err := p.getOrderStatuses(ctx, tx, ids)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	for _, t := range res {
 		t.Statuses = statuses[t.Id]
 	}
-	return res, total, nil
+	return res, nil
+}
+
+func (p *postgres) GetAllActiveOrdersTotal(
+	ctx context.Context,
+	tx pgx.Tx,
+	lastOrderId *int64,
+) (uint64, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT COUNT(*) AS total
+		FROM orders AS o 
+    	JOIN transfers t on o.transfer_id = t.id 
+		WHERE NOT (
+				SELECT ts.status 
+		        FROM transfer_statuses AS ts 
+		        WHERE ts.transfer_id=t.id AND ts.timestamp=(
+                		SELECT MAX(ts2.timestamp) 
+                		FROM transfer_statuses AS ts2 
+                		WHERE ts2.transfer_id=t.id
+                )
+		)= ANY('{Finished,Cancelled}') AND o.id < $1
+	`
+
+	var lastOrderIdParam int64 = math.MaxInt64
+	if lastOrderId != nil {
+		lastOrderIdParam = *lastOrderId
+	}
+
+	var total uint64
+	if err := tx.QueryRow(ctx, query,
+		lastOrderIdParam,
+	).Scan(&total); err != nil {
+		return 0, err
+	}
+	return total, nil
 }
 
 func (p *postgres) GetIncomingOrdersByAddress(

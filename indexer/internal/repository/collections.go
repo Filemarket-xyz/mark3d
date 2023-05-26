@@ -17,10 +17,10 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 	address common.Address,
 	lastCollectionAddress *common.Address,
 	limit int,
-) ([]*domain.Collection, uint64, error) {
+) ([]*domain.Collection, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT address,creator,owner,name,token_id,meta_uri,description,image, COUNT(*) OVER() AS total
+		SELECT address,creator,owner,name,token_id,meta_uri,description,image
 		FROM collections AS c 
 		WHERE (owner=$1 OR 
             EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)) AND
@@ -43,17 +43,16 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 		limit,
 	)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	defer rows.Close()
 	var res []*domain.Collection
-	var total uint64
 	for rows.Next() {
 		var collectionAddress, creator, owner, tokenId string
 		c := &domain.Collection{}
 		if err := rows.Scan(&collectionAddress, &creator, &owner, &c.Name,
-			&tokenId, &c.MetaUri, &c.Description, &c.Image, &total); err != nil {
-			return nil, 0, err
+			&tokenId, &c.MetaUri, &c.Description, &c.Image); err != nil {
+			return nil, err
 		}
 
 		c.Address = common.HexToAddress(collectionAddress)
@@ -63,11 +62,41 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 		var ok bool
 		c.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
 		if !ok {
-			return nil, 0, fmt.Errorf("failed to parse big int: %s", tokenId)
+			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
 		}
 		res = append(res, c)
 	}
-	return res, total, nil
+	return res, nil
+}
+
+func (p *postgres) GetCollectionsByOwnerAddressTotal(
+	ctx context.Context,
+	tx pgx.Tx,
+	address common.Address,
+	lastCollectionAddress *common.Address,
+) (uint64, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT COUNT(*) AS total
+		FROM collections AS c 
+		WHERE (owner=$1 OR 
+            EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)) AND
+		    address > $2
+	`
+
+	lastCollectionAddressStr := ""
+	if lastCollectionAddress != nil {
+		lastCollectionAddressStr = strings.ToLower(lastCollectionAddress.String())
+	}
+	var total uint64
+	if err := tx.QueryRow(ctx, query,
+		strings.ToLower(address.String()),
+		lastCollectionAddressStr,
+	).Scan(&total); err != nil {
+		return 0, err
+	}
+
+	return total, nil
 }
 
 func (p *postgres) GetCollection(ctx context.Context,

@@ -49,9 +49,14 @@ func (s *service) GetCollectionWithTokens(
 		log.Println("get collection failed: ", err)
 		return nil, internalError
 	}
-	tokens, total, err := s.repository.GetCollectionTokens(ctx, tx, address, lastTokenId, limit)
+	tokens, err := s.repository.GetCollectionTokens(ctx, tx, address, lastTokenId, limit)
 	if err != nil {
-		log.Println("get collection token failed: ", err)
+		log.Println("get collection tokens failed: ", err)
+		return nil, internalError
+	}
+	total, err := s.repository.GetCollectionTokensTotal(ctx, tx, address, lastTokenId)
+	if err != nil {
+		log.Println("get collection tokens total failed: ", err)
 		return nil, internalError
 	}
 	return &models.CollectionData{
