@@ -9,7 +9,7 @@ import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeedProviderFactory } from '../../../processing'
 import { Button, Txt } from '../../../UIkit'
 import { AppDialogProps } from '../../../utils/dialog'
-import { ButtonContainer } from '../../MarketCard/NFTCard'
+import { ButtonContainer } from '../../MarketCard/NamespaceCard/NamespaceCard.styles'
 import { ModalTitle } from '../../Modal/Modal'
 import { createMnemonic } from '../ConnectFileWalletDialog/utils/createMnemonic'
 import { CreatePasswordForm } from './CreatePasswordForm/CreatePasswordForm'
@@ -22,35 +22,35 @@ const CreatedMnemonicStyle = styled('div', {
   '& button': {
     padding: '5px',
     marginTop: '20px',
-    color: 'white'
+    color: 'white',
   },
 
   '& .contentModalWindow': {
-    width: '100%'
+    width: '100%',
   },
 
   '& .closeButton': {
-    top: '-35px !important'
+    top: '-35px !important',
   },
   paddingBottom: '30px',
 
   '& .grayText span': {
     color: '$gray400',
-    fontSize: '0.8rem'
+    fontSize: '0.8rem',
   },
   '& .mnemonic': {
     textAlign: 'justify',
     '& span': {
-      fontSize: '1.25rem'
+      fontSize: '1.25rem',
     },
-    padding: '$4 0'
+    padding: '$4 0',
   },
   '@md': {
-    fontSize: '15px'
+    fontSize: '15px',
   },
   '@ld': {
-    fontSize: '18px'
-  }
+    fontSize: '18px',
+  },
 
 })
 
@@ -60,6 +60,7 @@ export function CreateMnemonicDialog({ open, onClose, onSuccess }: AppDialogProp
   const [mnemonic, setMnemonic] = useState<string>()
   const { address } = useAccount()
   const seedProviderFactory = useSeedProviderFactory()
+
   return (
     <Modal
       closeButton
@@ -68,7 +69,7 @@ export function CreateMnemonicDialog({ open, onClose, onSuccess }: AppDialogProp
         sm: '400px',
         md: '650px',
         lg: '950px',
-        defaultValue: '950px'
+        defaultValue: '950px',
       })}
       onClose={onClose}
     >

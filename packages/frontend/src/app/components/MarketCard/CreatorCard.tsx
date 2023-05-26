@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react'
 import { styled } from '../../../styles'
 import { textVariant } from '../../UIkit'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
-import { BorderLayout } from './NFTCard'
+import { BorderLayout } from './NamespaceCard/NamespaceCard.styles'
 
 export interface CreatorCardProps {
   bgImageUrl: string
@@ -16,7 +16,7 @@ export interface CreatorCardProps {
 }
 
 const BgImage = styled(BasicCardSquareImg, {
-  height: '100%'
+  height: '100%',
 })
 
 const Controls = styled(BasicCardControls, {
@@ -27,7 +27,7 @@ const Controls = styled(BasicCardControls, {
   right: 0,
   display: 'flex',
   alignItems: 'center',
-  flexDirection: 'column'
+  flexDirection: 'column',
 })
 
 const UserImg = styled('img', {
@@ -36,12 +36,12 @@ const UserImg = styled('img', {
   position: 'absolute',
   top: -48,
   borderRadius: '50%',
-  objectFit: 'contain'
+  objectFit: 'contain',
 })
 
 const UserContainer = styled('div', {
   paddingTop: '$4',
-  marginBottom: '$3'
+  marginBottom: '$3',
 })
 
 const UserName = styled('p', {
@@ -52,21 +52,21 @@ const UserName = styled('p', {
   backgroundClip: 'text',
   color: 'transparent',
   marginBottom: '$1',
-  textAlign: 'center'
+  textAlign: 'center',
 })
 
 const UserSocial = styled('p', {
   ...textVariant('primary3'),
   fontSize: '$primary3',
   fontWeight: 600,
-  textAlign: 'center'
+  textAlign: 'center',
 })
 
 const Description = styled('p', {
   ...textVariant('secondary3'),
   fontSize: '$secondary3',
   color: '$gray500',
-  maxWidth: 215
+  maxWidth: 215,
 })
 
 export default function CreatorCard(props: CreatorCardProps) {
@@ -77,7 +77,10 @@ export default function CreatorCard(props: CreatorCardProps) {
         <Controls>
           <UserImg src={props.user.imageUrl} />
           <UserContainer>
-            <UserName>={props.user.name}</UserName>
+            <UserName>
+              =
+              {props.user.name}
+            </UserName>
             <UserSocial>{props.user.social}</UserSocial>
           </UserContainer>
           <Description>{props.description}</Description>
