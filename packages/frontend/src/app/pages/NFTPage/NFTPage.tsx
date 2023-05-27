@@ -44,6 +44,7 @@ const NFTPreviewContainer = styled('div', {
 })
 
 const MainInfo = styled(PageLayout, {
+  display: 'flex', // чтобы можно было дочерним заполнить все пространство
   marginTop: '150px',
   marginBottom: '-80px',
   paddingTB: 48,
@@ -64,11 +65,11 @@ const MainInfo = styled(PageLayout, {
 })
 
 const GridLayout = styled('div', {
+  flexGrow: 1, // чтобы был в высоту родителя
   display: 'grid',
   gap: '32px',
   position: 'relative',
   columnGap: '$4',
-  height: '100%',
   gridTemplateColumns: '3fr 1fr',
   // eslint-disable-next-line
   gridTemplateAreas: "'GridBlock Control'",
