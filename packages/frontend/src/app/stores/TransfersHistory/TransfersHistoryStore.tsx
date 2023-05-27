@@ -199,6 +199,12 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
     this.request()
   }
 
+  get hasMoreData() {
+    const { incoming = [], incomingTotal = 0, outgoing = [], outgoingTotal = 0 } = this.data
+
+    return incoming.length < incomingTotal || outgoing.length < outgoingTotal
+  }
+
   get tableRows(): ITableRow[] {
     const { incoming = [], outgoing = [] } = this.data
 
