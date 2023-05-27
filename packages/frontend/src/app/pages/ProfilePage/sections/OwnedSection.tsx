@@ -55,10 +55,10 @@ export const OwnedSection: React.FC = observer(() => {
           {profileAddress === currentAddress && (
             <NavButton
               primary
-              to={'/create/nft'}
+              to={'/create/eft'}
               css={{ textDecoration: 'none', marginBottom: '$3' }}
             >
-              Create NFT
+              Create EFT
             </NavButton>
           )}
         </NoNftContainer>

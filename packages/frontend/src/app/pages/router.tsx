@@ -22,7 +22,7 @@ const routes: RouteObject[] = [
   },
   {
     path: 'successGetAccess',
-    element: <SuccessSubscribePage />
+    element: <SuccessSubscribePage />,
   },
   {
     path: '/',
