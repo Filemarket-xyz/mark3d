@@ -27,12 +27,12 @@ export const storeRequestGeneric = <ResponseType>(
   target: IStoreRequester,
   requester: Promise<ResponseType>,
   responseHandler: (response: ResponseType) => void,
-  errorHandler: (error: any) => void
+  errorHandler: (error: any) => void,
 ): void => {
   if (!target.currentRequest) {
     target.isLoading = true
     const context: RequestContext = {
-      id: target.requestCount++
+      id: target.requestCount++,
     }
     const finish = (resultHandler: () => void) => {
       // handle result only if request is not replaced by another and not cancelled
@@ -51,15 +51,15 @@ export const storeRequestGeneric = <ResponseType>(
             finish(() => {
               responseHandler(data)
             })
-          })
-        )
+          }),
+        ),
       )
       .catch(
         action((error) => {
           finish(() => {
             errorHandler(error)
           })
-        })
+        }),
       )
     target.currentRequest = context
   }
@@ -69,7 +69,7 @@ export const storeRequestGeneric = <ResponseType>(
 export const storeRequest = <Data>(
   target: IStoreRequester,
   requester: Promise<HttpResponse<Data, ErrorResponse>>,
-  callback: (data: Data) => void
+  callback: (data: Data) => void,
 ): void => {
   storeRequestGeneric(
     target,
@@ -85,14 +85,14 @@ export const storeRequest = <Data>(
     },
     error => {
       target.errorStore.showError(stringifyError(error))
-    }
+    },
   )
 }
 
 export const storeRequestFetch = <Data>(
   target: IStoreRequester,
   requester: Promise<Data>,
-  callback: (data: Data) => void
+  callback: (data: Data) => void,
 ): void => {
   storeRequestGeneric(
     target,
@@ -103,7 +103,7 @@ export const storeRequestFetch = <Data>(
     },
     error => {
       target.errorStore.showError(stringifyError(error))
-    }
+    },
   )
 }
 

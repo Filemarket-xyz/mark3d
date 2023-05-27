@@ -14,21 +14,21 @@ export type FileButtonProps = AriaButtonProps & {
 const CardStyled = styled(Card, {
   width: 368,
   '@md': {
-    width: '100%'
+    width: '100%',
   },
   cursor: 'pointer',
   overflow: 'hidden',
   position: 'relative',
   transition: 'box-shadow 0.25s ease 0s',
   '&[data-pressed=true]': {
-    boxShadow: '$hover'
+    boxShadow: '$hover',
   },
   '&[data-hovered=true]': {
-    boxShadow: '$hover'
+    boxShadow: '$hover',
   },
   '&[data-disabled=true]': {
-    cursor: 'not-allowed'
-  }
+    cursor: 'not-allowed',
+  },
 })
 
 const ContentStyled = styled('div', {
@@ -41,18 +41,18 @@ const ContentStyled = styled('div', {
   padding: '$2 $3',
   transition: 'opacity 0.25s ease 0s',
   '&[data-pressed=true]': {
-    opacity: 0.7
+    opacity: 0.7,
   },
   '&[data-hovered=true]': {
-    opacity: 0.7
-  }
+    opacity: 0.7,
+  },
 })
 
 const DownloadIconStyled = styled('img', {
   width: 44,
   height: 44,
   display: 'block',
-  flexShrink: 0
+  flexShrink: 0,
 })
 
 const DownloadInfoStyled = styled('div', {
@@ -60,7 +60,7 @@ const DownloadInfoStyled = styled('div', {
   flexDirection: 'column',
   flexWrap: 'nowrap',
   flexGrow: 1,
-  fontWeight: '600'
+  fontWeight: '600',
 })
 
 const NameStyled = styled('div', {
@@ -71,16 +71,16 @@ const NameStyled = styled('div', {
   textOverflow: 'ellipsis',
   '@smx': {
     '& span': {
-      fontSize: '14px'
-    }
+      fontSize: '14px',
+    },
   },
   variants: {
     isDisabled: {
       true: {
-        color: '$gray600'
-      }
-    }
-  }
+        color: '$gray600',
+      },
+    },
+  },
 })
 
 const DownloadTextStyled = styled('div', {
@@ -94,8 +94,8 @@ const DownloadTextStyled = styled('div', {
   fontSize: '14px',
   gap: '$2',
   '@smx': {
-    fontSize: '12px'
-  }
+    fontSize: '12px',
+  },
 })
 
 export const FileButton: FC<FileButtonProps> = forwardRef<HTMLDivElement, FileButtonProps>(({

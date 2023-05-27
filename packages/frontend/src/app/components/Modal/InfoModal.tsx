@@ -12,7 +12,7 @@ const InfoModalStyle = styled('div', {
   margin: '0 auto',
   fontSize: '12px',
   paddingTop: '16px',
-  paddingBottom: 'calc(1.25rem + 16px)'
+  paddingBottom: 'calc(1.25rem + 16px)',
 })
 
 type InfoModalProps = AppDialogProps<{
@@ -23,21 +23,22 @@ type InfoModalProps = AppDialogProps<{
 
 export function InfoModal({ open, onClose, header, body }: InfoModalProps): JSX.Element {
   const { adaptive } = useMediaMui()
+
   return (
-        <Modal
-            closeButton
-            aria-labelledby='modal-title'
-            open={open}
-            onClose={onClose}
-            width={adaptive({
-              sm: '400px',
-              md: '650px',
-              lg: '950px',
-              defaultValue: '950px'
-            })}
-        >
-            <ModalTitle>{header}</ModalTitle>
-            <InfoModalStyle>{body}</InfoModalStyle>
-        </Modal>
+    <Modal
+      closeButton
+      aria-labelledby='modal-title'
+      open={open}
+      width={adaptive({
+        sm: '400px',
+        md: '650px',
+        lg: '950px',
+        defaultValue: '950px',
+      })}
+      onClose={onClose}
+    >
+      <ModalTitle>{header}</ModalTitle>
+      <InfoModalStyle>{body}</InfoModalStyle>
+    </Modal>
   )
 }

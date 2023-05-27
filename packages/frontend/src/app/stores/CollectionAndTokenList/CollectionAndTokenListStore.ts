@@ -28,7 +28,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
     makeAutoObservable(this, {
-      errorStore: false
+      errorStore: false,
     })
   }
 
@@ -75,12 +75,12 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
       title: token.name ?? '—',
       user: {
         img: getProfileImageUrl(token.owner ?? ''),
-        username: reduceAddress(token.owner ?? '')
+        username: reduceAddress(token.owner ?? ''),
       },
       button: {
         text: 'Go to page',
-        link: `/collection/${token.collectionAddress}/${token.tokenId}`
-      }
+        link: `/collection/${token.collectionAddress}/${token.tokenId}`,
+      },
     }))
   }
 
@@ -94,7 +94,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
       .filter(collection => collection.owner && utils.getAddress(collection.owner) === utils.getAddress(this.address))
       .map(collection => ({
         title: collection.name ?? '',
-        id: collection.address ?? ''
+        id: collection.address ?? '',
       }))
   }
 }

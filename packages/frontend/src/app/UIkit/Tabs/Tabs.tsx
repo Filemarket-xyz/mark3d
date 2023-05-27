@@ -12,17 +12,17 @@ interface TabProps {
 }
 const TabWrapper = styled('div', {
   display: 'flex',
-  gap: '$1'
+  gap: '$1',
 })
 
 const TabName = styled('p', {
   ...textVariant('h5').true,
-  color: '$blue900'
+  color: '$blue900',
 })
 
 const Amount = styled('p', {
   ...textVariant('h5').true,
-  color: '$gray500'
+  color: '$gray500',
 })
 
 const TabContent = (props: TabProps) => (
@@ -42,11 +42,11 @@ const NavigateTab = (props: LinkTabProps) => {
 
   return (
     <LinkTab
+      icon={props.content}
       onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.preventDefault()
         navigate(props.href)
       }}
-      icon={props.content}
       {...props}
     />
   )
@@ -66,7 +66,7 @@ export default function Tabs(props: TabsProps) {
   useEffect(() => {
     const currentTabUrl = location?.pathname?.split('/')?.at(-1) ?? ''
     let tabIndex = props.tabs.findIndex((t) =>
-      t.url.match(new RegExp(currentTabUrl, 'i'))
+      t.url.match(new RegExp(currentTabUrl, 'i')),
     )
     if (tabIndex === -1) {
       tabIndex = 0
@@ -77,14 +77,15 @@ export default function Tabs(props: TabsProps) {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue)
   }
+
   return (
     <StyledTabs value={tab} onChange={handleChange}>
       {props.tabs.map((tab) => {
         return (
           <NavigateTab
+            key={tab.name}
             href={tab.url}
             content={<TabContent name={tab.name} amount={tab.amount} />}
-            key={tab.name}
           />
         )
       })}

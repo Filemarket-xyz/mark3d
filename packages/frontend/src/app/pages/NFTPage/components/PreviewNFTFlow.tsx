@@ -28,19 +28,19 @@ const CenterContainer = styled('div', {
   height: '100%',
   gap: '$3',
   flexDirection: 'column',
-  position: 'relative'
+  position: 'relative',
 })
 
 const ErrorMessage = styled('p', {
   ...textVariant('primary1'),
   fontWeight: 600,
-  color: '$black'
+  color: '$black',
 })
 
 const SwiperSlide = styled(SwiperSlideUnstyled, {
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
 })
 
 export const getFileExtension = (file: File) =>
@@ -50,7 +50,7 @@ enum PreviewState {
   LOADED,
   LOADING,
   LOADING_ERROR,
-  EXTENSION_ERROR
+  EXTENSION_ERROR,
 }
 
 interface PreviewNFTFlowProps {
@@ -71,8 +71,8 @@ const ImageStyle = styled('img', {
   '@sm': {
     maxWidth: 358,
     maxHeight: 358,
-    marginTop: '-10px'
-  }
+    marginTop: '-10px',
+  },
 })
 
 /** Component that implement logic for loading and showing 3D models  */
@@ -80,7 +80,7 @@ export const PreviewNFTFlow = ({
   getFile,
   imageURL,
   canViewFile,
-  hiddenFile
+  hiddenFile,
 }: PreviewNFTFlowProps) => {
   const [previewState, setPreviewState] = useState<{
     state: PreviewState
@@ -101,8 +101,8 @@ export const PreviewNFTFlow = ({
     img.onload = function() {
       setIsObjectFit(img.width > parseInt(adaptive({
         sm: '358',
-        defaultValue: '500'
-      }))
+        defaultValue: '500',
+      })),
       )
     }
     img.src = imageURL
@@ -141,7 +141,7 @@ export const PreviewNFTFlow = ({
     if (!getFile) return
 
     setPreviewState({
-      state: PreviewState.LOADING
+      state: PreviewState.LOADING,
     })
 
     let model: DecryptResult<File>
@@ -150,14 +150,14 @@ export const PreviewNFTFlow = ({
     } catch (error) {
       return setPreviewState({
         state: PreviewState.LOADING_ERROR,
-        data: `${error}`
+        data: `${error}`,
       })
     }
 
     if (!model.ok) {
       return setPreviewState({
         state: PreviewState.LOADING_ERROR,
-        data: `Unable to decrypt. ${model.error}`
+        data: `Unable to decrypt. ${model.error}`,
       })
     }
 
@@ -166,13 +166,13 @@ export const PreviewNFTFlow = ({
     fr.onload = (e) =>
       setPreviewState({
         state: PreviewState.LOADED,
-        data: String(e.target?.result ?? '')
+        data: String(e.target?.result ?? ''),
       })
 
     fr.onerror = () =>
       setPreviewState({
         state: PreviewState.LOADING_ERROR,
-        data: 'Unable to download, try again later'
+        data: 'Unable to download, try again later',
       })
 
     if (isCanView) {
@@ -180,7 +180,7 @@ export const PreviewNFTFlow = ({
     } else {
       setPreviewState({
         state: PreviewState.EXTENSION_ERROR,
-        data: 'Preview is not available'
+        data: 'Preview is not available',
       })
     }
   }
@@ -194,7 +194,7 @@ export const PreviewNFTFlow = ({
   useEffect(() => {
     if (isLoading) {
       setPreviewState({
-        state: PreviewState.LOADING
+        state: PreviewState.LOADING,
       })
     }
   }, [isLoading])
@@ -209,7 +209,7 @@ export const PreviewNFTFlow = ({
         pagination={{ clickable: true }}
         css={{
           '--swiper-navigation-color': 'var(--colors-gray300)',
-          '--swiper-navigation-size': '20px'
+          '--swiper-navigation-size': '20px',
         }}
       >
         <SwiperSlide>
@@ -224,8 +224,7 @@ export const PreviewNFTFlow = ({
                       shadow-intensity='1'
                       touch-action='pan-y'
                       style={{ width: '100%', height: '100%' }}
-                    >
-                    </model-viewer>
+                    />
                   )
                     : (
                       <ImageStyle
@@ -270,7 +269,16 @@ export const PreviewNFTFlow = ({
                 )}
               </>
             )}
-          {(isCanView && !isLoading) && <ViewFile isPreviewView={!isViewFile} type={typeFile} onClick={() => { setIsViewFile(value => !value); handleLoadClick() }} />}
+          {isCanView && !isLoading && (
+            <ViewFile
+              isPreviewView={!isViewFile}
+              type={typeFile}
+              onClick={() => {
+                setIsViewFile(value => !value)
+                handleLoadClick()
+              }}
+            />
+          )}
         </SwiperSlide>
       </SwiperStyled>
     </CenterContainer>

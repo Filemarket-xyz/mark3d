@@ -10,5 +10,6 @@ import { useStores } from './useStores'
 export function useTransferListStore(address?: string) {
   const { transferListStore } = useStores()
   useActivateDeactivateRequireParams(transferListStore, address)
+
   return transferListStore
 }

@@ -15,12 +15,12 @@ export const CardsContainer = styled('div', {
   gap: '$4',
   justifyContent: 'normal',
   '@md': {
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   '@sm': {
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
-  paddingBottom: '$3'
+  paddingBottom: '$3',
 })
 
 const NftSection = observer(() => {

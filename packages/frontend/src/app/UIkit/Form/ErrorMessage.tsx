@@ -1,9 +1,9 @@
 import { styled } from '../../../styles'
 
 export const errorMessageStyle = {
-  color: '$red'
+  color: '$red',
 }
 
 export const ErrorMessage = styled('div', {
-  ...errorMessageStyle
+  ...errorMessageStyle,
 })

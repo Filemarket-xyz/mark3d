@@ -1,7 +1,7 @@
 import React from 'react'
 
 import NamespaceCard, {
-  NamespaceCardProps
+  NamespaceCardProps,
 } from '../../components/MarketCard/NamespaceCard'
 import namespaceImg from './img/namespace.jpg'
 import userImg from './img/userImg.jpg'
@@ -13,8 +13,8 @@ const card: NamespaceCardProps = {
   title: 'Ultra mega super VR Glasses 6353526 asjsdjsj',
   user: {
     img: userImg,
-    username: 'UnderKong'
-  }
+    username: 'UnderKong',
+  },
 }
 const cards: NamespaceCardProps[] = []
 for (let i = 0; i < 30; i++) {

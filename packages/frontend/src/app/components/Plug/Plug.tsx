@@ -14,22 +14,22 @@ const PlugStyle = styled('div', {
   gap: '32px',
   margin: 'auto',
   '@md': {
-    width: '100%'
+    width: '100%',
   },
-  marginBottom: '32px'
+  marginBottom: '32px',
 })
 
 const Header = styled('h3', {
   ...textVariant('h3').true,
   fontWeight: '600',
-  textAlign: 'center'
+  textAlign: 'center',
 })
 
 const MainText = styled('h4', {
   ...textVariant('primary1').true,
   fontSize: '18px',
   textAlign: 'center',
-  fontWeight: '400'
+  fontWeight: '400',
 })
 
 const ButtonsContainer = styled('div', {
@@ -38,12 +38,12 @@ const ButtonsContainer = styled('div', {
   justifyContent: 'center',
   gap: '30px',
   '& button': {
-    width: '100%'
+    width: '100%',
   },
   '@sm': {
     flexDirection: 'column',
-    gap: '15px'
-  }
+    gap: '15px',
+  },
 })
 
 interface PlugProps {
@@ -55,8 +55,8 @@ interface PlugProps {
 const Plug: FC<PlugProps> = ({ header, mainText, buttonsBlock }) => {
   return (
     <PlugStyle>
-        <Header>{header}</Header>
-        <MainText>{mainText}</MainText>
+      <Header>{header}</Header>
+      <MainText>{mainText}</MainText>
       <ButtonsContainer>{buttonsBlock}</ButtonsContainer>
     </PlugStyle>
   )

@@ -8,5 +8,6 @@ export const chainError = (error: unknown) => {
     message = `${error}`
     stack = new Error().stack
   }
+
   return { message, stack }
 }

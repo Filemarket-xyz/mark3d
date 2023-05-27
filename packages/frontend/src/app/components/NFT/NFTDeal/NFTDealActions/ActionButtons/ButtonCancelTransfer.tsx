@@ -17,8 +17,9 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullI
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Transfer cancelled',
-    loadingMsg: 'Cancelling transfer'
+    loadingMsg: 'Cancelling transfer',
   })
+
   return (
     <>
       <MintModal {...modalProps} />

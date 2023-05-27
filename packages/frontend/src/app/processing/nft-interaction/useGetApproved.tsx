@@ -11,6 +11,6 @@ export function useGetApproved({ collectionAddress, tokenId }: Partial<TokenFull
     abi: mark3dConfig.collectionToken.abi,
     functionName: 'getApproved',
     args: [BigNumber.from(tokenId ?? 0)],
-    suspense: !tokenId
+    suspense: !tokenId,
   })
 }

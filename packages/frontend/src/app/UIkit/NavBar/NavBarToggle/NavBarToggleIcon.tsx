@@ -13,26 +13,26 @@ export const StyledNavBarToggleIconContainer = styled('div', {
     backgroundColor: '$white',
     transition: 'transform 0.3s ease',
     '&.top': {
-      transform: 'translateY(-4px) rotate(0deg)'
+      transform: 'translateY(-4px) rotate(0deg)',
     },
     '&.bottom': {
-      transform: 'translateY(4px) rotate(0deg)'
-    }
+      transform: 'translateY(4px) rotate(0deg)',
+    },
   },
   variants: {
     isExpanded: {
       true: {
         '& .line': {
           '&.top': {
-            transform: 'translateY(2px) rotate(45deg)'
+            transform: 'translateY(2px) rotate(45deg)',
           },
           '&.bottom': {
-            transform: 'translateY(0px) rotate(-45deg)'
-          }
-        }
-      }
-    }
-  }
+            transform: 'translateY(0px) rotate(-45deg)',
+          },
+        },
+      },
+    },
+  },
 })
 
 type NavbarToggleIconProps = ComponentProps<typeof StyledNavBarToggleIconContainer> & {
@@ -44,7 +44,7 @@ export const NavbarToggleIcon: React.FC<NavbarToggleIconProps> = (props) => {
 
   return (
     <StyledNavBarToggleIconContainer
-      aria-hidden={true}
+      aria-hidden
       isExpanded={isExpanded}
       tabIndex={-1}
       {...otherProps}

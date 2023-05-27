@@ -30,12 +30,12 @@ export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFull
     return callContract({ contract, method: 'reportFraud' },
       BigNumber.from(tokenId),
       bufferToEtherHex(privateKey),
-      { gasPrice: mark3dConfig.gasPrice }
+      { gasPrice: mark3dConfig.gasPrice },
     )
   }), [contract, signer, address, wrapPromise])
 
   return {
     ...statuses,
-    reportFraud
+    reportFraud,
   }
 }

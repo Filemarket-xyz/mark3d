@@ -19,8 +19,8 @@ const FileTypeStyle = styled('div', {
   zIndex: '9',
   '& img': {
     width: '16px',
-    height: '16px'
-  }
+    height: '16px',
+  },
 })
 
 interface FileTypeProps {
@@ -30,6 +30,7 @@ interface FileTypeProps {
 const FileType: FC<FileTypeProps> = ({ file }) => {
   const type: typeFiles | undefined = useMemo(() => {
     if (!file) return undefined
+
     return fileToType(file)
   }, [file])
 
@@ -39,15 +40,18 @@ const FileType: FC<FileTypeProps> = ({ file }) => {
 
   const extension: string | undefined = useMemo(() => {
     if (!file) return undefined
+
     return fileToExtension(file)
   }, [file])
 
   return (
     <>
-      {type && <FileTypeStyle>
-        <img src={img} />
-        <Txt primary1 style={{ fontSize: '12px' }}>{`.${extension}`}</Txt>
-      </FileTypeStyle>}
+      {type && (
+        <FileTypeStyle>
+          <img src={img} />
+          <Txt primary1 style={{ fontSize: '12px' }}>{`.${extension}`}</Txt>
+        </FileTypeStyle>
+      )}
     </>
   )
 }

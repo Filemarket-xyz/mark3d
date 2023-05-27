@@ -9,7 +9,7 @@ export class ErrorStore {
   constructor({ dialogStore }: { dialogStore: DialogStore }) {
     this.dialogStore = dialogStore
     makeAutoObservable(this, {
-      dialogStore: false
+      dialogStore: false,
     })
   }
 

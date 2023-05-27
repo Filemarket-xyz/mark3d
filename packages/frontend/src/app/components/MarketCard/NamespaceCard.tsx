@@ -12,7 +12,7 @@ import {
   PriceInfo,
   UserContainer,
   UserImg,
-  UserName
+  UserName,
 } from './NFTCard'
 
 export interface NamespaceCardProps {
@@ -36,7 +36,7 @@ export default function NamespaceCard(props: NamespaceCardProps) {
         <BasicCardSquareImg src={props.imageURL} />
         <CardControls
           css={{
-            height: 128
+            height: 128,
           }}
         >
           <CardTitle css={{ marginBottom: '$2' }} title={props.title}>

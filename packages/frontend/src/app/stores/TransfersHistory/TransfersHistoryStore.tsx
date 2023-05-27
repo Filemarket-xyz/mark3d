@@ -5,7 +5,7 @@ import { styled } from '../../../styles'
 import {
   OrderStatusInfo,
   TransfersResponseV2,
-  TransferWithData
+  TransferWithData,
 } from '../../../swagger/Api'
 import { ITableRow } from '../../components/Table/TableBuilder'
 import { api } from '../../config/api'
@@ -18,7 +18,7 @@ import {
   IStoreRequester,
   RequestContext,
   storeRequest,
-  storeReset
+  storeReset,
 } from '../../utils/store'
 import { formatCurrency } from '../../utils/web3/currency'
 import { ErrorStore } from '../Error/ErrorStore'
@@ -28,14 +28,14 @@ const getLatestStatusTimestamp = (statuses?: OrderStatusInfo[]) => {
 
   return statuses.reduce(
     (acc, value) => ((value.timestamp ?? 0) > acc ? value.timestamp ?? 0 : acc),
-    -Infinity
+    -Infinity,
   )
 }
 
 const PriceContainer = styled('div', {
   display: 'flex',
   alignItems: 'center',
-  gap: '$1'
+  gap: '$1',
 })
 
 const Price = styled('div')
@@ -43,7 +43,7 @@ const Price = styled('div')
 const EthImg = styled('img', {
   width: 8,
   height: 12,
-  objectFit: 'contain'
+  objectFit: 'contain',
 })
 
 const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
@@ -58,54 +58,52 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
           (transfer.order?.id ?? 0) === 0 ? eventOptions[0] : eventOptions[1],
         cellAttributes: {
           css: {
-            flexGrow: 0.5
-          }
-        }
+            flexGrow: 0.5,
+          },
+        },
       },
       {
         columnName: 'Object',
         value: (
           <Badge
+            small
+            wrapperProps={{ css: { padding: 0 } }}
             image={{
               borderRadius: 'roundedSquare',
-              url: getHttpLinkFromIpfsString(transfer.collection?.image ?? '')
+              url: getHttpLinkFromIpfsString(transfer.collection?.image ?? ''),
             }}
             content={{
               value: reduceAddress(transfer.collection?.owner ?? '—'),
-              title: transfer.collection?.name ?? '—'
+              title: transfer.collection?.name ?? '—',
             }}
-            small
-            wrapperProps={{ css: { padding: 0 } }}
           />
         ),
         cellAttributes: {
           css: {
-            flexGrow: 1.5
-          }
-        }
+            flexGrow: 1.5,
+          },
+        },
       },
       {
         columnName: 'From',
-        value: reduceAddress(transfer.transfer?.from ?? '—')
+        value: reduceAddress(transfer.transfer?.from ?? '—'),
       },
       {
         columnName: 'To',
-        value: reduceAddress(transfer.transfer?.to ?? '—')
+        value: reduceAddress(transfer.transfer?.to ?? '—'),
       },
       {
         columnName: 'Price',
         value: (
-          <>
-            <PriceContainer>
-              <Price>
-                {transfer.order?.price !== undefined
-                  ? formatCurrency(transfer.order.price)
-                  : '—'}
-              </Price>
-              <EthImg src={ethIcon} />
-            </PriceContainer>
-          </>
-        )
+          <PriceContainer>
+            <Price>
+              {transfer.order?.price !== undefined
+                ? formatCurrency(transfer.order.price)
+                : '—'}
+            </Price>
+            <EthImg src={ethIcon} />
+          </PriceContainer>
+        ),
       },
       {
         columnName: 'Date',
@@ -113,14 +111,14 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
           transfer.order?.statuses !== undefined &&
           transfer.order.statuses.length
             ? dayjs(getLatestStatusTimestamp(transfer.order?.statuses)).format(
-              'MMM D[,] YYYY [at] HH[:]mm'
+              'MMM D[,] YYYY [at] HH[:]mm',
             )
-            : '—'
-      }
+            : '—',
+      },
     ],
     additionalData: {
-      linkToPage: `/collection/${transfer.collection?.address}/${transfer.token?.tokenId}`
-    }
+      linkToPage: `/collection/${transfer.collection?.address}/${transfer.token?.tokenId}`,
+    },
   })
 }
 
@@ -140,7 +138,7 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
     makeAutoObservable(this, {
-      errorStore: false
+      errorStore: false,
     })
   }
 
@@ -150,7 +148,7 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
       api.v2.transfersHistoryDetail(profileAddress),
       (resp) => {
         this.data = resp
-      }
+      },
     )
   }
 
@@ -181,10 +179,10 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
     }
 
     const incomingRows = incoming.map<ITableRow>(
-      convertTransferToTableRows('incoming')
+      convertTransferToTableRows('incoming'),
     )
     const outgoingRows = outgoing.map<ITableRow>(
-      convertTransferToTableRows('outgoing')
+      convertTransferToTableRows('outgoing'),
     )
 
     return incomingRows.concat(outgoingRows)

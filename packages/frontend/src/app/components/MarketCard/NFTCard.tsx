@@ -19,7 +19,7 @@ export const CardControls = styled(BasicCardControls, {
   bottom: '-65px',
   paddingTop: '12px',
   border: '1px solid #E9E9EA',
-  borderRadius: '16px'
+  borderRadius: '16px',
 })
 
 export const CardTitle = styled('h5', {
@@ -29,25 +29,25 @@ export const CardTitle = styled('h5', {
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   color: '$gray500',
-  transitionDelay: '0.35s'
+  transitionDelay: '0.35s',
 })
 
 const generateHoverStylesForCard = () => {
   const hoverStyles: any = {}
   hoverStyles[`&:hover ${CardControls.selector}`] = {
     transform: 'translateY(-73px)',
-    transitionDelay: '0s'
+    transitionDelay: '0s',
   }
 
   hoverStyles[`&:hover ${CardTitle.selector}`] = {
     color: '$blue900',
-    transitionDelay: '0s'
+    transitionDelay: '0s',
   }
   hoverStyles['&:hover'] = {
     border: '2px solid transparent',
     background:
             'linear-gradient($white 0 0) padding-box, $gradients$main border-box',
-    transitionDelay: '0s'
+    transitionDelay: '0s',
   }
 
   return hoverStyles
@@ -55,7 +55,7 @@ const generateHoverStylesForCard = () => {
 
 export const CardCollection = styled('p', {
   ...textVariant('secondary3').true,
-  marginBottom: '$1'
+  marginBottom: '$1',
 })
 
 export const PriceInfo = styled('div', {
@@ -72,10 +72,10 @@ export const PriceInfo = styled('div', {
   variants: {
     noneOpacity: {
       true: {
-        opacity: 0
-      }
-    }
-  }
+        opacity: 0,
+      },
+    },
+  },
 })
 
 export const UserContainer = styled('div', {
@@ -83,18 +83,18 @@ export const UserContainer = styled('div', {
   alignItems: 'center',
   gap: '$1',
   color: '$gray500',
-  height: 20
+  height: 20,
 })
 
 export const UserImg = styled('img', {
   width: '20px',
   height: '20px',
-  borderRadius: '50%'
+  borderRadius: '50%',
 })
 
 export const UserName = styled('p', {
   ...textVariant('primary3').true,
-  lineHeight: '$body2'
+  lineHeight: '$body2',
 })
 
 export const Price = styled('span', {
@@ -104,16 +104,16 @@ export const Price = styled('span', {
   justifyContent: 'space-between',
   color: '$blue900',
   fontWeight: '600',
-  lineHeight: '$body2'
+  lineHeight: '$body2',
 })
 
 export const PriceUsd = styled('span', {
-  color: '$gray600'
+  color: '$gray600',
 })
 
 export const ButtonContainer = styled('div', {
   display: 'flex',
-  justifyContent: 'center'
+  justifyContent: 'center',
 })
 
 export interface NFTCardProps {
@@ -134,7 +134,7 @@ export interface NFTCardProps {
 }
 
 export const Card = styled(BasicCard, {
-  cursor: 'pointer'
+  cursor: 'pointer',
 })
 
 export const BorderLayout = styled('div', {
@@ -148,7 +148,7 @@ export const BorderLayout = styled('div', {
   paddingTop: '12px',
   border: '1px solid #E9E9EA',
   position: 'relative',
-  ...generateHoverStylesForCard()
+  ...generateHoverStylesForCard(),
 })
 
 export const NFTCard: React.FC<NFTCardProps> = ({
@@ -159,7 +159,7 @@ export const NFTCard: React.FC<NFTCardProps> = ({
   title,
   user,
   price,
-  priceUsd
+  priceUsd,
 }) => {
   const navigate = useNavigate()
   const { data: collectionAndNfts } = useCollectionTokenListStore(collection)
@@ -200,7 +200,7 @@ export const NFTCard: React.FC<NFTCardProps> = ({
                 textDecoration: 'none',
                 marginLeft: 'auto',
                 marginRight: 'auto',
-                width: '100%'
+                width: '100%',
               }}
             >
               <Txt primary3>{button.text}</Txt>

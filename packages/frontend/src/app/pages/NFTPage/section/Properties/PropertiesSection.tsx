@@ -10,14 +10,14 @@ const PropertiesStyle = styled('div', {
     width: '100%',
     display: 'flex',
     gap: '16px',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   '@lg': {
     overflowX: 'scroll',
     '& .overflow': {
-      width: 'max-content'
-    }
-  }
+      width: 'max-content',
+    },
+  },
 })
 
 interface PropertiesProps {

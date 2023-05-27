@@ -20,12 +20,12 @@ export function useFinalizeTransfer({ collectionAddress, tokenId }: Partial<Toke
 
     return callContract({ contract, method: 'finalizeTransfer' },
       BigNumber.from(tokenId),
-      { gasPrice: mark3dConfig.gasPrice }
+      { gasPrice: mark3dConfig.gasPrice },
     )
   }), [contract, signer, wrapPromise])
 
   return {
     ...statuses,
-    finalizeTransfer
+    finalizeTransfer,
   }
 }

@@ -10,13 +10,13 @@ const OurPartnersContainer = styled(PoweredByContainer, {
   paddingTB: '160px',
   display: 'flex',
   flexDirection: 'column',
-  gap: '48px'
+  gap: '48px',
 })
 
 const OurPartnersStyle = styled('div', {
   display: 'flex',
   gap: '16px',
-  flexWrap: 'wrap'
+  flexWrap: 'wrap',
 })
 
 const OurPartners = () => {
@@ -24,7 +24,14 @@ const OurPartners = () => {
     <OurPartnersContainer>
       <Txt h1 style={{ fontSize: '56px', lineHeight: '56px' } }>Our Partners</Txt>
       <OurPartnersStyle>
-        {OurPartnersOptions.map((item, index) => <CardPartner img={item.img} url={item.url} partners={true} key={index} />)}
+        {OurPartnersOptions.map((item, index) => (
+          <CardPartner
+            key={index}
+            partners
+            img={item.img}
+            url={item.url}
+          />
+        ))}
       </OurPartnersStyle>
     </OurPartnersContainer>
   )

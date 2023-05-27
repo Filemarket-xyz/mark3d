@@ -12,10 +12,10 @@ export const RowWrapper = styled('div', {
     open: {
       true: {
         borderBottomLeftRadius: '0',
-        borderBottomRightRadius: '0'
-      }
-    }
-  }
+        borderBottomRightRadius: '0',
+      },
+    },
+  },
 })
 
 export const RowBody = styled('div', {
@@ -26,6 +26,6 @@ export const RowBody = styled('div', {
   flex: '1 1 auto',
   gap: '$3',
   '@sm': {
-    paddingLR: '$3'
-  }
+    paddingLR: '$3',
+  },
 })

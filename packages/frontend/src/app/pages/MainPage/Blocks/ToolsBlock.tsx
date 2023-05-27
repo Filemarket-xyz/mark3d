@@ -13,11 +13,11 @@ export const BlockWrapper = styled('section', {
   marginRight: 'auto',
   paddingLR: '$3',
   '@md': {
-    paddingTop: '64px'
+    paddingTop: '64px',
   },
   '@sm': {
-    paddingTop: '40px'
-  }
+    paddingTop: '40px',
+  },
 })
 
 export const Subtitle = styled('h2', {
@@ -26,14 +26,14 @@ export const Subtitle = styled('h2', {
   fontWeight: '700',
   textAlign: 'center',
   '@sm': {
-    fontSize: '$h3'
-  }
+    fontSize: '$h3',
+  },
 })
 
 const ToolsContainer = styled('div', {
   display: 'flex',
   flexDirection: 'column',
-  gap: '48px'
+  gap: '48px',
 })
 
 const Tool = styled('div', {
@@ -42,13 +42,13 @@ const Tool = styled('div', {
   variants: {
     reversed: {
       true: {
-        flexDirection: 'row-reverse'
-      }
-    }
+        flexDirection: 'row-reverse',
+      },
+    },
   },
   '@sm': {
-    gap: '$3'
-  }
+    gap: '$3',
+  },
 })
 
 const ToolImgContainer = styled('div', {
@@ -64,12 +64,12 @@ const ToolImgContainer = styled('div', {
   '@md': {
     width: '140px',
     height: '140px',
-    borderRadius: '$4'
+    borderRadius: '$4',
   },
   '@sm': {
     width: '110px',
-    height: '110px'
-  }
+    height: '110px',
+  },
 })
 
 const ToolImg = styled('img')
@@ -80,8 +80,8 @@ const ToolBody = styled('div', {
   justifyContent: 'center',
   gap: '$3',
   '@sm': {
-    gap: '$2'
-  }
+    gap: '$2',
+  },
 })
 
 const ToolTitle = styled('h4', {
@@ -89,8 +89,8 @@ const ToolTitle = styled('h4', {
   fontSize: '$body1',
   fontWeight: '700',
   '@sm': {
-    fontSize: '$body2'
-  }
+    fontSize: '$body2',
+  },
 })
 
 const ToolDescription = styled('p', {
@@ -98,8 +98,8 @@ const ToolDescription = styled('p', {
   fontWeight: '400',
   fontSize: '$body2',
   '@sm': {
-    fontSize: '$body4'
-  }
+    fontSize: '$body4',
+  },
 })
 
 interface ITool {
@@ -113,26 +113,26 @@ const tools: ITool[] = [
     title: 'Explorer',
     imgURL: explorer,
     description:
-      'Explorer is an info service that provides the list of all existing and coming soon Metaverse Virtual spaces projects with characteristics'
+      'Explorer is an info service that provides the list of all existing and coming soon Metaverse Virtual spaces projects with characteristics',
   },
   {
     title: '3D Market',
     imgURL: market3d,
     description:
-      '3D Market is an NFT marketplace for any type of 3D models or virtual spaces. Mint, List, Sell your 3d creations or buy them from other artists'
+      '3D Market is an NFT marketplace for any type of 3D models or virtual spaces. Mint, List, Sell your 3d creations or buy them from other artists',
   },
   {
     title: 'Namespases',
     imgURL: namespaces,
     description:
-      'Namespases .3d is a decentralized domain name service. Your .3d domain will contain your links to all kinds of virtual spaces, that you own'
+      'Namespases .3d is a decentralized domain name service. Your .3d domain will contain your links to all kinds of virtual spaces, that you own',
   },
   {
     title: 'MetaEdem',
     imgURL: metaedem,
     description:
-      'MetaEdem is our own virtual space which is a 3D part of our website to give a touch and feel of Metaverse. Soon available in VR'
-  }
+      'MetaEdem is our own virtual space which is a 3D part of our website to give a touch and feel of Metaverse. Soon available in VR',
+  },
 ]
 
 export default function ToolsBlock() {
@@ -141,9 +141,9 @@ export default function ToolsBlock() {
       <Subtitle css={{ marginBottom: '48px' }}>Mark3d tools</Subtitle>
       <ToolsContainer>
         {tools.map((t, index) => (
-          <Tool reversed={index % 2 !== 0} key={t.title}>
+          <Tool key={t.title} reversed={index % 2 !== 0}>
             <ToolImgContainer>
-              <ToolImg src={t.imgURL}></ToolImg>
+              <ToolImg src={t.imgURL} />
             </ToolImgContainer>
             <ToolBody>
               <ToolTitle>{t.title}</ToolTitle>

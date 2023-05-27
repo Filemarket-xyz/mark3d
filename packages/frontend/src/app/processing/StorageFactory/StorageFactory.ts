@@ -18,6 +18,7 @@ export class StorageFactory implements IStorageFactory {
     await secureStorage.setSecurityProvider(securityProvider)
     this.storageProviders[account] = storageProvider
     this.secureStorages[account] = secureStorage
+
     return { storageProvider, secureStorage }
   }
 
@@ -33,6 +34,7 @@ export class StorageFactory implements IStorageFactory {
       job = this.createStorages(account)
       this.jobs[account] = job
     }
+
     return job
   }
 }

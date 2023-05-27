@@ -17,11 +17,11 @@ import { Params } from '../../utils/router/Params'
 const Background = styled('div', {
   background: '$gradients$background',
   width: '100%',
-  height: 352
+  height: 352,
 })
 
 const Profile = styled('div', {
-  paddingBottom: '$4'
+  paddingBottom: '$4',
 })
 
 const ProfileHeader = styled('div', {
@@ -33,8 +33,8 @@ const ProfileHeader = styled('div', {
   '@sm': {
     flexDirection: 'column',
     alignItems: 'center',
-    marginBottom: '$3'
-  }
+    marginBottom: '$3',
+  },
 })
 
 const ProfileImage = styled('img', {
@@ -43,7 +43,7 @@ const ProfileImage = styled('img', {
   borderRadius: '50%',
   border: '8px solid $white',
   background: '$white',
-  objectFit: 'fill'
+  objectFit: 'fill',
 })
 
 const ProfileName = styled('h2', {
@@ -51,12 +51,12 @@ const ProfileName = styled('h2', {
   color: '$blue900',
   paddingBottom: '$3',
   '@sm': {
-    fontSize: 'calc(5vw + 10px)'
-  }
+    fontSize: 'calc(5vw + 10px)',
+  },
 })
 
 const GrayOverlay = styled('div', {
-  backgroundColor: '$gray100'
+  backgroundColor: '$gray100',
 })
 
 const Inventory = styled(Container, {
@@ -64,14 +64,14 @@ const Inventory = styled(Container, {
   backgroundColor: '$white',
   borderRadius: '$6 $6 0 0',
   '@md': {
-    borderRadius: '$4 $4 0 0'
+    borderRadius: '$4 $4 0 0',
   },
   boxShadow: '$footer',
-  minHeight: 460 // prevent floating footer
+  minHeight: 460, // prevent floating footer
 })
 
 const TabsContainer = styled('div', {
-  marginBottom: '$4'
+  marginBottom: '$4',
 })
 
 const ProfilePage = observer(() => {
@@ -89,20 +89,20 @@ const ProfilePage = observer(() => {
       {
         name: 'Owned',
         url: 'owned',
-        amount: nfts.length
+        amount: nfts.length,
       },
       {
         name: 'History',
         url: 'history',
-        amount: table.length
-      }
+        amount: table.length,
+      },
     ]
 
     if (currentAddress === profileAddress) {
       tabs.push({
         amount: transferCards.length,
         url: 'transfers',
-        name: 'Transfers'
+        name: 'Transfers',
       })
     }
 
@@ -110,33 +110,31 @@ const ProfilePage = observer(() => {
   }, [nfts, table, transferCards])
 
   return (
-    <>
-      <GrayOverlay>
-        <Background />
+    <GrayOverlay>
+      <Background />
 
-        <Container>
-          <Profile>
-            <ProfileHeader>
-              <ProfileImage
-                src={getProfileImageUrl(profileAddress ?? '')}
-                onError={({ currentTarget }) => {
-                  currentTarget.onerror = null
-                  currentTarget.src = gradientPlaceholderImg
-                }}
-              />
-              <ProfileName>{reduceAddress(profileAddress ?? '')}</ProfileName>
-            </ProfileHeader>
-          </Profile>
-        </Container>
+      <Container>
+        <Profile>
+          <ProfileHeader>
+            <ProfileImage
+              src={getProfileImageUrl(profileAddress ?? '')}
+              onError={({ currentTarget }) => {
+                currentTarget.onerror = null
+                currentTarget.src = gradientPlaceholderImg
+              }}
+            />
+            <ProfileName>{reduceAddress(profileAddress ?? '')}</ProfileName>
+          </ProfileHeader>
+        </Profile>
+      </Container>
 
-        <Inventory>
-          <TabsContainer>
-            <Tabs tabs={tabs} />
-          </TabsContainer>
-          <Outlet />
-        </Inventory>
-      </GrayOverlay>
-    </>
+      <Inventory>
+        <TabsContainer>
+          <Tabs tabs={tabs} />
+        </TabsContainer>
+        <Outlet />
+      </Inventory>
+    </GrayOverlay>
   )
 })
 

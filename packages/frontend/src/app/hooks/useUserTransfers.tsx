@@ -10,5 +10,6 @@ import { useStores } from './useStores'
 export function useUserTransferStore(address?: string) {
   const { userTransferStore } = useStores()
   useActivateDeactivateRequireParams(userTransferStore, address)
+
   return userTransferStore
 }

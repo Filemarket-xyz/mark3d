@@ -6,14 +6,14 @@ import { wagmiClient } from '../../config/web3Modal'
 export class ContractProvider {
   constructor(
     private readonly provider: Provider,
-    private readonly config: typeof mark3dConfig
+    private readonly config: typeof mark3dConfig,
   ) {}
 
   getCollectionContract(address: string) {
     return getContract({
       address,
       abi: this.config.collectionToken.abi,
-      signerOrProvider: this.provider
+      signerOrProvider: this.provider,
     })
   }
 
@@ -21,7 +21,7 @@ export class ContractProvider {
     return getContract({
       address: this.config.accessToken.address,
       abi: this.config.accessToken.abi,
-      signerOrProvider: this.provider
+      signerOrProvider: this.provider,
     })
   }
 
@@ -29,7 +29,7 @@ export class ContractProvider {
     return getContract({
       address: this.config.exchangeToken.address,
       abi: this.config.exchangeToken.abi,
-      signerOrProvider: this.provider
+      signerOrProvider: this.provider,
     })
   }
 }

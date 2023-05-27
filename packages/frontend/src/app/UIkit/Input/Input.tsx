@@ -17,7 +17,7 @@ const InputStyle = styled('div', {
     border: '2px solid $white50',
     borderRadius: '6px',
     textAlign: 'center',
-    color: '$white100'
+    color: '$white100',
   },
 
   '& input::-webkit-input-placeholder': {
@@ -27,16 +27,16 @@ const InputStyle = styled('div', {
     lineHeight: '16px',
     color: '$white75',
     textShadow: '0px 2px 4px rgba(112, 112, 112, 0.25)',
-    textAlign: 'left'
+    textAlign: 'left',
   },
 
   '& .errorInput': {
-    border: '2px solid $red'
+    border: '2px solid $red',
   },
 
   '& .errorMessage': {
-    color: '$red'
-  }
+    color: '$red',
+  },
 })
 
 export const Input = (props: AriaTextFieldOptions<'input'>) => {
@@ -44,21 +44,22 @@ export const Input = (props: AriaTextFieldOptions<'input'>) => {
   const ref = React.useRef<HTMLInputElement>(null)
   const { labelProps, inputProps, descriptionProps, errorMessageProps } =
         useTextField(props, ref)
+
   return (
-        <InputStyle>
-            <label {...labelProps}>{label}</label>
-            <input {...inputProps} ref={ref} className={`${inputProps['aria-invalid'] ? 'errorInput' : ''}`} />
-            {props.description && (
-                <div {...descriptionProps}>
-                    {props.description}
-                </div>
-            )}
-            {props.errorMessage &&
+    <InputStyle>
+      <label {...labelProps}>{label}</label>
+      <input {...inputProps} ref={ref} className={`${inputProps['aria-invalid'] ? 'errorInput' : ''}`} />
+      {props.description && (
+        <div {...descriptionProps}>
+          {props.description}
+        </div>
+      )}
+      {props.errorMessage &&
                 (
-                    <div {...errorMessageProps} className={'errorMessage'}>
-                        {props.errorMessage}
-                    </div>
+                  <div {...errorMessageProps} className={'errorMessage'}>
+                    {props.errorMessage}
+                  </div>
                 )}
-        </InputStyle>
+    </InputStyle>
   )
 }

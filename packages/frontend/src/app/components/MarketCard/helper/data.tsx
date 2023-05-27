@@ -17,7 +17,7 @@ export const typeOptions: Record<typeFiles, string[]> = {
   music: ['.mp3', '.wav', '.aac', '.wma', '.flac', '.m4a', '.ogg', '.ape', '.alac'],
   picture: ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tif', '.tiff', '.psd', '.ai', '.eps'],
   rar: ['.zip', '.rar', '.7z', '.tar', '.gz', '.tgz', '.bz2', '.xz'],
-  video: ['.mp4', '.avi', '.mov', '.mkv', '.wmv', '.flv', '.mpeg', '.mpg', '.3gp', '.webm']
+  video: ['.mp4', '.avi', '.mov', '.mkv', '.wmv', '.flv', '.mpeg', '.mpg', '.3gp', '.webm'],
 }
 
 export const typeImg: Record<typeFiles, string> = {
@@ -28,5 +28,5 @@ export const typeImg: Record<typeFiles, string> = {
   music: MusicImg,
   picture: PictureImg,
   rar: RarImg,
-  video: VideoImg
+  video: VideoImg,
 }

@@ -6,7 +6,7 @@ import {
   ITableColumn,
   ITableRowCell,
   ITransformedRow,
-  TableBuilder
+  TableBuilder,
 } from '../../../components/Table/TableBuilder'
 import { HeadItem } from '../../ExplorerPage/components/Table/Table'
 import { ItemShareButton, RowCellStyled } from './HistorySection'
@@ -19,19 +19,20 @@ export class HistoryTableBuilder extends TableBuilder implements ITableBuilder {
   private renderRow(rowIndex: number, row: ITransformedRow) {
     return (
       <RowWrapper
+        key={rowIndex}
         css={{
           alignItems: 'center',
           boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)',
           height: 56,
           maxHeight: 56,
-          minHeight: 56
+          minHeight: 56,
         }}
-        key={rowIndex}
       >
         <RowBody css={{ height: '100%' }}>
           {this.table.columns.map((column) => {
             const cell = row.row.get(column.name)
             if (!cell) return null
+
             return (
               <RowCellStyled
                 hide={column.hide || undefined}
@@ -45,7 +46,7 @@ export class HistoryTableBuilder extends TableBuilder implements ITableBuilder {
             )
           })}
         </RowBody>
-        <ItemShareButton to={row.additionalData.linkToPage}></ItemShareButton>
+        <ItemShareButton to={row.additionalData.linkToPage} />
       </RowWrapper>
     )
   }

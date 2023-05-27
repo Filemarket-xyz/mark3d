@@ -11,14 +11,14 @@ export const ModalTitle = styled('h3', {
   color: '$blue900',
   fontWeight: 600,
   textAlign: 'center',
-  paddingTop: '$3'
+  paddingTop: '$3',
 })
 
 const ModalP = styled('p', {
   ...textVariant('primary1'),
   color: '$gray500',
   textAlign: 'center',
-  paddingTop: '$2'
+  paddingTop: '$2',
 })
 
 interface InProcessBodyProps {
@@ -58,7 +58,7 @@ export interface SuccessOkBodyProps {
 }
 
 const Center = styled('div', {
-  dflex: 'center'
+  dflex: 'center',
 })
 
 export const SuccessOkBody: FC<SuccessOkBodyProps> = ({ description, handleClose }) => (
@@ -82,11 +82,13 @@ export const extractMessageFromError = (error: any) => {
     if (!errorPartToShow) return UNKNOWN_ERROR
     try {
       const errorObject = JSON.parse(errorPartToShow)
+
       return errorObject.message ?? stringifyError(error)
     } catch {
       return errorPartToShow
     }
   }
+
   return stringifyError(error)
 }
 
@@ -100,8 +102,7 @@ export const ErrorBody = ({ message }: { message: string }) => (
 interface MintModalProps {
   open: boolean
   handleClose: () => void
-  body: ReactNode
-  header?: ReactNode
+  body?: ReactNode
   footer?: ReactNode
 }
 
@@ -109,7 +110,7 @@ export default function MintModal({
   handleClose,
   open,
   body,
-  footer
+  footer,
 }: MintModalProps) {
   return (
     <Modal
@@ -118,7 +119,7 @@ export default function MintModal({
       open={open}
       onClose={handleClose}
     >
-      <Modal.Body>{body}</Modal.Body>
+      {body && <Modal.Body>{body}</Modal.Body>}
       <Modal.Footer>{footer}</Modal.Footer>
     </Modal>
   )

@@ -16,8 +16,8 @@ export default function useWatchFileWalletConnect(): void {
     dialogStore.openDialog({
       component: ConnectFileWalletDialog,
       props: {
-        name: 'ConnectMain'
-      }
+        name: 'ConnectMain',
+      },
     }).onClose(() => setCheckHasSeed(true))
   }, [dialogStore, setCheckHasSeed])
 
@@ -35,6 +35,7 @@ export default function useWatchFileWalletConnect(): void {
 
   useEffect(() => {
     console.log('init watch file wallet connect')
+
     return () => {
       console.log('destroy watch file wallet connect')
     }

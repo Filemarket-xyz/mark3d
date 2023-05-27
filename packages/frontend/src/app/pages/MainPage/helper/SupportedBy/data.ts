@@ -7,22 +7,22 @@ import item6 from '../../img/SupportedBy/item6.svg'
 export const supportedByData: Array<{ src: string, url: string }> = [
   {
     src: item1,
-    url: 'https://protocol.ai/'
+    url: 'https://protocol.ai/',
   },
   {
     src: item2,
-    url: 'https://filecoin.io/'
+    url: 'https://filecoin.io/',
   },
   {
     src: item3,
-    url: 'https://fvm.filecoin.io/'
+    url: 'https://fvm.filecoin.io/',
   },
   {
     src: item5,
-    url: 'https://horadrim.capital/'
+    url: 'https://horadrim.capital/',
   },
   {
     src: item6,
-    url: 'https://cointelegraph.com/'
-  }
+    url: 'https://cointelegraph.com/',
+  },
 ]

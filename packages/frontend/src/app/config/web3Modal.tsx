@@ -15,14 +15,14 @@ if (!projectId) {
 }
 
 const { provider, webSocketProvider } = configureChains(chains, [
-  w3mProvider({ projectId })
+  w3mProvider({ projectId }),
 ])
 
 export const wagmiClient = createClient({
   autoConnect: true,
   connectors: w3mConnectors({ projectId, version: 1, chains }),
   provider,
-  webSocketProvider
+  webSocketProvider,
 })
 
 const ethereumClient = new EthereumClient(wagmiClient, chains)
@@ -32,10 +32,10 @@ export const Web3ModalConfigured: FC = () => (
   <Web3Modal
     projectId={projectId}
     themeMode="light"
+    ethereumClient={ethereumClient}
     themeVariables={{
       '--w3m-font-family': theme.fonts.primary.value,
-      '--w3m-accent-color': theme.colors.blue500.value
+      '--w3m-accent-color': theme.colors.blue500.value,
     }}
-    ethereumClient={ethereumClient}
   />
 )

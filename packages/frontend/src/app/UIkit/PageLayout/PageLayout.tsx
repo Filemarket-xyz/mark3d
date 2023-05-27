@@ -9,8 +9,8 @@ export const PageLayout = styled(Container, {
   variants: {
     nonePaddingTop: {
       true: {
-        paddingTop: 0
-      }
-    }
-  }
+        paddingTop: 0,
+      },
+    },
+  },
 })

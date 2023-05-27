@@ -32,7 +32,7 @@ export const transferPermissions = {
         [
           TransferStatus.Created,
           TransferStatus.PublicKeySet,
-          TransferStatus.PasswordSet
+          TransferStatus.PasswordSet,
         ].includes(status)
       )
     },
@@ -41,7 +41,7 @@ export const transferPermissions = {
 
       return status === TransferStatus.Drafted &&
         transfer?.orderId !== undefined && transfer?.orderId !== null
-    }
+    },
   },
   buyer: {
     canCompleteDraft: (transfer?: Transfer) => {
@@ -88,6 +88,6 @@ export const transferPermissions = {
       console.log(statusInfo)
 
       return statusInfo?.status === TransferStatus.PublicKeySet
-    }
-  }
+    },
+  },
 }
