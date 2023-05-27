@@ -68,20 +68,19 @@ export const globalStyles = globalCss({
     overflow: 'overlay',
   },
   '*::-webkit-scrollbar, html *::-webkit-scrollbar': {
-    width: '5px',
+    width: '12px',
     height: '4px',
   },
   '*::-webkit-scrollbar-track, html *::-webkit-scrollbar-track': {
     background: 'none',
-    boxShadow: 'inset 0 0 5px 5px #80C8FF',
-    border: 'solid 3px transparent',
+    boxShadow: 'inset 0 0 5px 5px #0090FF',
+    border: 'solid 7px transparent',
   },
 
   '*::-webkit-scrollbar-thumb, html *::-webkit-scrollbar-thumb': {
-    background: '#80C8FF',
-    borderRadius: '5px',
-    boxShadow: 'inset 0 0 5px 5px #80C8FF',
-    border: 'solid 3px transparent',
+    background: '#0090FF',
+    borderRadius: '8px',
+    border: 'solid 1px rgba(255, 255, 255, 0.5)',
   },
 
   '#root': {
