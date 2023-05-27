@@ -107,27 +107,20 @@ func (p *postgres) GetCollectionTokensTotal(
 	ctx context.Context,
 	tx pgx.Tx,
 	collectionAddress common.Address,
-	lastTokenId *big.Int,
 ) (uint64, error) {
 	// language=PostgreSQL
 	query := `
 		SELECT COUNT(*) as total
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
-		WHERE t.collection_address=$1 AND t.token_id > $2
+		WHERE t.collection_address=$1
 	`
 	var total uint64
-	lastTokenIdStr := ""
-	if lastTokenId != nil && lastTokenId.Cmp(big.NewInt(0)) != 0 {
-		lastTokenIdStr = lastTokenId.String()
-	}
-
-	if err := tx.QueryRow(ctx, query,
-		strings.ToLower(collectionAddress.String()),
-		lastTokenIdStr,
-	).Scan(&total); err != nil {
+	row := tx.QueryRow(ctx, query, strings.ToLower(collectionAddress.String()))
+	if err := row.Scan(&total); err != nil {
 		return 0, err
 	}
+
 	return total, nil
 }
 
@@ -232,33 +225,20 @@ func (p *postgres) GetTokensByAddressTotal(
 	ctx context.Context,
 	tx pgx.Tx,
 	ownerAddress common.Address,
-	lastCollectionAddress *common.Address,
-	lastTokenId *big.Int,
 ) (uint64, error) {
 	// language=PostgreSQL
 	query := `
 		SELECT COUNT(*) AS total
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
-		WHERE t.owner=$1 AND (t.collection_address, t.token_id) > ($2, $3)
+		WHERE t.owner=$1
 	`
-	lastCollectionAddressStr := ""
-	if lastCollectionAddress != nil {
-		lastCollectionAddressStr = strings.ToLower(lastCollectionAddress.String())
-	}
-	lastTokenIdStr := ""
-	if lastTokenId != nil && lastTokenId.Cmp(big.NewInt(0)) != 0 {
-		lastTokenIdStr = lastTokenId.String()
-	}
-
 	var total uint64
-	if err := tx.QueryRow(ctx, query,
-		strings.ToLower(ownerAddress.String()),
-		lastCollectionAddressStr,
-		lastTokenIdStr,
-	).Scan(&total); err != nil {
+	row := tx.QueryRow(ctx, query, strings.ToLower(ownerAddress.String()))
+	if err := row.Scan(&total); err != nil {
 		return 0, err
 	}
+
 	return total, nil
 }
 

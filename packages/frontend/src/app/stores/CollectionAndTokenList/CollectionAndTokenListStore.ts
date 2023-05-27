@@ -49,7 +49,6 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
     storeRequest(
       this,
       api.tokens.tokensDetail(this.address, {
-        // collections?
         tokenLimit: 20,
       }),
       data => this.setData(data),
@@ -86,6 +85,12 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
 
   reload(): void {
     this.request()
+  }
+
+  get hasMoreData() {
+    const { tokens = [], tokensTotal = 0 } = this.data
+
+    return tokens.length < tokensTotal
   }
 
   get nftCards(): NFTCardProps[] {

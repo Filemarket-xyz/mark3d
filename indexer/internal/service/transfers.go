@@ -30,7 +30,7 @@ func (s *service) GetTransfers(
 		log.Println("get active incoming transfers failed: ", err)
 		return nil, internalError
 	}
-	incomingTotal, err := s.repository.GetActiveIncomingTransfersByAddressTotal(ctx, tx, address, lastIncomingTransferId)
+	incomingTotal, err := s.repository.GetActiveIncomingTransfersByAddressTotal(ctx, tx, address)
 	if err != nil {
 		log.Println("get active incoming transfers total failed: ", err)
 		return nil, internalError
@@ -40,7 +40,7 @@ func (s *service) GetTransfers(
 		log.Println("get active outgoing transfers failed: ", err)
 		return nil, internalError
 	}
-	outgoingTotal, err := s.repository.GetActiveOutgoingTransfersByAddressTotal(ctx, tx, address, lastOutgoingTransferId)
+	outgoingTotal, err := s.repository.GetActiveOutgoingTransfersByAddressTotal(ctx, tx, address)
 	if err != nil {
 		log.Println("get active outgoing transfers total failed: ", err)
 		return nil, internalError
@@ -73,7 +73,7 @@ func (s *service) GetTransfersHistory(
 		log.Println("get incoming transfers failed: ", err)
 		return nil, internalError
 	}
-	incomingTotal, err := s.repository.GetIncomingTransfersByAddressTotal(ctx, tx, address, lastIncomingTransferId)
+	incomingTotal, err := s.repository.GetIncomingTransfersByAddressTotal(ctx, tx, address)
 	if err != nil {
 		log.Println("get incoming transfers failed: ", err)
 		return nil, internalError
@@ -83,7 +83,7 @@ func (s *service) GetTransfersHistory(
 		log.Println("get outgoing transfers failed: ", err)
 		return nil, internalError
 	}
-	outgoingTotal, err := s.repository.GetOutgoingTransfersByAddressTotal(ctx, tx, address, lastOutgoingTransferId)
+	outgoingTotal, err := s.repository.GetOutgoingTransfersByAddressTotal(ctx, tx, address)
 	if err != nil {
 		log.Println("get outgoing transfers failed: ", err)
 		return nil, internalError
@@ -133,7 +133,7 @@ func (s *service) GetTransfersV2(
 		log.Println("get active incoming transfers failed: ", err)
 		return nil, internalError
 	}
-	incomingTotal, err := s.repository.GetActiveIncomingTransfersByAddressTotal(ctx, tx, address, lastIncomingTransferId)
+	incomingTotal, err := s.repository.GetActiveIncomingTransfersByAddressTotal(ctx, tx, address)
 	if err != nil {
 		log.Println("get active incoming transfers total failed: ", err)
 		return nil, internalError
@@ -143,7 +143,7 @@ func (s *service) GetTransfersV2(
 		log.Println("get active outgoing transfers failed: ", err)
 		return nil, internalError
 	}
-	outgoingTotal, err := s.repository.GetActiveOutgoingTransfersByAddressTotal(ctx, tx, address, lastOutgoingTransferId)
+	outgoingTotal, err := s.repository.GetActiveOutgoingTransfersByAddressTotal(ctx, tx, address)
 	if err != nil {
 		log.Println("get active outgoing transfers total failed: ", err)
 		return nil, internalError
@@ -222,7 +222,7 @@ func (s *service) GetTransfersHistoryV2(
 		log.Println("get incoming transfers failed: ", err)
 		return nil, internalError
 	}
-	incomingTotal, err := s.repository.GetIncomingTransfersByAddressTotal(ctx, tx, address, lastIncomingTransferId)
+	incomingTotal, err := s.repository.GetIncomingTransfersByAddressTotal(ctx, tx, address)
 	if err != nil {
 		log.Println("get incoming transfers failed: ", err)
 		return nil, internalError
@@ -232,7 +232,7 @@ func (s *service) GetTransfersHistoryV2(
 		log.Println("get outgoing transfers failed: ", err)
 		return nil, internalError
 	}
-	outgoingTotal, err := s.repository.GetOutgoingTransfersByAddressTotal(ctx, tx, address, lastOutgoingTransferId)
+	outgoingTotal, err := s.repository.GetOutgoingTransfersByAddressTotal(ctx, tx, address)
 	if err != nil {
 		log.Println("get outgoing transfers failed: ", err)
 		return nil, internalError
