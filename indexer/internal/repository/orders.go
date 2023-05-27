@@ -69,9 +69,19 @@ func (p *postgres) GetAllActiveOrders(
 	for rows.Next() {
 		var price string
 		o := &domain.Order{}
-		if err := rows.Scan(&o.Id, &o.TransferId, &price); err != nil {
+		o.Statuses = make([]*domain.OrderStatus, 1)
+
+		if err := rows.Scan(
+			&o.Id,
+			&o.TransferId,
+			&price,
+			&o.Statuses[0].Timestamp,
+			&o.Statuses[0].Status,
+			&o.Statuses[0].TxId,
+		); err != nil {
 			return nil, err
 		}
+
 		var ok bool
 		o.Price, ok = big.NewInt(0).SetString(price, 10)
 		if !ok {
@@ -80,13 +90,7 @@ func (p *postgres) GetAllActiveOrders(
 
 		res, ids = append(res, o), append(ids, o.Id)
 	}
-	statuses, err := p.getOrderStatuses(ctx, tx, ids)
-	if err != nil {
-		return nil, err
-	}
-	for _, t := range res {
-		t.Statuses = statuses[t.Id]
-	}
+
 	return res, nil
 }
 
