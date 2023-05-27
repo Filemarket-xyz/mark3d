@@ -36,13 +36,10 @@ export const TransferCard: React.FC<TransferCardProps> = ({
       collectionName={collectionName}
       button={{ to: button.link, text: button.text }}
     >
+      <NftCardUserInfo img={user.img} address={user.address} />
       <NftCardInfoRow>
-        <NftCardUserInfo img={user.img} address={user.address} />
+        <StyledTxtName primary2>{status}</StyledTxtName>
         {price && <StyledTxtValue primary2>{price}</StyledTxtValue>}
-      </NftCardInfoRow>
-      <NftCardInfoRow>
-        <StyledTxtName primary3>Status</StyledTxtName>
-        <StyledTxtValue primary1>{status}</StyledTxtValue>
       </NftCardInfoRow>
     </NftCardBase>
   )

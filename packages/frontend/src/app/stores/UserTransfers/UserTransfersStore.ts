@@ -19,7 +19,7 @@ import { ErrorStore } from '../Error/ErrorStore'
 
 const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
   const eventOptions =
-    target === 'incoming' ? ['Receive', 'Buy'] : ['Send', 'Sale']
+    target === 'incoming' ? ['Receiving', 'Buying'] : ['Sending', 'Selling']
 
   return (transfer: TransferWithData): TransferCardProps => ({
     status: transfer.order?.id === 0 ? eventOptions[0] : eventOptions[1],
