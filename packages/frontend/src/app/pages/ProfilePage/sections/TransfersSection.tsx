@@ -24,8 +24,7 @@ const TransfersSection: React.FC = observer(() => {
   return (
     <>
       <InfiniteScroll
-      // TODO: update
-        hasMore={false}
+        hasMore={!!userTransferStore.data.incomingTotal || !!userTransferStore.data.outgoingTotal}
         fetchMore={() => userTransferStore.requestMore()}
         isLoading={userTransferStore.isLoading}
         currentItemCount={userTransferStore.transferCards.length}

@@ -27,8 +27,7 @@ export const HistorySection: React.FC = observer(() => {
   return (
     <>
       <InfiniteScroll
-        // TODO: update
-        hasMore={false}
+        hasMore={!!transferHistoryStore.data.incomingTotal || !!transferHistoryStore.data.outgoingTotal}
         fetchMore={() => transferHistoryStore.requestMore()}
         isLoading={transferHistoryStore.isLoading}
         currentItemCount={transferHistoryStore.tableRows.length}

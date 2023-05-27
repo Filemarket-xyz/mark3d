@@ -29,8 +29,7 @@ export const OwnedSection: React.FC = observer(() => {
   return (
     <>
       <InfiniteScroll
-        // TODO: update
-        hasMore={false}
+        hasMore={!!collectionAndTokenListStore.data.tokensTotal}
         fetchMore={() => collectionAndTokenListStore.requestMoreTokens()}
         isLoading={collectionAndTokenListStore.isLoading}
         currentItemCount={collectionAndTokenListStore.nftCards.length}

@@ -20,8 +20,7 @@ const NftSection: React.FC = observer(() => {
   return (
     <>
       <InfiniteScroll
-        // TODO: update
-        hasMore={false}
+        hasMore={!!openOrderListStore.data.total}
         isLoading={openOrderListStore.isLoading}
         currentItemCount={openOrderListStore.nftCards.length}
         fetchMore={() => openOrderListStore.requestMore()}
