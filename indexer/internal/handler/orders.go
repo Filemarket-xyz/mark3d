@@ -59,7 +59,7 @@ func (h *handler) handleGetAllActiveOrders(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	limit, err := parseLimitParam(r, "limit", 10, 100)
+	limit, err := parseLimitParam(r, "limit", 10000, 10000)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return

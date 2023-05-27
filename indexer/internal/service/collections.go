@@ -51,11 +51,17 @@ func (s *service) GetCollectionWithTokens(
 	}
 	tokens, err := s.repository.GetCollectionTokens(ctx, tx, address, lastTokenId, limit)
 	if err != nil {
-		log.Println("get collection token failed: ", err)
+		log.Println("get collection tokens failed: ", err)
+		return nil, internalError
+	}
+	total, err := s.repository.GetCollectionTokensTotal(ctx, tx, address, lastTokenId)
+	if err != nil {
+		log.Println("get collection tokens total failed: ", err)
 		return nil, internalError
 	}
 	return &models.CollectionData{
 		Collection: domain.CollectionToModel(collection),
 		Tokens:     domain.MapSlice(tokens, domain.TokenToModel),
+		Total:      total,
 	}, nil
 }

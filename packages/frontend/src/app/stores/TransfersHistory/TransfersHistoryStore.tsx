@@ -20,6 +20,7 @@ import {
   storeRequest,
   storeReset,
 } from '../../utils/store'
+import { lastItem } from '../../utils/structs'
 import { formatCurrency } from '../../utils/web3/currency'
 import { ErrorStore } from '../Error/ErrorStore'
 
@@ -99,7 +100,8 @@ const convertTransferToTableRows = (target: 'incoming' | 'outgoing') => {
             <Price>
               {transfer.order?.price !== undefined
                 ? formatCurrency(transfer.order.price)
-                : '—'}
+                : '—'
+              }
             </Price>
             <EthImg src={ethIcon} />
           </PriceContainer>
@@ -142,20 +144,46 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
     })
   }
 
-  private request(profileAddress: string) {
-    storeRequest<TransfersResponseV2>(
+  setData(data: TransfersResponseV2) {
+    this.data = data
+  }
+
+  addData(data: TransfersResponseV2) {
+    this.data.incoming?.push(...(data.incoming ?? []))
+    this.data.incomingTotal = data.incomingTotal
+
+    this.data.outgoing?.push(...(data.outgoing ?? []))
+    this.data.outgoingTotal = data.outgoingTotal
+  }
+
+  private request() {
+    storeRequest(
       this,
-      api.v2.transfersHistoryDetail(profileAddress),
-      (resp) => {
-        this.data = resp
-      },
+      api.v2.transfersHistoryDetail(this.collectionAddress, { outgoingLimit: 10, incomingLimit: 10 }),
+      (data) => this.setData(data),
+    )
+  }
+
+  requestMore() {
+    const lastIncomingTransferId = lastItem(this.data.incoming ?? [])?.transfer?.id
+    const lastOutgoingTransferId = lastItem(this.data.outgoing ?? [])?.transfer?.id
+
+    storeRequest(
+      this,
+      api.v2.transfersHistoryDetail(this.collectionAddress, {
+        lastIncomingTransferId,
+        lastOutgoingTransferId,
+        outgoingLimit: 10,
+        incomingLimit: 10,
+      }),
+      (data) => this.addData(data),
     )
   }
 
   activate(collectionAddress: string): void {
     this.isActivated = true
     this.collectionAddress = collectionAddress
-    this.request(collectionAddress)
+    this.request()
   }
 
   deactivate(): void {
@@ -168,7 +196,7 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
   }
 
   reload(): void {
-    this.request(this.collectionAddress)
+    this.request()
   }
 
   get tableRows(): ITableRow[] {

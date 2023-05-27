@@ -4,12 +4,11 @@ import { Outlet, useLocation, useParams } from 'react-router'
 import { styled } from '../../../styles'
 import { mark3dConfig } from '../../config/mark3d'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
-import { Badge, Container, gradientPlaceholderImg, Link, NavLink, textVariant } from '../../UIkit'
-import Tabs from '../../UIkit/Tabs/Tabs'
+import { Badge, Container, gradientPlaceholderImg, Link, NavLink, Tabs, textVariant } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { Params } from '../../utils/router/Params'
+import { Params } from '../../utils/router'
 
 const Background = styled('div', {
   background: '$gradients$background',

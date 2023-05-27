@@ -22,7 +22,7 @@ func (p *postgres) GetAllActiveOrders(
 ) ([]*domain.Order, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT o.id, o.transfer_id, o.price 
+		SELECT o.id, o.transfer_id, o.price
 		FROM orders AS o 
     	JOIN transfers t on o.transfer_id = t.id 
 		WHERE NOT (
@@ -41,6 +41,9 @@ func (p *postgres) GetAllActiveOrders(
 	var lastOrderIdParam int64 = math.MaxInt64
 	if lastOrderId != nil {
 		lastOrderIdParam = *lastOrderId
+	}
+	if limit == 0 {
+		limit = 10000
 	}
 
 	rows, err := tx.Query(ctx, query, lastOrderIdParam, limit)
@@ -74,6 +77,41 @@ func (p *postgres) GetAllActiveOrders(
 		t.Statuses = statuses[t.Id]
 	}
 	return res, nil
+}
+
+func (p *postgres) GetAllActiveOrdersTotal(
+	ctx context.Context,
+	tx pgx.Tx,
+	lastOrderId *int64,
+) (uint64, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT COUNT(*) AS total
+		FROM orders AS o 
+    	JOIN transfers t on o.transfer_id = t.id 
+		WHERE NOT (
+				SELECT ts.status 
+		        FROM transfer_statuses AS ts 
+		        WHERE ts.transfer_id=t.id AND ts.timestamp=(
+                		SELECT MAX(ts2.timestamp) 
+                		FROM transfer_statuses AS ts2 
+                		WHERE ts2.transfer_id=t.id
+                )
+		)= ANY('{Finished,Cancelled}') AND o.id < $1
+	`
+
+	var lastOrderIdParam int64 = math.MaxInt64
+	if lastOrderId != nil {
+		lastOrderIdParam = *lastOrderId
+	}
+
+	var total uint64
+	if err := tx.QueryRow(ctx, query,
+		lastOrderIdParam,
+	).Scan(&total); err != nil {
+		return 0, err
+	}
+	return total, nil
 }
 
 func (p *postgres) GetIncomingOrdersByAddress(

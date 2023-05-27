@@ -25,6 +25,7 @@ const ConvertKitStyle = styled(ConvertKitForm, {
     },
   },
   '& button': {
+    cursor: 'pointer',
     background: 'none',
     ...textVariant('primary1').true,
     border: '2px solid #028FFF',

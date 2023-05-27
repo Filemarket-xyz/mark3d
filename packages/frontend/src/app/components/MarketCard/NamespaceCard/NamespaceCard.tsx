@@ -1,7 +1,7 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 
-import { Button, Txt } from '../../UIkit'
-import { BasicCardSquareImg } from './BasicCard'
+import { Button, Txt } from '../../../UIkit'
+import { BasicCardSquareImg } from '../BasicCard'
 import {
   BorderLayout,
   ButtonContainer,
@@ -13,7 +13,11 @@ import {
   UserContainer,
   UserImg,
   UserName,
-} from './NFTCard'
+} from './NamespaceCard.styles'
+
+const formatPrice = (price: number) => {
+  return `${price.toFixed(3)} ETH`
+}
 
 export interface NamespaceCardProps {
   imageURL: string
@@ -25,29 +29,30 @@ export interface NamespaceCardProps {
   price: number
 }
 
-export default function NamespaceCard(props: NamespaceCardProps) {
-  const formatPrice = useCallback((price: number) => {
-    return `${price.toFixed(3)} ETH`
-  }, [])
-
+export const NamespaceCard: React.FC<NamespaceCardProps> = ({
+  imageURL,
+  title,
+  user,
+  price,
+}) => {
   return (
     <BorderLayout>
       <Card>
-        <BasicCardSquareImg src={props.imageURL} />
+        <BasicCardSquareImg src={imageURL} />
         <CardControls
           css={{
             height: 128,
           }}
         >
-          <CardTitle css={{ marginBottom: '$2' }} title={props.title}>
-            {props.title}
+          <CardTitle css={{ marginBottom: '$2' }} title={title}>
+            {title}
           </CardTitle>
           <PriceInfo>
             <UserContainer>
-              <UserImg src={props.user.img} />
-              <UserName>{props.user.username}</UserName>
+              <UserImg src={user.img} />
+              <UserName>{user.username}</UserName>
             </UserContainer>
-            <Price>{formatPrice(props.price)}</Price>
+            <Price>{formatPrice(price)}</Price>
           </PriceInfo>
           <ButtonContainer>
             <Button

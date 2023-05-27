@@ -49,7 +49,6 @@ const Description = styled('div', {
         ...textVariant('primary1').true,
         fontSize: '14px',
         fontWeight: '400',
-        marginBottom: '0',
       },
     },
   },
@@ -273,7 +272,7 @@ const CreateNftPage = observer(() => {
           setModalOpen(false)
         }}
       />
-      <PageLayout css={{ paddingBottom: '$4' }}>
+      <PageLayout>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <TitleGroup>
             <h3><Txt h3 style={{ fontWeight: '600' }}>Create New EFT</Txt></h3>

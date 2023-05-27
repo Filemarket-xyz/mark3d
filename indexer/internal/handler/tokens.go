@@ -60,7 +60,7 @@ func (h *handler) handleGetCollectionTokens(w http.ResponseWriter, r *http.Reque
 		sendResponse(w, err.Code, err)
 		return
 	}
-	limit, err := parseLimitParam(r, "limit", 10, 100)
+	limit, err := parseLimitParam(r, "limit", 10000, 10000)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
@@ -68,19 +68,19 @@ func (h *handler) handleGetCollectionTokens(w http.ResponseWriter, r *http.Reque
 
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
-	tokens, e := h.service.GetCollectionTokens(ctx, common.HexToAddress(address), lastTokenId, limit)
+	tokensByCollection, e := h.service.GetCollectionTokens(ctx, common.HexToAddress(address), lastTokenId, limit)
 	if e != nil {
 		sendResponse(w, e.Code, e)
 		return
 	}
-	sendResponse(w, 200, tokens)
+	sendResponse(w, 200, tokensByCollection)
 }
 
 func (h *handler) handleGetTokens(w http.ResponseWriter, r *http.Request) {
 	address := mux.Vars(r)["address"]
 
 	lastCollectionAddress := parseCommonAddressParam(r, "lastCollectionAddress")
-	collectionLimit, err := parseLimitParam(r, "collectionLimit", 10, 100)
+	collectionLimit, err := parseLimitParam(r, "collectionLimit", 10000, 10000)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return
@@ -91,7 +91,7 @@ func (h *handler) handleGetTokens(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	lastTokenCollectionAddress := parseCommonAddressParam(r, "lastTokenCollectionAddress")
-	tokenLimit, err := parseLimitParam(r, "tokenLimit", 10, 100)
+	tokenLimit, err := parseLimitParam(r, "tokenLimit", 10000, 10000)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return

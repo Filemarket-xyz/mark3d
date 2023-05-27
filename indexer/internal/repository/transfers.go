@@ -43,6 +43,9 @@ func (p *postgres) GetIncomingTransfersByAddress(
 	if lastTransferId != nil {
 		lastTransferIdParam = *lastTransferId
 	}
+	if limit == 0 {
+		limit = 10000
+	}
 	rows, err := tx.Query(ctx, query,
 		strings.ToLower(address.String()),
 		lastTransferIdParam,
@@ -104,6 +107,35 @@ func (p *postgres) GetIncomingTransfersByAddress(
 	return res, nil
 }
 
+func (p *postgres) GetIncomingTransfersByAddressTotal(
+	ctx context.Context,
+	tx pgx.Tx,
+	address common.Address,
+	lastTransferId *int64,
+) (uint64, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT COUNT(*) AS total
+		FROM transfers AS t 
+        LEFT JOIN orders o on t.id = o.transfer_id
+        WHERE t.to_address=$1 AND t.id < $2
+	`
+
+	var lastTransferIdParam int64 = math.MaxInt64
+	if lastTransferId != nil {
+		lastTransferIdParam = *lastTransferId
+	}
+	var total uint64
+	if err := tx.QueryRow(ctx, query,
+		strings.ToLower(address.String()),
+		lastTransferIdParam,
+	).Scan(&total); err != nil {
+		return 0, err
+	}
+
+	return total, nil
+}
+
 func (p *postgres) GetOutgoingTransfersByAddress(
 	ctx context.Context,
 	tx pgx.Tx,
@@ -134,6 +166,9 @@ func (p *postgres) GetOutgoingTransfersByAddress(
 	var lastTransferIdParam int64 = math.MaxInt64
 	if lastTransferId != nil {
 		lastTransferIdParam = *lastTransferId
+	}
+	if limit == 0 {
+		limit = 10000
 	}
 
 	rows, err := tx.Query(ctx, query,
@@ -197,6 +232,35 @@ func (p *postgres) GetOutgoingTransfersByAddress(
 	}
 
 	return res, nil
+}
+
+func (p *postgres) GetOutgoingTransfersByAddressTotal(
+	ctx context.Context,
+	tx pgx.Tx,
+	address common.Address,
+	lastTransferId *int64,
+) (uint64, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT COUNT(*) AS total
+		FROM transfers AS t 
+        LEFT JOIN orders o on t.id = o.transfer_id 
+		WHERE t.from_address=$1 AND t.id < $2
+	`
+
+	var lastTransferIdParam int64 = math.MaxInt64
+	if lastTransferId != nil {
+		lastTransferIdParam = *lastTransferId
+	}
+	var total uint64
+	if err := tx.QueryRow(ctx, query,
+		strings.ToLower(address.String()),
+		lastTransferIdParam,
+	).Scan(&total); err != nil {
+		return 0, err
+	}
+
+	return total, nil
 }
 
 func (p *postgres) GetActiveIncomingTransfersByAddress(
@@ -247,6 +311,9 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 	if lastTransferId != nil {
 		lastTransferIdParam = *lastTransferId
 	}
+	if limit == 0 {
+		limit = 10000
+	}
 	rows, err := tx.Query(ctx, query,
 		strings.ToLower(address.String()),
 		lastTransferIdParam,
@@ -265,7 +332,7 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 		var collectionAddress, tokenId, from, to, number string
 		t := &domain.Transfer{}
 
-		err := rows.Scan(
+		if err := rows.Scan(
 			&t.Id,
 			&collectionAddress,
 			&tokenId,
@@ -276,8 +343,7 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 			&t.PublicKey,
 			&t.EncryptedPassword,
 			&number,
-		)
-		if err != nil {
+		); err != nil {
 			return nil, err
 		}
 
@@ -306,6 +372,51 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 		t.Statuses = statuses[t.Id]
 	}
 	return res, nil
+}
+
+func (p *postgres) GetActiveIncomingTransfersByAddressTotal(
+	ctx context.Context,
+	tx pgx.Tx,
+	address common.Address,
+	lastTransferId *int64,
+) (uint64, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT COUNT(*) AS total
+		FROM transfers AS t 
+		LEFT JOIN orders o on t.id = o.transfer_id 
+		WHERE 
+			t.to_address = $1 
+			AND NOT (
+				SELECT 
+					ts.status 
+				FROM 
+					transfer_statuses AS ts 
+				WHERE 
+					ts.transfer_id = t.id 
+				AND ts.timestamp =(
+					SELECT 
+						MAX(ts2.timestamp) 
+					FROM 
+						transfer_statuses AS ts2 
+					WHERE 
+						ts2.transfer_id = t.id
+				)
+			)= ANY('{Finished,Cancelled}') AND t.id < $2
+	`
+
+	var lastTransferIdParam int64 = math.MaxInt64
+	if lastTransferId != nil {
+		lastTransferIdParam = *lastTransferId
+	}
+	var total uint64
+	if err := tx.QueryRow(ctx, query,
+		strings.ToLower(address.String()),
+		lastTransferIdParam,
+	).Scan(&total); err != nil {
+		return 0, err
+	}
+	return total, nil
 }
 
 func (p *postgres) GetActiveOutgoingTransfersByAddress(
@@ -357,6 +468,9 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(
 	if lastTransferId != nil {
 		lastTransferIdParam = *lastTransferId
 	}
+	if limit == 0 {
+		limit = 10000
+	}
 	rows, err := tx.Query(ctx, query,
 		strings.ToLower(address.String()),
 		lastTransferIdParam,
@@ -416,6 +530,53 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(
 		t.Statuses = statuses[t.Id]
 	}
 	return res, nil
+}
+
+func (p *postgres) GetActiveOutgoingTransfersByAddressTotal(
+	ctx context.Context,
+	tx pgx.Tx,
+	address common.Address,
+	lastTransferId *int64,
+) (uint64, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT COUNT(*) AS total
+		FROM 
+			transfers AS t 
+		LEFT JOIN orders o on t.id = o.transfer_id 
+		WHERE 
+			t.from_address = $1 
+			AND NOT (
+				SELECT 
+					ts.status 
+				FROM 
+					transfer_statuses AS ts 
+				WHERE 
+					ts.transfer_id = t.id 
+				AND ts.timestamp =(
+					SELECT 
+						MAX(ts2.timestamp) 
+					FROM 
+						transfer_statuses AS ts2 
+					WHERE 
+						ts2.transfer_id = t.id
+				)
+			)= ANY('{Finished,Cancelled}') AND t.id < $2
+	`
+
+	var lastTransferIdParam int64 = math.MaxInt64
+	if lastTransferId != nil {
+		lastTransferIdParam = *lastTransferId
+	}
+	var total uint64
+	if err := tx.QueryRow(ctx, query,
+		strings.ToLower(address.String()),
+		lastTransferIdParam,
+	).Scan(&total); err != nil {
+		return 0, err
+	}
+
+	return total, nil
 }
 
 func (p *postgres) getTransferStatuses(

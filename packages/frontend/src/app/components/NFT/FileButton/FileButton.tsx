@@ -69,7 +69,7 @@ const NameStyled = styled('div', {
   color: '$blue500',
   width: '278px',
   textOverflow: 'ellipsis',
-  '@smx': {
+  '@xs': {
     '& span': {
       fontSize: '14px',
     },
@@ -93,7 +93,7 @@ const DownloadTextStyled = styled('div', {
   alignItems: 'center',
   fontSize: '14px',
   gap: '$2',
-  '@smx': {
+  '@xs': {
     fontSize: '12px',
   },
 })

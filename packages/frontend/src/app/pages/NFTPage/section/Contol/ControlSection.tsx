@@ -5,7 +5,7 @@ import { NFTDeal } from '../../../../components/NFT'
 import { useOrderStore } from '../../../../hooks/useOrderStore'
 import { useTransferStoreWatchEvents } from '../../../../hooks/useTransferStoreWatchEvents'
 import { makeTokenFullId } from '../../../../processing/utils/id'
-import { Params } from '../../../../utils/router/Params'
+import { Params } from '../../../../utils/router'
 import { GridBlock } from '../../helper/styles/style'
 
 const ControlSection = () => {

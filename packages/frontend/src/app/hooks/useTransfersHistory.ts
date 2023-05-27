@@ -7,7 +7,7 @@ import { useStores } from './useStores'
  * Returns store containing data field with collection's tokens, and status fields like isLoading, isLoaded
  * @param profileAddress
  */
-export function useTransfersHistory(profileAddress?: string) {
+export function useTransfersHistoryStore(profileAddress?: string) {
   const { transfersHistoryStore } = useStores()
   useActivateDeactivateRequireParams(transfersHistoryStore, profileAddress)
 

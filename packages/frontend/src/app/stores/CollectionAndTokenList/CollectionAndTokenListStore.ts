@@ -1,8 +1,8 @@
 import { utils } from 'ethers/lib.esm'
 import { makeAutoObservable } from 'mobx'
 
-import { Collection, Token, TokensResponse } from '../../../swagger/Api'
-import { NFTCardProps } from '../../components/MarketCard/NFTCard'
+import { TokensResponse } from '../../../swagger/Api'
+import { NFTCardProps } from '../../components/MarketCard/NFTCard/NFTCard'
 import { api } from '../../config/api'
 import { gradientPlaceholderImg } from '../../UIkit'
 import { ComboBoxOption } from '../../UIkit/Form/Combobox'
@@ -10,6 +10,7 @@ import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsS
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { lastItem } from '../../utils/structs'
 import { ErrorStore } from '../Error/ErrorStore'
 
 export class CollectionAndTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
@@ -21,9 +22,9 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   isLoading = false
   isActivated = false
 
-  collections: Collection[] = []
-  tokens: Token[] = []
   address = ''
+
+  data: TokensResponse = {}
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
@@ -32,25 +33,46 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
     })
   }
 
-  private request(address: string) {
-    storeRequest<TokensResponse>(
+  setData(data: TokensResponse) {
+    this.data = data
+  }
+
+  addData(data: TokensResponse) {
+    this.data.collections?.push(...(data.collections ?? []))
+    this.data.collectionsTotal = data.collectionsTotal
+
+    this.data.tokens?.push(...(data.tokens ?? []))
+    this.data.tokensTotal = data.tokensTotal
+  }
+
+  private request() {
+    storeRequest(
       this,
-      api.tokens.tokensDetail(address),
-      resp => {
-        if (resp.collections) {
-          this.collections = resp.collections
-        }
-        if (resp.tokens) {
-          this.tokens = resp.tokens
-        }
-      })
+      api.tokens.tokensDetail(this.address, {
+        // collections?
+        tokenLimit: 20,
+      }),
+      data => this.setData(data),
+    )
+  }
+
+  requestMoreTokens() {
+    const { tokenId, collectionAddress } = lastItem(this.data.tokens ?? [])
+    storeRequest(
+      this,
+      api.tokens.tokensDetail(this.address, {
+        lastTokenId: tokenId,
+        lastTokenCollectionAddress: collectionAddress,
+        tokenLimit: 20,
+      }),
+      (data) => this.addData(data),
+    )
   }
 
   activate(address: string): void {
     this.isActivated = true
     this.address = address
-    this.request(address)
-    console.log(this)
+    this.request()
   }
 
   deactivate(): void {
@@ -63,19 +85,19 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   }
 
   reload(): void {
-    this.request(this.address)
+    this.request()
   }
 
   get nftCards(): NFTCardProps[] {
-    const tokens = this.tokens ?? []
+    if (!this.data.tokens) return []
 
-    return tokens.map((token) => ({
-      collection: token.collectionAddress ?? '',
+    return this.data.tokens.map((token) => ({
+      collectionName: token.collectionName ?? '',
       imageURL: token.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
       title: token.name ?? '—',
       user: {
         img: getProfileImageUrl(token.owner ?? ''),
-        username: reduceAddress(token.owner ?? ''),
+        address: reduceAddress(token.owner ?? ''),
       },
       button: {
         text: 'Go to page',
@@ -85,11 +107,9 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   }
 
   get collectionMintOptions(): ComboBoxOption[] {
-    if (!this.address) {
-      return []
-    }
+    if (!this.address || !this.data.collections) return []
 
-    return this.collections
+    return this.data.collections
       // user is only allowed to mint into owned collections
       .filter(collection => collection.owner && utils.getAddress(collection.owner) === utils.getAddress(this.address))
       .map(collection => ({

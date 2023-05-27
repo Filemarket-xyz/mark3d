@@ -36,7 +36,7 @@ export interface ITableBuilder {
 
 /** This class provides logic to transform given data structures to more convinient and fast ones */
 export class TableBuilder {
-  protected table: {
+  table: {
     rows: ITransformedRow[]
     /** Columns to iterate to get correct cells order */
     columns: ITableColumn[]

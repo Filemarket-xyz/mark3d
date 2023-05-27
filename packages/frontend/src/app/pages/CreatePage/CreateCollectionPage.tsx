@@ -80,7 +80,6 @@ export const ButtonContainer = styled('div', {
   '@sm': {
     paddingLeft: 0,
     justifyContent: 'center',
-    paddingBottom: '45px',
   },
 })
 
@@ -153,12 +152,7 @@ export default function CreateCollectionPage() {
           setModalOpen(false)
         }}
       />
-      <PageLayout
-        css={{
-          minHeight: '100vh',
-          paddingBottom: '$4',
-        }}
-      >
+      <PageLayout css={{ minHeight: '100vh' }}>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Title>Create New Collection</Title>
 

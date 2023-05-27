@@ -97,7 +97,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
       },
       small: {
         true: {
-          height: '36px',
+          height: '32px',
           minWidth: 0,
           padding: '0 18px',
         },

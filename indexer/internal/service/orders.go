@@ -124,7 +124,7 @@ func (s *service) GetAllActiveOrders(
 	ctx context.Context,
 	lastOrderId *int64,
 	limit int,
-) ([]*models.OrderWithToken, *models.ErrorResponse) {
+) (*models.OrdersAllActiveResponse, *models.ErrorResponse) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
@@ -143,12 +143,17 @@ func (s *service) GetAllActiveOrders(
 		log.Println("get all active orders failed", err)
 		return nil, internalError
 	}
+	total, err := s.repository.GetAllActiveOrdersTotal(ctx, tx, lastOrderId)
+	if err != nil {
+		log.Println("get all active orders total failed", err)
+		return nil, internalError
+	}
 
 	for _, o := range orders {
 		o.PriceUsd = currencyconversion.Convert(rate, o.Price)
 	}
 
-	res := make([]*models.OrderWithToken, len(orders))
+	ordersWithToken := make([]*models.OrderWithToken, len(orders))
 	for i, o := range orders {
 		transfer, err := s.repository.GetTransfer(ctx, tx, o.TransferId)
 		if err != nil {
@@ -161,11 +166,14 @@ func (s *service) GetAllActiveOrders(
 			return nil, internalError
 		}
 
-		res[i] = &models.OrderWithToken{
+		ordersWithToken[i] = &models.OrderWithToken{
 			Order:    domain.OrderToModel(o),
 			Token:    domain.TokenToModel(token),
 			Transfer: domain.TransferToModel(transfer),
 		}
 	}
-	return res, nil
+	return &models.OrdersAllActiveResponse{
+		Items: ordersWithToken,
+		Total: total,
+	}, nil
 }

@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 
 import { CollectionData } from '../../../swagger/Api'
-import { NFTCardProps } from '../../components/MarketCard/NFTCard'
+import { NFTCardProps } from '../../components/MarketCard/NFTCard/NFTCard'
 import { api } from '../../config/api'
 import { gradientPlaceholderImg } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
@@ -70,12 +70,12 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
     const collection = this.data.collection
 
     return tokens.map((token) => ({
-      collection: collection?.name ?? '',
+      collectionName: collection?.name ?? '',
       imageURL: token.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
       title: token.name ?? '—',
       user: {
         img: getProfileImageUrl(token.owner ?? ''),
-        username: reduceAddress(collection?.owner ?? ''),
+        address: reduceAddress(collection?.owner ?? ''),
       },
       button: {
         link: `/collection/${token.collectionAddress}/${token.tokenId}`,

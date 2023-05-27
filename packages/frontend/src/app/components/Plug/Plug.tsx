@@ -16,7 +16,6 @@ const PlugStyle = styled('div', {
   '@md': {
     width: '100%',
   },
-  marginBottom: '32px',
 })
 
 const Header = styled('h3', {

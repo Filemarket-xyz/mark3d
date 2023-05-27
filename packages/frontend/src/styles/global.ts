@@ -57,6 +57,9 @@ export const globalStyles = globalCss({
     fontSize: '$html',
     height: '100%',
   },
+  a: {
+    textDecoration: 'none',
+  },
   html: {
     // breaks popovers
     // overflowY: 'hidden'

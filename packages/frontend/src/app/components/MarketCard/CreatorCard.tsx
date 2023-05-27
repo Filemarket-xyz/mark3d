@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react'
 import { styled } from '../../../styles'
 import { textVariant } from '../../UIkit'
 import BasicCard, { BasicCardControls, BasicCardSquareImg } from './BasicCard'
-import { BorderLayout } from './NFTCard'
+import { BorderLayout } from './NamespaceCard/NamespaceCard.styles'
 
 export interface CreatorCardProps {
   bgImageUrl: string

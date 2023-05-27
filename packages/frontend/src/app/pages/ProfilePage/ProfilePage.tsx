@@ -6,13 +6,12 @@ import { useAccount } from 'wagmi'
 
 import { styled } from '../../../styles'
 import { useCollectionAndTokenListStore } from '../../hooks'
-import { useTransfersHistory } from '../../hooks/useTransfersHistory'
+import { useTransfersHistoryStore } from '../../hooks/useTransfersHistory'
 import { useUserTransferStore } from '../../hooks/useUserTransfers'
-import { Container, gradientPlaceholderImg, textVariant } from '../../UIkit'
-import Tabs from '../../UIkit/Tabs/Tabs'
+import { Container, gradientPlaceholderImg, TabItem, Tabs, textVariant } from '../../UIkit'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
-import { Params } from '../../utils/router/Params'
+import { Params } from '../../utils/router'
 
 const Background = styled('div', {
   background: '$gradients$background',
@@ -61,6 +60,7 @@ const GrayOverlay = styled('div', {
 
 const Inventory = styled(Container, {
   paddingTop: '$4',
+  paddingBottom: 48,
   backgroundColor: '$white',
   borderRadius: '$6 $6 0 0',
   '@md': {
@@ -74,22 +74,22 @@ const TabsContainer = styled('div', {
   marginBottom: '$4',
 })
 
-const ProfilePage = observer(() => {
+const ProfilePage: React.FC = observer(() => {
   const { profileAddress } = useParams<Params>()
   const { address: currentAddress } = useAccount()
 
-  const { tableRows: table } = useTransfersHistory(profileAddress)
+  const { tableRows: table } = useTransfersHistoryStore(profileAddress)
 
-  const { tokens: nfts } = useCollectionAndTokenListStore(profileAddress)
+  const { data } = useCollectionAndTokenListStore(profileAddress)
 
   const { transferCards } = useUserTransferStore(profileAddress)
 
   const tabs = useMemo(() => {
-    const tabs = [
+    const tabs: TabItem[] = [
       {
         name: 'Owned',
         url: 'owned',
-        amount: nfts.length,
+        amount: data.tokens?.length,
       },
       {
         name: 'History',
@@ -107,7 +107,7 @@ const ProfilePage = observer(() => {
     }
 
     return tabs
-  }, [nfts, table, transferCards])
+  }, [data.tokens, table, transferCards])
 
   return (
     <GrayOverlay>

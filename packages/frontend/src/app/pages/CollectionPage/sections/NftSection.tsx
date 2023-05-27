@@ -6,7 +6,7 @@ import { styled } from '../../../../styles'
 import { NFTCard } from '../../../components'
 import Plug from '../../../components/Plug/Plug'
 import { useCollectionTokenListStore } from '../../../hooks/useCollectionTokenListStore'
-import { Button, CardsPlaceholder, Txt } from '../../../UIkit'
+import { Button, CardsSkeletonLoading, Txt } from '../../../UIkit'
 
 export const CardsContainer = styled('div', {
   display: 'flex',
@@ -42,23 +42,23 @@ const NftSection = observer(() => {
 
   return (
     <CardsContainer>
-      {isLoading ? (
-        <CardsPlaceholder cardsAmount={5} />
-      ) : nftCards.length ? (
-        nftCards.map((card, index) => <NFTCard {...card} key={index} />)
-      ) : (
-        <NoNftContainer>
-          <Plug
-            header={'There\'s not one thing'}
-            mainText={'Be the first and create your first EFT'}
-            buttonsBlock={(
-              <Button primary onClick={() => navigate('/create/eft')}>
-                <Txt primary1>Create</Txt>
-              </Button>
-            )}
-          />
-        </NoNftContainer>
-      )}
+      <CardsSkeletonLoading isLoading={isLoading} count={5}>
+        {nftCards.length ? (
+          nftCards.map((card, index) => <NFTCard {...card} key={index} />)
+        ) : (
+          <NoNftContainer>
+            <Plug
+              header={'There\'s not one thing'}
+              mainText={'Be the first and create your first EFT'}
+              buttonsBlock={(
+                <Button primary onClick={() => navigate('/create/nft')}>
+                  <Txt primary1>Create</Txt>
+                </Button>
+              )}
+            />
+          </NoNftContainer>
+        )}
+      </CardsSkeletonLoading>
     </CardsContainer>
   )
 })

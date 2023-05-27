@@ -6,9 +6,7 @@ import { styled } from '../../../../../styles'
 import { mark3dConfig } from '../../../../config/mark3d'
 import { Button, gradientPlaceholderImg, Txt } from '../../../../UIkit'
 import { BasicCardSquareImg } from '../../../MarketCard/BasicCard'
-import {
-  Price,
-} from '../../../MarketCard/NFTCard'
+import { Price } from '../../../MarketCard/NamespaceCard/NamespaceCard.styles'
 
 const HeightContainer = styled('div', {
   height: '566px',

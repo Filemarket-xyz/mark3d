@@ -4,8 +4,8 @@ import { css, theme } from './stitches.config'
 export const cssShowIn = css({
   variants: {
     showIn: {
-      smx: {
-        '@smxUp': {
+      xs: {
+        '@xsUp': {
           display: 'none',
         },
       },
@@ -36,8 +36,8 @@ export const cssShowIn = css({
 export const cssHideIn = css({
   variants: {
     hideIn: {
-      smx: {
-        '@smx': {
+      xs: {
+        '@xs': {
           display: 'none',
         },
       },
