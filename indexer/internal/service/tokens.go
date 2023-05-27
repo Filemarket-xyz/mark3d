@@ -78,7 +78,7 @@ func (s *service) GetCollectionTokens(
 		log.Println("get collection tokens failed: ", err)
 		return nil, internalError
 	}
-	total, err := s.repository.GetCollectionTokensTotal(ctx, tx, address, lastTokenId)
+	total, err := s.repository.GetCollectionTokensTotal(ctx, tx, address)
 	if err != nil {
 		log.Println("get collection tokens total failed: ", err)
 		return nil, internalError
@@ -110,7 +110,7 @@ func (s *service) GetTokensByAddress(
 		log.Println("get collections by address failed: ", err)
 		return nil, internalError
 	}
-	collectionsTotal, err := s.repository.GetCollectionsByOwnerAddressTotal(ctx, tx, address, lastCollectionAddress)
+	collectionsTotal, err := s.repository.GetCollectionsByOwnerAddressTotal(ctx, tx, address)
 	if err != nil {
 		log.Println("get collections total by address failed: ", err)
 		return nil, internalError
@@ -122,7 +122,7 @@ func (s *service) GetTokensByAddress(
 		return nil, internalError
 	}
 	tokensRes := domain.MapSlice(tokens, domain.TokenToModel)
-	tokensTotal, err := s.repository.GetTokensByAddressTotal(ctx, tx, address, lastCollectionAddress, lastTokenId)
+	tokensTotal, err := s.repository.GetTokensByAddressTotal(ctx, tx, address)
 	if err != nil {
 		log.Println("get tokens by address total failed: ", err)
 		return nil, internalError

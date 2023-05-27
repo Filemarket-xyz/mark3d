@@ -25,7 +25,7 @@ func (p *postgres) GetAllActiveOrders(
 		SELECT o.id, o.transfer_id, o.price
 		FROM orders AS o 
     	JOIN transfers t on o.transfer_id = t.id 
-		WHERE NOT (
+		WHERE (
 				SELECT ts.status 
 		        FROM transfer_statuses AS ts 
 		        WHERE ts.transfer_id=t.id AND ts.timestamp=(
@@ -33,7 +33,7 @@ func (p *postgres) GetAllActiveOrders(
                 		FROM transfer_statuses AS ts2 
                 		WHERE ts2.transfer_id=t.id
                 )
-		)= ANY('{Finished,Cancelled}') AND o.id < $1
+		)= 'Created' AND o.id < $1
 		ORDER BY o.id DESC
 		LIMIT $2
 	`
@@ -82,14 +82,13 @@ func (p *postgres) GetAllActiveOrders(
 func (p *postgres) GetAllActiveOrdersTotal(
 	ctx context.Context,
 	tx pgx.Tx,
-	lastOrderId *int64,
 ) (uint64, error) {
 	// language=PostgreSQL
 	query := `
 		SELECT COUNT(*) AS total
 		FROM orders AS o 
     	JOIN transfers t on o.transfer_id = t.id 
-		WHERE NOT (
+		WHERE (
 				SELECT ts.status 
 		        FROM transfer_statuses AS ts 
 		        WHERE ts.transfer_id=t.id AND ts.timestamp=(
@@ -97,18 +96,11 @@ func (p *postgres) GetAllActiveOrdersTotal(
                 		FROM transfer_statuses AS ts2 
                 		WHERE ts2.transfer_id=t.id
                 )
-		)= ANY('{Finished,Cancelled}') AND o.id < $1
+		)= 'Created'
 	`
 
-	var lastOrderIdParam int64 = math.MaxInt64
-	if lastOrderId != nil {
-		lastOrderIdParam = *lastOrderId
-	}
-
 	var total uint64
-	if err := tx.QueryRow(ctx, query,
-		lastOrderIdParam,
-	).Scan(&total); err != nil {
+	if err := tx.QueryRow(ctx, query).Scan(&total); err != nil {
 		return 0, err
 	}
 	return total, nil

@@ -73,26 +73,17 @@ func (p *postgres) GetCollectionsByOwnerAddressTotal(
 	ctx context.Context,
 	tx pgx.Tx,
 	address common.Address,
-	lastCollectionAddress *common.Address,
 ) (uint64, error) {
 	// language=PostgreSQL
 	query := `
 		SELECT COUNT(*) AS total
 		FROM collections AS c 
 		WHERE (owner=$1 OR 
-            EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)) AND
-		    address > $2
+            EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1))
 	`
-
-	lastCollectionAddressStr := ""
-	if lastCollectionAddress != nil {
-		lastCollectionAddressStr = strings.ToLower(lastCollectionAddress.String())
-	}
 	var total uint64
-	if err := tx.QueryRow(ctx, query,
-		strings.ToLower(address.String()),
-		lastCollectionAddressStr,
-	).Scan(&total); err != nil {
+	row := tx.QueryRow(ctx, query, strings.ToLower(address.String()))
+	if err := row.Scan(&total); err != nil {
 		return 0, err
 	}
 
