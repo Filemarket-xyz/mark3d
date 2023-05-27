@@ -54,7 +54,7 @@ func (s *service) GetCollectionWithTokens(
 		log.Println("get collection tokens failed: ", err)
 		return nil, internalError
 	}
-	total, err := s.repository.GetCollectionTokensTotal(ctx, tx, address, lastTokenId)
+	total, err := s.repository.GetCollectionTokensTotal(ctx, tx, address)
 	if err != nil {
 		log.Println("get collection tokens total failed: ", err)
 		return nil, internalError
