@@ -4,6 +4,7 @@ import { useStores } from '../../hooks'
 
 export const DialogManager = observer((): JSX.Element => {
   const { dialogStore } = useStores()
+
   return (
     <>
       {
@@ -11,6 +12,7 @@ export const DialogManager = observer((): JSX.Element => {
           const onClose = () => {
             dialogStore.closeDialogById(instance.id)
           }
+
           // instance.onClosed is called inside closeDialogById
           return (
             <instance.component
@@ -18,8 +20,7 @@ export const DialogManager = observer((): JSX.Element => {
               key={instance.id}
               open={instance.open}
               onClose={onClose}
-            >
-            </instance.component>
+            />
           )
         })
       }

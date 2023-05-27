@@ -40,7 +40,7 @@ export function useSetPublicKey({ collectionAddress, tokenId }: Partial<TokenFul
       BigNumber.from(tokenId),
       bufferToEtherHex(publicKey),
       BigNumber.from(dealNumber),
-      { gasPrice: mark3dConfig.gasPrice }
+      { gasPrice: mark3dConfig.gasPrice },
     )
   }), [contract, signer, address, collectionAddress, tokenId])
 

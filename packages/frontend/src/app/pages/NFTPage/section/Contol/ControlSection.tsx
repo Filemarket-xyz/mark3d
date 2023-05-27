@@ -14,7 +14,7 @@ const ControlSection = () => {
   const orderStore = useOrderStore(collectionAddress, tokenId)
   const tokenFullId = useMemo(
     () => makeTokenFullId(collectionAddress, tokenId),
-    [collectionAddress, tokenId]
+    [collectionAddress, tokenId],
   )
 
   return (

@@ -12,12 +12,12 @@ const DescriptionSectionStyle = styled(GridBlock, {
   paddingBottom: '32px',
   '@md': {
     paddingTop: '16px',
-    paddingBottom: '16px'
+    paddingBottom: '16px',
   },
   '@sm': {
     paddingTop: '8px',
-    paddingBottom: '8px'
-  }
+    paddingBottom: '8px',
+  },
 })
 
 const Pre = styled('pre', {
@@ -25,7 +25,7 @@ const Pre = styled('pre', {
   color: '$gray800',
   fontWeight: 400,
   whiteSpace: 'pre-wrap',
-  wordWrap: 'break-word'
+  wordWrap: 'break-word',
 })
 
 const DescriptionSection = () => {

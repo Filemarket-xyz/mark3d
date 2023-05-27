@@ -18,7 +18,7 @@ import { assertAccount, assertCollection, assertContract, assertSigner, assertTo
  */
 export function useFulfillOrder(
   { collectionAddress, tokenId }: Partial<TokenFullId> = {},
-  price?: BigNumberish
+  price?: BigNumberish,
 ) {
   const { contract: exchangeContract, signer } = useExchangeContract()
   const { contract: collectionContract } = useCollectionContract(collectionAddress)
@@ -46,8 +46,8 @@ export function useFulfillOrder(
       BigNumber.from(tokenId),
       {
         value: BigNumber.from(price),
-        gasPrice: mark3dConfig.gasPrice
-      }
+        gasPrice: mark3dConfig.gasPrice,
+      },
     )
   }), [exchangeContract, collectionContract, address, wrapPromise, signer, collectionAddress, tokenId, price])
 

@@ -24,7 +24,7 @@ export const NavBarCollapseItem: FC<NavBarCollapseItemProps> = ({
       index > -1 && length > 0
         ? (index / length) * 0.5 * 1000 + transitionDelay
         : 0.1,
-    [index, length]
+    [index, length],
   )
 
   return (
@@ -33,7 +33,7 @@ export const NavBarCollapseItem: FC<NavBarCollapseItemProps> = ({
         opacity: isVisible ? 1 : 0,
         transform: isVisible ? transitionMatrix.in : transitionMatrix.out,
         // eslint-disable-next-line max-len
-        transition: `opacity ${transitionTime}ms cubic-bezier(0.5, 0, 0, 1) ${timeDelay}ms, transform ${transitionTime}ms cubic-bezier(0.5, 0, 0, 1) ${timeDelay}ms`
+        transition: `opacity ${transitionTime}ms cubic-bezier(0.5, 0, 0, 1) ${timeDelay}ms, transform ${transitionTime}ms cubic-bezier(0.5, 0, 0, 1) ${timeDelay}ms`,
       }}
       {...otherProps}
     >

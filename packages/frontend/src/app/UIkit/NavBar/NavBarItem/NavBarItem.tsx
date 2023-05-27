@@ -18,18 +18,18 @@ const navBarItemStyles = {
 
   '&[data-hovered=true]': {
     color: '$white',
-    transform: 'scale(1.03)'
+    transform: 'scale(1.03)',
   },
   '&[data-focus=true]': {
-    focusRing: '$gray100'
+    focusRing: '$gray100',
   },
   '&[data-pressed=true]': {
-    opacity: 0.9
+    opacity: 0.9,
   },
   '&[data-disabled=true]': {
     color: '$gray400',
     fill: '$gray400',
-    cursor: 'not-allowed'
+    cursor: 'not-allowed',
   },
   '&::after': {
     transition: 'opacity 0.25s ease 0s',
@@ -42,10 +42,10 @@ const navBarItemStyles = {
     right: 0,
     height: '2px',
     background: '$gray100',
-    filter: 'blur(0.5px)'
+    filter: 'blur(0.5px)',
   },
   '&.active::after': {
-    opacity: 1
+    opacity: 1,
   },
   variants: {
     mock: {
@@ -54,17 +54,17 @@ const navBarItemStyles = {
         cursor: 'default',
         '&[data-hovered=true]': {
           color: '$gray100',
-          transform: 'none'
+          transform: 'none',
         },
         '&[data-focus=true]': {
-          focusRing: 'none'
+          focusRing: 'none',
         },
         '&[data-pressed=true]': {
-          opacity: 1
-        }
-      }
-    }
-  }
+          opacity: 1,
+        },
+      },
+    },
+  },
 }
 
 export const NavLinkStyled = styled(RouterNavLink, cssShowHideIn, navBarItemStyles)
@@ -76,6 +76,7 @@ export type NavBarItemProps = PropsWithChildren<NavLinkProps & ComponentProps<ty
 export const NavBarItem = forwardRef<HTMLAnchorElement, NavBarItemProps>(
   ({ children, ...navLinkProps }, ref) => {
     const { linkRef, linkProps } = useLink(navLinkProps, ref)
+
     return (
       <NavLinkStyled
         {...linkProps}
@@ -93,6 +94,7 @@ export type NavBarItemLinkProps = PropsWithChildren<LinkProps & ComponentProps<t
 export const NavBarItemLink = forwardRef<HTMLAnchorElement, NavBarItemLinkProps>(
   ({ children, ...navLinkProps }, ref) => {
     const { linkRef, linkProps } = useLink(navLinkProps, ref)
+
     return (
       <LinkStyled
         {...linkProps}

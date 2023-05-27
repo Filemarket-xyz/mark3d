@@ -7,5 +7,6 @@ import { useStores } from './useStores'
 export function useTokenMetaStore(metaURI?: string) {
   const { tokenMetaStore } = useStores()
   useActivateDeactivateRequireParams(tokenMetaStore, metaURI)
+
   return tokenMetaStore
 }

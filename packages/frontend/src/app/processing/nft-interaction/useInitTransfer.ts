@@ -23,12 +23,12 @@ export function useInitTransfer({ collectionAddress, tokenId }: Partial<TokenFul
       to,
       '0x00',
       nullAddress,
-      { gasPrice: mark3dConfig.gasPrice }
+      { gasPrice: mark3dConfig.gasPrice },
     )
   }), [contract, signer, wrapPromise, collectionAddress, tokenId, to])
 
   return {
     ...statuses,
-    initTransfer
+    initTransfer,
   }
 }

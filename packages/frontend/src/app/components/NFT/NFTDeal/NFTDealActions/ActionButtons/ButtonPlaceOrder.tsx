@@ -22,8 +22,9 @@ export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callb
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Order placed! Now be ready to transfer hidden files, if someone fulfills the order.',
-    loadingMsg: 'Placing order'
+    loadingMsg: 'Placing order',
   })
+
   return (
     <>
       <Modal

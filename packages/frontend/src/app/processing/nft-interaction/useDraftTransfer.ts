@@ -21,12 +21,12 @@ export function useDraftTransfer({ collectionAddress, tokenId }: Partial<TokenFu
     return callContract({ contract, method: 'draftTransfer' },
       BigNumber.from(tokenId),
       nullAddress,
-      { gasPrice: mark3dConfig.gasPrice }
+      { gasPrice: mark3dConfig.gasPrice },
     )
   }), [contract, signer, wrapPromise])
 
   return {
     ...statuses,
-    draftTransfer
+    draftTransfer,
   }
 }

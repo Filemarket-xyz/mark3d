@@ -51,10 +51,17 @@ const CreatedMnemonicStyle = styled('div', {
   '@ld': {
     fontSize: '18px',
   },
-
 })
 
-export function CreateMnemonicDialog({ open, onClose, onSuccess }: AppDialogProps<{ onSuccess?: () => void }>): JSX.Element {
+interface CreateMnemonicDialogProps {
+  onSuccess?: () => void
+}
+
+export const CreateMnemonicDialog: React.FC<AppDialogProps<CreateMnemonicDialogProps>> = ({
+  open,
+  onClose,
+  onSuccess,
+}) => {
   useCloseIfNotConnected(onClose)
   const { adaptive } = useMediaMui()
   const [mnemonic, setMnemonic] = useState<string>()

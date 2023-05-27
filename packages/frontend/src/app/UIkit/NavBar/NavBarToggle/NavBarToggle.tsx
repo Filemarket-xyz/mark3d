@@ -16,11 +16,11 @@ const StyledNavBarToggle = styled('button', cssShowHideIn, {
   padding: '$2',
   transition: 'box-shadow 0.25s ease 0s, opacity 0.25s ease 0s',
   '&[data-pressed=true]': {
-    opacity: 0.7
+    opacity: 0.7,
   },
   '&[data-focus-ring]=true': {
-    focusRing: '$blue500'
-  }
+    focusRing: '$blue500',
+  },
 })
 
 export type NavBarToggleProps = Omit<ComponentProps<typeof StyledNavBarToggle>, 'onChange'> &
@@ -41,6 +41,7 @@ export const NavBarToggle = forwardRef<HTMLButtonElement, NavBarToggleProps>((pr
   const state = useToggleState({ isSelected, ...props })
   const { buttonProps, isPressed } = useToggleButton({ ...props, isSelected }, state, domRef)
   const { isFocusVisible, focusProps } = useFocusRing({ autoFocus })
+
   return (
     <StyledNavBarToggle
       ref={domRef}

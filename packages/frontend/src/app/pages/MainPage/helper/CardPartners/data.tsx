@@ -9,61 +9,61 @@ import item7 from '../../img/TechnologyStack/item7.svg'
 export const PoweredByOptions: CardPartnerProps[] = [
   {
     img: item1,
-    url: 'https://ethereum.org/'
+    url: 'https://ethereum.org/',
   },
   {
     img: item2,
-    url: 'https://polygon.technology/'
+    url: 'https://polygon.technology/',
   },
   {
     img: item3,
-    url: 'https://filecoin.io/'
+    url: 'https://filecoin.io/',
   },
   {
     img: item4,
-    url: 'https://fvm.filecoin.io/'
+    url: 'https://fvm.filecoin.io/',
   },
   {
     img: item6,
-    url: 'https://ipld.io/'
+    url: 'https://ipld.io/',
   },
   {
     img: item7,
-    url: 'https://www.lighthouse.storage/'
-  }
+    url: 'https://www.lighthouse.storage/',
+  },
 ]
 
 export const OurPartnersOptions: CardPartnerProps[] = [
   {
     img: item1,
     url: 'https://ethereum.org/',
-    text: 'Filecoin'
+    text: 'Filecoin',
   },
   {
     img: item2,
     url: 'https://polygon.technology/',
-    text: 'Filecoin Foundation'
+    text: 'Filecoin Foundation',
   },
   {
     img: item3,
     url: 'https://filecoin.io/',
-    text: 'LightHose'
+    text: 'LightHose',
   },
   {
     img: item4,
     url: 'https://fvm.filecoin.io/',
-    text: 'NFT.Storage'
+    text: 'NFT.Storage',
   },
   {
     img: item6,
     url: 'https://ipld.io/',
-    text: 'Web3.Storage'
+    text: 'Web3.Storage',
   },
   {
     img: item7,
     url: 'https://www.lighthouse.storage/',
-    text: 'Collectif DAO'
-  }
+    text: 'Collectif DAO',
+  },
   // {
   //   img: ,
   //   url: '',

@@ -15,7 +15,7 @@ const columns: ITableColumn[] = [
   { name: 'From', hide: 'md' },
   { name: 'To', hide: 'md' },
   { name: 'Price', hide: 'sm' },
-  { name: 'Date', hide: 'lg' }
+  { name: 'Date', hide: 'lg' },
 ]
 
 export const HistorySection: React.FC = observer(() => {
@@ -38,7 +38,7 @@ export const HistorySection: React.FC = observer(() => {
           flexDirection: 'column',
           gap: '$2',
           paddingTop: 28,
-          paddingBottom: '$3'
+          paddingBottom: '$3',
         }}
       />
       {!transferHistoryStore.tableRows.length && !transferHistoryStore.isLoading && (

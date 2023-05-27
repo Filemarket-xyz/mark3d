@@ -100,7 +100,6 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
           },
           priceUsd: order?.priceUsd,
           price: order?.price,
-          orderId: order?.id,
         }),
       )
   }

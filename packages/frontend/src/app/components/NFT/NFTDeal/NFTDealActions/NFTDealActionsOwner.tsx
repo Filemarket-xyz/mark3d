@@ -29,7 +29,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   transfer,
   tokenFullId,
   reFetchOrder,
-  ownerStatusChanged
+  ownerStatusChanged,
 }) => {
   const { isApprovedExchange, error: isApprovedExchangeError, refetch } = useIsApprovedExchange(tokenFullId)
   const error = isApprovedExchangeError
@@ -40,6 +40,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
       </Txt>
     )
   }
+
   return (
     <>
       <HideAction hide={!transfer || !permissions.canApprove(transfer)}>

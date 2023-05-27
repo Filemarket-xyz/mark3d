@@ -33,7 +33,7 @@ const NavBarStyled = styled('nav', {
   background: '$colors$blue500',
   backdropFilter: 'blur(12.5px)',
   boxShadow: '$header',
-  color: '$blue900'
+  color: '$blue900',
 })
 
 const horizontalGap = 30
@@ -45,21 +45,21 @@ const NavBarHorizontalSpacer = styled('div', {
   alignItems: 'center',
   flexDirection: 'row',
   flexWrap: 'nowrap',
-  gap: horizontalGap
+  gap: horizontalGap,
 }, cssShowHideIn)
 
 const ActionsContainer = styled('div', {
   display: 'flex',
   justifyContent: 'end',
   gap: horizontalGap,
-  flexGrow: 1
+  flexGrow: 1,
 })
 
 const NavBarVerticalSpacer = styled('div', {
   dflex: 'start',
   flexDirection: 'column',
   flexWrap: 'nowrap',
-  gap: '$3'
+  gap: '$3',
 })
 
 const itemTo = (item: NavBarItemData) =>
@@ -69,13 +69,14 @@ export const NavBar: FC<NavBarProps> = ({
   brand,
   items,
   actions,
-  mobileBp
+  mobileBp,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { pathname } = useLocation()
   useEffect(() => {
     setIsExpanded(false)
   }, [pathname])
+
   return (
     <>
       <NavBarStyled>
@@ -83,22 +84,22 @@ export const NavBar: FC<NavBarProps> = ({
           <NavBarHorizontalSpacer>
             <NavBarToggle
               isSelected={isExpanded}
-              onChange={setIsExpanded}
               showIn={mobileBp}
+              onChange={setIsExpanded}
             />
             {brand}
             {items && (
               <NavBarHorizontalSpacer hideIn={mobileBp}>
                 {items.map((item, index) => item.isLink ? (
-                    <NavBarItemLink
-                      key={index}
-                      href={itemTo(item)}
-                      target="_blank"
-                      hideIn={mobileBp}
-                      mock={item.isMock}
-                    >
-                      {item.label}
-                    </NavBarItemLink>
+                  <NavBarItemLink
+                    key={index}
+                    href={itemTo(item)}
+                    target="_blank"
+                    hideIn={mobileBp}
+                    mock={item.isMock}
+                  >
+                    {item.label}
+                  </NavBarItemLink>
                 ) : (
                   <NavBarItem
                     key={index}
@@ -124,10 +125,10 @@ export const NavBar: FC<NavBarProps> = ({
           <NavBarVerticalSpacer>
             {items.map((item, index) => (
               <NavBarCollapseItem
+                key={index}
                 isVisible={isExpanded}
                 index={index}
                 length={items?.length}
-                key={index}
                 mock={item.isMock}
                 to={itemTo(item)}
               >

@@ -22,7 +22,7 @@ export class TransferListStore implements IActivateDeactivate<[string]>, IStoreR
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
     makeAutoObservable(this, {
-      errorStore: false
+      errorStore: false,
     })
   }
 
@@ -38,6 +38,7 @@ export class TransferListStore implements IActivateDeactivate<[string]>, IStoreR
     }
     fillDict(this.incoming)
     fillDict(this.outgoing)
+
     return dict
   }
 
@@ -52,7 +53,7 @@ export class TransferListStore implements IActivateDeactivate<[string]>, IStoreR
         if (data.outgoing) {
           this.outgoing = data.outgoing
         }
-      }
+      },
     )
   }
 

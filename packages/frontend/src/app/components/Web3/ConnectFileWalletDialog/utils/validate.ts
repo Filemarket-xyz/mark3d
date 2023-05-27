@@ -18,6 +18,6 @@ export const validatePassword = (value: string): string | undefined => {
 const error: Record<SupportedLocale, Record<string, string>> = {
   en: {
     INVALID_BET: 'Invalid mnemonic',
-    INVALID_PASSWORD: 'Password must be at least 8 characters long'
-  }
+    INVALID_PASSWORD: 'Password must be at least 8 characters long',
+  },
 }

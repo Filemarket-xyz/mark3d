@@ -7,7 +7,7 @@ import {
   ITableColumn,
   ITableRowCell,
   ITransformedRow,
-  TableBuilder
+  TableBuilder,
 } from '../../../components/Table/TableBuilder'
 import { NavButton } from '../../../UIkit'
 import { HeadItem } from '../../ExplorerPage/components/Table/Table'
@@ -54,7 +54,7 @@ export class HistoryTableBuilder extends TableBuilder implements ITableBuilder {
           boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)',
           height: 56,
           maxHeight: 56,
-          minHeight: 56
+          minHeight: 56,
         }}
       >
         <RowBody css={{ height: '100%' }}>

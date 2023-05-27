@@ -10,5 +10,6 @@ export const ensureCall = <Args extends any[], ReturnType>(
   if (!func) {
     throw new Error(`${funcName} no function provided`)
   }
+
   return func(...args)
 }

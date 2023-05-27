@@ -20,7 +20,7 @@ const MarketPage = observer(() => {
           tabs={[
             {
               name: 'EFTs',
-              url: '/market/nfts',
+              url: '/market/efts',
               amount: nftCards?.length,
             },
           ]}

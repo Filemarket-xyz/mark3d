@@ -6,7 +6,7 @@ import { useDrip } from '../Drip/Drip.hooks'
 
 export function useButton<Props extends AriaButtonProps & HTMLAttributes<HTMLSpanElement>, Elem extends HTMLElement>(
   props: Props,
-  ref?: RefObject<Elem | null> | Ref<Elem | null>
+  ref?: RefObject<Elem | null> | Ref<Elem | null>,
 ) {
   const {
     isDisabled,
@@ -21,7 +21,7 @@ export function useButton<Props extends AriaButtonProps & HTMLAttributes<HTMLSpa
   const buttonRef = useDOMRef(ref)
   const { onClick: onDripClickHandler, ...dripProps } = useDrip(
     buttonRef,
-    false
+    false,
   )
 
   const { isPressed, buttonProps: ariaButtonPropsFull } = useButtonAria(
@@ -31,9 +31,9 @@ export function useButton<Props extends AriaButtonProps & HTMLAttributes<HTMLSpa
       onPressStart,
       onPressEnd,
       onPressChange,
-      onPressUp
+      onPressUp,
     },
-    buttonRef
+    buttonRef,
   )
   const { onClick, ...ariaButtonProps } = ariaButtonPropsFull
 
@@ -43,11 +43,12 @@ export function useButton<Props extends AriaButtonProps & HTMLAttributes<HTMLSpa
       deprecatedOnClick?.(event)
       onDripClickHandler(event)
     },
-    [onClick, onDripClickHandler]
+    [onClick, onDripClickHandler],
   )
 
   const { isFocusVisible, focusProps } = useFocusRing()
   const { hoverProps, isHovered } = useHover({ isDisabled })
+
   return {
     buttonRef,
     buttonProps: {
@@ -57,8 +58,8 @@ export function useButton<Props extends AriaButtonProps & HTMLAttributes<HTMLSpa
       'data-pressed': isPressed,
       'data-hovered': isHovered,
       'data-focus-ring': isFocusVisible,
-      'data-disabled': isDisabled
+      'data-disabled': isDisabled,
     },
-    dripProps
+    dripProps,
   }
 }

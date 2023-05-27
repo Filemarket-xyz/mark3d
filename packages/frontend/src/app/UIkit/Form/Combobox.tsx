@@ -9,7 +9,7 @@ import {
   Controller,
   ControllerRenderProps,
   FieldValues,
-  Path
+  Path,
 } from 'react-hook-form'
 
 import { styled } from '../../../styles'
@@ -37,30 +37,30 @@ const Listbox = styled('ul', {
   '& li': {
     color: '$blue900',
     backgroundColor: '$white',
-    padding: 'calc($3 - $1)'
+    padding: 'calc($3 - $1)',
   },
   '& li.Mui-focused': {
     backgroundColor: '#4a8df6',
     color: 'white',
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   '& li:active': {
     backgroundColor: '#2977f5',
-    color: 'white'
+    color: 'white',
   },
   variants: {
     size: {
       md: {
         maxWidth: '285px',
         '@md': {
-          maxWidth: '266px'
+          maxWidth: '266px',
         },
         '@sm': {
-          maxWidth: '100%'
-        }
-      }
-    }
-  }
+          maxWidth: '100%',
+        },
+      },
+    },
+  },
 })
 
 const ContentContainer = styled('div', {
@@ -72,17 +72,17 @@ const ContentContainer = styled('div', {
       true: {
         background: '#F4F4F4',
         borderRadius: '8px',
-        color: '$gray800'
-      }
-    }
-  }
+        color: '$gray800',
+      },
+    },
+  },
 })
 
 const LoadingContainer = styled('div', {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  padding: '$4'
+  padding: '$4',
 })
 
 export interface ComboBoxOption {
@@ -117,7 +117,7 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
     getListboxProps,
     getOptionProps,
     groupedOptions,
-    inputValue
+    inputValue,
   } = useAutocomplete({
     options: props.options,
     autoComplete: true,
@@ -129,7 +129,7 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
     value: props.otherFieldProps?.value ?? null,
     onChange: props.onChange,
     onOpen: props.onFocus,
-    readOnly: props.isDisabled
+    readOnly: props.isDisabled,
   })
 
   const ContentLoaded = () => {
@@ -203,13 +203,13 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
           inputProps={{
             ...getInputProps(),
             onKeyDown: handleKeyDown,
-            onKeyUp: handleKeyUp
+            onKeyUp: handleKeyUp,
           }}
           postfixProps={{
             onClick: (event: React.MouseEvent<HTMLInputElement>) => {
               handleClick(event)
               getInputProps().onMouseDown?.(event)
-            }
+            },
           }}
         />
       </div>
@@ -240,7 +240,7 @@ export interface ControlledComboboxProps<T extends FieldValues> {
 }
 
 export const ControlledComboBox = <T extends FieldValues>(
-  props: ControlledComboboxProps<T>
+  props: ControlledComboboxProps<T>,
 ) => (
   <Controller
     control={props.control}

@@ -73,6 +73,10 @@ export const ButtonContainer = styled('div', {
   width: '100%',
   display: 'flex',
   justifyContent: 'flex-start',
+  paddingBottom: '90px',
+  '@md': {
+    paddingBottom: '70px',
+  },
   '@sm': {
     paddingLeft: 0,
     justifyContent: 'center',
@@ -142,15 +146,13 @@ export default function CreateCollectionPage() {
   return (
     <>
       <MintModal
-        body={modalBody ?? <></>}
+        body={modalBody}
         open={modalOpen}
         handleClose={() => {
           setModalOpen(false)
         }}
       />
-      <PageLayout
-        css={{ minHeight: '100vh' }}
-      >
+      <PageLayout css={{ minHeight: '100vh' }}>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Title>Create New Collection</Title>
 

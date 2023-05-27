@@ -21,8 +21,8 @@ const ConvertKitStyle = styled(ConvertKitForm, {
     width: '60%',
     '@sm': {
       width: '80%',
-      margin: '0 auto'
-    }
+      margin: '0 auto',
+    },
   },
   '& button': {
     background: 'none',
@@ -34,15 +34,15 @@ const ConvertKitStyle = styled(ConvertKitForm, {
     height: '48px',
     '@sm': {
       width: '80%',
-      margin: '0 auto'
-    }
+      margin: '0 auto',
+    },
   },
   '& #ck-first-name': {
-    display: 'none'
+    display: 'none',
   },
   '@sm': {
-    flexDirection: 'column'
-  }
+    flexDirection: 'column',
+  },
 })
 
 const EmailForm = () => {

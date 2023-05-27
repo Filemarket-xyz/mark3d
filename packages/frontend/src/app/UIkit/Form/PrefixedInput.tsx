@@ -8,13 +8,13 @@ const InputWithPrefix = styled('div', {
   width: '100%',
   display: 'flex',
   gap: '$2',
-  alignItems: 'center'
+  alignItems: 'center',
 })
 
 const InputPrefix = styled('span', {
   color: '$gray500',
   ...textVariant('secondary1').true,
-  fontWeight: 600
+  fontWeight: 600,
 })
 
 interface PrefixedInputProps {
@@ -27,9 +27,7 @@ export default function PrefixedInput(props: PrefixedInputProps) {
     <InputWithPrefix>
       <InputPrefix>{props.prefix}</InputPrefix>
       <Input
-          onChange={(event) => {
-            console.log(event)
-          }}
+        placeholder={props.placeholder}
         css={{
           paddingLR: 0,
           borderRadius: 0,
@@ -38,10 +36,12 @@ export default function PrefixedInput(props: PrefixedInputProps) {
           height: '100%',
           boxShadow: 'none',
           '&:focus': {
-            boxShadow: 'none'
-          }
+            boxShadow: 'none',
+          },
         }}
-        placeholder={props.placeholder}
+        onChange={(event) => {
+          console.log(event)
+        }}
       />
     </InputWithPrefix>
   )

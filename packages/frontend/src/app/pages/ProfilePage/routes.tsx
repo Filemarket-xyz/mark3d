@@ -7,18 +7,18 @@ import TransfersSection from './sections/TransfersSection'
 export const profileRoutes: RouteObject[] = [
   {
     path: '',
-    element: <Navigate to={'owned'} />
+    element: <Navigate to={'owned'} />,
   },
   {
     path: 'owned',
-    element: <OwnedSection />
+    element: <OwnedSection />,
   },
   {
     path: 'history',
-    element: <HistorySection />
+    element: <HistorySection />,
   },
   {
     path: 'transfers',
-    element: <TransfersSection />
-  }
+    element: <TransfersSection />,
+  },
 ]

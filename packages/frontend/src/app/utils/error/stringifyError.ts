@@ -22,6 +22,7 @@ export function stringifyError(error: any): string {
     // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
     str = (error + '')
   }
+
   return str
 }
 
@@ -29,5 +30,6 @@ export function errorResponseToMessage(error?: ErrorResponse): string {
   if (!error) {
     return 'received nullish error from the backend, but request was not successful'
   }
+
   return `${error.message}: ${error.detail}`
 }

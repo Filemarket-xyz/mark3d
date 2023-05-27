@@ -10,18 +10,18 @@ import SuccessImage from './img/Success.svg'
 
 const Box = styled('img', {
   width: 48,
-  height: 64
+  height: 64,
 })
 
 const FileInput = styled('input', {
-  display: 'none'
+  display: 'none',
 })
 
 const BoxLabel = styled('span', {
   ...textVariant('primary1').true,
   color: '$blue500',
   fontWeight: 600,
-  textAlign: 'center'
+  textAlign: 'center',
 })
 
 export const WhiteShade = styled('div', {
@@ -39,16 +39,16 @@ export const WhiteShade = styled('div', {
   variants: {
     selected: {
       true: {
-        zIndex: 0
-      }
-    }
-  }
+        zIndex: 0,
+      },
+    },
+  },
 })
 
 const generateFileHoverStyles = () => {
   const hoverFileStyles: any = {}
   hoverFileStyles[`&:hover ${WhiteShade.selector}`] = {
-    background: 'rgba(255,255,255, 0.3)'
+    background: 'rgba(255,255,255, 0.3)',
   }
 
   return hoverFileStyles
@@ -73,10 +73,10 @@ export const File = styled('label', {
   variants: {
     isImageUpload: {
       true: {
-        height: '320px'
-      }
-    }
-  }
+        height: '320px',
+      },
+    },
+  },
 })
 
 export const CloseButton = styled(Button, {
@@ -91,13 +91,13 @@ export const CloseButton = styled(Button, {
   backgroundColor: '$white',
   zIndex: 2,
   border: '1px solid $gray300',
-  boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)'
+  boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
 })
 
 export const CrossIcon = styled('img', {
   width: 16,
   height: 16,
-  objectFit: 'contain'
+  objectFit: 'contain',
 })
 
 const supportedExtensions = new Set(['*'])
@@ -111,7 +111,7 @@ export default function NftLoader(props: NftLoaderProps) {
   const [fileChosen, setFileChosen] = useState<File>()
 
   return (
-    <File htmlFor='nftInput'>
+    <File htmlFor='eftInput'>
       {fileChosen && (
         <CloseButton
           onPress={() => {
@@ -119,10 +119,10 @@ export default function NftLoader(props: NftLoaderProps) {
             setFileChosen(undefined)
           }}
         >
-          <CrossIcon src={CrossImage}></CrossIcon>
+          <CrossIcon src={CrossImage} />
         </CloseButton>
       )}
-      <WhiteShade></WhiteShade>
+      <WhiteShade />
       <Box src={fileChosen ? SuccessImage : BoxImage} />
       {fileChosen ? (
         <BoxLabel css={{ color: '$gray600' }}>
@@ -134,7 +134,7 @@ export default function NftLoader(props: NftLoaderProps) {
         <BoxLabel>Choose file</BoxLabel>
       )}
       <FileInput
-        id='nftInput'
+        id='eftInput'
         type='file'
         accept={Array.from(supportedExtensions).join(',')}
         {...props.registerProps}

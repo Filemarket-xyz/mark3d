@@ -1,7 +1,7 @@
 import { Api, ApiConfig } from '../../swagger/Api'
 
 const apiConfig: ApiConfig = {
-  baseUrl: '/api'
+  baseUrl: '/api',
 }
 
 export const api = new Api(apiConfig)

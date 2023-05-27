@@ -14,5 +14,6 @@ export const formatFileSize = (size: number): string => {
   if (size < Math.pow(denominator, 3)) {
     return `${Math.round(size / Math.pow(denominator, 2))} MB`
   }
+
   return `${Math.round(size / Math.pow(denominator, 3))} GB`
 }

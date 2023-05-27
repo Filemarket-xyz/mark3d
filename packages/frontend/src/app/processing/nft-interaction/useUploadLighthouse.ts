@@ -17,6 +17,7 @@ export function useUploadLighthouse() {
     const getAccessToken = async () => {
       const message = await lighthouseService.getMessage(address)
       const signedMessage = await signer.signMessage(message) // Sign message
+
       return lighthouseService.getAccessToken(address, signedMessage)
     }
 
@@ -31,12 +32,12 @@ export function useUploadLighthouse() {
       }
       const output = await lighthouse.upload(
         { target: { files: [file] }, persist: () => void 0 },
-        accessToken, () => void 0
+        accessToken, () => void 0,
       )
 
       return {
         url: `ipfs://${output.data.Hash}`,
-        cid: output.data.Hash
+        cid: output.data.Hash,
       }
     }
 
@@ -54,7 +55,7 @@ export function useUploadLighthouse() {
 
     const metaToUpload = JSON.stringify({
       ...meta,
-      ...fileProps
+      ...fileProps,
     }, undefined, 2)
 
     const metaFile = new File([metaToUpload], 'metadata.json', { type: 'text/plain' })

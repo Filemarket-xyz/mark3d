@@ -16,8 +16,8 @@ const BadgesContainer = styled('div', {
   flexWrap: 'wrap',
   gap: '$2',
   '@sm': {
-    flexDirection: 'column-reverse'
-  }
+    flexDirection: 'column-reverse',
+  },
 })
 
 const HomeLandSection = () => {
@@ -42,10 +42,10 @@ const HomeLandSection = () => {
               url: collection?.image
                 ? getHttpLinkFromIpfsString(collection.image)
                 : gradientPlaceholderImg,
-              borderRadius: 'roundedSquare'
+              borderRadius: 'roundedSquare',
             }}
             wrapperProps={{
-              nftPage: true
+              nftPage: true,
             }}
           />
         </NavLink>
@@ -56,14 +56,14 @@ const HomeLandSection = () => {
           <Badge
             image={{
               borderRadius: 'circle',
-              url: getProfileImageUrl(collection?.creator ?? '')
+              url: getProfileImageUrl(collection?.creator ?? ''),
             }}
             content={{
               title: 'Creator',
-              value: reduceAddress(collection?.creator ?? '')
+              value: reduceAddress(collection?.creator ?? ''),
             }}
             wrapperProps={{
-              nftPage: true
+              nftPage: true,
             }}
           />
         </NavLink>
@@ -74,14 +74,14 @@ const HomeLandSection = () => {
           <Badge
             image={{
               borderRadius: 'circle',
-              url: getProfileImageUrl(token?.owner ?? '')
+              url: getProfileImageUrl(token?.owner ?? ''),
             }}
             content={{
               title: 'Owner',
-              value: reduceAddress(token?.owner ?? '')
+              value: reduceAddress(token?.owner ?? ''),
             }}
             wrapperProps={{
-              nftPage: true
+              nftPage: true,
             }}
           />
         </NavLink>

@@ -11,13 +11,13 @@ const NftName = styled('h1', {
   ...textVariant('h3').true,
   fontWeight: '600',
   color: '$gray800',
-  marginBottom: '$3'
+  marginBottom: '$3',
 })
 
 export const NftLicence = styled('span', {
   display: 'flex',
   gap: '4px',
-  marginTop: '$2'
+  marginTop: '$2',
 })
 
 const BaseInfoSection = () => {

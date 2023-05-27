@@ -30,12 +30,12 @@ export function usePlaceOrder({ collectionAddress, tokenId }: Partial<TokenFullI
       collectionAddress,
       BigNumber.from(tokenId),
       BigNumber.from(price),
-      { gasPrice: mark3dConfig.gasPrice }
+      { gasPrice: mark3dConfig.gasPrice },
     )
   }), [contract, signer, wrapPromise, collectionAddress, tokenId, price])
 
   return {
     ...statuses,
-    placeOrder
+    placeOrder,
   }
 }

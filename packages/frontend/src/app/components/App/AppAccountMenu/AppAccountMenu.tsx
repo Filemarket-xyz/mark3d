@@ -13,12 +13,12 @@ const Spacer = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   flexWrap: 'nowrap',
-  gap: '$3'
+  gap: '$3',
 })
 
 const IconWrapper = styled('div', {
   background: '$white',
-  dflex: 'center'
+  dflex: 'center',
 })
 
 export interface AppAccountMenuProps {
@@ -30,15 +30,21 @@ export const AppAccountMenu: FC<AppAccountMenuProps> = ({ address }) => {
   const close = useCallback(() => setIsOpen(false), [setIsOpen])
   const { chain } = useNetwork()
   const needToSwitchNetwork = chain && chain?.id !== mark3dConfig.chain.id
+
   return (
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger>
-        <Button icon secondary small iconCover>
+        <Button
+          icon
+          secondary
+          small
+          iconCover
+        >
           <IconWrapper>
             {needToSwitchNetwork ? (
               <Warning
                 sx={{
-                  color: 'var(--colors-red)'
+                  color: 'var(--colors-red)',
                 }}
               />
             ) : (

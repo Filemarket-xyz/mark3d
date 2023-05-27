@@ -13,6 +13,7 @@ export type LinkProps = ComponentProps<typeof LinkStyled> & {
 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
   const { linkRef, linkProps } = useLink(props, ref)
+
   return (
     <LinkStyled
       {...linkProps}

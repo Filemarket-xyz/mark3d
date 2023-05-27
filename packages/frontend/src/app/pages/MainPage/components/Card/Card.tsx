@@ -1,5 +1,5 @@
 import { ComponentProps } from '@stitches/react'
-import React, { FC, ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 
 import { styled } from '../../../../../styles'
 import { textVariant } from '../../../../UIkit'
@@ -17,7 +17,7 @@ const CardStyle = styled('div', {
   fontSize: '16px',
   '@lg': {
     gridTemplateColumns: 'auto',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   variants: {
     cardType: {
@@ -27,31 +27,31 @@ const CardStyle = styled('div', {
         padding: '20px',
         '@sm': {
           '& img': {
-            display: 'none'
-          }
-        }
+            display: 'none',
+          },
+        },
       },
       info: {
         gap: '48px',
         padding: '48px',
-        borderRadius: '32px'
-      }
+        borderRadius: '32px',
+      },
     },
     linear: {
       true: {
         border: '2px solid rgba(56,188,201, 0.5)',
-        boxShadow: '0px 4px 50px rgba(55, 187, 201, 0.25)'
-      }
+        boxShadow: '0px 4px 50px rgba(55, 187, 201, 0.25)',
+      },
     },
     theme: {
       black: {
         background: '$gray800',
         boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
         color: '$gray200',
-        borderColor: '#444649'
-      }
-    }
-  }
+        borderColor: '#444649',
+      },
+    },
+  },
 })
 
 const Info = styled('div', {
@@ -61,11 +61,11 @@ const Info = styled('div', {
   variants: {
     cardType: {
       main: {
-        maxWidth: '433px'
+        maxWidth: '433px',
       },
-      info: {}
-    }
-  }
+      info: {},
+    },
+  },
 })
 
 const Text = styled('div', {
@@ -77,8 +77,8 @@ const Text = styled('div', {
     cardType: {
       main: {
         '& span': {
-          lineHeight: '28px !important'
-        }
+          lineHeight: '28px !important',
+        },
       },
       info: {
         '& span': {
@@ -86,12 +86,12 @@ const Text = styled('div', {
           fontWeight: '400 !important',
           lineHeight: '30px !important',
           '@sm': {
-            fontSize: '12px !important'
-          }
-        }
-      }
-    }
-  }
+            fontSize: '12px !important',
+          },
+        },
+      },
+    },
+  },
 })
 
 const Header = styled('h4', {
@@ -103,14 +103,14 @@ const Header = styled('h4', {
     cardType: {
       main: {
         '@sm': {
-          fontSize: '20px'
-        }
+          fontSize: '20px',
+        },
       },
       info: {
         '@sm': {
-          fontSize: '16px'
-        }
-      }
+          fontSize: '16px',
+        },
+      },
     },
     linear: {
       true: {
@@ -119,42 +119,42 @@ const Header = styled('h4', {
         '-webkit-background-clip': 'text',
         '-webkit-text-fill-color': 'transparent',
         backgroundClip: 'text',
-        textFillColor: 'transparent'
-      }
-    }
-  }
+        textFillColor: 'transparent',
+      },
+    },
+  },
 })
 
 const RightBottomContent = styled('div', {
   variants: {
     cardType: {
       main: {
-        paddingTop: '24px'
+        paddingTop: '24px',
       },
       info: {
-        paddingTop: '32px'
-      }
-    }
-  }
+        paddingTop: '32px',
+      },
+    },
+  },
 })
 
 const ImgBlock = styled('a', {
   '@lg': {
-    display: 'none'
+    display: 'none',
   },
   variants: {
     cardType: {
       main: {
         width: '192px',
-        height: '192px'
+        height: '192px',
       },
       info: {
         width: '366px',
         height: '384px',
-        borderRadius: '16px'
-      }
-    }
-  }
+        borderRadius: '16px',
+      },
+    },
+  },
 })
 
 export type CardProps = ComponentProps<typeof CardStyle> & ComponentProps<typeof RightBottomContent> & {
@@ -166,26 +166,40 @@ export type CardProps = ComponentProps<typeof CardStyle> & ComponentProps<typeof
   isImgRight?: boolean
 }
 
-const Card: FC<CardProps> = ({ headerText, img, imgHref, text, rightBottomContent, cardType, linear, theme, isImgRight }) => {
+const Card: React.FC<CardProps> = ({
+  headerText,
+  img,
+  imgHref,
+  text,
+  rightBottomContent,
+  cardType,
+  linear,
+  theme,
+  isImgRight,
+}) => {
   return (
     <CardStyle cardType={cardType} linear={linear} theme={theme}>
       {
-        isImgRight ? <>
+        isImgRight ? (
+          <>
             <Info cardType={cardType}>
               <Header linear={linear} cardType={cardType}>{headerText}</Header>
               <Text cardType={cardType}>{text}</Text>
               <RightBottomContent cardType={cardType}>{rightBottomContent}</RightBottomContent>
             </Info>
             <ImgBlock href={imgHref} cardType={cardType} style={{ backgroundImage: `url(${img}` }} />
-        </>
-          : <>
-            <ImgBlock href={imgHref} cardType={cardType} style={{ backgroundImage: `url(${img}` }} />
-            <Info cardType={cardType}>
-              <Header linear={linear} cardType={cardType}>{headerText}</Header>
-              <Text cardType={cardType}>{text}</Text>
-              <RightBottomContent cardType={cardType}>{rightBottomContent}</RightBottomContent>
-            </Info>
           </>
+        )
+          : (
+            <>
+              <ImgBlock href={imgHref} cardType={cardType} style={{ backgroundImage: `url(${img}` }} />
+              <Info cardType={cardType}>
+                <Header linear={linear} cardType={cardType}>{headerText}</Header>
+                <Text cardType={cardType}>{text}</Text>
+                <RightBottomContent cardType={cardType}>{rightBottomContent}</RightBottomContent>
+              </Info>
+            </>
+          )
       }
     </CardStyle>
   )

@@ -15,10 +15,10 @@ export function useHookToCallback<
   CallbackReturnType,
   MaybeAsyncCallbackReturnType extends Promise<CallbackReturnType> | CallbackReturnType,
   HookReturnType extends { [Key in CallbackName]: () => MaybeAsyncCallbackReturnType },
-  >(
+>(
   hook: (...args: HookArgs) => HookReturnType,
   callbackName: CallbackName,
-  notifiers?: { callbackOk?: (v: CallbackReturnType) => void, callbackError?: (error: any) => void }
+  notifiers?: { callbackOk?: (v: CallbackReturnType) => void, callbackError?: (error: any) => void },
 ): Omit<HookReturnType, CallbackName> & { [Key in CallbackName]: (...args: HookArgs) => void } {
   const [args, setArgs] = useState<HookArgs>([] as unknown as HookArgs)
   const hookReturnValue = hook(...args)
@@ -41,7 +41,8 @@ export function useHookToCallback<
     }
   }, [args])
   const callbackObj: { [Key in CallbackName]: (...args: HookArgs) => void } = {
-    [callbackName]: wrappedCallback
+    [callbackName]: wrappedCallback,
   } as any
+
   return { ...callbackObj, ...other }
 }

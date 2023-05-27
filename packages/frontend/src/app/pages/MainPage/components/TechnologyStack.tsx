@@ -15,22 +15,22 @@ const ToolCardWide = styled('div', {
   marginTop: 48,
   '@lg': {
     marginLeft: 'auto',
-    marginRight: 'auto'
+    marginRight: 'auto',
   },
   '@sm': {
-    width: '90%'
-  }
+    width: '90%',
+  },
 })
 
 const ToolCardContent = styled('div', {
   display: 'flex',
   flexDirection: 'column',
-  gap: '$3'
+  gap: '$3',
 })
 
 const Title = styled('h5', {
   color: '$gray800',
-  ...textVariant('h5').true
+  ...textVariant('h5').true,
 })
 
 const ItemsContainer = styled('div', {
@@ -41,24 +41,24 @@ const ItemsContainer = styled('div', {
   flexWrap: 'wrap',
   justifyContent: 'space-between',
   '&::-webkit-scrollbar': {
-    display: 'none'
+    display: 'none',
   },
   '-ms-overflow-style': 'none',
-  'scrollbar-width': 'none'
+  'scrollbar-width': 'none',
 })
 
 const Item = styled('a', {
   transition: 'all 0.2s ease-in-out',
   cursor: 'pointer',
   '&:hover': {
-    transform: 'scale(1.1)'
-  }
+    transform: 'scale(1.1)',
+  },
 })
 
 const ItemImg = styled('img', {
   objectFit: 'contain',
   height: 40,
-  width: 'min-content'
+  width: 'min-content',
 })
 
 interface ItemData {
@@ -69,28 +69,28 @@ interface ItemData {
 const items: ItemData[] = [
   {
     src: item1,
-    href: 'https://filecoin.io/'
+    href: 'https://filecoin.io/',
   },
   {
     src: item2,
-    href: 'https://fvm.filecoin.io/'
+    href: 'https://fvm.filecoin.io/',
   },
   {
     src: item3,
-    href: 'https://ipfs.tech/'
+    href: 'https://ipfs.tech/',
   },
   {
     src: item4,
-    href: 'https://ipld.io/'
+    href: 'https://ipld.io/',
   },
   {
     src: item6,
-    href: 'https://www.lighthouse.storage/'
+    href: 'https://www.lighthouse.storage/',
   },
   {
     src: item7,
-    href: 'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34'
-  }
+    href: 'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34',
+  },
 ]
 
 export const TechnologyStack = () => {

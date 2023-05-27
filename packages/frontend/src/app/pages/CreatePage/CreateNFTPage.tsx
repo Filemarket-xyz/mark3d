@@ -222,7 +222,7 @@ const CreateNftPage = observer(() => {
   useAfterDidMountEffect(() => {
     if (isNftLoading) {
       setModalOpen(true)
-      setModalBody(<InProgressBody text='NFT is being minted' />)
+      setModalBody(<InProgressBody text='EFT is being minted' />)
     } else if (nftError) {
       setModalOpen(true)
       setModalBody(<ErrorBody message={extractMessageFromError(nftError)} />)
@@ -230,7 +230,7 @@ const CreateNftPage = observer(() => {
       setModalOpen(true)
       setModalBody(
         <SuccessNavBody
-          buttonText='View NFT'
+          buttonText='View EFT'
           link={`/collection/${nftResult.receipt.to}/${nftResult.tokenId}`}
         />,
       )
@@ -264,7 +264,7 @@ const CreateNftPage = observer(() => {
   return (
     <>
       <MintModal
-        body={modalBody ?? <></>}
+        body={modalBody}
         open={modalOpen}
         handleClose={() => {
           setIsNftLoading(false)
@@ -282,7 +282,7 @@ const CreateNftPage = observer(() => {
                   placement={'bottomStart'}
                   content={(
                     <Txt secondary1 css={{ fontSize: '14px' }}>
-                      Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT
+                      {'Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT'}
                     </Txt>
                   )}
                   css={{
@@ -498,7 +498,7 @@ const CreateNftPage = observer(() => {
                   options: licenseOptions,
                 }}
               />
-              <Description secondary style={{ marginBottom: '0', padding: '0 16px' }}>
+              <Description secondary style={{ marginBottom: '8px', padding: '0 16px' }}>
                 <Txt style={{ fontWeight: '500', color: '#232528' }}>{licenseDescription.split(' ')[0]}</Txt>
                 &nbsp;
                 {licenseDescription.split(' ').slice(1, licenseDescription.split(' ').length).join(' ')}

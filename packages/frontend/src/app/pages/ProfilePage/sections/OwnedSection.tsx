@@ -40,8 +40,8 @@ export const OwnedSection: React.FC = observer(() => {
       {!collectionAndTokenListStore.nftCards.length && !collectionAndTokenListStore.isLoading && (
         <NoNftContainer>
           <Plug
-            header={'You don`t have any NFTs '}
-            mainText={'Create your own NFT or go to the market to find something amazing'}
+            header={'You don`t have any EFTs '}
+            mainText={'Create your own EFT or go to the market to find something amazing'}
             buttonsBlock={(
               <>
                 <Button primary onClick={() => navigate('/market')}>

@@ -15,8 +15,8 @@ export default function ExplorerBlock() {
             description: `The Sandbox is a decentralized community-driven Metaverse for
           creators to monetize voxel assets and gaming experiences in the
           blockchain!`,
-            title: 'Sandbox'
-          }
+            title: 'Sandbox',
+          },
         ]}
       />
     </BlockWrapper>

@@ -14,7 +14,7 @@ import { ModalTitle } from '../../Modal/Modal'
 import { EnterSeedPhraseForm } from './EnterSeedPhraseForm/EnterSeedPhraseForm'
 
 const ModalStyle = styled(Modal, {
-  fontSize: '20px'
+  fontSize: '20px',
 })
 
 const InputWindowStyle = styled('div', {
@@ -26,16 +26,16 @@ const InputWindowStyle = styled('div', {
   '& button': {
     padding: '5px',
     marginTop: '20px',
-    color: 'white'
+    color: 'white',
   },
   '& .contentModalWindow': {
-    width: '100%'
+    width: '100%',
   },
 
   '& .closeButton': {
-    top: '-35px !important'
+    top: '-35px !important',
   },
-  paddingBottom: '30px'
+  paddingBottom: '30px',
 })
 
 export function EnterSeedPhraseDialog({ open, onClose }: AppDialogProps<{}>): JSX.Element {
@@ -45,32 +45,36 @@ export function EnterSeedPhraseDialog({ open, onClose }: AppDialogProps<{}>): JS
   const { dialogStore } = useStores()
   const { address } = useAccount()
   const { seedProvider } = useSeedProvider(address)
+
   return (
     <ModalStyle
       closeButton
       open={open}
-      onClose={() => {
-        onClose()
-      }}
       width={adaptive({
         sm: '400px',
         md: '650px',
         lg: '950px',
-        defaultValue: '950px'
+        defaultValue: '950px',
       })}
+      onClose={() => {
+        onClose()
+      }}
     >
       <ModalTitle>{seedProvider?.mnemonic ? 'Enter a new seed-phrase' : 'Enter a seed-phrase'}</ModalTitle>
       <InputWindowStyle>
         <div className="contentModalWindow">
           {!isSuccess
-            ? <EnterSeedPhraseForm
-              onSubmit={async (value) => {
-                const seed = mnemonicToEntropy(value.seedPhrase)
-                await seedProvider?.set(Buffer.from(seed, 'hex'), value.password)
-                setIsSuccess(true)
-                dialogStore.closeDialogByName('ConnectMain')
-              }
-              } />
+            ? (
+              <EnterSeedPhraseForm
+                onSubmit={async (value) => {
+                  const seed = mnemonicToEntropy(value.seedPhrase)
+                  await seedProvider?.set(Buffer.from(seed, 'hex'), value.password)
+                  setIsSuccess(true)
+                  dialogStore.closeDialogByName('ConnectMain')
+                }
+                }
+              />
+            )
             : <Txt h2>{'SUCCESS!'}</Txt>
           }
         </div>

@@ -20,12 +20,12 @@ export function useCancelTransfer({ collectionAddress, tokenId }: Partial<TokenF
 
     return callContract({ contract, method: 'cancelTransfer' },
       BigNumber.from(tokenId),
-      { gasPrice: mark3dConfig.gasPrice }
+      { gasPrice: mark3dConfig.gasPrice },
     )
   }), [contract, signer, wrapPromise])
 
   return {
     ...statuses,
-    cancelTransfer
+    cancelTransfer,
   }
 }
