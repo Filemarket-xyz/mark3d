@@ -13,11 +13,16 @@ import { marketRoutes } from './MarketPage/routes'
 import NFTPage from './NFTPage/NFTPage'
 import ProfilePage from './ProfilePage/ProfilePage'
 import { profileRoutes } from './ProfilePage/routes'
+import SuccessSubscribePage from './SuccessSubscribePage/SuccessSubscribePage'
 
 const routes: RouteObject[] = [
   {
     path: '/',
     element: <GetAccessPage />,
+  },
+  {
+    path: 'successGetAccess',
+    element: <SuccessSubscribePage />
   },
   {
     path: '/',

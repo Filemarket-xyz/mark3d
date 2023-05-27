@@ -178,8 +178,8 @@ func NewMetadataProperty(traitType, displayType, value, maxValue, minValue strin
 	}
 }
 
-func NewPlaceholderMetadata() TokenMetadata {
-	return TokenMetadata{
+func NewPlaceholderMetadata() *TokenMetadata {
+	return &TokenMetadata{
 		Name:        "Undefined",
 		Description: "Undefined",
 		Image:       "",

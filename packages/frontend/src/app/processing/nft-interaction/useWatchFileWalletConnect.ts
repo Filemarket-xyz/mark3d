@@ -22,7 +22,7 @@ export default function useWatchFileWalletConnect(): void {
   }, [dialogStore, setCheckHasSeed])
 
   const checkGetAccessPagePath = () => {
-    return window.location.pathname === '/'
+    return window.location.pathname === '/' || window.location.pathname === '/successGetAccess'
   }
 
   useEffect(() => {
