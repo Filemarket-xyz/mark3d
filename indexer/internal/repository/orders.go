@@ -20,21 +20,32 @@ func (p *postgres) GetAllActiveOrders(
 	lastOrderId *int64,
 	limit int,
 ) ([]*domain.Order, error) {
+	// Returns orders, where the latest order status=='Created' and latest transfer status NOT IN ('Finished', 'Cancelled')
 	// language=PostgreSQL
 	query := `
-		SELECT o.id, o.transfer_id, o.price
-		FROM orders AS o 
-    	JOIN transfers t on o.transfer_id = t.id 
-		WHERE (
-				SELECT ts.status 
-		        FROM transfer_statuses AS ts 
-		        WHERE ts.transfer_id=t.id AND ts.timestamp=(
-                		SELECT MAX(ts2.timestamp) 
-                		FROM transfer_statuses AS ts2 
-                		WHERE ts2.transfer_id=t.id
-                )
-		)= 'Created' AND o.id < $1
-		ORDER BY o.id DESC
+		WITH latest_transfer_statuses AS (
+			SELECT transfer_id, status, RANK() OVER(PARTITION BY transfer_id ORDER BY timestamp DESC) as rank
+			FROM transfer_statuses
+		),
+		latest_order_statuses AS (
+			SELECT order_id, status, timestamp, tx_id, RANK() OVER(PARTITION BY order_id ORDER BY timestamp DESC) as rank
+			FROM order_statuses
+		),
+		filtered_orders AS (
+			SELECT o.id, o.transfer_id, o.price
+			FROM orders AS o
+			JOIN transfers t on o.transfer_id = t.id
+			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
+			WHERE lts.rank = 1 
+			  AND lts.status NOT IN ('Finished', 'Cancelled') 
+			  AND o.id < $1
+		)
+		SELECT fo.id, fo.transfer_id, fo.price, los.timestamp, los.status, los.tx_id
+		FROM filtered_orders fo
+		JOIN latest_order_statuses los ON fo.id = los.order_id
+		WHERE los.rank = 1 
+		  AND los.status = 'Created'
+		ORDER BY fo.id DESC
 		LIMIT $2
 	`
 
@@ -85,18 +96,26 @@ func (p *postgres) GetAllActiveOrdersTotal(
 ) (uint64, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT COUNT(*) AS total
-		FROM orders AS o 
-    	JOIN transfers t on o.transfer_id = t.id 
-		WHERE (
-				SELECT ts.status 
-		        FROM transfer_statuses AS ts 
-		        WHERE ts.transfer_id=t.id AND ts.timestamp=(
-                		SELECT MAX(ts2.timestamp) 
-                		FROM transfer_statuses AS ts2 
-                		WHERE ts2.transfer_id=t.id
-                )
-		)= 'Created'
+		WITH latest_transfer_statuses AS (
+			SELECT transfer_id, status, RANK() OVER(PARTITION BY transfer_id ORDER BY timestamp DESC) as rank
+			FROM transfer_statuses
+		),
+		latest_order_statuses AS (
+			SELECT order_id, status, timestamp, tx_id, RANK() OVER(PARTITION BY order_id ORDER BY timestamp DESC) as rank
+			FROM order_statuses
+		),
+		filtered_orders AS (
+			SELECT o.id, o.transfer_id, o.price
+			FROM orders AS o
+					 JOIN transfers t on o.transfer_id = t.id
+					 JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
+			WHERE lts.rank = 1 AND lts.status NOT IN ('Finished', 'Cancelled')
+		)
+		SELECT COUNT(*) as total
+		FROM filtered_orders fo
+		JOIN latest_order_statuses los ON fo.id = los.order_id
+		WHERE los.rank = 1 AND los.status = 'Created'
+		ORDER BY fo.id DESC
 	`
 
 	var total uint64
