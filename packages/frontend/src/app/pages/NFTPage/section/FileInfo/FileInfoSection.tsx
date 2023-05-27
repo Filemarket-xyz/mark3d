@@ -20,27 +20,27 @@ const FileInfoSectionStyle = styled('div', {
   justifyContent: 'space-between',
   padding: '12px',
   '@md': {
-    width: '100%'
-  }
+    width: '100%',
+  },
 })
 
 const FileList = styled('div', {
   '& li:not(:last-child)': {
-    marginBottom: '$2'
-  }
+    marginBottom: '$2',
+  },
 })
 
 const FileInfoSectionTitle = styled(PropertyTitle, {
   color: '#232528',
   fontWeight: '600',
   fontSize: '20px',
-  marginBottom: '12px'
+  marginBottom: '12px',
 })
 
 const Line = styled('div', {
   height: '15px',
   width: '2px',
-  background: '$gray400'
+  background: '$gray400',
 })
 
 interface FileInfoSectionProps {
@@ -56,7 +56,7 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
     statuses,
     okMsg: 'File decrypted and download started',
     loadingMsg: 'Decrypt file in progress',
-    waitForSign: false
+    waitForSign: false,
   })
 
   useEffect(() => {

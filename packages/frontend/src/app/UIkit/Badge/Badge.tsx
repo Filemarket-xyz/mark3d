@@ -15,22 +15,22 @@ const Wrapper = styled('div', {
   boxShadow: '$form',
   border: '1px solid $gray300',
   '@md': {
-    width: '100%'
+    width: '100%',
   },
   variants: {
     nftPage: {
       true: {
         '@lg': {
-          width: '100%'
-        }
-      }
-    }
-  }
+          width: '100%',
+        },
+      },
+    },
+  },
 })
 
 const Title = styled('p', {
   color: '$gray500',
-  ...textVariant('primary3').true
+  ...textVariant('primary3').true,
 })
 
 const Value = styled('p', {
@@ -40,7 +40,7 @@ const Value = styled('p', {
   overflow: 'hidden',
   whiteSpace: 'nowrap',
   width: '100%',
-  fontSize: '14px'
+  fontSize: '14px',
 })
 
 const Content = styled('div', {
@@ -49,7 +49,7 @@ const Content = styled('div', {
   justifyContent: 'center',
   gap: '$1',
   minHeight: 48,
-  width: '140px'
+  width: '140px',
 })
 
 const Image = styled('img', {
@@ -60,19 +60,19 @@ const Image = styled('img', {
   variants: {
     roundVariant: {
       circle: {
-        borderRadius: '50%'
+        borderRadius: '50%',
       },
       roundedSquare: {
-        borderRadius: '$2'
-      }
+        borderRadius: '$2',
+      },
     },
     small: {
       true: {
         width: 40,
-        height: 40
-      }
-    }
-  }
+        height: 40,
+      },
+    },
+  },
 })
 
 export interface BadgeProps {

@@ -20,7 +20,7 @@ const CardControls = styled(BasicCardControls, {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  padding: '28px 12px'
+  padding: '28px 12px',
 })
 
 const Description = styled('p', {
@@ -28,12 +28,12 @@ const Description = styled('p', {
   textAlign: 'center',
   ...textVariant('primary2').true,
   color: '$gray500',
-  lineHeight: '143%'
+  lineHeight: '143%',
 })
 
 const CardImg = styled(BasicCardSquareImg, {
   height: '265px',
-  objectFit: 'cover'
+  objectFit: 'cover',
 })
 
 const CardIcon = styled('img', {
@@ -42,7 +42,7 @@ const CardIcon = styled('img', {
   borderRadius: '$2',
   position: 'absolute',
   top: -24,
-  objectPosition: 'center'
+  objectPosition: 'center',
 })
 
 export default function CollectionCard(props: CollectionCardProps) {

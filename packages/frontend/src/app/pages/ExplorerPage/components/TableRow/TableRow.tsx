@@ -19,24 +19,24 @@ const ArrowImg = styled('img', {
   variants: {
     up: {
       true: {
-        transform: 'rotateX(180deg)'
-      }
-    }
-  }
+        transform: 'rotateX(180deg)',
+      },
+    },
+  },
 })
 
 const ItemArrow = styled('button', {
   alignItems: 'center',
   padding: '$4',
   '@md': {
-    paddingLeft: 0
+    paddingLeft: 0,
   },
   flexShrink: 0,
   cursor: 'pointer',
   background: 'inherit',
   border: 'none',
   borderRadius: 'inherit',
-  outline: 'none' // TODO implement outline or smth else for focused elements
+  outline: 'none', // TODO implement outline or smth else for focused elements
 })
 
 export const RowCell = styled('div', {
@@ -52,41 +52,41 @@ export const RowCell = styled('div', {
     title: {
       true: {
         ...textVariant('primary2').true,
-        color: '$blue500'
+        color: '$blue500',
       },
       false: {
         ...textVariant('secondary1').true,
-        fontSize: '14px'
-      }
+        fontSize: '14px',
+      },
     },
     hide: {
       sm: {
         '@sm': {
-          display: 'none'
-        }
+          display: 'none',
+        },
       },
       md: {
         '@md': {
-          display: 'none'
-        }
+          display: 'none',
+        },
       },
       lg: {
         '@lg': {
-          display: 'none'
-        }
+          display: 'none',
+        },
       },
       xl: {
         '@xl': {
-          display: 'none'
-        }
-      }
-    }
-  }
+          display: 'none',
+        },
+      },
+    },
+  },
 })
 
 const Icon = styled('img', {
   width: '20px',
-  height: '20px'
+  height: '20px',
 })
 
 const ItemWithContent = styled('div')

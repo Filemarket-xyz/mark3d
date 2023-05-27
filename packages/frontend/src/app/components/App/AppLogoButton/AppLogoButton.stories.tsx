@@ -5,7 +5,7 @@ import { AppLogoButton } from './AppLogoButton'
 
 const story: ComponentMeta<typeof AppLogoButton> = {
   component: AppLogoButton,
-  title: 'App/AppLogoButton'
+  title: 'App/AppLogoButton',
 }
 
 export default story

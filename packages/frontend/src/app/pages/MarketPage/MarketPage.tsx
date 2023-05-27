@@ -7,7 +7,7 @@ import { PageLayout } from '../../UIkit'
 import Tabs from '../../UIkit/Tabs/Tabs'
 
 const TabsContainer = styled('div', {
-  marginBottom: '$4'
+  marginBottom: '$4',
 })
 
 const MarketPage = observer(() => {
@@ -20,9 +20,9 @@ const MarketPage = observer(() => {
           tabs={[
             {
               name: 'EFTs',
-              url: '/market/nfts',
-              amount: nftCards?.length
-            }
+              url: '/market/efts',
+              amount: nftCards?.length,
+            },
           ]}
         />
       </TabsContainer>

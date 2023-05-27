@@ -12,7 +12,7 @@ import {
   IStoreRequester,
   RequestContext,
   storeRequest,
-  storeReset
+  storeReset,
 } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
 
@@ -35,7 +35,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
     makeAutoObservable(this, {
-      errorStore: false
+      errorStore: false,
     })
   }
 
@@ -75,15 +75,15 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate<
           title: token?.name ?? '—',
           user: {
             img: getProfileImageUrl(token?.owner ?? ''),
-            username: reduceAddress(token?.owner ?? '')
+            username: reduceAddress(token?.owner ?? ''),
           },
           button: {
             link: `/collection/${token?.collectionAddress}/${token?.tokenId}`,
-            text: 'View & Buy'
+            text: 'View & Buy',
           },
           priceUsd: order?.priceUsd,
-          price: order?.price
-        })
+          price: order?.price,
+        }),
       )
   }
 }

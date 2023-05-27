@@ -27,11 +27,11 @@ export function useStatusState<ResultType>() {
     statuses: {
       isLoading,
       error,
-      result
+      result,
     },
     setIsLoading,
     setError,
     setResult,
-    wrapPromise
+    wrapPromise,
   }
 }

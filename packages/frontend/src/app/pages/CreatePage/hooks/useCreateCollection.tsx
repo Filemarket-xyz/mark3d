@@ -3,17 +3,17 @@ import { useState } from 'react'
 import { useAfterDidMountEffect } from '../../../hooks/useDidMountEffect'
 import {
   CreateCollectionForm as FormDataToTransfer,
-  useMintCollection
+  useMintCollection,
 } from '../../../processing/nft-interaction'
 import { CreateCollectionForm } from '../CreateCollectionPage'
 
 const convertFormDataToCollectionDTO = (
-  form: CreateCollectionForm
+  form: CreateCollectionForm,
 ): FormDataToTransfer => {
   return {
     ...form,
     name: form.name,
-    image: form.image[0]
+    image: form.image[0],
   }
 }
 
@@ -23,14 +23,14 @@ export const useCreateCollection = () => {
     description: '',
     image: undefined,
     name: '',
-    symbol: ''
+    symbol: '',
   })
 
   const {
     statuses: { error, isLoading, result },
     setError,
     setIsLoading,
-    mintCollection
+    mintCollection,
   } = useMintCollection(formToTransfer)
 
   useAfterDidMountEffect(() => {
@@ -45,6 +45,6 @@ export const useCreateCollection = () => {
     result,
     createCollection: (form: CreateCollectionForm) => {
       setFormToTransfer(convertFormDataToCollectionDTO(form))
-    }
+    },
   }
 }

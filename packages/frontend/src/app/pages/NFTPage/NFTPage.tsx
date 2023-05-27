@@ -34,13 +34,13 @@ const NFTPreviewContainer = styled('div', {
     mixBlendMode: 'normal',
     backdropFilter: 'blur(150px)',
     paddingTop: 'calc($layout$navBarHeight)',
-    paddingBottom: '$6'
+    paddingBottom: '$6',
   },
   zIndex: '1',
   position: 'relative',
   '@sm': {
-    height: 390
-  }
+    height: 390,
+  },
 })
 
 const MainInfo = styled(PageLayout, {
@@ -59,8 +59,8 @@ const MainInfo = styled(PageLayout, {
   position: 'relative',
   '@md': {
     height: 'unset',
-    borderRadius: '24px 24px 0px 0px'
-  }
+    borderRadius: '24px 24px 0px 0px',
+  },
 })
 
 const GridLayout = styled('div', {
@@ -74,8 +74,8 @@ const GridLayout = styled('div', {
   gridTemplateAreas: "'GridBlock Control'",
   '@md': {
     gridTemplateAreas: "'BaseInfo' 'Control' 'HomeLand' 'Tags' 'Description'",
-    gridTemplateColumns: 'unset'
-  }
+    gridTemplateColumns: 'unset',
+  },
 })
 
 const GridBlockSection = styled(GridBlock, {
@@ -84,12 +84,12 @@ const GridBlockSection = styled(GridBlock, {
   gridArea: 'GridBlock',
   gap: '32px',
   '@md': {
-    display: 'none'
-  }
+    display: 'none',
+  },
 })
 
 const ControlFileSection = styled('div', {
-  height: '100%'
+  height: '100%',
 })
 
 const ControlStickyBlock = styled('div', {
@@ -100,8 +100,8 @@ const ControlStickyBlock = styled('div', {
   top: '125px',
   '@md': {
     position: 'relative',
-    top: '0'
-  }
+    top: '0',
+  },
 })
 
 const NFTPage = observer(() => {
@@ -112,12 +112,12 @@ const NFTPage = observer(() => {
   const files = useHiddenFileDownload(tokenMetaStore, tokenStore.data)
   const tokenFullId = useMemo(
     () => makeTokenFullId(collectionAddress, tokenId),
-    [collectionAddress, tokenId]
+    [collectionAddress, tokenId],
   )
   const { isOwner } = useIsOwner(tokenFullId)
   const isBuyer = useIsBuyer(transferStore.data)
   const canViewHiddenFiles = isBuyer && transferPermissions.buyer.canViewHiddenFiles(
-    transferStore.data
+    transferStore.data,
   )
 
   const categories: string[] = useMemo(() => {
@@ -135,7 +135,7 @@ const NFTPage = observer(() => {
       <NFTPreviewContainer style={{
         backgroundImage: `url(${getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
       }}
       >
         <div className='blur'>

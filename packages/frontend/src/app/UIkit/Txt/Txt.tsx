@@ -29,8 +29,8 @@ export const textVariant = (token: keyof typeof theme['fontSizes']) => ({
     fontSize: `$${token}`,
     fontWeight: `$${token.slice(0, -1)}`,
     lineHeight: `$${token}`,
-    fontFamily: `$${token.slice(0, -1)}`
-  }
+    fontFamily: `$${token.slice(0, -1)}`,
+  },
 })
 
 // На слове Text подсказки ide плохо работают, поэтому убрали букву e.
@@ -62,6 +62,6 @@ export const Txt = styled('span', {
 
     ternary1: textVariant('ternary1'),
     ternary2: textVariant('ternary2'),
-    ternary3: textVariant('ternary3')
-  }
+    ternary3: textVariant('ternary3'),
+  },
 })

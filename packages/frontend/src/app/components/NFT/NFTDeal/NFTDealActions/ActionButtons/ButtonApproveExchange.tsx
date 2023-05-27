@@ -16,9 +16,10 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
-    okMsg: 'You have approved FileMarket to list your NFT. You can now place an order',
-    loadingMsg: 'At first, you need to approve FileMarket to list your NFT. After that you can place an order.'
+    okMsg: 'You have approved FileMarket to list your EFT. You can now place an order',
+    loadingMsg: 'At first, you need to approve FileMarket to list your EFT. After that you can place an order.',
   })
+
   return (
     <>
       <MintModal {...modalProps} />

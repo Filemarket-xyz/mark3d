@@ -17,7 +17,7 @@ export class SecureStorage implements ISecureStorage {
   securityProviderChanging = false
 
   constructor(
-    public readonly storageProvider: IStorageProvider
+    public readonly storageProvider: IStorageProvider,
   ) {
   }
 
@@ -34,9 +34,9 @@ export class SecureStorage implements ISecureStorage {
               securityProvider,
               await decrypt(
                 this.securityProvider,
-                encryptedValue
-              )
-            )
+                encryptedValue,
+              ),
+            ),
           ])
         }
       }
@@ -55,6 +55,7 @@ export class SecureStorage implements ISecureStorage {
     if (!encryptedValue) {
       return undefined
     }
+
     return decrypt(this.securityProvider, encryptedValue)
   }
 

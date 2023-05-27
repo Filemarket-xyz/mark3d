@@ -7,6 +7,7 @@ import Footer from '../Footer/Footer'
 
 export const AppLayout: FC = () => {
   useScrollTop()
+
   return (
     <>
       <AppNav />

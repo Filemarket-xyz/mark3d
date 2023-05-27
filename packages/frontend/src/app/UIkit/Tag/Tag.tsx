@@ -6,7 +6,7 @@ import { textVariant } from '../Txt'
 
 export const BlueText = styled('h5', {
   ...textVariant('primary2').true,
-  color: '$blue500'
+  color: '$blue500',
 })
 
 export const TagStyle = styled(BlueText, {
@@ -18,8 +18,8 @@ export const TagStyle = styled(BlueText, {
   gap: '10px',
   border: '1px solid $gray300',
   '& img': {
-    cursor: 'pointer'
-  }
+    cursor: 'pointer',
+  },
 })
 
 export interface TagOptions {

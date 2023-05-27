@@ -7,7 +7,7 @@ import {
   IStoreRequester,
   RequestContext,
   storeRequest,
-  storeReset
+  storeReset,
 } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
 
@@ -26,7 +26,7 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
     makeAutoObservable(this, {
-      errorStore: false
+      errorStore: false,
     })
   }
 
@@ -36,7 +36,7 @@ export class CollectionStore implements IActivateDeactivate<[string]>, IStoreReq
       api.collections.collectionsDetail(address),
       (resp) => {
         this.collection = resp
-      }
+      },
     )
   }
 

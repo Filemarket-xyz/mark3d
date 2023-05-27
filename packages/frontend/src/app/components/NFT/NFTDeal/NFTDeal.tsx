@@ -27,17 +27,17 @@ const NFTDealStyle = styled('div', {
   flexDirection: 'column',
   paddingTB: '$3',
   '@md': {
-    width: '100%'
+    width: '100%',
   },
   variants: {
     isNotListed: {
       true: {
         background: 'none',
         height: '64px',
-        padding: '0'
-      }
-    }
-  }
+        padding: '0',
+      },
+    },
+  },
 })
 
 const DealContainerInfo = styled('div', {
@@ -48,8 +48,8 @@ const DealContainerInfo = styled('div', {
   gap: '$3',
   padding: '0 16px',
   '@sm': {
-    flexDirection: 'column'
-  }
+    flexDirection: 'column',
+  },
 })
 
 const ButtonsContainer = styled('div', {
@@ -61,8 +61,8 @@ const ButtonsContainer = styled('div', {
   padding: '0 16px',
   '@sm': {
     flexDirection: 'column',
-    gap: '$3'
-  }
+    gap: '$3',
+  },
 })
 
 const IsNotListedContainer = styled('div', {
@@ -73,7 +73,7 @@ const IsNotListedContainer = styled('div', {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  cursor: 'not-allowed'
+  cursor: 'not-allowed',
 })
 
 export const NFTDeal: FC<NFTDealProps> = observer(({
@@ -81,7 +81,7 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
   order,
   tokenFullId,
   reFetchOrder,
-  children
+  children,
 }) => {
   const { isOwner } = useIsOwner(tokenFullId)
 

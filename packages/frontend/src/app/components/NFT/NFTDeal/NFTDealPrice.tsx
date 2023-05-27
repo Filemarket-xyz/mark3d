@@ -17,12 +17,12 @@ export const Price = styled('div', {
   height: '64px',
   background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), #232528',
   borderRadius: '16px',
-  padding: '8px 16px'
+  padding: '8px 16px',
 })
 
 export const PriceTitle = styled('span', {
   ...textVariant('primary2').true,
-  color: '$gray500'
+  color: '$gray500',
 })
 
 export const PriceValue = styled('p', {
@@ -30,11 +30,11 @@ export const PriceValue = styled('p', {
   justifyContent: 'space-between',
   fontSize: '24px',
   fontWeight: 600,
-  color: '$gray800'
+  color: '$gray800',
 })
 
 const PriceUsd = styled('span', {
-  color: '$gray600'
+  color: '$gray600',
 })
 
 export const NFTDealPrice: FC<NFTDealPriceProps> = observer(({ price, priceUsd }) => {

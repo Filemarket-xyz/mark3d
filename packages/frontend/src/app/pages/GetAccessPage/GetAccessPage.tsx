@@ -20,42 +20,42 @@ const GetAccessPageStyle = styled('div', {
   background: '#F9F9F9',
   '& .fourthImg': {
     top: '-47px',
-    left: '-66px'
+    left: '-66px',
   },
   '& .firstImg': {
     bottom: '-30px',
-    right: '-90px'
+    right: '-90px',
   },
   '& .secondImg': {
     bottom: '-160px',
-    left: '-141px'
+    left: '-141px',
   },
   '& .thirdImg': {
     top: '-107px',
-    right: '-116px'
+    right: '-116px',
   },
   '@md': {
     '& .thirdImg, .secondImg': {
-      transform: 'scale(0.5)'
+      transform: 'scale(0.5)',
     },
     '& .fourthImg': {
-      top: '-36px'
-    }
+      top: '-36px',
+    },
   },
   '@sm': {
     '& .firstImg': {
       bottom: '-22px',
       right: '-58px',
-      transform: 'scale(0.6)'
+      transform: 'scale(0.6)',
     },
     '& .thirdImg, .secondImg': {
-      transform: 'scale(0.37)'
+      transform: 'scale(0.37)',
     },
     '& .fourthImg': {
       top: '-22px',
-      transform: 'scale(0.7)'
-    }
-  }
+      transform: 'scale(0.7)',
+    },
+  },
 })
 
 export const MainBlock = styled('div', {
@@ -67,11 +67,11 @@ export const MainBlock = styled('div', {
   position: 'relative',
   background: '#F9F9F9',
   '@lg': {
-    padding: '80px 20px'
+    padding: '80px 20px',
   },
   '@md': {
-    padding: '80px 0'
-  }
+    padding: '80px 0',
+  },
 })
 
 const Container = styled('div', {
@@ -81,17 +81,17 @@ const Container = styled('div', {
   flexDirection: 'column',
   justifyContent: 'center',
   '& img': {
-    position: 'absolute'
+    position: 'absolute',
   },
   '@lg': {
-    width: '600px'
+    width: '600px',
   },
   '@md': {
-    width: '450px'
+    width: '450px',
   },
   '@sm': {
-    width: '300px'
-  }
+    width: '300px',
+  },
 })
 
 const IconsBlock = styled('div', {
@@ -100,11 +100,11 @@ const IconsBlock = styled('div', {
   bottom: '76px',
   gap: '24px',
   '& a': {
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   '& a:hover': {
-    filter: 'brightness(115%)'
-  }
+    filter: 'brightness(115%)',
+  },
 })
 
 const GetAccessPage = () => {

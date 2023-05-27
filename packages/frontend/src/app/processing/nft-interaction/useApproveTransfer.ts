@@ -35,12 +35,12 @@ export function useApproveTransfer({ collectionAddress, tokenId }: Partial<Token
     return callContract({ contract, method: 'approveTransfer' },
       BigNumber.from(tokenId),
       bufferToEtherHex(encryptedFilePassword),
-      { gasPrice: mark3dConfig.gasPrice }
+      { gasPrice: mark3dConfig.gasPrice },
     )
   }), [contract, signer, address, wrapPromise, publicKey])
 
   return {
     ...statuses,
-    approveTransfer
+    approveTransfer,
   }
 }

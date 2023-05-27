@@ -13,9 +13,11 @@ export function useSeed(account: string | undefined): ArrayBuffer | undefined {
   useEffect(() => {
     setSeed(seedProvider?.seed)
     seedProvider?.addOnSeedChangeListener(setSeed)
+
     return () => {
       seedProvider?.removeOnSeedChangeListener(setSeed)
     }
   }, [setSeed, seedProvider])
+
   return seed
 }

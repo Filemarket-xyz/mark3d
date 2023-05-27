@@ -11,9 +11,11 @@ export function useCanUnlock(account: string | undefined): boolean {
   useEffect(() => {
     updateCanUnlock()
     seedProvider?.addOnInitListener(updateCanUnlock)
+
     return () => {
       seedProvider?.removeOnInitListener(updateCanUnlock)
     }
   }, [updateCanUnlock, seedProvider])
+
   return canUnlock
 }

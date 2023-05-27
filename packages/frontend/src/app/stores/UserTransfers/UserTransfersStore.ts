@@ -11,7 +11,7 @@ import {
   IStoreRequester,
   RequestContext,
   storeRequest,
-  storeReset
+  storeReset,
 } from '../../utils/store'
 import { formatCurrency } from '../../utils/web3/currency'
 import { ErrorStore } from '../Error/ErrorStore'
@@ -24,16 +24,16 @@ const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
     status: transfer.order?.id === 0 ? eventOptions[0] : eventOptions[1],
     button: {
       link: `/collection/${transfer.collection?.address}/${transfer.token?.tokenId}`,
-      text: 'Go to page'
+      text: 'Go to page',
     },
     collection: `${transfer.collection?.name}`,
     imageURL: getHttpLinkFromIpfsString(transfer.token?.image ?? ''),
     title: `${transfer.token?.name}`,
     user: {
       username: reduceAddress(transfer.token?.owner ?? '—'),
-      img: getProfileImageUrl(transfer.token?.owner ?? '')
+      img: getProfileImageUrl(transfer.token?.owner ?? ''),
     },
-    price: transfer.order?.price ? formatCurrency(transfer.order?.price) : undefined
+    price: transfer.order?.price ? formatCurrency(transfer.order?.price) : undefined,
   })
 }
 
@@ -52,7 +52,7 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
     makeAutoObservable(this, {
-      errorStore: false
+      errorStore: false,
     })
   }
 
@@ -62,7 +62,7 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
       api.v2.transfersDetail(address),
       (resp) => {
         this.data = resp
-      }
+      },
     )
   }
 
@@ -89,10 +89,10 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
     const { incoming = [], outgoing = [] } = this.data
 
     const incomingCards = incoming.map<TransferCardProps>(
-      convertTransferToTransferCards('incoming')
+      convertTransferToTransferCards('incoming'),
     )
     const outgoingCards = outgoing.map<TransferCardProps>(
-      convertTransferToTransferCards('outgoing')
+      convertTransferToTransferCards('outgoing'),
     )
 
     return incomingCards.concat(outgoingCards)

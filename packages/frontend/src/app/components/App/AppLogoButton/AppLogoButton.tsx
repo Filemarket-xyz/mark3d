@@ -10,7 +10,7 @@ const height = 30
 
 const Logo = styled('img', {
   height,
-  objectFit: 'contain'
+  objectFit: 'contain',
 })
 
 const LinkStyled = styled(Link, {
@@ -30,31 +30,31 @@ const LinkStyled = styled(Link, {
   fontFamily: '$primary',
   transition: 'transform 0.25s ease 0s',
   '& .gradient, & .black': {
-    transition: 'opacity 0.25s ease 0s'
+    transition: 'opacity 0.25s ease 0s',
   },
   '& .gradient': {
-    opacity: 0
+    opacity: 0,
   },
   '& .black': {
-    opacity: 1
+    opacity: 1,
   },
   '&[data-pressed=true]': {
-    transform: 'scale(0.97)'
+    transform: 'scale(0.97)',
   },
   '&[data-hovered=true]': {
     '.gradient': {
-      opacity: 1
+      opacity: 1,
     },
     '.black': {
-      opacity: 0
-    }
+      opacity: 0,
+    },
   },
   '&[data-disabled=true]': {
-    cursor: 'not-allowed'
+    cursor: 'not-allowed',
   },
   '&[data-focus-ring=true]': {
-    focusRing: '$blue500'
-  }
+    focusRing: '$blue500',
+  },
 })
 
 export type AppLogoButtonProps = AriaButtonProps & ComponentProps<typeof LinkStyled> & {
@@ -66,12 +66,12 @@ export const AppLogoButton = forwardRef<HTMLAnchorElement, AppLogoButtonProps>((
     hideNameIn,
     ...otherProps
   },
-  ref
+  ref,
 ) => {
   const {
     buttonRef,
     buttonProps,
-    dripProps
+    dripProps,
   } = useButton(otherProps, ref)
 
   return (

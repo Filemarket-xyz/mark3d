@@ -7,13 +7,13 @@ import { mark3dConfig } from '../../../../config/mark3d'
 import { Button, gradientPlaceholderImg, Txt } from '../../../../UIkit'
 import { BasicCardSquareImg } from '../../../MarketCard/BasicCard'
 import {
-  Price
+  Price,
 } from '../../../MarketCard/NFTCard'
 
 const HeightContainer = styled('div', {
   height: '566px',
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
 })
 
 const BorderLayoutFakeNft = styled('div', {
@@ -31,7 +31,7 @@ const BorderLayoutFakeNft = styled('div', {
   '& button': {
     transition: 'all 0s ease-in-out 0s',
     transitionDelay: '0',
-    opacity: '0'
+    opacity: '0',
   },
   '&:hover': {
     background: 'white',
@@ -39,39 +39,39 @@ const BorderLayoutFakeNft = styled('div', {
     transition: 'all 0.25s ease-in-out 0s',
     '& button': {
       transitionDelay: '0.25s',
-      opacity: '1'
+      opacity: '1',
     },
-    height: '566px'
+    height: '566px',
   },
   variants: {
     rarity: {
       common: {
         '&:hover': {
-          border: '5px solid #77AFFF'
-        }
+          border: '5px solid #77AFFF',
+        },
       },
       uncommon: {
         '&:hover': {
-          border: '5px solid #4481EB'
-        }
+          border: '5px solid #4481EB',
+        },
       },
       rare: {
         '&:hover': {
-          border: '5px solid #37ECBA'
-        }
+          border: '5px solid #37ECBA',
+        },
       },
       legendary: {
         '&:hover': {
-          border: '5px solid #7579FF'
-        }
+          border: '5px solid #7579FF',
+        },
       },
       mythical: {
         '&:hover': {
-          border: '5px solid #FF9A44'
-        }
-      }
-    }
-  }
+          border: '5px solid #FF9A44',
+        },
+      },
+    },
+  },
 })
 
 const CardRarity = styled('span', {
@@ -86,7 +86,7 @@ const CardRarity = styled('span', {
     '-webkit-background-clip': 'text',
     '-webkit-text-fill-color': 'transparent',
     backgroundClip: 'text',
-    textFillColor: 'transparent'
+    textFillColor: 'transparent',
   },
   variants: {
     rarity: {
@@ -96,8 +96,8 @@ const CardRarity = styled('span', {
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
           backgroundClip: 'text',
-          textFillColor: 'transparent'
-        }
+          textFillColor: 'transparent',
+        },
       },
       uncommon: {
         '& span': {
@@ -105,8 +105,8 @@ const CardRarity = styled('span', {
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
           backgroundClip: 'text',
-          textFillColor: 'transparent'
-        }
+          textFillColor: 'transparent',
+        },
       },
       rare: {
         '& span': {
@@ -114,8 +114,8 @@ const CardRarity = styled('span', {
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
           backgroundClip: 'text',
-          textFillColor: 'transparent'
-        }
+          textFillColor: 'transparent',
+        },
       },
       legendary: {
         '& span': {
@@ -123,8 +123,8 @@ const CardRarity = styled('span', {
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
           backgroundClip: 'text',
-          textFillColor: 'transparent'
-        }
+          textFillColor: 'transparent',
+        },
       },
       mythical: {
         '& span': {
@@ -132,18 +132,18 @@ const CardRarity = styled('span', {
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
           backgroundClip: 'text',
-          textFillColor: 'transparent'
-        }
-      }
-    }
-  }
+          textFillColor: 'transparent',
+        },
+      },
+    },
+  },
 })
 
 const FakeNftCard = styled('div', {
   color: '#656669',
   maxWidth: '252px',
   margin: '0 auto',
-  height: '100%'
+  height: '100%',
 })
 
 const Line = styled('div', {
@@ -153,22 +153,22 @@ const Line = styled('div', {
   variants: {
     rarity: {
       common: {
-        background: 'linear-gradient(90deg, #ACCBEE 0%, #77AFFF 100%)'
+        background: 'linear-gradient(90deg, #ACCBEE 0%, #77AFFF 100%)',
       },
       uncommon: {
-        background: 'linear-gradient(90deg, #4481EB 0%, #04BEFE 100%)'
+        background: 'linear-gradient(90deg, #4481EB 0%, #04BEFE 100%)',
       },
       rare: {
-        background: 'linear-gradient(90deg, #37ECBA 0%, #72AFD3 100%)'
+        background: 'linear-gradient(90deg, #37ECBA 0%, #72AFD3 100%)',
       },
       legendary: {
-        background: 'linear-gradient(90deg, #B224EF 0%, #7579FF 100%)'
+        background: 'linear-gradient(90deg, #B224EF 0%, #7579FF 100%)',
       },
       mythical: {
-        background: 'linear-gradient(90deg, #FC6076 0%, #FF9A44 100%)'
-      }
-    }
-  }
+        background: 'linear-gradient(90deg, #FC6076 0%, #FF9A44 100%)',
+      },
+    },
+  },
 })
 
 const CardFakeNftText = styled('span', {
@@ -181,20 +181,20 @@ const CardFakeNftText = styled('span', {
     fontSize: '18px',
     fontWeight: '700',
     color: '#232528',
-    letterSpacing: '0.15em'
-  }
+    letterSpacing: '0.15em',
+  },
 })
 
 const CardInfo = styled('div', {
   display: 'flex',
   flexDirection: 'column',
-  gap: '3px'
+  gap: '3px',
 })
 
 const PriceFakeNft = styled(Price, {
   fontSize: '24px',
   fontWeight: '700',
-  paddingTop: '8px'
+  paddingTop: '8px',
 })
 
 const ButtonContainer = styled('div', {
@@ -203,13 +203,13 @@ const ButtonContainer = styled('div', {
   height: '75px',
   '& span': {
     fontWeight: '700',
-    color: 'white'
-  }
+    color: 'white',
+  },
 })
 
 const BasicCardSquareImgFakeNft = styled(BasicCardSquareImg, {
   width: '252px',
-  height: '252px'
+  height: '252px',
 })
 
 type FakeMintNftProps = ComponentProps<typeof CardRarity> & {
@@ -265,7 +265,7 @@ const FakeMintNft: FC<FakeMintNftProps> = ({ rarity, imageURL, chance, price }) 
                   textDecoration: 'none',
                   marginLeft: 'auto',
                   marginRight: 'auto',
-                  width: '100%'
+                  width: '100%',
                 }}
               >
                 <Txt body1>MINT</Txt>

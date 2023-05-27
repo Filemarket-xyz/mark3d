@@ -5,15 +5,15 @@ import CreateNFTPage from './CreateNFTPage'
 
 export const createRoutes: RouteObject[] = [
   {
-    path: 'nft',
-    element: <CreateNFTPage />
+    path: 'eft',
+    element: <CreateNFTPage />,
   },
   {
     path: 'collection',
-    element: <CreateCollectionPage />
+    element: <CreateCollectionPage />,
   },
   {
     path: '',
-    element: <Navigate to={'collection'} />
-  }
+    element: <Navigate to={'collection'} />,
+  },
 ]

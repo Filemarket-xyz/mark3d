@@ -5,5 +5,5 @@ export const Hr = styled('hr', {
   height: '2px',
   background: '$gray200',
   border: 'none',
-  display: 'block'
+  display: 'block',
 })

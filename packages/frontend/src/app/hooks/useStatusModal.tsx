@@ -18,13 +18,13 @@ export function useStatusModal({
   statuses: { isLoading, result, error },
   okMsg,
   loadingMsg,
-  waitForSign = true
+  waitForSign = true,
 }: UseModalOkArgs) {
   const {
     modalOpen,
     setModalOpen,
     modalBody,
-    setModalBody
+    setModalBody,
   } = useModalProperties()
 
   const handleClose = useCallback(() => {
@@ -43,20 +43,20 @@ export function useStatusModal({
         <InProgressBody
           text={loadingMsg}
           waitForSign={waitForSign}
-        />
+        />,
       )
     } else if (result) {
       setModalBody(
         <SuccessOkBody
           description={okMsg}
           handleClose={handleClose}
-        />
+        />,
       )
     } else if (error) {
       setModalBody(
         <ErrorBody
           message={extractMessageFromError(error)}
-        />
+        />,
       )
     }
   }, [isLoading, result, error, loadingMsg, okMsg, waitForSign, handleClose])
@@ -65,9 +65,9 @@ export function useStatusModal({
     modalProps: {
       body: modalBody,
       open: modalOpen,
-      handleClose
+      handleClose,
     },
     setModalOpen,
-    setModalBody
+    setModalBody,
   }
 }

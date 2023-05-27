@@ -11,6 +11,6 @@ export function useOwnerOfNFT({ collectionAddress, tokenId }: Partial<TokenFullI
     abi: mark3dConfig.collectionToken.abi,
     functionName: 'ownerOf',
     args: [BigNumber.from(tokenId)],
-    suspense: !tokenId
+    suspense: !tokenId,
   })
 }

@@ -16,7 +16,7 @@ export class SeedProvider implements ISeedProvider {
 
   constructor(
     private readonly storage: IStorageProvider,
-    private readonly account: string
+    private readonly account: string,
   ) {
   }
 

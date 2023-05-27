@@ -14,21 +14,21 @@ const KeepUpDateStyle = styled('div', {
   '@md': {
     gridTemplateRows: 'auto auto',
     gridTemplateColumns: 'inherit',
-    gap: '12px'
-  }
+    gap: '12px',
+  },
 })
 
 const Line = styled('div', {
   background: '#F4F4F4',
   height: '100%',
-  width: '2px'
+  width: '2px',
 })
 
 const CommunityBlock = styled('div', {
   width: '100%',
   display: 'flex',
   flexWrap: 'wrap',
-  gap: '8px'
+  gap: '8px',
 })
 
 const KeepUpDate = () => {
@@ -40,12 +40,22 @@ const KeepUpDate = () => {
           <Txt primary1 style={{ fontWeight: '400' }}>Subscribe to our newsletter to remain informed about our latest feature updates, NFT launches, and guidance on how to effectively explore FileMarket.</Txt>
           <EmailForm />
         </div>
-      <Line />
+        <Line />
         <div>
-        <Header style={{ paddingBottom: '16px' }}>Join the community</Header>
-        <CommunityBlock>
-          {Cards.map((item, index) => <Card href={item.url} target={'_blank'} white key={index}><img src={item.blackImg} /><Text black>{item.text}</Text></Card>)}
-        </CommunityBlock>
+          <Header style={{ paddingBottom: '16px' }}>Join the community</Header>
+          <CommunityBlock>
+            {Cards.map((item, index) => (
+              <Card
+                key={index}
+                white
+                href={item.url}
+                target={'_blank'}
+              >
+                <img src={item.blackImg} />
+                <Text black>{item.text}</Text>
+              </Card>
+            ))}
+          </CommunityBlock>
         </div>
       </KeepUpDateStyle>
     </InfoBlockCard>

@@ -10,5 +10,6 @@ import { useStores } from './useStores'
 export function useTransfersHistory(profileAddress?: string) {
   const { transfersHistoryStore } = useStores()
   useActivateDeactivateRequireParams(transfersHistoryStore, profileAddress)
+
   return transfersHistoryStore
 }

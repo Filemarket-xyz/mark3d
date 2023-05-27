@@ -1,5 +1,6 @@
 export const getIpfsCidWithFilePath = (ipfs: string) => {
   const pattern = /ipfs:\/\/([A-Za-z0-9/.-_]+)/
+
   return pattern.exec(ipfs)?.[1] ?? ''
 }
 

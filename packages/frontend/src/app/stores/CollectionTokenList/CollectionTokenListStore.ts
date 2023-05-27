@@ -12,7 +12,7 @@ import {
   IStoreRequester,
   RequestContext,
   storeRequest,
-  storeReset
+  storeReset,
 } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
 
@@ -32,7 +32,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
     makeAutoObservable(this, {
-      errorStore: false
+      errorStore: false,
     })
   }
 
@@ -42,7 +42,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
       api.collections.fullDetail(collectionAddress),
       (resp) => {
         this.data = resp || {}
-      }
+      },
     )
   }
 
@@ -75,13 +75,13 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
       title: token.name ?? '—',
       user: {
         img: getProfileImageUrl(token.owner ?? ''),
-        username: reduceAddress(collection?.owner ?? '')
+        username: reduceAddress(collection?.owner ?? ''),
       },
       button: {
         link: `/collection/${token.collectionAddress}/${token.tokenId}`,
-        text: 'Go to page'
+        text: 'Go to page',
       },
-      hiddenFile: token.hiddenFileMeta
+      hiddenFile: token.hiddenFileMeta,
     }))
   }
 }

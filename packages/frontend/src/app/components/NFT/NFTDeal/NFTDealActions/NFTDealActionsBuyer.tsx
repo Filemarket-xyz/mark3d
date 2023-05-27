@@ -28,7 +28,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
   order,
   tokenFullId,
   ownerStatusChanged,
-  reFetchOrder
+  reFetchOrder,
 }) => {
   const isBuyer = useIsBuyer(transfer)
 

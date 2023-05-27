@@ -9,9 +9,9 @@ export interface AddressIconProps {
 
 export const AddressIcon: FC<AddressIconProps> = ({ size = 20, address }) => {
   return (
-      <img
-        alt="Identicon"
-        src={getProfileImageUrl(address, size)}
-      />
+    <img
+      alt="Identicon"
+      src={getProfileImageUrl(address, size)}
+    />
   )
 }

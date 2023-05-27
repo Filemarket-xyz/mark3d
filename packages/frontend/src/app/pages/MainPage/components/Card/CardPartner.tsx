@@ -20,10 +20,10 @@ const CardPartnerStyle = styled('a', {
     partners: {
       true: {
         width: '210px',
-        height: '200px'
-      }
-    }
-  }
+        height: '200px',
+      },
+    },
+  },
 })
 
 export type CardPartnerProps = ComponentProps<typeof CardPartnerStyle> & {

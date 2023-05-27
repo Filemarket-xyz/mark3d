@@ -13,7 +13,7 @@ import {
   PriceInfo,
   UserContainer,
   UserImg,
-  UserName
+  UserName,
 } from './NFTCard'
 
 export interface TransferCardProps {
@@ -56,23 +56,23 @@ export const TransferCard = (props: TransferCardProps) => {
             )}
           </PriceInfo>
           <PriceInfo css={{ marginBottom: '4px', marginTop: '0' }}>
-            <Txt css={{ fontWeight: 600, color: '$gray500' }} primary3>
+            <Txt primary3 css={{ fontWeight: 600, color: '$gray500' }}>
               Status
             </Txt>
-            <Txt css={{ fontWeight: 600, color: '$blue900' }} primary1>
+            <Txt primary1 css={{ fontWeight: 600, color: '$blue900' }}>
               {props.status}
             </Txt>
           </PriceInfo>
           <ButtonContainer>
             <NavButton
               primary
+              small
               to={props.button.link}
-              small={true}
               css={{
                 textDecoration: 'none',
                 marginLeft: 'auto',
                 marginRight: 'auto',
-                height: '32px'
+                height: '32px',
               }}
             >
               <Txt primary3>{props.button.text}</Txt>

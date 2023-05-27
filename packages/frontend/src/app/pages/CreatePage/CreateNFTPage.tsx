@@ -10,7 +10,7 @@ import MintModal, {
   ErrorBody,
   extractMessageFromError,
   InProgressBody,
-  SuccessNavBody
+  SuccessNavBody,
 } from '../../components/Modal/Modal'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
@@ -30,7 +30,7 @@ import {
   LabelWithCounter,
   LetterCounter,
   TextBold,
-  TextGray
+  TextGray,
 } from './CreateCollectionPage'
 import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory, tags } from './helper/data/data'
 import { useCreateNft } from './hooks/useCreateNft'
@@ -49,10 +49,10 @@ const Description = styled('div', {
         ...textVariant('primary1').true,
         fontSize: '14px',
         fontWeight: '400',
-        marginBottom: '0'
-      }
-    }
-  }
+        marginBottom: '0',
+      },
+    },
+  },
 })
 
 const AddCollectionButton = styled(Button, {
@@ -65,12 +65,12 @@ const AddCollectionButton = styled(Button, {
   minWidth: 0,
   padding: 0,
   backgroundColor: '$white',
-  boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)'
+  boxShadow: '0px 0px 15px rgba(19, 19, 45, 0.05)',
 })
 
 const Icon = styled('img', {
   width: 16,
-  height: 16
+  height: 16,
 })
 
 const CollectionPickerContainer = styled('div', {
@@ -78,7 +78,7 @@ const CollectionPickerContainer = styled('div', {
   gap: '$2',
   justifyContent: 'space-between',
   '& div:first-child': {
-    flexGrow: 1
+    flexGrow: 1,
   },
 
   // set width to full width of form
@@ -87,34 +87,34 @@ const CollectionPickerContainer = styled('div', {
     width: 'calc(100% - 2 * calc((100% - $breakpoints$xl) * 0.5 + $space$3))',
     '@xl': {
       width:
-        'calc(100% - 2 * calc((100% - $breakpoints$lg) * 0.5 + $space$3) - $space$2 - 48px)'
+        'calc(100% - 2 * calc((100% - $breakpoints$lg) * 0.5 + $space$3) - $space$2 - 48px)',
     },
     '@lg': {
-      width: 'calc(100% - 2 * calc((100% - $breakpoints$md) * 0.5 + $space$4))'
+      width: 'calc(100% - 2 * calc((100% - $breakpoints$md) * 0.5 + $space$4))',
     },
     '@md': {
-      width: 'calc(100% - 2 * calc((100% - $breakpoints$sm) * 0.5 + $space$3))'
+      width: 'calc(100% - 2 * calc((100% - $breakpoints$sm) * 0.5 + $space$3))',
     },
     '@sm': {
-      width: 'calc(100% - 2 * $space$3)'
-    }
-  }
+      width: 'calc(100% - 2 * $space$3)',
+    },
+  },
 })
 
 const TitleGroup = styled(FormControl, {
-  marginBottom: '$4'
+  marginBottom: '$4',
 })
 
 const SubTitle = styled('div', {
-  color: '$gray600'
+  color: '$gray600',
 })
 
 const CategoryAndSubcategory = styled('div', {
   display: 'flex',
   gap: '30px',
   '@sm': {
-    flexDirection: 'column'
-  }
+    flexDirection: 'column',
+  },
 })
 
 const ContentField = styled(CollectionPickerContainer, {
@@ -127,22 +127,22 @@ const ContentField = styled(CollectionPickerContainer, {
   '& ul': {
     maxWidth: '562px',
     '@lg': {
-      width: 'calc(100% - 2 * calc((100% - $breakpoints$md) * 0.5 + $space$5))'
+      width: 'calc(100% - 2 * calc((100% - $breakpoints$md) * 0.5 + $space$5))',
     },
     '@md': {
-      width: 'calc(100% - 2 * calc((100% - $breakpoints$sm) * 0.5 + $space$4))'
+      width: 'calc(100% - 2 * calc((100% - $breakpoints$sm) * 0.5 + $space$4))',
     },
     '@sm': {
-      width: 'calc(100% - 2 * $space$4)'
-    }
-  }
+      width: 'calc(100% - 2 * $space$4)',
+    },
+  },
 
 })
 
 const NFTLicense = styled('div', {
   '& a': {
-    fontSize: '14px'
-  }
+    fontSize: '14px',
+  },
 })
 
 export interface CreateNFTForm {
@@ -171,7 +171,7 @@ const CreateNftPage = observer(() => {
 
   const {
     collectionMintOptions,
-    isLoading: isCollectionLoading
+    isLoading: isCollectionLoading,
   } = useCollectionAndTokenListStore(address)
 
   const { collectionAndTokenList } = useStores()
@@ -185,7 +185,7 @@ const CreateNftPage = observer(() => {
     isLoading: isNftLoading,
     result: nftResult,
     setError: setNftError,
-    setIsLoading: setIsNftLoading
+    setIsLoading: setIsNftLoading,
   } = useCreateNft()
   const { adaptive } = useMediaMui()
   const {
@@ -194,14 +194,14 @@ const CreateNftPage = observer(() => {
     control,
     formState: { isValid },
     resetField,
-    watch
+    watch,
   } = useForm<CreateNFTForm>({
     defaultValues: {
       collection: predefinedCollection
         ? { id: predefinedCollection.address, title: predefinedCollection.name }
         : undefined,
-      license: { id: licenseOptions[0].id, title: licenseOptions[0].title }
-    }
+      license: { id: licenseOptions[0].id, title: licenseOptions[0].title },
+    },
   })
 
   const [choseTagValue, setChoseTagValue] = useState<string>('')
@@ -223,7 +223,7 @@ const CreateNftPage = observer(() => {
   useAfterDidMountEffect(() => {
     if (isNftLoading) {
       setModalOpen(true)
-      setModalBody(<InProgressBody text='NFT is being minted' />)
+      setModalBody(<InProgressBody text='EFT is being minted' />)
     } else if (nftError) {
       setModalOpen(true)
       setModalBody(<ErrorBody message={extractMessageFromError(nftError)} />)
@@ -231,9 +231,9 @@ const CreateNftPage = observer(() => {
       setModalOpen(true)
       setModalBody(
         <SuccessNavBody
-          buttonText='View NFT'
+          buttonText='View EFT'
           link={`/collection/${nftResult.receipt.to}/${nftResult.tokenId}`}
-        />
+        />,
       )
     }
   }, [nftError, isNftLoading, nftResult])
@@ -265,7 +265,7 @@ const CreateNftPage = observer(() => {
   return (
     <>
       <MintModal
-        body={modalBody ?? <></>}
+        body={modalBody}
         open={modalOpen}
         handleClose={() => {
           setIsNftLoading(false)
@@ -283,15 +283,15 @@ const CreateNftPage = observer(() => {
                   placement={'bottomStart'}
                   content={(
                     <Txt secondary1 css={{ fontSize: '14px' }}>
-                      Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT
+                      {'Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT'}
                     </Txt>
                   )}
                   css={{
                     width: `${adaptive({
                       sm: '300px',
                       md: '400px',
-                      defaultValue: '544px'
-                    })}`
+                      defaultValue: '544px',
+                    })}`,
                   }}
                 >
                   {' '}
@@ -352,7 +352,7 @@ const CreateNftPage = observer(() => {
                 rules={{ required: true }}
                 comboboxProps={{
                   options: collectionMintOptions,
-                  isLoading: isCollectionLoading
+                  isLoading: isCollectionLoading,
                 }}
                 onFocus={() => {
                   collectionAndTokenList.reload()
@@ -374,7 +374,7 @@ const CreateNftPage = observer(() => {
               </Label>
               <LetterCounter
                 style={{
-                  color: description?.length > 1000 ? '#D81B60' : '#A7A8A9'
+                  color: description?.length > 1000 ? '#D81B60' : '#A7A8A9',
                 }}
               >
                 {description?.length}
@@ -400,7 +400,7 @@ const CreateNftPage = observer(() => {
                     rules={{ required: true }}
                     size={'md'}
                     comboboxProps={{
-                      options: categoryOptions
+                      options: categoryOptions,
                     }}
                   />
                 </CollectionPickerContainer>
@@ -420,7 +420,7 @@ const CreateNftPage = observer(() => {
                     isDisabled={!category}
                     size={'md'}
                     comboboxProps={{
-                      options: subcategoryOptions
+                      options: subcategoryOptions,
                     }}
                   />
                 </CollectionPickerContainer>
@@ -436,7 +436,7 @@ const CreateNftPage = observer(() => {
               </Label>
               <LetterCounter
                 style={{
-                  color: choseTagValue.length > 35 ? '#D81B60' : '#A7A8A9'
+                  color: choseTagValue.length > 35 ? '#D81B60' : '#A7A8A9',
                 }}
               >
                 {choseTagValue.length}
@@ -451,7 +451,7 @@ const CreateNftPage = observer(() => {
                 rules={{ required: false }}
                 rightContent={<Txt primary1 style={{ cursor: 'pointer', color: '#0090FF', fontSize: '14px' }}>Save</Txt>}
                 comboboxProps={{
-                  options: tags?.filter((tag) => !chosenTags.includes(tag.title))
+                  options: tags?.filter((tag) => !chosenTags.includes(tag.title)),
                 }}
                 onClickRightContent={(value) => {
                   choseTagValue.length <= 35 && saveValue(value)
@@ -475,7 +475,7 @@ const CreateNftPage = observer(() => {
                       setChosenTags([...chosenTags?.filter((tag) => {
                         return tag !== value
                       })])
-                    }
+                    },
                   }}
                 />
               )}
@@ -496,7 +496,7 @@ const CreateNftPage = observer(() => {
                 placeholder={'License'}
                 rules={{ required: true }}
                 comboboxProps={{
-                  options: licenseOptions
+                  options: licenseOptions,
                 }}
               />
               <Description secondary style={{ marginBottom: '8px', padding: '0 16px' }}>
@@ -524,7 +524,7 @@ const CreateNftPage = observer(() => {
               isDisabled={!isValid}
               title={isValid ? undefined : 'Required fields must be filled'}
               css={{
-                width: '320px'
+                width: '320px',
               }}
             >
               Mint

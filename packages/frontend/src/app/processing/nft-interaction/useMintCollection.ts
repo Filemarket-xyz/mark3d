@@ -40,7 +40,7 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       name,
       description: description ?? '',
       image,
-      external_link: mark3dConfig.externalLink
+      external_link: mark3dConfig.externalLink,
     })
     console.log('mint metadata', metadata)
 
@@ -53,7 +53,7 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       metadata.url,
       metadata.url,
       '0x00',
-      { gasPrice: mark3dConfig.gasPrice }
+      { gasPrice: mark3dConfig.gasPrice },
     )
 
     const createCollectionEvent = receipt.events
@@ -79,7 +79,7 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       collectionId,
       collectionTokenAddress,
       collectionName,
-      receipt
+      receipt,
     }
   }), [contract, signer, name, symbol, image, description, wrapPromise, upload])
 

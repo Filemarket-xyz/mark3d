@@ -21,7 +21,7 @@ export interface HiddenFileDownload {
 
 // массив, потому что в будущем предполагается прикрепление нескольких скрытых файлов
 export function useHiddenFileDownload(
-  tokenMetaStore: TokenMetaStore, token?: Token
+  tokenMetaStore: TokenMetaStore, token?: Token,
 ): HiddenFileDownload[] {
   const factory = useHiddenFileProcessorFactory()
   const { address } = useAccount()
@@ -48,6 +48,7 @@ export function useHiddenFileDownload(
 
         if (file.ok) {
           saveAs(file.result, file.result.name)
+
           return file.ok
         }
 
@@ -56,8 +57,9 @@ export function useHiddenFileDownload(
       getFile: async () => {
         const encryptedFile = await ipfsService.fetchBytes(hiddenFileURI)
         const owner = await factory.getOwner(address, collectionAddress, tokenId)
+
         return owner.decryptFile(encryptedFile, hiddenMeta)
-      }
+      },
     }]
   }, [factory, token, address, meta])
 }

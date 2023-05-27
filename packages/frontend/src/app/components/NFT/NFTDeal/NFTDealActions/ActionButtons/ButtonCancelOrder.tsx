@@ -17,8 +17,9 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, cal
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Order cancelled',
-    loadingMsg: 'Cancelling order'
+    loadingMsg: 'Cancelling order',
   })
+
   return (
     <>
       <MintModal {...modalProps} />

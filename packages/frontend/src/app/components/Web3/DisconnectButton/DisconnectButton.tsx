@@ -13,6 +13,7 @@ export const DisconnectButton: FC<DisconnectButtonProps> = ({ onPress }) => {
   const { disconnect } = useDisconnect()
   const { address } = useAccount()
   const { seedProvider } = useSeedProvider(address)
+
   return (
     <Link
       type="button"

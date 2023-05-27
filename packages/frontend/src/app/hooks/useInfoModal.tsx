@@ -17,7 +17,7 @@ export function useInfoModal({ header, main }: UseModalArgs) {
     modalBody,
     setModalBody,
     modalHeader,
-    setModalHeader
+    setModalHeader,
   } = useModalProperties()
 
   const { dialogStore } = useStores()
@@ -46,8 +46,8 @@ export function useInfoModal({ header, main }: UseModalArgs) {
         component: InfoModal,
         props: {
           header: modalHeader,
-          body: modalBody
-        }
+          body: modalBody,
+        },
       })
       setModalInfoInst(inst)
     }
@@ -55,15 +55,16 @@ export function useInfoModal({ header, main }: UseModalArgs) {
       modalInfoInst.close()
     }
   }, [modalOpen, modalInfoInst])
+
   return {
     modalInfoProps: {
       header: modalHeader,
       body: modalBody,
       open: modalOpen,
-      handleClose
+      handleClose,
     },
     setModalOpen,
     setModalBody,
-    setModalHeader
+    setModalHeader,
   }
 }

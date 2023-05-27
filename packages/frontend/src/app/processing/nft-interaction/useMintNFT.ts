@@ -52,7 +52,7 @@ export function useMintNFT(form: MintNFTForm = {}) {
     const hiddenFileMeta: FileMeta = {
       name: hiddenFile.name,
       type: hiddenFile.type,
-      size: hiddenFile.size
+      size: hiddenFile.size,
     }
     const metadata = await upload({
       name,
@@ -64,7 +64,7 @@ export function useMintNFT(form: MintNFTForm = {}) {
       categories,
       license,
       tags,
-      subcategories
+      subcategories,
     })
     console.log('mint metadata', metadata)
 
@@ -73,12 +73,12 @@ export function useMintNFT(form: MintNFTForm = {}) {
       tokenCountBN,
       metadata.url,
       '0x00',
-      { gasPrice: mark3dConfig.gasPrice }
+      { gasPrice: mark3dConfig.gasPrice },
     )
 
     return {
       tokenId: tokenCountBN.toString(),
-      receipt
+      receipt,
     }
   }), [contract, signer, address, factory, form, wrapPromise])
 
