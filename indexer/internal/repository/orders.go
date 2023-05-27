@@ -70,6 +70,7 @@ func (p *postgres) GetAllActiveOrders(
 		var price string
 		o := &domain.Order{}
 		o.Statuses = make([]*domain.OrderStatus, 1)
+		o.Statuses[0] = &domain.OrderStatus{}
 
 		if err := rows.Scan(
 			&o.Id,
