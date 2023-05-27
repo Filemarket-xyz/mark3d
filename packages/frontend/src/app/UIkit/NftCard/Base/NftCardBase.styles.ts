@@ -97,7 +97,7 @@ export const StyledButtonWrapper = styled('div', {
 export const StyledButton = styled(NavButton, {
   transition: 'all 0.25s ease-in-out',
   left: 0,
-  top: 14,
+  top: 44,
   position: 'absolute',
 })
 
