@@ -16,7 +16,6 @@ import {
 import { lastItem } from '../../utils/structs'
 import { formatCurrency } from '../../utils/web3/currency'
 import { ErrorStore } from '../Error/ErrorStore'
-import { transferMock } from '../TransfersHistory/transferMock'
 
 const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
   const eventOptions =
@@ -48,7 +47,7 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
   isLoading = false
   isActivated = false
 
-  data: TransfersResponseV2 = transferMock
+  data: TransfersResponseV2 = {}
   address = ''
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
@@ -64,7 +63,10 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
 
   addData(data: TransfersResponseV2) {
     this.data.incoming?.push(...(data.incoming ?? []))
+    this.data.incomingTotal = data.incomingTotal
+
     this.data.outgoing?.push(...(data.outgoing ?? []))
+    this.data.outgoingTotal = data.outgoingTotal
   }
 
   private request() {
@@ -76,14 +78,9 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
   }
 
   requestMore() {
-    let lastIncomingTransferId
-    let lastOutgoingTransferId
-    if (this.data.incoming) {
-      lastIncomingTransferId = lastItem(this.data.incoming).transfer?.id
-    }
-    if (this.data.outgoing) {
-      lastOutgoingTransferId = lastItem(this.data.outgoing).transfer?.id
-    }
+    const lastOutgoingTransferId = lastItem(this.data.incoming ?? [])?.transfer?.id
+    const lastIncomingTransferId = lastItem(this.data.outgoing ?? []).transfer?.id
+
     storeRequest<TransfersResponseV2>(
       this,
       api.v2.transfersDetail(this.address, {

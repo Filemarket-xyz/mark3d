@@ -1,7 +1,7 @@
 import { utils } from 'ethers/lib.esm'
 import { makeAutoObservable } from 'mobx'
 
-import { Collection, Token, TokensResponse } from '../../../swagger/Api'
+import { TokensResponse } from '../../../swagger/Api'
 import { NFTCardProps } from '../../components/MarketCard/NFTCard/NFTCard'
 import { api } from '../../config/api'
 import { gradientPlaceholderImg } from '../../UIkit'
@@ -22,9 +22,9 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   isLoading = false
   isActivated = false
 
-  collections: Collection[] = []
-  tokens: Token[] = []
   address = ''
+
+  data: TokensResponse = {}
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
@@ -34,18 +34,15 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   }
 
   setData(data: TokensResponse) {
-    if (data.collections) {
-      this.collections = data.collections
-    }
-    if (data.tokens) {
-      this.tokens = data.tokens
-    }
+    this.data = data
   }
 
-  addTokens(tokens?: Token[]) {
-    if (tokens) {
-      this.tokens.push(...tokens)
-    }
+  addData(data: TokensResponse) {
+    this.data.collections?.push(...(data.collections ?? []))
+    this.data.collectionsTotal = data.collectionsTotal
+
+    this.data.tokens?.push(...(data.tokens ?? []))
+    this.data.tokensTotal = data.tokensTotal
   }
 
   private request() {
@@ -60,7 +57,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   }
 
   requestMoreTokens() {
-    const { tokenId, collectionAddress } = lastItem(this.tokens)
+    const { tokenId, collectionAddress } = lastItem(this.data.tokens ?? [])
     storeRequest(
       this,
       api.tokens.tokensDetail(this.address, {
@@ -68,7 +65,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
         lastTokenCollectionAddress: collectionAddress,
         tokenLimit: 20,
       }),
-      ({ tokens }) => this.addTokens(tokens),
+      (data) => this.addData(data),
     )
   }
 
@@ -92,9 +89,9 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   }
 
   get nftCards(): NFTCardProps[] {
-    const tokens = this.tokens ?? []
+    if (!this.data.tokens) return []
 
-    return tokens.map((token) => ({
+    return this.data.tokens.map((token) => ({
       collectionName: token.collectionName ?? '',
       imageURL: token.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
       title: token.name ?? '—',
@@ -110,11 +107,9 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
   }
 
   get collectionMintOptions(): ComboBoxOption[] {
-    if (!this.address) {
-      return []
-    }
+    if (!this.address || !this.data.collections) return []
 
-    return this.collections
+    return this.data.collections
       // user is only allowed to mint into owned collections
       .filter(collection => collection.owner && utils.getAddress(collection.owner) === utils.getAddress(this.address))
       .map(collection => ({

@@ -150,7 +150,10 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
 
   addData(data: TransfersResponseV2) {
     this.data.incoming?.push(...(data.incoming ?? []))
+    this.data.incomingTotal = data.incomingTotal
+
     this.data.outgoing?.push(...(data.outgoing ?? []))
+    this.data.outgoingTotal = data.outgoingTotal
   }
 
   private request() {
@@ -162,14 +165,9 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
   }
 
   requestMore() {
-    let lastIncomingTransferId
-    let lastOutgoingTransferId
-    if (this.data.incoming) {
-      lastIncomingTransferId = lastItem(this.data.incoming).transfer?.id
-    }
-    if (this.data.outgoing) {
-      lastOutgoingTransferId = lastItem(this.data.outgoing).transfer?.id
-    }
+    const lastIncomingTransferId = lastItem(this.data.incoming ?? [])?.transfer?.id
+    const lastOutgoingTransferId = lastItem(this.data.outgoing ?? [])?.transfer?.id
+
     storeRequest(
       this,
       api.v2.transfersHistoryDetail(this.collectionAddress, {

@@ -8,7 +8,7 @@ import { styled } from '../../../styles'
 import { useCollectionAndTokenListStore } from '../../hooks'
 import { useTransfersHistoryStore } from '../../hooks/useTransfersHistory'
 import { useUserTransferStore } from '../../hooks/useUserTransfers'
-import { Container, gradientPlaceholderImg, Tabs, textVariant } from '../../UIkit'
+import { Container, gradientPlaceholderImg, TabItem, Tabs, textVariant } from '../../UIkit'
 import { getProfileImageUrl } from '../../utils/nfts/getProfileImageUrl'
 import { reduceAddress } from '../../utils/nfts/reduceAddress'
 import { Params } from '../../utils/router'
@@ -80,16 +80,16 @@ const ProfilePage: React.FC = observer(() => {
 
   const { tableRows: table } = useTransfersHistoryStore(profileAddress)
 
-  const { tokens: nfts } = useCollectionAndTokenListStore(profileAddress)
+  const { data } = useCollectionAndTokenListStore(profileAddress)
 
   const { transferCards } = useUserTransferStore(profileAddress)
 
   const tabs = useMemo(() => {
-    const tabs = [
+    const tabs: TabItem[] = [
       {
         name: 'Owned',
         url: 'owned',
-        amount: nfts.length,
+        amount: data.tokens?.length,
       },
       {
         name: 'History',
@@ -107,7 +107,7 @@ const ProfilePage: React.FC = observer(() => {
     }
 
     return tabs
-  }, [nfts, table, transferCards])
+  }, [data.tokens, table, transferCards])
 
   return (
     <GrayOverlay>

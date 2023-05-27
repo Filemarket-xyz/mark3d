@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
-import { OrderStatus, OrderWithToken } from '../../../swagger/Api'
+import { OrdersAllActiveResponse, OrderStatus } from '../../../swagger/Api'
 import { api } from '../../config/api'
 import { gradientPlaceholderImg } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
@@ -29,7 +29,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
   isLoading = true
   isActivated = false
 
-  data: OrderWithToken[] = []
+  data: OrdersAllActiveResponse = {}
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
@@ -38,12 +38,13 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
     })
   }
 
-  setData(data: OrderWithToken[]) {
+  setData(data: OrdersAllActiveResponse) {
     this.data = data
   }
 
-  addData(data: OrderWithToken[]) {
-    this.data.push(...data)
+  addData(data: OrdersAllActiveResponse) {
+    this.data.items?.push(...(data?.items ?? []))
+    this.data.total = data.total
   }
 
   private request() {
@@ -55,7 +56,7 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
   }
 
   requestMore() {
-    const lastOrderId = lastItem(this.data)?.order?.id
+    const lastOrderId = lastItem(this.data.items ?? [])?.order?.id
     storeRequest(
       this,
       api.orders.allActiveList({ lastOrderId, limit: 20 }),
@@ -82,25 +83,25 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
   }
 
   get nftCards() {
-    return this.data
+    if (!this.data.items) return []
+
+    return this.data.items
       .filter(({ order }) => order?.statuses?.[0]?.status === OrderStatus.Created)
-      .map(
-        ({ token, order }) => ({
-          collectionName: token?.collectionName ?? '',
-          hiddenFile: token?.hiddenFileMeta,
-          imageURL: token?.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
-          title: token?.name ?? '—',
-          user: {
-            img: getProfileImageUrl(token?.owner ?? ''),
-            address: reduceAddress(token?.owner ?? ''),
-          },
-          button: {
-            link: `/collection/${token?.collectionAddress}/${token?.tokenId}`,
-            text: 'View & Buy',
-          },
-          priceUsd: order?.priceUsd,
-          price: order?.price,
-        }),
-      )
+      .map(({ token, order }) => ({
+        collectionName: token?.collectionName ?? '',
+        hiddenFile: token?.hiddenFileMeta,
+        imageURL: token?.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
+        title: token?.name ?? '—',
+        user: {
+          img: getProfileImageUrl(token?.owner ?? ''),
+          address: reduceAddress(token?.owner ?? ''),
+        },
+        button: {
+          link: `/collection/${token?.collectionAddress}/${token?.tokenId}`,
+          text: 'View & Buy',
+        },
+        priceUsd: order?.priceUsd,
+        price: order?.price,
+      }))
   }
 }
