@@ -68,9 +68,8 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
           position: 'relative',
           '&:after': {
             content: `url(${RedirectImg})`,
-            position: 'absolute',
-            right: '-20px',
-            bottom: '-3px',
+            verticalAlign: 'middle',
+            paddingLeft: '5px',
           },
         },
       },
