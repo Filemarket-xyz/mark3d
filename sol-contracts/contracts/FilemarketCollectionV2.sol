@@ -285,7 +285,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         require(info.encryptedPassword.length != 0, "FilemarketCollectionV2: encrypted password wasn't set yet");
         require(!info.fraudReported, "FilemarketCollectionV2: fraud was reported");
         require(info.to == _msgSender() ||
-            (info.passwordSetAt + 24 hours < block.timestamp && info.from == _msgSender()), "FilemarketCollectionV2: permission denied");
+            (info.passwordSetAt + finalizeTransferTimeout < block.timestamp && info.from == _msgSender()), "FilemarketCollectionV2: permission denied");
         _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
         if (address(info.callbackReceiver) != address(0)) {
             info.callbackReceiver.transferFinished(tokenId);
@@ -361,7 +361,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeable, ERC721Enumera
         require(info.initiator != address(0), "FilemarketCollectionV2: transfer for this token wasn't created");
         require(!info.fraudReported, "FilemarketCollectionV2: fraud reported");
         require(_msgSender() == ownerOf(tokenId) || (info.to == address(0) && _msgSender() == info.initiator) ||
-            (info.publicKeySetAt + 24 hours < block.timestamp && info.passwordSetAt == 0 && info.to == _msgSender()),
+            (info.publicKeySetAt + finalizeTransferTimeout  < block.timestamp && info.passwordSetAt == 0 && info.to == _msgSender()),
             "FilemarketCollectionV2: permission denied");
         if (address(info.callbackReceiver) != address(0)) {
             info.callbackReceiver.transferCancelled(tokenId);

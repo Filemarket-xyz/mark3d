@@ -262,7 +262,7 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
         require(info.encryptedPassword.length != 0, "PublicCollection: encrypted password wasn't set yet");
         require(!info.fraudReported, "PublicCollection: fraud was reported");
         require(info.to == _msgSender() ||
-            (info.passwordSetAt + 24 hours < block.timestamp && info.from == _msgSender()), "PublicCollection: permission denied");
+            (info.passwordSetAt + finalizeTransferTimeout < block.timestamp && info.from == _msgSender()), "PublicCollection: permission denied");
         _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
         if (address(info.callbackReceiver) != address(0)) {
             info.callbackReceiver.transferFinished(tokenId);
@@ -338,7 +338,7 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
         require(info.initiator != address(0), "PublicCollection: transfer for this token wasn't created");
         require(!info.fraudReported, "PublicCollection: fraud reported");
         require(_msgSender() == ownerOf(tokenId) || (info.to == address(0) && _msgSender() == info.initiator) ||
-            (info.publicKeySetAt + 24 hours < block.timestamp && info.passwordSetAt == 0 && info.to == _msgSender()),
+            (info.publicKeySetAt + finalizeTransferTimeout < block.timestamp && info.passwordSetAt == 0 && info.to == _msgSender()),
             "PublicCollection: permission denied");
         if (address(info.callbackReceiver) != address(0)) {
             info.callbackReceiver.transferCancelled(tokenId);
