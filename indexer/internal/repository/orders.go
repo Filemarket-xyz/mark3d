@@ -124,7 +124,6 @@ func (p *postgres) GetAllActiveOrdersTotal(
 		FROM filtered_orders fo
 		JOIN latest_order_statuses los ON fo.id = los.order_id
 		WHERE los.rank = 1 AND los.status = 'Created'
-		ORDER BY fo.id DESC
 	`
 
 	var total uint64
