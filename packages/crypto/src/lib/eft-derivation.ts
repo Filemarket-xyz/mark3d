@@ -64,6 +64,8 @@ const eftRsaDerivationAux = async (
 
   return new Promise((resolve, reject) => {
     const rsaWorker = new Worker(rsaWorkerUrl, { type: 'module' })
+    rsaWorker.addEventListener('error', console.error)
+    rsaWorker.addEventListener('message', console.log)
     rsaWorker.onmessage = (e) => resolve(e.data)
     rsaWorker.onerror = (e) => {
       console.error(e)

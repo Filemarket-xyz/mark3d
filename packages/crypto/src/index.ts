@@ -17,7 +17,7 @@ import {
   RsaPublicKey
 } from './lib/types';
 import {sha512Native} from './lib/sha512';
-import {rsaDecryptNative, rsaEncryptNative} from './lib/rsa';
+import {rsaDecryptNative, rsaEncryptNative, rsaGenerateKeyPair} from './lib/rsa';
 import {hmacSha512Native} from './lib/hmac-sha512';
 import {hkdfSha512Native} from './lib/hkdf-sha512';
 import {eftAesDerivationNative, eftRsaDerivationNative} from './lib/eft-derivation';
@@ -39,7 +39,7 @@ export class FileMarketCrypto {
     return sha512Native(this.crypto)(...args)
   }
 
-  // rsaGenerateKeyPair = rsaGenerateKeyPair
+  rsaGenerateKeyPair = rsaGenerateKeyPair
 
   hmacSha512: HmacFunction = async (...args): Promise<ArrayBuffer> => {
     return hmacSha512Native(this.crypto)(...args)
