@@ -82,6 +82,12 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
     this.request()
   }
 
+  get hasMoreData() {
+    const { total = 0, items = [] } = this.data
+
+    return items.length < total
+  }
+
   get nftCards() {
     if (!this.data.items) return []
 
