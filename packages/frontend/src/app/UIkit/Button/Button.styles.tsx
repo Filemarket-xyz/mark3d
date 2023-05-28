@@ -81,6 +81,20 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           },
         },
       },
+      glowing: {
+        true: {
+          transition: 'all 0.25s ease',
+          color: '$blue500',
+          minWidth: 240,
+          border: '2px solid $blue500',
+          background: '$white',
+          '&[data-hovered=true]': {
+            opacity: 1,
+            color: '$blue300',
+            borderColor: '$blue300',
+          },
+        },
+      },
       input: {
         true: {
           color: 'white',
