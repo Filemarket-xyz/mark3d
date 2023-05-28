@@ -51,7 +51,7 @@ const NftSection = observer(() => {
               header={'There\'s not one thing'}
               mainText={'Be the first and create your first EFT'}
               buttonsBlock={(
-                <Button primary onClick={() => navigate('/create/nft')}>
+                <Button primary onClick={() => navigate('/create/eft')}>
                   <Txt primary1>Create</Txt>
                 </Button>
               )}

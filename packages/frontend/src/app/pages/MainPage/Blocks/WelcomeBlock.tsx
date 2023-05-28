@@ -175,7 +175,7 @@ export default function WelcomeBlock() {
                 largeHg
                 style={{ height: '80px', padding: '28px 59px' }}
                 onClick={() => {
-                  navigate('/create/nft')
+                  navigate('/create/eft')
                 }}
               >
                 Mint EFT right here
