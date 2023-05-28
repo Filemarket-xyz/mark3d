@@ -53,6 +53,7 @@ const DownloadIconStyled = styled('img', {
   height: 44,
   display: 'block',
   flexShrink: 0,
+  filter: 'brightness(0.8)',
 })
 
 const DownloadInfoStyled = styled('div', {

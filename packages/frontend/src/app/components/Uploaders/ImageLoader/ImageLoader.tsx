@@ -75,7 +75,7 @@ const FileImageContainer = styled('div', {
     isImageUpload: {
       true: {
         height: '320px',
-        backgroundSize: 'contain !important',
+        backgroundSize: 'cover !important',
       },
     },
   },
@@ -147,7 +147,7 @@ export default function ImageLoader(props: ImageLoaderProps) {
   }
 
   return (
-    <File htmlFor='inputTag' selected={Boolean(preview)} isImageUpload={!!file}>
+    <File htmlFor='inputTag' isImageUpload={!!file}>
       {file && (
         <CloseButton
           onPress={() => {

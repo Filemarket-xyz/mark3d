@@ -84,7 +84,7 @@ export const ProtectedStamp: FC<PropsWithChildren> = ({ children }) => {
           <Button className={'buttons'} style={{ height: '64px ' }}>
             <span>
               <img src={Protected} className={'firstImg'} />
-              Protected by EFT protocol
+              Protected by EFT Protocol
               {' '}
               <img src={QuestionMark} className={'secondImg'} />
             </span>
