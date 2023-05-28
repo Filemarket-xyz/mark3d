@@ -9,7 +9,7 @@ export const StyledFileTypeContainer = styled('div', {
   position: 'absolute',
   left: 4,
   top: 4,
-  zIndex: '9',
+  zIndex: 1,
 })
 
 export const StyledImgRoot = styled('div', {
@@ -111,7 +111,7 @@ export const StyledCardInner = styled('div', {
 export const StyledCardBorder = styled('div', {
   border: '1px solid $gray300',
   backgroundColor: '$gray100',
-  borderRadius: 14,
+  borderRadius: 'inherit',
   transition: 'all 0.25s ease-in-out',
 })
 
@@ -122,8 +122,9 @@ export const StyledCard = styled(NavLink, {
   borderRadius: '$3',
   position: 'relative',
   transition: 'all 0.25s ease-in-out',
-  background: '$gradients$main',
+  background: 'transparent',
   '&:hover': {
+    background: '$blue500',
     borderColor: 'transparent',
   },
   [`&:hover ${StyledFileTypeContainer.selector} > div > div`]: {

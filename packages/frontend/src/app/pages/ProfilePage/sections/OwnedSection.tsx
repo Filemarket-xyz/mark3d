@@ -58,7 +58,7 @@ export const OwnedSection: React.FC = observer(() => {
               to={'/create/eft'}
               css={{ textDecoration: 'none', marginBottom: '$3' }}
             >
-              Create NFT
+              Create EFT
             </NavButton>
           )}
         </NoNftContainer>

@@ -34,7 +34,7 @@ const TransfersSection: React.FC = observer(() => {
       {!userTransferStore.transferCards.length && !userTransferStore.isLoading && (
         <Plug
           header={'You don`t have any activity'}
-          mainText={'Get started by creating your own NFT or go to the market to find something amazing'}
+          mainText={'Get started by creating your own EFT or go to the market to find something amazing'}
           buttonsBlock={(
             <>
               <Button primary onClick={() => navigate('/market') }>
