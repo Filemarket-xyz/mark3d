@@ -67,20 +67,25 @@ func (p *postgres) GetAllActiveOrders(
 		ids []int64
 	)
 	for rows.Next() {
-		var price string
-		o := &domain.Order{}
-		o.Statuses = make([]*domain.OrderStatus, 1)
+		var price, txId string
+		status := &domain.OrderStatus{}
+		o := &domain.Order{
+			Statuses: make([]*domain.OrderStatus, 0, 1),
+		}
 
 		if err := rows.Scan(
 			&o.Id,
 			&o.TransferId,
 			&price,
-			&o.Statuses[0].Timestamp,
-			&o.Statuses[0].Status,
-			&o.Statuses[0].TxId,
+			&status.Timestamp,
+			&status.Status,
+			&txId,
 		); err != nil {
 			return nil, err
 		}
+
+		status.TxId = common.HexToHash(txId)
+		o.Statuses = append(o.Statuses, status)
 
 		var ok bool
 		o.Price, ok = big.NewInt(0).SetString(price, 10)
@@ -111,8 +116,8 @@ func (p *postgres) GetAllActiveOrdersTotal(
 		filtered_orders AS (
 			SELECT o.id, o.transfer_id, o.price
 			FROM orders AS o
-					 JOIN transfers t on o.transfer_id = t.id
-					 JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
+			JOIN transfers t on o.transfer_id = t.id
+			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
 			WHERE lts.rank = 1 AND lts.status NOT IN ('Finished', 'Cancelled')
 		)
 		SELECT COUNT(*) as total
