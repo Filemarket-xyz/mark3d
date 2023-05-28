@@ -3,6 +3,7 @@ import React, { FC, useEffect } from 'react'
 import { styled } from '../../../../../styles'
 import { HiddenFileMetaData } from '../../../../../swagger/Api'
 import { FileButton, MintModal, ProtectedStamp } from '../../../../components'
+import { filenameToExtension } from '../../../../components/MarketCard/helper/fileToType'
 import { useStatusState } from '../../../../hooks'
 import { HiddenFileDownload } from '../../../../hooks/useHiddenFilesDownload'
 import { useStatusModal } from '../../../../hooks/useStatusModal'
@@ -63,6 +64,16 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
     console.log(files)
   }, [files])
 
+  const fileName = (name: string | undefined): string | undefined => {
+    const maxCountAvailable = 30
+    if ((name?.length ?? 0) < 30) return name
+    const extension = filenameToExtension(name ?? '')
+    const secondPartName = name?.substring(name.indexOf(`.${extension}`) - 3, name.length)
+    const firstPartName = name?.substring(0, maxCountAvailable - (secondPartName?.length ?? 0) - 3)
+
+    return `${firstPartName}...${secondPartName}`
+  }
+
   return (
     <>
       <MintModal {...modalProps} />
@@ -75,7 +86,7 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
                 <ProtectedStamp key={cid}>
                   <FileButton
                     caption={formatFileSize(size)}
-                    name={name}
+                    name={fileName(name)}
                     onPress={wrapPromise(download)}
                   />
                 </ProtectedStamp>
@@ -85,7 +96,7 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
                 <ProtectedStamp key={index}>
                   <FileButton
                     isDisabled
-                    name={name}
+                    name={fileName(name)}
                     caption={(
                       <>
                         <Txt>{formatFileSize(size ?? 0)}</Txt>

@@ -45,15 +45,6 @@ export const WhiteShade = styled('div', {
   },
 })
 
-const generateFileHoverStyles = () => {
-  const hoverFileStyles: any = {}
-  hoverFileStyles[`&:hover ${WhiteShade.selector}`] = {
-    background: 'rgba(255,255,255, 0.3)',
-  }
-
-  return hoverFileStyles
-}
-
 export const File = styled('label', {
   width: '320px',
   height: '160px',
@@ -69,11 +60,22 @@ export const File = styled('label', {
   position: 'relative',
   border: '1px solid $gray300',
   boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
-  ...generateFileHoverStyles(),
+  '&:hover': {
+    boxShadow: '0px 4px 15px rgba(35, 37, 40, 0.15)',
+    '& img, p': {
+      filter: 'brightness(120%)',
+    },
+  },
   variants: {
     isImageUpload: {
       true: {
         height: '320px',
+        '&:hover': {
+          boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
+          '& img, p': {
+            filter: 'brightness(100%)',
+          },
+        },
       },
     },
   },
@@ -111,7 +113,7 @@ export default function NftLoader(props: NftLoaderProps) {
   const [fileChosen, setFileChosen] = useState<File>()
 
   return (
-    <File htmlFor='eftInput'>
+    <File htmlFor='eftInput' isImageUpload={!!fileChosen}>
       {fileChosen && (
         <CloseButton
           onPress={() => {

@@ -25,7 +25,7 @@ import TagsSection from './section/Tags/TagsSection'
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',
-  height: 555,
+  height: 686,
   background: '$gradients$background',
   boxSizing: 'content-box',
   '& .blur': {
@@ -33,8 +33,7 @@ const NFTPreviewContainer = styled('div', {
     height: '100%',
     mixBlendMode: 'normal',
     backdropFilter: 'blur(150px)',
-    paddingTop: 'calc($layout$navBarHeight)',
-    paddingBottom: '$6',
+    paddingTop: '3px',
   },
   zIndex: '1',
   position: 'relative',
@@ -45,7 +44,7 @@ const NFTPreviewContainer = styled('div', {
 
 const MainInfo = styled(PageLayout, {
   display: 'flex', // чтобы можно было дочерним заполнить все пространство
-  marginTop: '150px',
+  marginTop: '10px',
   marginBottom: '-80px',
   paddingTB: 48,
   fontSize: '16px',
@@ -135,7 +134,7 @@ const NFTPage = observer(() => {
     <>
       <NFTPreviewContainer style={{
         backgroundImage: `url(${getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')})`,
-        backgroundSize: 'cover',
+        backgroundSize: '100% 100%',
         backgroundPosition: 'center',
       }}
       >
