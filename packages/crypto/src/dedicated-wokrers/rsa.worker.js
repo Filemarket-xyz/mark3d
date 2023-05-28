@@ -6,4 +6,8 @@ self.onmessage = ({ data }) => {
   rsaGenerateKeyPair(data.seed)
     .then((keyPair) => self.postMessage(keyPair))
     .then(() => self.close())
+    .catch((e) => {
+      console.error(e)
+      throw e
+    })
 }
