@@ -357,7 +357,7 @@ const CreateNftPage = observer(() => {
                   collectionAndTokenList.reload()
                 }}
               />
-              <a target={'_blank'} href={'/collection'} rel="noreferrer">
+              <a target={'_blank'} href={'/create/collection'} rel="noreferrer">
                 <AddCollectionButton>
                   <Icon src={PlusIcon} />
                 </AddCollectionButton>
@@ -479,7 +479,7 @@ const CreateNftPage = observer(() => {
                 />
               )}
               {chosenTags.length <= 0 && (
-                <Description secondary style={{ paddingLeft: '8px' }}>
+                <Description secondary style={{ paddingLeft: '8px', marginBottom: '0' }}>
                   Tags make it easier to find the right content
                 </Description>
               )}
