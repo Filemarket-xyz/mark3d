@@ -9,7 +9,7 @@ export const StyledFileTypeContainer = styled('div', {
   position: 'absolute',
   left: 4,
   top: 4,
-  zIndex: '9',
+  zIndex: 1,
 })
 
 export const StyledImgRoot = styled('div', {
