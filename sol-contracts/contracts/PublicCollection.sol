@@ -116,7 +116,7 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
         string memory metaUri,
         uint256 royalty,
         bytes memory _data
-    ) external onlyOwner {
+    ) external {
         require(bytes(metaUri).length > 0, "PublicCollection: empty meta uri");
         _mint(to, id, metaUri, _data, royalty);
     }
