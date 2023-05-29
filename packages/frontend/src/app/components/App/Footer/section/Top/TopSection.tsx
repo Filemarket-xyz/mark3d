@@ -164,7 +164,7 @@ export const Cards: Array<{ img: string, blackImg: string, text: string, url: st
     img: DiscordImg,
     blackImg: DiscordBlackImg,
     text: 'Discord',
-    url: 'https://discord.gg/9pe5CUqqz4',
+    url: 'https://discord.gg/filemarket',
   },
   {
     img: TelegramImg,
@@ -225,7 +225,7 @@ const TopSection = () => {
   },
   {
     text: 'DAO',
-    url: 'https://discord.gg/9pe5CUqqz4',
+    url: 'https://discord.gg/filemarket',
   },
   {
     text: 'GitHub',

@@ -97,7 +97,7 @@ const Container = styled('div', {
 const IconsBlock = styled('div', {
   display: 'flex',
   position: 'absolute',
-  bottom: '76px',
+  bottom: '6vh',
   gap: '24px',
   '& a': {
     cursor: 'pointer',
@@ -120,8 +120,8 @@ const GetAccessPage = () => {
         </MainBlock>
       </Container>
       <IconsBlock>
-        <a href='https://twitter.com/filemarket_xyz' target={'_blank'} rel="noreferrer"><img src={DiscordGetAccess} alt='discord icon' /></a>
-        <a href='https://discord.gg/9pe5CUqqz4' target={'_blank'} rel="noreferrer"><img src={TwitterGetAccess} alt='twitter icon' /></a>
+        <a href='https://discord.gg/filemarket' target={'_blank'} rel="noreferrer"><img src={DiscordGetAccess} alt='discord icon' /></a>
+        <a href='https://twitter.com/filemarket_xyz' target={'_blank'} rel="noreferrer"><img src={TwitterGetAccess} alt='twitter icon' /></a>
         <a href='https://www.linkedin.com/company/filemarketxyz/' target={'_blank'} rel="noreferrer"><img src={LinkdGetAccess} alt='linkedin icon' /></a>
       </IconsBlock>
     </GetAccessPageStyle>
