@@ -1,7 +1,6 @@
-self.onmessage = async ({ data }) => {
-  const url =  new URL('../lib/rsa', import.meta.url)
-  const { rsaGenerateKeyPair } = await import(url.href)
+import { rsaGenerateKeyPair } from '../lib/rsa'
 
+self.onmessage = async ({ data }) => {
   const keyPair = await rsaGenerateKeyPair(data.seed)
   self.postMessage(keyPair)
 
