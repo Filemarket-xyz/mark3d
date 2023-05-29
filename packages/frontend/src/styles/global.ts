@@ -68,13 +68,13 @@ export const globalStyles = globalCss({
     overflow: 'overlay',
   },
   '*::-webkit-scrollbar, html *::-webkit-scrollbar': {
-    width: '12px',
+    width: '10px',
     height: '4px',
   },
   '*::-webkit-scrollbar-track, html *::-webkit-scrollbar-track': {
     background: 'none',
     boxShadow: 'inset 0 0 5px 5px #0090FF',
-    border: 'solid 7px transparent',
+    border: 'solid 6px transparent',
   },
 
   '*::-webkit-scrollbar-thumb, html *::-webkit-scrollbar-thumb': {
