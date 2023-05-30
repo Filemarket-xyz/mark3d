@@ -21,8 +21,8 @@ export function AlertSnackbar(
     duration,
     open,
     onClose,
-    action
-  }: AlertSnackbarProps
+    action,
+  }: AlertSnackbarProps,
 ): JSX.Element {
   return (
     <Snackbar
@@ -31,34 +31,34 @@ export function AlertSnackbar(
       onClose={onClose}
     >
       <Alert
-        onClose={onClose}
         severity={severity}
         sx={{
-          width: '100%'
+          width: '100%',
         }}
         action={
           action && (
             <Box
-              onClick={onClose}
               sx={{
                 display: 'grid',
                 gridAutoRows: 'auto',
                 gridTemplateRows: '1fr',
                 gridAutoFlow: 'column',
-                gap: 1
+                gap: 1,
               }}
+              onClick={onClose}
             >
               {action}
               <IconButton
                 color="inherit"
-                onClick={onClose}
                 size="small"
+                onClick={onClose}
               >
                 <i className="ti ti-close" />
               </IconButton>
             </Box>
           )
         }
+        onClose={onClose}
       >
         {
           title

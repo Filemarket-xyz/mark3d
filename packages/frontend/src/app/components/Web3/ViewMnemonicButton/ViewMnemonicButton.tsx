@@ -16,18 +16,18 @@ export const ViewMnemonicButton: FC<ChangeMnemonicButton> = observer(({ onPress 
   const openWindow = () => {
     dialogStore.openDialog({
       component: ViewMnemonicDialog,
-      props: { }
+      props: { },
     })
   }
 
   return (
-        <Link
-            type="button"
-            onPress={() => {
-              openWindow()
-            }}
-        >
-            View FileWallet seed phrase
-        </Link>
+    <Link
+      type="button"
+      onPress={() => {
+        openWindow()
+      }}
+    >
+      View FileWallet seed phrase
+    </Link>
   )
 })

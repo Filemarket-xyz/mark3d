@@ -30,12 +30,12 @@ const LayoutStyled = styled('div', {
       backgroundClip: 'text',
       textFillColor: 'transparent',
       '& .firstImg': {
-        paddingRight: '8px'
+        paddingRight: '8px',
       },
       '& .secondImg': {
-        paddingLeft: '4px'
-      }
-    }
+        paddingLeft: '4px',
+      },
+    },
   },
   '@md': {
     flexDirection: 'column',
@@ -48,15 +48,15 @@ const LayoutStyled = styled('div', {
         '& span': {
           fontSize: '12px',
           '& .firstImg': {
-            width: '60px'
-          }
-        }
-      }
+            width: '60px',
+          },
+        },
+      },
     },
     '& .tooltip': {
-      width: '100% !important'
-    }
-  }
+      width: '100% !important',
+    },
+  },
 })
 
 export const ProtectedStamp: FC<PropsWithChildren> = ({ children }) => {
@@ -76,15 +76,15 @@ export const ProtectedStamp: FC<PropsWithChildren> = ({ children }) => {
           width: `${adaptive({
             sm: '90%',
             md: '520px',
-            defaultValue: '400px'
-          })}`
+            defaultValue: '400px',
+          })}`,
         }}
       >
         <div className="buttons">
           <Button className={'buttons'} style={{ height: '64px ' }}>
             <span>
               <img src={Protected} className={'firstImg'} />
-              Protected by EFT protocol
+              Protected by EFT Protocol
               {' '}
               <img src={QuestionMark} className={'secondImg'} />
             </span>

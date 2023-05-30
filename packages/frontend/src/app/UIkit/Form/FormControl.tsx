@@ -7,8 +7,8 @@ export const FormControl = styled('div', {
   variants: {
     size: {
       lg: {
-        maxWidth: '100%'
-      }
-    }
-  }
+        maxWidth: '100%',
+      },
+    },
+  },
 })

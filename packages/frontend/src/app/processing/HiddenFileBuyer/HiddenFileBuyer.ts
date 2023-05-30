@@ -16,7 +16,7 @@ export class HiddenFileBuyer implements IHiddenFileBuyer {
     public readonly seedProvider: ISeedProvider,
     public readonly globalSalt: ArrayBuffer,
     public readonly collectionAddress: ArrayBuffer,
-    public readonly tokenId: number
+    public readonly tokenId: number,
   ) {
     this.#tokenFullIdArgs = [this.collectionAddress, this.tokenId]
     this.#persistentArgs = [this.globalSalt, ...this.#tokenFullIdArgs]

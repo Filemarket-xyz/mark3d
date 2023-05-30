@@ -2,7 +2,7 @@ import { MouseEventHandler, RefObject, useState } from 'react'
 
 export const useDrip = (
   ref: RefObject<HTMLElement>,
-  initialValue = false
+  initialValue = false,
 ): {
     visible: boolean
     onClick: MouseEventHandler
@@ -32,6 +32,6 @@ export const useDrip = (
     onClick: clickHandler,
     onCompleted: dripCompletedHandle,
     top,
-    left
+    left,
   }
 }

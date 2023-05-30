@@ -7,7 +7,8 @@ export function useExchangeContract() {
   const contract = useContract({
     address: mark3dConfig.exchangeToken.address,
     abi: mark3dConfig.exchangeToken.abi,
-    signerOrProvider: signer
+    signerOrProvider: signer,
   })
+
   return { contract, signer }
 }

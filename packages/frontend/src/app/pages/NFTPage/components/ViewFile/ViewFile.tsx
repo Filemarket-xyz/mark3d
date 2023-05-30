@@ -18,7 +18,7 @@ const ViewFileStyle = styled('div', {
   display: 'flex',
   justifyContent: 'flex-start',
   '&:hover': {
-    opacity: '1'
+    opacity: '1',
   },
   '& .container': {
     padding: '0 14.5px',
@@ -26,23 +26,23 @@ const ViewFileStyle = styled('div', {
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: '10.5px',
-    height: '100%'
+    height: '100%',
   },
   position: 'absolute',
   bottom: '28px',
   right: 'calc((100% - $breakpoints$xl) * 0.3 + $space$4)',
   '@xl': {
-    right: 'calc((100% - $breakpoints$lg) * 0.554 + $space$4)'
+    right: 'calc((100% - $breakpoints$lg) * 0.554 + $space$4)',
   },
   '@lg': {
-    right: 'calc((100% - $breakpoints$md) * 0.554 + $space$4)'
+    right: 'calc((100% - $breakpoints$md) * 0.554 + $space$4)',
   },
   '@md': {
-    right: 'calc((100% - $breakpoints$sm) * 0.554 + $space$3)'
+    right: 'calc((100% - $breakpoints$sm) * 0.554 + $space$3)',
   },
   '@sm': {
-    right: '$3'
-  }
+    right: '$3',
+  },
 })
 
 interface ViewFileProps {

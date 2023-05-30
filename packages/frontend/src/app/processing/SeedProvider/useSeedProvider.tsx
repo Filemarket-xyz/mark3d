@@ -4,7 +4,7 @@ import { useSeedProviderFactory } from '../SeedProviderFactory'
 import { SeedProvider } from './SeedProvider'
 
 export function useSeedProvider(
-  account: string | undefined
+  account: string | undefined,
 ): { seedProvider: SeedProvider | undefined, error: unknown } {
   const [seedProvider, setSeedProvider] = useState<SeedProvider>()
   const [error, setError] = useState<unknown>()
@@ -17,5 +17,6 @@ export function useSeedProvider(
         .catch(setError)
     }
   }, [account, seedProviderFactory, setSeedProvider])
+
   return { seedProvider, error }
 }

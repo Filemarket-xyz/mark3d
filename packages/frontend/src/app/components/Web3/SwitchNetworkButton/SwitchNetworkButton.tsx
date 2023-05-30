@@ -11,16 +11,19 @@ export interface SwitchNetworkButtonProps {
 
 export const SwitchNetworkButton: FC<SwitchNetworkButtonProps> = ({ onPress }) => {
   const { switchNetwork, isLoading } = useSwitchNetwork()
+
   return (
     <Link
       red
+      isDisabled={!switchNetwork || isLoading}
       onPress={(e) => {
         switchNetwork?.(mark3dConfig.chain.id)
         onPress?.(e)
       }}
-      isDisabled={!switchNetwork || isLoading}
     >
-      Switch chain to {mark3dConfig.chain.name}
+      Switch chain to
+      {' '}
+      {mark3dConfig.chain.name}
     </Link>
   )
 }

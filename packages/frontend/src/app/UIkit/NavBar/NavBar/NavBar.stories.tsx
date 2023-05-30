@@ -5,7 +5,7 @@ import { NavBar } from './NavBar'
 
 const story: ComponentMeta<typeof NavBar> = {
   title: 'UIKit/NavBar',
-  component: NavBar
+  component: NavBar,
 }
 export default story
 
@@ -17,12 +17,12 @@ const Template: ComponentStory<typeof NavBar> = () => {
           items={[
             {
               to: '/home',
-              label: 'Home'
+              label: 'Home',
             },
             {
               to: '/house',
-              label: 'House'
-            }
+              label: 'House',
+            },
           ]}
         />
       </div>

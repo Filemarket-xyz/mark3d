@@ -4,7 +4,7 @@ import {
   ITableBuilder,
   ITableRowCell,
   ITransformedRow,
-  TableBuilder
+  TableBuilder,
 } from '../../../../components/Table/TableBuilder'
 import { CheckIcon, CrossIcon, RowCell, TableRow } from '../TableRow/TableRow'
 import { HeadItem } from './Table'
@@ -19,9 +19,9 @@ export class ExplorerTableBuilder
   private renderRow(rowIndex: number, row: ITransformedRow) {
     return (
       <TableRow
+        key={rowIndex}
         content={row.additionalData.content}
         contentTitle={row.additionalData.title}
-        key={rowIndex}
       >
         {this.renderCells(row.row, rowIndex)}
       </TableRow>
@@ -33,13 +33,16 @@ export class ExplorerTableBuilder
       if (typeof value === 'boolean') {
         return value ? <CheckIcon /> : <CrossIcon />
       }
+
       return value
     }
+
     return (
       <>
         {this.table.columns.map((column, index) => {
           const cell = row.get(column.name)
           if (!cell) return null
+
           return (
             <RowCell
               title={index === 0}

@@ -65,7 +65,7 @@ func (s *service) GetCollectionTokens(
 	address common.Address,
 	lastTokenId *big.Int,
 	limit int,
-) ([]*models.Token, *models.ErrorResponse) {
+) (*models.TokensByCollectionResponse, *models.ErrorResponse) {
 	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
 	if err != nil {
 		log.Println("begin tx failed: ", err)
@@ -78,7 +78,15 @@ func (s *service) GetCollectionTokens(
 		log.Println("get collection tokens failed: ", err)
 		return nil, internalError
 	}
-	return domain.MapSlice(tokens, domain.TokenToModel), nil
+	total, err := s.repository.GetCollectionTokensTotal(ctx, tx, address)
+	if err != nil {
+		log.Println("get collection tokens total failed: ", err)
+		return nil, internalError
+	}
+	return &models.TokensByCollectionResponse{
+		Tokens: domain.MapSlice(tokens, domain.TokenToModel),
+		Total:  total,
+	}, nil
 }
 
 func (s *service) GetTokensByAddress(
@@ -102,6 +110,11 @@ func (s *service) GetTokensByAddress(
 		log.Println("get collections by address failed: ", err)
 		return nil, internalError
 	}
+	collectionsTotal, err := s.repository.GetCollectionsByOwnerAddressTotal(ctx, tx, address)
+	if err != nil {
+		log.Println("get collections total by address failed: ", err)
+		return nil, internalError
+	}
 
 	tokens, err := s.repository.GetTokensByAddress(ctx, tx, address, lastTokenCollectionAddress, lastTokenId, tokenLimit)
 	if err != nil {
@@ -109,6 +122,11 @@ func (s *service) GetTokensByAddress(
 		return nil, internalError
 	}
 	tokensRes := domain.MapSlice(tokens, domain.TokenToModel)
+	tokensTotal, err := s.repository.GetTokensByAddressTotal(ctx, tx, address)
+	if err != nil {
+		log.Println("get tokens by address total failed: ", err)
+		return nil, internalError
+	}
 
 	for i, t := range tokens {
 		transfer, err := s.repository.GetActiveTransfer(ctx, tx, t.CollectionAddress, t.TokenId)
@@ -122,7 +140,9 @@ func (s *service) GetTokensByAddress(
 		tokensRes[i].PendingTransferID, tokensRes[i].PendingOrderID = transfer.Id, transfer.OrderId
 	}
 	return &models.TokensResponse{
-		Collections: domain.MapSlice(collections, domain.CollectionToModel),
-		Tokens:      tokensRes,
+		Collections:      domain.MapSlice(collections, domain.CollectionToModel),
+		CollectionsTotal: collectionsTotal,
+		Tokens:           tokensRes,
+		TokensTotal:      tokensTotal,
 	}, nil
 }

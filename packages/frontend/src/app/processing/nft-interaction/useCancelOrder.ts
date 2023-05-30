@@ -26,12 +26,12 @@ export function useCancelOrder({ collectionAddress, tokenId }: Partial<TokenFull
     return callContract({ contract, method: 'cancelOrder' },
       collectionAddress as `0x${string}`,
       BigNumber.from(tokenId),
-      { gasPrice: mark3dConfig.gasPrice }
+      { gasPrice: mark3dConfig.gasPrice },
     )
   }), [contract, signer, wrapPromise, collectionAddress, tokenId])
 
   return {
     ...statuses,
-    cancelOrder
+    cancelOrder,
   }
 }

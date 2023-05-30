@@ -22,7 +22,7 @@ const TopSectionStyle = styled('div', {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
-    ...textVariant('secondary2')
+    ...textVariant('secondary2'),
   },
   display: 'flex',
   width: '100%',
@@ -33,35 +33,35 @@ const TopSectionStyle = styled('div', {
     maxWidth: '360px',
     '& img': {
       width: '170px',
-      height: '30px'
+      height: '30px',
     },
     '& h5': {
       fontWeight: '500 !important',
-      fontSize: '16px !important'
-    }
+      fontSize: '16px !important',
+    },
   },
   '& .third': {
-    maxWidth: '256px'
+    maxWidth: '256px',
   },
   '@lg': {
     '& .third': {
-      maxWidth: '360px'
-    }
+      maxWidth: '360px',
+    },
   },
   '@md': {
     '& .first, .third': {
       maxWidth: '100%',
-      width: '100%'
-    }
+      width: '100%',
+    },
   },
   '@sm': {
     columnGap: '74px',
     justifyContent: 'left',
     gap: '32px',
     '& .second': {
-      width: '140px'
-    }
-  }
+      width: '140px',
+    },
+  },
 })
 
 export const TextLink = styled('a', {
@@ -70,18 +70,18 @@ export const TextLink = styled('a', {
   color: 'white',
   textDecoration: 'none',
   '&:hover': {
-    color: '#D3D3D4'
+    color: '#D3D3D4',
   },
   variants: {
     black: {
       true: {
         color: '#232528',
         '&:hover': {
-          color: '#393B3E'
-        }
-      }
-    }
-  }
+          color: '#393B3E',
+        },
+      },
+    },
+  },
 })
 
 export const Text = styled('span', {
@@ -93,29 +93,29 @@ export const Text = styled('span', {
   variants: {
     black: {
       true: {
-        color: '#232528'
-      }
-    }
-  }
+        color: '#232528',
+      },
+    },
+  },
 })
 
 const HeaderText = styled('h4', {
   ...textVariant('secondary2').true,
   fontWeight: '700',
-  color: '#7B7C7E'
+  color: '#7B7C7E',
 })
 
 const SecondContent = styled('div', {
   display: 'flex',
   flexDirection: 'column',
-  gap: '4px'
+  gap: '4px',
 })
 
 const ThirdContent = styled('div', {
   display: 'flex',
   flexWrap: 'wrap',
   gap: '4px',
-  width: '100%'
+  width: '100%',
 })
 
 export const Card = styled('a', {
@@ -129,7 +129,7 @@ export const Card = styled('a', {
   borderRadius: '8px',
   textDecoration: 'none',
   '&:hover': {
-    background: '#393B3E'
+    background: '#393B3E',
   },
   variants: {
     white: {
@@ -138,14 +138,14 @@ export const Card = styled('a', {
         border: '1px solid $gray300',
         boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
         '&:hover': {
-          background: '#D3D3D4'
-        }
-      }
-    }
+          background: '#D3D3D4',
+        },
+      },
+    },
   },
   '@md': {
-    width: '49%'
-  }
+    width: '49%',
+  },
 })
 
 interface ILink {
@@ -158,129 +158,137 @@ export const Cards: Array<{ img: string, blackImg: string, text: string, url: st
     img: TwitterImg,
     blackImg: TwitterBlackImg,
     text: 'Twitter',
-    url: 'https://twitter.com/filemarket_xyz'
+    url: 'https://twitter.com/filemarket_xyz',
   },
   {
     img: DiscordImg,
     blackImg: DiscordBlackImg,
     text: 'Discord',
-    url: 'https://discord.gg/9pe5CUqqz4'
+    url: 'https://discord.gg/filemarket',
   },
   {
     img: TelegramImg,
     blackImg: TelegramBlackImg,
     text: 'Telegram',
-    url: 'https://t.me/FileMarketChat'
+    url: 'https://t.me/FileMarketChat',
   },
   {
     img: YoutubeImg,
     blackImg: YoutubeBlackImg,
     text: 'Youtube',
-    url: 'https://www.youtube.com/@filemarket_xyz'
+    url: 'https://www.youtube.com/@filemarket_xyz',
   },
   {
     img: MediumImg,
     blackImg: MediumBlackImg,
     text: 'Medium',
-    url: 'https://medium.com/filemarket-xyz'
+    url: 'https://medium.com/filemarket-xyz',
   },
   {
     img: LinkedinImg,
     blackImg: LinkedinBlackImg,
     text: 'LinkedIn',
-    url: 'https://www.linkedin.com/company/filemarketxyz/'
-  }
+    url: 'https://www.linkedin.com/company/filemarketxyz/',
+  },
 ]
 
 const TopSection = () => {
   const MarketPlaceItems: ILink[] = [
     {
       text: 'Explore EFTs',
-      url: '/market'
+      url: '/market',
     },
     {
       text: 'Build own Shop',
-      url: 'https://form.typeform.com/to/gulmhUKG?typeform-source=filemarket.xyz'
+      url: 'https://form.typeform.com/to/gulmhUKG?typeform-source=filemarket.xyz',
     },
     {
       text: 'Collections',
-      url: ''
+      url: '',
     },
     {
       text: 'How to get FIL',
-      url: 'https://medium.com/filemarket-xyz/how-to-buy-fil-and-use-fil-in-the-filecoin-virtual-machine-d67fa90764d5'
+      url: 'https://medium.com/filemarket-xyz/how-to-buy-fil-and-use-fil-in-the-filecoin-virtual-machine-d67fa90764d5',
     },
     {
       text: 'FAQ',
-      url: ''
-    }
+      url: '',
+    },
   ]
   const Links: ILink[] = [{
     text: 'EFT Protocol',
-    url: 'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34'
+    url: 'https://medium.com/filemarket-xyz/how-to-attach-an-encrypted-file-to-your-nft-7d6232fd6d34',
   },
   {
     text: 'SDK',
-    url: ''
+    url: '',
   },
   {
     text: 'DAO',
-    url: 'https://discord.gg/9pe5CUqqz4'
+    url: 'https://discord.gg/filemarket',
   },
   {
     text: 'GitHub',
-    url: 'https://github.com/Filemarket-xyz/file-market'
+    url: 'https://github.com/Filemarket-xyz/file-market',
   },
   {
     text: 'Blogs',
-    url: 'https://medium.com/filemarket-xyz'
-  }
+    url: 'https://medium.com/filemarket-xyz',
+  },
   ]
   const Company: ILink[] = [
     {
       text: 'About',
-      url: ''
+      url: '',
     },
     {
       text: 'Ambassador program',
-      url: 'https://filemarket.typeform.com/to/MTwDOB1J'
+      url: 'https://filemarket.typeform.com/to/MTwDOB1J',
     },
     {
       text: 'Become a partner',
-      url: 'https://filemarket.typeform.com/to/BqkdzJQM'
+      url: 'https://filemarket.typeform.com/to/BqkdzJQM',
     },
     {
       text: 'Branding',
-      url: ''
+      url: '',
     },
     {
       text: 'Calendly',
-      url: 'http://calendly.com/filemarket'
-    }
+      url: 'http://calendly.com/filemarket',
+    },
   ]
+
   return (
-        <TopSectionStyle>
-            <div className="section first">
-              <Link to={'/mainpage'}><img src={FileMarketIcon} alt="" /></Link>
-                <Text style={{ lineHeight: '24px', fontSize: '16px' }}>FileMarket is a multi-chain platform that serves as NFT shop builder and central marketplace/explorer utilizing Filecoin decentralized storage with privacy protocol for NFTs - Encrypted FileToken (EFT)</Text>
-            </div>
-            <div className="section second">
-                <HeaderText>Platform</HeaderText>
-                <SecondContent>{MarketPlaceItems.map((item, index) => <TextLink href={item.url} target={'_blank'} key={index}>{item.text}</TextLink>)}</SecondContent>
-            </div>
-            <div className="section second">
-                <HeaderText>Links</HeaderText>
-                <SecondContent>{Links.map((item, index) => <TextLink href={item.url} target={'_blank'} key={index}>{item.text}</TextLink>)}</SecondContent>
-            </div>
-            <div className="section second">
-                <HeaderText>Company</HeaderText>
-                <SecondContent>{Company.map((item, index) => <TextLink href={item.url} target={'_blank'} key={index}>{item.text}</TextLink>)}</SecondContent>
-            </div>
-            <div className="section third">
-                <HeaderText>Join our community</HeaderText>
-                <ThirdContent>{Cards.map((item, index) => <Card href={item.url} target={'_blank'} key={index}><img src={item.img} /><Text>{item.text}</Text></Card>)}</ThirdContent>
-            </div>
-        </TopSectionStyle>
+    <TopSectionStyle>
+      <div className="section first">
+        <Link to={'/mainpage'}><img src={FileMarketIcon} alt="" /></Link>
+        <Text style={{ lineHeight: '24px', fontSize: '16px' }}>FileMarket is a multi-chain platform that serves as EFT shop builder and central marketplace/explorer utilizing Filecoin decentralized storage with privacy protocol for EFTs - Encrypted FileToken (EFT)</Text>
+      </div>
+      <div className="section second">
+        <HeaderText>Platform</HeaderText>
+        <SecondContent>{MarketPlaceItems.map((item, index) => <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>)}</SecondContent>
+      </div>
+      <div className="section second">
+        <HeaderText>Links</HeaderText>
+        <SecondContent>{Links.map((item, index) => <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>)}</SecondContent>
+      </div>
+      <div className="section second">
+        <HeaderText>Company</HeaderText>
+        <SecondContent>{Company.map((item, index) => <TextLink key={index} href={item.url} target={'_blank'}>{item.text}</TextLink>)}</SecondContent>
+      </div>
+      <div className="section third">
+        <HeaderText>Join our community</HeaderText>
+        <ThirdContent>
+          {Cards.map((item, index) => (
+            <Card key={index} href={item.url} target={'_blank'}>
+              <img src={item.img} />
+              <Text>{item.text}</Text>
+            </Card>
+          ))}
+        </ThirdContent>
+      </div>
+    </TopSectionStyle>
   )
 }
 

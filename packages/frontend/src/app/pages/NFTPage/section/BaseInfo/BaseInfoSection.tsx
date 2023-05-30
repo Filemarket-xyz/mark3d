@@ -4,20 +4,20 @@ import { useParams } from 'react-router-dom'
 import { styled } from '../../../../../styles'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
 import { Link, textVariant } from '../../../../UIkit'
-import { Params } from '../../../../utils/router/Params'
+import { Params } from '../../../../utils/router'
 import { GridBlock, PropertyTitle } from '../../helper/styles/style'
 
 const NftName = styled('h1', {
   ...textVariant('h3').true,
   fontWeight: '600',
   color: '$gray800',
-  marginBottom: '$3'
+  marginBottom: '$3',
 })
 
 export const NftLicence = styled('span', {
   display: 'flex',
   gap: '4px',
-  marginTop: '$2'
+  marginTop: '$2',
 })
 
 const BaseInfoSection = () => {

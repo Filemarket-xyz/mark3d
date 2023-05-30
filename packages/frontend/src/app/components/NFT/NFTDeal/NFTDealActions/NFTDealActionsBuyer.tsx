@@ -28,40 +28,43 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
   order,
   tokenFullId,
   ownerStatusChanged,
-  reFetchOrder
+  reFetchOrder,
 }) => {
   const isBuyer = useIsBuyer(transfer)
 
   return (
-      <>
-        <HideAction hide={!transfer || !permissions.canFulfillOrder(transfer)}>
-          <ButtonFulfillOrder tokenFullId={tokenFullId} order={order} />
-        </HideAction>
-        <HideAction hide={!isBuyer || !transfer || !permissions.canSetPublicKey(transfer)}>
-          <ButtonSetPublicKeyTransfer tokenFullId={tokenFullId} />
-        </HideAction>
-        <HideAction hide={!isBuyer || !transfer || !permissions.canFinalize(transfer)}>
-          <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={() => {
+    <>
+      <HideAction hide={!transfer || !permissions.canFulfillOrder(transfer)}>
+        <ButtonFulfillOrder tokenFullId={tokenFullId} order={order} />
+      </HideAction>
+      <HideAction hide={!isBuyer || !transfer || !permissions.canSetPublicKey(transfer)}>
+        <ButtonSetPublicKeyTransfer tokenFullId={tokenFullId} />
+      </HideAction>
+      <HideAction hide={!isBuyer || !transfer || !permissions.canFinalize(transfer)}>
+        <ButtonFinalizeTransfer
+          tokenFullId={tokenFullId}
+          callback={() => {
             ownerStatusChanged?.()
             reFetchOrder?.()
-          }} />
-        </HideAction>
-        <HideAction hide={!isBuyer || !transfer || !permissions.canReportFraud(transfer)}>
-          <ButtonReportFraudTransfer tokenFullId={tokenFullId} />
-        </HideAction>
-        <HideAction hide={!isBuyer || !transfer || !permissions.canCancel(transfer)}>
-          <ButtonCancelTransfer tokenFullId={tokenFullId} callback={reFetchOrder} />
-        </HideAction>
-        <HideAction hide={!!transfer}>
-          <Button
-            secondary
-            isDisabled
-            fullWidth
-            borderRadiusSecond
-          >
-            NFT is not listed
-          </Button>
-        </HideAction>
-      </>
+          }}
+        />
+      </HideAction>
+      <HideAction hide={!isBuyer || !transfer || !permissions.canReportFraud(transfer)}>
+        <ButtonReportFraudTransfer tokenFullId={tokenFullId} />
+      </HideAction>
+      <HideAction hide={!isBuyer || !transfer || !permissions.canCancel(transfer)}>
+        <ButtonCancelTransfer tokenFullId={tokenFullId} callback={reFetchOrder} />
+      </HideAction>
+      <HideAction hide={!isBuyer || !transfer || !permissions.canWaitSeller(transfer)}>
+        <Button
+          primary
+          fullWidth
+          borderRadiusSecond
+          isDisabled
+        >
+          Waiting for seller
+        </Button>
+      </HideAction>
+    </>
   )
 })

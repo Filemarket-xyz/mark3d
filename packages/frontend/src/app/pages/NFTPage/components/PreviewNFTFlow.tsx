@@ -14,6 +14,7 @@ import { HiddenFileMetaData } from '../../../../swagger/Api'
 import { typeFiles } from '../../../components/MarketCard/helper/data'
 import { fileToExtension, fileToType } from '../../../components/MarketCard/helper/fileToType'
 import { useStores } from '../../../hooks'
+import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeed } from '../../../processing/SeedProvider/useSeed'
 import { DecryptResult } from '../../../processing/types'
 import { gradientPlaceholderImg, textVariant } from '../../../UIkit'
@@ -27,19 +28,19 @@ const CenterContainer = styled('div', {
   height: '100%',
   gap: '$3',
   flexDirection: 'column',
-  position: 'relative'
+  position: 'relative',
 })
 
 const ErrorMessage = styled('p', {
   ...textVariant('primary1'),
   fontWeight: 600,
-  color: '$black'
+  color: '$black',
 })
 
 const SwiperSlide = styled(SwiperSlideUnstyled, {
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
 })
 
 export const getFileExtension = (file: File) =>
@@ -49,7 +50,7 @@ enum PreviewState {
   LOADED,
   LOADING,
   LOADING_ERROR,
-  EXTENSION_ERROR
+  EXTENSION_ERROR,
 }
 
 interface PreviewNFTFlowProps {
@@ -61,17 +62,17 @@ interface PreviewNFTFlowProps {
 
 const SwiperStyled = styled(Swiper)
 
-const Image = styled('img', {
-  objectFit: 'none',
+const ImageStyle = styled('img', {
   width: 'max-content',
-  maxWidth: '80%',
+  maxWidth: '500px',
   height: 'max-content',
-  maxHeight: '90%',
+  maxHeight: '500px',
   borderRadius: '20px',
   '@sm': {
-    width: 290,
-    height: 290
-  }
+    maxWidth: 358,
+    maxHeight: 358,
+    marginTop: '-10px',
+  },
 })
 
 /** Component that implement logic for loading and showing 3D models  */
@@ -79,17 +80,33 @@ export const PreviewNFTFlow = ({
   getFile,
   imageURL,
   canViewFile,
-  hiddenFile
+  hiddenFile,
 }: PreviewNFTFlowProps) => {
   const [previewState, setPreviewState] = useState<{
     state: PreviewState
     data?: string
   }>()
+  const { adaptive } = useMediaMui()
+  const [isObjectFit, setIsObjectFit] = useState<boolean>(false)
   const { address, isConnected } = useAccount()
   const { tokenMetaStore, tokenStore } = useStores()
   const seed = useSeed(address)
   const [is3D, setIs3D] = useState<boolean | undefined>(undefined)
   const [isViewFile, setIsViewFile] = useState<boolean>(false)
+
+  const [isFullScreen, setIsFullScreen] = useState<boolean>()
+
+  useEffect(() => {
+    const img = new Image()
+    img.onload = function() {
+      setIsObjectFit(img.width > parseInt(adaptive({
+        sm: '358',
+        defaultValue: '500',
+      })),
+      )
+    }
+    img.src = imageURL
+  }, [imageURL])
 
   const typeFile: typeFiles | undefined = useMemo(() => {
     return hiddenFile ? fileToType(hiddenFile) : undefined
@@ -124,7 +141,7 @@ export const PreviewNFTFlow = ({
     if (!getFile) return
 
     setPreviewState({
-      state: PreviewState.LOADING
+      state: PreviewState.LOADING,
     })
 
     let model: DecryptResult<File>
@@ -133,14 +150,14 @@ export const PreviewNFTFlow = ({
     } catch (error) {
       return setPreviewState({
         state: PreviewState.LOADING_ERROR,
-        data: `${error}`
+        data: `${error}`,
       })
     }
 
     if (!model.ok) {
       return setPreviewState({
         state: PreviewState.LOADING_ERROR,
-        data: `Unable to decrypt. ${model.error}`
+        data: `Unable to decrypt. ${model.error}`,
       })
     }
 
@@ -149,13 +166,13 @@ export const PreviewNFTFlow = ({
     fr.onload = (e) =>
       setPreviewState({
         state: PreviewState.LOADED,
-        data: String(e.target?.result ?? '')
+        data: String(e.target?.result ?? ''),
       })
 
     fr.onerror = () =>
       setPreviewState({
         state: PreviewState.LOADING_ERROR,
-        data: 'Unable to download, try again later'
+        data: 'Unable to download, try again later',
       })
 
     if (isCanView) {
@@ -163,7 +180,7 @@ export const PreviewNFTFlow = ({
     } else {
       setPreviewState({
         state: PreviewState.EXTENSION_ERROR,
-        data: 'Preview is not available'
+        data: 'Preview is not available',
       })
     }
   }
@@ -177,7 +194,7 @@ export const PreviewNFTFlow = ({
   useEffect(() => {
     if (isLoading) {
       setPreviewState({
-        state: PreviewState.LOADING
+        state: PreviewState.LOADING,
       })
     }
   }, [isLoading])
@@ -192,7 +209,7 @@ export const PreviewNFTFlow = ({
         pagination={{ clickable: true }}
         css={{
           '--swiper-navigation-color': 'var(--colors-gray300)',
-          '--swiper-navigation-size': '20px'
+          '--swiper-navigation-size': '20px',
         }}
       >
         <SwiperSlide>
@@ -207,12 +224,12 @@ export const PreviewNFTFlow = ({
                       shadow-intensity='1'
                       touch-action='pan-y'
                       style={{ width: '100%', height: '100%' }}
-                    >
-                    </model-viewer>
+                    />
                   )
                     : (
-                      <Image
+                      <ImageStyle
                         src={previewState.data}
+                        style={{ objectFit: `${isFullScreen ? (isObjectFit ? 'contain' : 'none') : (isObjectFit ? 'initial' : 'none')}` }}
                         onError={({ currentTarget }) => {
                           currentTarget.onerror = null
                           currentTarget.src = gradientPlaceholderImg
@@ -232,9 +249,9 @@ export const PreviewNFTFlow = ({
             : (
               <>
                 {isLoading ? <Loading size='xl' color={'white'} /> : (
-                  <Image
+                  <ImageStyle
                     src={imageURL}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', objectFit: `${isFullScreen ? (isObjectFit ? 'contain' : 'none') : (isObjectFit ? 'initial' : 'none')}` }}
                     onError={({ currentTarget }) => {
                       currentTarget.onerror = null
                       currentTarget.src = gradientPlaceholderImg
@@ -242,15 +259,26 @@ export const PreviewNFTFlow = ({
                     onClick={(e) => {
                       if (screenfull.isFullscreen) {
                         screenfull.exit()
+                        setIsFullScreen(false)
                       } else if (screenfull.isEnabled) {
                         screenfull.request(e.target as Element)
+                        setIsFullScreen(true)
                       }
                     }}
                   />
                 )}
               </>
             )}
-          {(isCanView && !isLoading) && <ViewFile isPreviewView={!isViewFile} type={typeFile} onClick={() => { setIsViewFile(value => !value); handleLoadClick() }} />}
+          {isCanView && !isLoading && (
+            <ViewFile
+              isPreviewView={!isViewFile}
+              type={typeFile}
+              onClick={() => {
+                setIsViewFile(value => !value)
+                handleLoadClick()
+              }}
+            />
+          )}
         </SwiperSlide>
       </SwiperStyled>
     </CenterContainer>

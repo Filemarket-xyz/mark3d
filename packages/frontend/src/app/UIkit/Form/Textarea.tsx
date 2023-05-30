@@ -6,5 +6,5 @@ export const TextArea = styled('textarea', {
   padding: '14px $3',
   height: 'auto',
   minHeight: 96,
-  resize: 'vertical'
+  resize: 'vertical',
 })

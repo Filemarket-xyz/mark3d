@@ -7,7 +7,8 @@ export function useCollectionContract(address?: string) {
   const contract = useContract({
     address,
     abi: mark3dConfig.collectionToken.abi,
-    signerOrProvider: signer
+    signerOrProvider: signer,
   })
+
   return { contract, signer }
 }

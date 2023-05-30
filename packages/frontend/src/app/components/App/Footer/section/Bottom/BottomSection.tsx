@@ -12,12 +12,12 @@ const BottomSectionStyle = styled('div', {
   gap: '$3',
   '& .links': {
     display: 'flex',
-    gap: '32px'
+    gap: '16px',
   },
   '@sm': {
     flexFlow: 'column-reverse wrap',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 })
 
 const Info = styled('div', {
@@ -27,8 +27,8 @@ const Info = styled('div', {
   '@sm': {
     flexFlow: 'column-reverse wrap',
     gap: '16px',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 })
 
 const Divider = styled('div', {
@@ -37,8 +37,8 @@ const Divider = styled('div', {
   background: '#232528',
   borderRadius: '2px',
   '@sm': {
-    display: 'none'
-  }
+    display: 'none',
+  },
 })
 
 const Email = styled('div', {
@@ -47,32 +47,36 @@ const Email = styled('div', {
   gap: '8px',
   '& img': {
     width: '16px',
-    height: '13px'
-  }
+    height: '13px',
+  },
 })
 
 const date = new Date()
 
 const BottomSection = () => {
   return (
-        <BottomSectionStyle>
-            <Info>
-                <Txt secondary1 css={{ fontSize: 14, color: '#A7A8A9' }}>
-                    © {date.getFullYear()} FileMarket.xyz, Inc
-                </Txt>
-                <Divider />
-              <div className='links'>
-                <Link footer>Privacy policy</Link>
-                <Link footer>Terms of Service</Link>
-              </div>
-            </Info>
-            <Email>
-                <img src={EmailImg} />
-                <Txt secondary1 css={{ fontSize: 14 }}>
-                    genesis@filemarket.xyz
-                </Txt>
-            </Email>
-        </BottomSectionStyle>
+    <BottomSectionStyle>
+      <Info>
+        <Txt secondary1 css={{ fontSize: 14, color: '#A7A8A9' }}>
+          ©
+          {' '}
+          {date.getFullYear()}
+          {' '}
+          FileMarket.xyz, Inc
+        </Txt>
+        <Divider />
+        <div className='links'>
+          <Link footer>Privacy policy</Link>
+          <Link footer>Terms of Service</Link>
+        </div>
+      </Info>
+      <Email>
+        <img src={EmailImg} />
+        <Txt secondary1 css={{ fontSize: 14 }}>
+          genesis@filemarket.xyz
+        </Txt>
+      </Email>
+    </BottomSectionStyle>
   )
 }
 

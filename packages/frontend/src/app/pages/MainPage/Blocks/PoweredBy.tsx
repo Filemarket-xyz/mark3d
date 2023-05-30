@@ -9,13 +9,13 @@ export const PoweredByContainer = styled(Container, {
   paddingTB: '160px',
   display: 'flex',
   flexDirection: 'column',
-  gap: '48px'
+  gap: '48px',
 })
 
 const PoweredByStyle = styled('div', {
   display: 'flex',
   gap: '16px',
-  flexWrap: 'wrap'
+  flexWrap: 'wrap',
 })
 
 const PoweredBy = () => {
@@ -23,7 +23,7 @@ const PoweredBy = () => {
     <PoweredByContainer>
       <Txt h1 style={{ fontSize: '56px', lineHeight: '56px' } }>Powered by</Txt>
       <PoweredByStyle>
-        {PoweredByOptions.map((item, index) => <CardPartner img={item.img} url={item.url} key={index} />)}
+        {PoweredByOptions.map((item, index) => <CardPartner key={index} img={item.img} url={item.url} />)}
       </PoweredByStyle>
     </PoweredByContainer>
   )

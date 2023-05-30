@@ -1,72 +1,34 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { styled } from '../../../styles'
-import { textVariant } from '..'
-import LinkTab from './LinkTab'
-import StyledTabs from './TabsBones'
+import { Flex } from '../Flex'
+import { MuiTabs } from './MuiTabs'
+import { StyledTab, StyledTabAmount, StyledTabName } from './Tabs.styles'
 
-interface TabProps {
+export interface TabItem {
   name: string
+  url: string
   amount?: number
-}
-const TabWrapper = styled('div', {
-  display: 'flex',
-  gap: '$1'
-})
-
-const TabName = styled('p', {
-  ...textVariant('h5').true,
-  color: '$blue900'
-})
-
-const Amount = styled('p', {
-  ...textVariant('h5').true,
-  color: '$gray500'
-})
-
-const TabContent = (props: TabProps) => (
-  <TabWrapper>
-    <TabName>{props.name}</TabName>
-    {props.amount !== undefined && <Amount>{props.amount}</Amount>}
-  </TabWrapper>
-)
-
-interface LinkTabProps {
-  href: string
-  content: JSX.Element
-}
-
-const NavigateTab = (props: LinkTabProps) => {
-  const navigate = useNavigate()
-
-  return (
-    <LinkTab
-      onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        event.preventDefault()
-        navigate(props.href)
-      }}
-      icon={props.content}
-      {...props}
-    />
-  )
 }
 
 export interface TabsProps {
-  tabs: Array<{
-    name: string
-    url: string
-    amount?: number
-  }>
+  tabs: TabItem[]
+  textAlign?: 'left'
 }
 
-export default function Tabs(props: TabsProps) {
+export const Tabs: React.FC<TabsProps> = ({ tabs, textAlign }) => {
   const [tab, setTab] = useState<false | number>(false)
   const location = useLocation()
+  const navigate = useNavigate()
+
+  const onChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTab(newValue)
+  }
+
   useEffect(() => {
     const currentTabUrl = location?.pathname?.split('/')?.at(-1) ?? ''
-    let tabIndex = props.tabs.findIndex((t) =>
-      t.url.match(new RegExp(currentTabUrl, 'i'))
+    let tabIndex = tabs.findIndex((t) =>
+      t.url.match(new RegExp(currentTabUrl, 'i')),
     )
     if (tabIndex === -1) {
       tabIndex = 0
@@ -74,20 +36,27 @@ export default function Tabs(props: TabsProps) {
     setTab(tabIndex)
   }, [])
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTab(newValue)
-  }
   return (
-    <StyledTabs value={tab} onChange={handleChange}>
-      {props.tabs.map((tab) => {
-        return (
-          <NavigateTab
-            href={tab.url}
-            content={<TabContent name={tab.name} amount={tab.amount} />}
-            key={tab.name}
-          />
-        )
-      })}
-    </StyledTabs>
+    <MuiTabs value={tab} onChange={onChange}>
+      {tabs.map((tab) => (
+        <StyledTab
+          key={tab.name}
+          LinkComponent={'a'}
+          sx={{
+            paddingLeft: textAlign === 'left' ? 0 : undefined,
+          }}
+          icon={(
+            <Flex gap='$1' justifyContent='start'>
+              <StyledTabName>{tab.name}</StyledTabName>
+              {tab.amount && <StyledTabAmount>{tab.amount}</StyledTabAmount>}
+            </Flex>
+          )}
+          onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+            event.preventDefault()
+            navigate(tab.url)
+          }}
+        />
+      ))}
+    </MuiTabs>
   )
 }

@@ -6,98 +6,97 @@ import { styled } from '../../../styles'
 import { textVariant } from '../Txt'
 
 export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.ComponentType<any> | Util.Function,
-  >(type: Type) =>
-    styled(type, {
-      fontFamily: '$button',
-      fontSize: '$button1',
-      fontWeight: '$button',
-      lineHeight: '$button',
-      color: '$blue500',
-      fill: '$blue500',
-      transition: 'opacity 0.25s ease 0s',
-      outline: 'none',
-      textDecoration: 'none',
-      cursor: 'pointer',
+>(type: Type) =>
+  styled(type, {
+    fontFamily: '$button',
+    fontSize: '$button1',
+    fontWeight: '$button',
+    lineHeight: '$button',
+    color: '$blue500',
+    fill: '$blue500',
+    transition: 'opacity 0.25s ease 0s',
+    outline: 'none',
+    textDecoration: 'none',
+    cursor: 'pointer',
 
-      '&[data-hovered=true]': {
-        opacity: 0.7
+    '&[data-hovered=true]': {
+      opacity: 0.7,
+    },
+    '&[data-focus=true]': {
+      focusRing: '$blue500',
+    },
+    '&[data-pressed=true]': {
+      opacity: 0.9,
+    },
+    '&[data-disabled=true]': {
+      color: '$gray400',
+      fill: '$gray400',
+      cursor: 'not-allowed',
+    },
+    variants: {
+      gray: {
+        true: {
+          color: '$gray500',
+          fill: '$gray500',
+        },
       },
-      '&[data-focus=true]': {
-        focusRing: '$blue500'
+      red: {
+        true: {
+          color: '$red',
+          fill: '$red',
+        },
       },
-      '&[data-pressed=true]': {
-        opacity: 0.9
+      footer: {
+        true: {
+          color: '$gray300',
+          fill: '$gray300',
+          ...textVariant('primary2').true,
+          fontSize: '14px',
+          fontWeight: '400',
+        },
       },
-      '&[data-disabled=true]': {
-        color: '$gray400',
-        fill: '$gray400',
-        cursor: 'not-allowed'
+      small: {
+        ...textVariant('primary3'),
       },
-      variants: {
-        gray: {
-          true: {
-            color: '$gray500',
-            fill: '$gray500'
-          }
+      underlined: {
+        true: {
+          textDecoration: 'underline',
         },
-        red: {
-          true: {
-            color: '$red',
-            fill: '$red'
-          }
+      },
+      iconRedirect: {
+        true: {
+          position: 'relative',
+          '&:after': {
+            content: `url(${RedirectImg})`,
+            verticalAlign: 'middle',
+            paddingLeft: '5px',
+          },
         },
-        footer: {
-          true: {
-            color: '$gray300',
-            fill: '$gray300',
-            ...textVariant('primary2').true,
-            fontSize: '14px',
-            fontWeight: '400'
-          }
+      },
+      howToGetStart: {
+        true: {
+          fontSize: '14px',
+          lineHeight: '16px',
+          fontWeight: '600',
+          '@md': {
+            fontSize: '12px',
+            lineHeight: '14px',
+          },
         },
-        small: {
-          ...textVariant('primary3')
+      },
+      mdFullWidth: {
+        true: {
+          '@md': {
+            width: '100%',
+          },
         },
-        underlined: {
-          true: {
-            textDecoration: 'underline'
-          }
+      },
+      lgFullWidth: {
+        true: {
+          '@lg': {
+            width: '100%',
+          },
         },
-        iconRedirect: {
-          true: {
-            position: 'relative',
-            '&:after': {
-              content: `url(${RedirectImg})`,
-              position: 'absolute',
-              right: '-20px',
-              bottom: '-3px'
-            }
-          }
-        },
-        howToGetStart: {
-          true: {
-            fontSize: '14px',
-            lineHeight: '16px',
-            fontWeight: '600',
-            '@md': {
-              fontSize: '12px',
-              lineHeight: '14px'
-            }
-          }
-        },
-        mdFullWidth: {
-          true: {
-            '@md': {
-              width: '100%'
-            }
-          }
-        },
-        lgFullWidth: {
-          true: {
-            '@lg': {
-              width: '100%'
-            }
-          }
-        }
-      }
-    })
+      },
+    },
+  })

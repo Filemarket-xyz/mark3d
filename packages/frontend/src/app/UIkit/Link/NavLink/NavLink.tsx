@@ -13,6 +13,7 @@ export type NavLinkProps = ComponentProps<typeof NavLinkStyled> & PressHookProps
 
 export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>((props, ref) => {
   const { linkRef, linkProps } = useLink(props, ref)
+
   return (
     <NavLinkStyled
       {...linkProps}

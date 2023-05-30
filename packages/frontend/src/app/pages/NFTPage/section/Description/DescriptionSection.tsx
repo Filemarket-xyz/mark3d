@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { styled } from '../../../../../styles'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
 import { textVariant } from '../../../../UIkit'
-import { Params } from '../../../../utils/router/Params'
+import { Params } from '../../../../utils/router'
 import { GridBlock, PropertyTitle } from '../../helper/styles/style'
 
 const DescriptionSectionStyle = styled(GridBlock, {
@@ -12,18 +12,20 @@ const DescriptionSectionStyle = styled(GridBlock, {
   paddingBottom: '32px',
   '@md': {
     paddingTop: '16px',
-    paddingBottom: '16px'
+    paddingBottom: '16px',
   },
   '@sm': {
     paddingTop: '8px',
-    paddingBottom: '8px'
-  }
+    paddingBottom: '8px',
+  },
 })
 
 const Pre = styled('pre', {
   ...textVariant('body4').true,
   color: '$gray800',
-  fontWeight: 400
+  fontWeight: 400,
+  whiteSpace: 'pre-wrap',
+  wordWrap: 'break-word',
 })
 
 const DescriptionSection = () => {

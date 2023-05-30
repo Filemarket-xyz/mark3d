@@ -62,9 +62,13 @@ const eftRsaDerivationAux = async (
     rsaModulusLength,
   )
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const rsaWorker = new Worker(rsaWorkerUrl, { type: 'module' })
-    rsaWorker.onmessage = (e) => resolve(e.data)
+    rsaWorker.onmessage = (e: MessageEvent) => resolve(e.data)
+    rsaWorker.onerror = (e: ErrorEvent) => {
+      console.error(e)
+      reject(e)
+    }
 
     rsaWorker.postMessage({ seed: OKM })
   })

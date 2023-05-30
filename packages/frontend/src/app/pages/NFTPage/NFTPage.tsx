@@ -12,7 +12,7 @@ import { useIsBuyer, useIsOwner } from '../../processing'
 import { makeTokenFullId } from '../../processing/utils/id'
 import { PageLayout } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
-import { Params } from '../../utils/router/Params'
+import { Params } from '../../utils/router'
 import { transferPermissions } from '../../utils/transfer/status'
 import { PreviewNFTFlow } from './components/PreviewNFTFlow'
 import { GridBlock } from './helper/styles/style'
@@ -25,7 +25,7 @@ import TagsSection from './section/Tags/TagsSection'
 
 const NFTPreviewContainer = styled('div', {
   width: '100%',
-  height: 555,
+  height: 686,
   background: '$gradients$background',
   boxSizing: 'content-box',
   '& .blur': {
@@ -33,45 +33,49 @@ const NFTPreviewContainer = styled('div', {
     height: '100%',
     mixBlendMode: 'normal',
     backdropFilter: 'blur(150px)',
-    paddingTop: 'calc($layout$navBarHeight)',
-    paddingBottom: '$6'
+    paddingTop: '3px',
   },
   zIndex: '1',
-  position: 'relative'
+  position: 'relative',
+  '@sm': {
+    height: 390,
+  },
 })
 
 const MainInfo = styled(PageLayout, {
-  marginTop: '150px',
+  display: 'flex', // чтобы можно было дочерним заполнить все пространство
+  marginTop: '10px',
   marginBottom: '-80px',
   paddingTB: 48,
   fontSize: '16px',
   gridTemplateColumns: '3fr 1fr',
   columnGap: '$4',
   minHeight: '100%',
-  height: '100%',
+  height: 'max-content',
   borderRadius: '$6 $6 0 0',
   top: '-$6',
   boxShadow: '$footer',
   zIndex: '7',
   position: 'relative',
   '@md': {
-    height: 'unset'
-  }
+    height: 'unset',
+    borderRadius: '24px 24px 0px 0px',
+  },
 })
 
 const GridLayout = styled('div', {
+  flexGrow: 1, // чтобы был в высоту родителя
   display: 'grid',
-  gap: '3rem',
+  gap: '32px',
   position: 'relative',
   columnGap: '$4',
-  height: '100%',
   gridTemplateColumns: '3fr 1fr',
   // eslint-disable-next-line
-  gridTemplateAreas: "'GridBlock Control' 'HomeLand HomeLand' 'Tags Tags' 'Description Description'",
+  gridTemplateAreas: "'GridBlock Control'",
   '@md': {
     gridTemplateAreas: "'BaseInfo' 'Control' 'HomeLand' 'Tags' 'Description'",
-    gridTemplateColumns: 'unset'
-  }
+    gridTemplateColumns: 'unset',
+  },
 })
 
 const GridBlockSection = styled(GridBlock, {
@@ -80,20 +84,24 @@ const GridBlockSection = styled(GridBlock, {
   gridArea: 'GridBlock',
   gap: '32px',
   '@md': {
-    display: 'none'
-  }
+    display: 'none',
+  },
 })
 
 const ControlFileSection = styled('div', {
+  height: '100%',
+})
+
+const ControlStickyBlock = styled('div', {
+  position: 'sticky',
   display: 'flex',
   flexDirection: 'column',
   gap: '16px',
-  position: 'sticky',
   top: '125px',
   '@md': {
     position: 'relative',
-    top: '0'
-  }
+    top: '0',
+  },
 })
 
 const NFTPage = observer(() => {
@@ -104,12 +112,12 @@ const NFTPage = observer(() => {
   const files = useHiddenFileDownload(tokenMetaStore, tokenStore.data)
   const tokenFullId = useMemo(
     () => makeTokenFullId(collectionAddress, tokenId),
-    [collectionAddress, tokenId]
+    [collectionAddress, tokenId],
   )
   const { isOwner } = useIsOwner(tokenFullId)
   const isBuyer = useIsBuyer(transferStore.data)
   const canViewHiddenFiles = isBuyer && transferPermissions.buyer.canViewHiddenFiles(
-    transferStore.data
+    transferStore.data,
   )
 
   const categories: string[] = useMemo(() => {
@@ -126,8 +134,8 @@ const NFTPage = observer(() => {
     <>
       <NFTPreviewContainer style={{
         backgroundImage: `url(${getHttpLinkFromIpfsString(tokenStore.data?.image ?? '')})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundSize: '100% 100%',
+        backgroundPosition: 'center',
       }}
       >
         <div className='blur'>
@@ -166,13 +174,17 @@ const NFTPage = observer(() => {
               </>
             )}
           <ControlFileSection style={{ gridArea: 'Control' }}>
-            <ControlSection />
-            <FileInfoSection
-              isOwner={isOwner}
-              canViewHiddenFiles={canViewHiddenFiles}
-              files={files}
-              filesMeta={tokenStore.data?.hiddenFileMeta ? [tokenStore.data?.hiddenFileMeta] : []}
-            />
+            <ControlStickyBlock>
+              <ControlSection />
+              {(transferStore.data || isOwner) && (
+                <FileInfoSection
+                  isOwner={isOwner}
+                  canViewHiddenFiles={canViewHiddenFiles}
+                  files={files}
+                  filesMeta={tokenStore.data?.hiddenFileMeta ? [tokenStore.data?.hiddenFileMeta] : []}
+                />
+              )}
+            </ControlStickyBlock>
           </ControlFileSection>
         </GridLayout>
       </MainInfo>

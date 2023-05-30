@@ -11,7 +11,7 @@ export class DialogRef {
   constructor(
     private readonly dialogCallId: number,
     public dialogStore: DialogStore,
-    public readonly name?: string
+    public readonly name?: string,
   ) {
   }
 
@@ -31,7 +31,7 @@ export class DialogStore {
 
   constructor() {
     makeAutoObservable(this, {
-      count: false
+      count: false,
     })
   }
 
@@ -45,8 +45,9 @@ export class DialogStore {
       open: true,
       onClosed: () => {
         ref.closeListeners.forEach((fn) => fn())
-      }
+      },
     })
+
     return ref
   }
 
@@ -85,8 +86,8 @@ export class DialogStore {
       props: {
         severity: 'error',
         duration: 10000,
-        body: error
-      }
+        body: error,
+      },
     })
   }
 
@@ -96,8 +97,8 @@ export class DialogStore {
       props: {
         severity: 'success',
         duration: 5000,
-        body: msg
-      }
+        body: msg,
+      },
     })
   }
 
@@ -107,8 +108,8 @@ export class DialogStore {
       props: {
         severity: 'warning',
         duration: 5000,
-        body: msg
-      }
+        body: msg,
+      },
     })
   }
 }

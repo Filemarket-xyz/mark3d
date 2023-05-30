@@ -19,7 +19,7 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     public readonly seedProvider: ISeedProvider,
     public readonly globalSalt: ArrayBuffer,
     public readonly collectionAddress: ArrayBuffer,
-    public readonly tokenId: number
+    public readonly tokenId: number,
   ) {
     this.#tokenFullIdArgs = [this.collectionAddress, this.tokenId]
     this.#persistentArgs = [this.globalSalt, ...this.#tokenFullIdArgs]
@@ -38,7 +38,7 @@ export class HiddenFileOwner implements IHiddenFileOwner {
       } else {
         const {
           encryptedPassword,
-          dealNumber
+          dealNumber,
         } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullIdArgs)
 
         const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
@@ -49,12 +49,12 @@ export class HiddenFileOwner implements IHiddenFileOwner {
 
       return {
         ok: true,
-        result: new File([decryptedFile], meta?.name || 'hidden_file', { type: meta?.type })
+        result: new File([decryptedFile], meta?.name || 'hidden_file', { type: meta?.type }),
       }
     } catch (error) {
       return {
         ok: false,
-        error: `Decrypt failed: ${error}`
+        error: `Decrypt failed: ${error}`,
       }
     }
   }
@@ -81,7 +81,7 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     } else {
       const {
         encryptedPassword: lastEncryptedPassword,
-        dealNumber
+        dealNumber,
       } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullIdArgs)
 
       const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)

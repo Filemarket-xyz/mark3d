@@ -4,5 +4,6 @@ import useWatchFileWalletConnect from '../../../processing/nft-interaction/useWa
 
 export const FileWalletConnectWatcher: FC = () => {
   useWatchFileWalletConnect()
+
   return null
 }

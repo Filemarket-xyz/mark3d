@@ -23,7 +23,7 @@ const ButtonContainer = styled('div', {
   display: 'flex',
   justifyContent: 'end',
   alignItems: 'center',
-  gap: '$3'
+  gap: '$3',
 })
 
 export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
@@ -59,8 +59,8 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
       <ButtonContainer>
         {error && (<ErrorMessage>{error}</ErrorMessage>)}
         <Button
-          type="submit"
           primary
+          type="submit"
           isDisabled={!!(errors.password)}
         >
           Unlock

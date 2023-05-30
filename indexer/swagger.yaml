@@ -95,6 +95,11 @@ paths:
           description: Адрес последней коллекции.
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+        - name: lastTokenCollectionAddress
+          in: query
+          description: Адрес последней коллекции последнего токена.
+          type: string
+          pattern: "0x[0-9a-f-A-F]{40}"
         - name: collectionLimit
           in: query
           description: Максимальное число коллекций, которое вернется на этой странице.
@@ -109,11 +114,6 @@ paths:
           type: string
           default: ""
           pattern: "^[0-9]*$"
-        - name: lastTokenCollectionAddress
-          in: query
-          description: Адрес последней коллекции последнего токена.
-          type: string
-          pattern: "0x[0-9a-f-A-F]{40}"
         - name: tokenLimit
           in: query
           description: Максимальное число токенов, которое вернется на этой странице.
@@ -187,9 +187,7 @@ paths:
         "200":
           description: Токены
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/Token"
+            $ref: "#/definitions/TokensByCollectionResponse"
         default:
           description: Ошибка
           schema:
@@ -477,9 +475,7 @@ paths:
         200:
           description: Список ордеров
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/OrderWithToken"
+            $ref: "#/definitions/OrdersAllActiveResponse"
         default:
           description: Ошибка
           schema:
@@ -619,11 +615,27 @@ definitions:
         description: Коллекции пользователя
         items:
           $ref: "#/definitions/Collection"
+      collectionsTotal:
+        type: number
+        format: uint64
       tokens:
         type: array
         description: Токены пользователя
         items:
           $ref: "#/definitions/Token"
+      tokensTotal:
+        type: number
+        format: uint64
+  TokensByCollectionResponse:
+    type: object
+    properties:
+      tokens:
+        type: array
+        items:
+          $ref: "#/definitions/Token"
+      total:
+        type: number
+        format: uint64
   TransfersResponse:
     type: object
     description: Ответ на запрос трансферов токенов от пользователя
@@ -633,11 +645,17 @@ definitions:
         description: Входящие трансферы
         items:
           $ref: "#/definitions/Transfer"
+      incomingTotal:
+        type: number
+        format: uint64
       outgoing:
         type: array
         description: Исходящие трансферы
         items:
           $ref: "#/definitions/Transfer"
+      outgoingTotal:
+        type: number
+        format: uint64
   TransfersResponseV2:
     type: object
     description: Ответ на запрос трансферов токенов от пользователя
@@ -647,11 +665,17 @@ definitions:
         description: Входящие трансферы
         items:
           $ref: "#/definitions/TransferWithData"
+      incomingTotal:
+        type: number
+        format: uint64
       outgoing:
         type: array
         description: Исходящие трансферы
         items:
           $ref: "#/definitions/TransferWithData"
+      outgoingTotal:
+        type: number
+        format: uint64
   OrdersResponse:
     type: object
     description: Ответ на запрос ордеров
@@ -661,11 +685,27 @@ definitions:
         description: Входящие ордера (где пользователь - получатель)
         items:
           $ref: "#/definitions/Order"
+      incomingTotal:
+        type: number
+        format: uint64
       outgoing:
         type: array
         description: Исходящие ордера (где пользователь - продавец)
         items:
           $ref: "#/definitions/Order"
+      outgoingTotal:
+        type: number
+        format: uint64
+  OrdersAllActiveResponse:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/OrderWithToken"
+      total:
+        type: number
+        format: uint64
   OrderWithToken:
     type: object
     description: Ордер с токеном
@@ -686,6 +726,9 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Token"
+      total:
+        type: number
+        format: uint64
   Collection:
     type: object
     description: Коллекция

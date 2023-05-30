@@ -8,15 +8,16 @@ import { columns, rows } from './tableData'
 
 const Title = styled('h1', {
   ...textVariant('h3').true,
-  marginBottom: '$4'
+  marginBottom: '$4',
 })
 
 export default function ExplorerPage() {
   // TODO use when filters are ready
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [columnsToDisplay, setColumnsToDisplay] = useState<string[]>(
-    columns.map((c) => c.name)
+    columns.map((c) => c.name),
   )
+
   return (
     <PageLayout>
       <Title>VerseExplorer</Title>
@@ -24,7 +25,7 @@ export default function ExplorerPage() {
         columns={columns}
         rows={rows}
         columnsToDisplay={columnsToDisplay}
-      ></Table>
+      />
     </PageLayout>
   )
 }

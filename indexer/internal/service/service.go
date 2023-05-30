@@ -66,7 +66,7 @@ type Collections interface {
 type Tokens interface {
 	GetToken(ctx context.Context, address common.Address, tokenId *big.Int) (*models.Token, *models.ErrorResponse)
 	GetTokenEncryptedPassword(ctx context.Context, address common.Address, tokenId *big.Int) (*models.EncryptedPasswordResponse, *models.ErrorResponse)
-	GetCollectionTokens(ctx context.Context, address common.Address, lastTokenId *big.Int, limit int) ([]*models.Token, *models.ErrorResponse)
+	GetCollectionTokens(ctx context.Context, address common.Address, lastTokenId *big.Int, limit int) (*models.TokensByCollectionResponse, *models.ErrorResponse)
 	GetTokensByAddress(ctx context.Context, address common.Address, lastCollectionAddress *common.Address, collectionLimit int, lastTokenCollectionAddress *common.Address, lastTokenId *big.Int, tokenLimit int) (*models.TokensResponse, *models.ErrorResponse)
 }
 
@@ -83,7 +83,7 @@ type Orders interface {
 	GetOrders(ctx context.Context, address common.Address) (*models.OrdersResponse, *models.ErrorResponse)
 	GetOrdersHistory(ctx context.Context, address common.Address) (*models.OrdersResponse, *models.ErrorResponse)
 	GetOrder(ctx context.Context, address common.Address, tokenId *big.Int) (*models.Order, *models.ErrorResponse)
-	GetAllActiveOrders(ctx context.Context, lastOrderId *int64, limit int) ([]*models.OrderWithToken, *models.ErrorResponse)
+	GetAllActiveOrders(ctx context.Context, lastOrderId *int64, limit int) (*models.OrdersAllActiveResponse, *models.ErrorResponse)
 }
 
 type service struct {
@@ -387,7 +387,7 @@ func (s *service) processCollectionCreation(
 		}
 	}
 
-	meta := domain.NewPlaceholderMetadata()
+	meta := *domain.NewPlaceholderMetadata()
 	metaUri, ok := metaUriAny.(string)
 	if !ok {
 		return errors.New("failed to cast metaUri to string")
@@ -623,7 +623,7 @@ func (s *service) tryProcessCollectionTransferEvent(
 			token.CollectionAddress.String(),
 			token.TokenId.String(),
 		)
-		meta = domain.NewPlaceholderMetadata()
+		meta = *domain.NewPlaceholderMetadata()
 	}
 
 	token.Metadata = &meta

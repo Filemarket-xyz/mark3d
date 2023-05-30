@@ -36,29 +36,29 @@ export interface ITableBuilder {
 
 /** This class provides logic to transform given data structures to more convinient and fast ones */
 export class TableBuilder {
-  protected table: {
+  table: {
     rows: ITransformedRow[]
     /** Columns to iterate to get correct cells order */
     columns: ITableColumn[]
   } = {
       columns: [],
-      rows: []
+      rows: [],
     }
 
   constructor(
     private readonly columns: ITableColumn[],
-    private readonly rows: ITableRow[]
+    private readonly rows: ITableRow[],
   ) {
     this.table = {
       columns: this.columns,
-      rows: this.convertRowsToMapsWithAdditionalData()
+      rows: this.convertRowsToMapsWithAdditionalData(),
     }
   }
 
   private convertRowsToMapsWithAdditionalData() {
     return this.rows.map((row) => ({
       row: this.convertRowToMap(row),
-      additionalData: row.additionalData
+      additionalData: row.additionalData,
     }))
   }
 
@@ -69,11 +69,12 @@ export class TableBuilder {
       const cell = row.cells.find((cell) => cell.columnName === columnName)
       if (!cell) {
         throw new Error(
-          `Column name "${columnName}" in row with index ${index} was not found`
+          `Column name "${columnName}" in row with index ${index} was not found`,
         )
       }
       map.set(columnName, cell)
     })
+
     return map
   }
 }

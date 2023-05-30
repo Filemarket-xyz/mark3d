@@ -10,7 +10,7 @@ export const ViewFilesImage: Record<typeFiles, string> = {
   music: ImgView,
   picture: ImgView,
   rar: ImgView,
-  video: ImgView
+  video: ImgView,
 }
 
 export const ViewFilesText: Record<typeFiles, string> = {
@@ -21,5 +21,5 @@ export const ViewFilesText: Record<typeFiles, string> = {
   music: 'View file',
   picture: 'View file',
   rar: 'View file',
-  video: 'View file'
+  video: 'View file',
 }

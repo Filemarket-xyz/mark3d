@@ -25,10 +25,10 @@ const Shade = styled('div', {
     selected: {
       true: {
         zIndex: 0,
-        background: 'rgba(0, 0, 0, 0)'
-      }
-    }
-  }
+        background: 'rgba(0, 0, 0, 0)',
+      },
+    },
+  },
 })
 
 const P = styled('p', {
@@ -38,10 +38,10 @@ const P = styled('p', {
     selected: {
       true: {
         opacity: 0,
-        zIndex: 1
-      }
-    }
-  }
+        zIndex: 1,
+      },
+    },
+  },
 })
 
 const ImageIcon = styled('img', {
@@ -52,10 +52,10 @@ const ImageIcon = styled('img', {
     selected: {
       true: {
         opacity: 0,
-        zIndex: 1
-      }
-    }
-  }
+        zIndex: 1,
+      },
+    },
+  },
 })
 
 const FileImageContainer = styled('div', {
@@ -75,14 +75,14 @@ const FileImageContainer = styled('div', {
     isImageUpload: {
       true: {
         height: '320px',
-        backgroundSize: 'contain !important'
-      }
-    }
-  }
+        backgroundSize: 'cover !important',
+      },
+    },
+  },
 })
 
 const FileInput = styled('input', {
-  display: 'none'
+  display: 'none',
 })
 
 interface ItemWithGetFileProperty {
@@ -115,12 +115,12 @@ export default function ImageLoader(props: ImageLoaderProps) {
           item.kind === 'file' &&
           (item.type === 'image/jpeg' ||
             item.type === 'image/png' ||
-            item.type === 'image/gif')
+            item.type === 'image/gif'),
       )
       if (item) {
         void setFileAsync(item as unknown as ItemWithGetFileProperty)
       }
-    }
+    },
   })
 
   useEffect(() => {
@@ -147,7 +147,7 @@ export default function ImageLoader(props: ImageLoaderProps) {
   }
 
   return (
-    <File htmlFor='inputTag' selected={Boolean(preview)} isImageUpload={!!file}>
+    <File htmlFor='inputTag' isImageUpload={!!file}>
       {file && (
         <CloseButton
           onPress={() => {
@@ -155,7 +155,7 @@ export default function ImageLoader(props: ImageLoaderProps) {
             setFile(undefined)
           }}
         >
-          <CrossIcon src={CrossImage}></CrossIcon>
+          <CrossIcon src={CrossImage} />
         </CloseButton>
       )}
       <FileImageContainer
@@ -166,10 +166,10 @@ export default function ImageLoader(props: ImageLoaderProps) {
           backgroundImage: `url('${preview}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
+          backgroundRepeat: 'no-repeat',
         }}
       >
-        <Shade selected={Boolean(preview)}></Shade>
+        <Shade selected={Boolean(preview)} />
         <ImageIcon src={ImgIcon} selected={Boolean(preview)} />
         <P selected={Boolean(preview)}>Choose Preview</P>
       </FileImageContainer>

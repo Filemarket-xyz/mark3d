@@ -5,18 +5,18 @@ import { keyframes, styled } from '../../../styles'
 const dripExpand = keyframes({
   '0%': {
     opacity: 0,
-    transform: 'scale(0.25)'
+    transform: 'scale(0.25)',
   },
   '30%': {
-    opacity: 1
+    opacity: 1,
   },
   '80%': {
-    opacity: 0.5
+    opacity: 0.5,
   },
   '100%': {
     transform: 'scale(28)',
-    opacity: 0
-  }
+    opacity: 0,
+  },
 })
 
 const DripStyled = styled('div', {
@@ -32,8 +32,8 @@ const DripStyled = styled('div', {
     animation: `300ms linear ${dripExpand.name}`,
     animationFillMode: 'forwards',
     width: '1rem',
-    height: '1rem'
-  }
+    height: '1rem',
+  },
 })
 
 export interface DripProps {
@@ -56,7 +56,7 @@ export const Drip = memo<DripProps>((
     left = 0,
     onClick,
     ...props
-  }
+  },
 ) => {
   const dripRef = useRef<HTMLDivElement>(null)
 
@@ -82,8 +82,18 @@ export const Drip = memo<DripProps>((
 
   return (
     <DripStyled ref={dripRef} className={className} {...props}>
-      <svg height="20" style={{ top, left }} viewBox="0 0 20 20" width="20">
-        <g fill="none" fillRule="evenodd" stroke="none" strokeWidth="1">
+      <svg
+        height="20"
+        style={{ top, left }}
+        viewBox="0 0 20 20"
+        width="20"
+      >
+        <g
+          fill="none"
+          fillRule="evenodd"
+          stroke="none"
+          strokeWidth="1"
+        >
           <g className="nextui-drip-filler" fill={color}>
             <rect height="100%" rx="10" width="100%" />
           </g>

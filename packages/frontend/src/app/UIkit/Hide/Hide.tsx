@@ -4,8 +4,8 @@ export const Hide = styled('div', {
   variants: {
     hide: {
       true: {
-        display: 'none'
-      }
-    }
-  }
+        display: 'none',
+      },
+    },
+  },
 })

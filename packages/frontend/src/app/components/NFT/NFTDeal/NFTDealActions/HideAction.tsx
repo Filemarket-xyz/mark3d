@@ -3,5 +3,5 @@ import { Hide } from '../../../../UIkit/Hide/Hide'
 
 export const HideAction = styled(Hide, {
   width: '100%',
-  flexGrow: '1'
+  flexGrow: '1',
 })

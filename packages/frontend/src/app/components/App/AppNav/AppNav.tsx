@@ -9,12 +9,10 @@ import { paths } from './paths'
 const mobileBp: BreakpointsOptions = 'lg'
 
 export const AppNav: FC = () => (
-  <>
-    <NavBar
-      mobileBp={mobileBp}
-      brand={<AppLogoButton to='/mainpage' hideNameIn={mobileBp} />}
-      items={paths}
-      actions={<AppConnectWidget />}
-    />
-  </>
+  <NavBar
+    mobileBp={mobileBp}
+    brand={<AppLogoButton to='/mainpage' hideNameIn={mobileBp} />}
+    items={paths}
+    actions={<AppConnectWidget />}
+  />
 )

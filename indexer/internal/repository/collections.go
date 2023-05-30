@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-// GetCollectionsByOwnerAddress returns owned collection or collections of owned tokens
+// GetCollectionsByOwnerAddress returns owned collections or collections of owned tokens
 func (p *postgres) GetCollectionsByOwnerAddress(
 	ctx context.Context,
 	tx pgx.Tx,
@@ -20,7 +20,7 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 ) ([]*domain.Collection, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT address,creator,owner,name,token_id,meta_uri,description,image 
+		SELECT address,creator,owner,name,token_id,meta_uri,description,image
 		FROM collections AS c 
 		WHERE (owner=$1 OR 
             EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)) AND
@@ -67,6 +67,27 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 		res = append(res, c)
 	}
 	return res, nil
+}
+
+func (p *postgres) GetCollectionsByOwnerAddressTotal(
+	ctx context.Context,
+	tx pgx.Tx,
+	address common.Address,
+) (uint64, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT COUNT(*) AS total
+		FROM collections AS c 
+		WHERE (owner=$1 OR 
+            EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1))
+	`
+	var total uint64
+	row := tx.QueryRow(ctx, query, strings.ToLower(address.String()))
+	if err := row.Scan(&total); err != nil {
+		return 0, err
+	}
+
+	return total, nil
 }
 
 func (p *postgres) GetCollection(ctx context.Context,
