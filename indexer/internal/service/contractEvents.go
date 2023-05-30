@@ -122,7 +122,7 @@ func (s *service) onCollectionTransferEvent(
 			token.CollectionAddress.String(),
 			token.TokenId.String(),
 		)
-		meta = domain.NewPlaceholderMetadata()
+		meta = *domain.NewPlaceholderMetadata()
 	}
 
 	token.Metadata = &meta

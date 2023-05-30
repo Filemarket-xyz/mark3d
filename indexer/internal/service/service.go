@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/publicCollection"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"io"
@@ -64,7 +64,7 @@ type EthClient interface {
 type Collections interface {
 	GetCollection(ctx context.Context, address common.Address) (*models.Collection, *models.ErrorResponse)
 	GetCollectionWithTokens(ctx context.Context, address common.Address, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
-	GetPublicCollectionWithTokens(ctx context.Context) (*models.CollectionData, *models.ErrorResponse)
+	GetPublicCollectionWithTokens(ctx context.Context, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
 }
 
 type Tokens interface {
@@ -892,7 +892,6 @@ func (s *service) tryProcessTransferCancel(
 	}
 	return nil
 }
-
 
 func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.Transaction) error {
 	log.Println("processing collection tx", t.Hash())

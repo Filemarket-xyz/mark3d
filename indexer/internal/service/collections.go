@@ -66,6 +66,10 @@ func (s *service) GetCollectionWithTokens(
 	}, nil
 }
 
-func (s *service) GetPublicCollectionWithTokens(ctx context.Context) (*models.CollectionData, *models.ErrorResponse) {
-	return s.GetCollectionWithTokens(ctx, s.cfg.PublicCollectionAddress)
+func (s *service) GetPublicCollectionWithTokens(
+	ctx context.Context,
+	lastTokenId *big.Int,
+	limit int,
+) (*models.CollectionData, *models.ErrorResponse) {
+	return s.GetCollectionWithTokens(ctx, s.cfg.PublicCollectionAddress, lastTokenId, limit)
 }

@@ -91,7 +91,7 @@ func (p *postgres) GetCollectionTokens(
 		metadata, err := p.GetMetadata(ctx, tx, r.CollectionAddress, r.TokenId)
 		if err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
-				log.Printf("couldn't get metadata for token with collection address: %s, tokenId: %s", r.CollectionAddress, r.TokenId.String()))
+				log.Printf("couldn't get metadata for token with collection address: %s, tokenId: %s", r.CollectionAddress, r.TokenId.String())
 				metadata = domain.NewPlaceholderMetadata()
 			}
 			return nil, err
@@ -210,7 +210,7 @@ func (p *postgres) GetTokensByAddress(
 		metadata, err := p.GetMetadata(ctx, tx, r.CollectionAddress, r.TokenId)
 		if err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
-				log.Printf("couldn't get metadata for token with collection address: %s, tokenId: %s", r.CollectionAddress, r.TokenId.String()))
+				log.Printf("couldn't get metadata for token with collection address: %s, tokenId: %s", r.CollectionAddress, r.TokenId.String())
 				metadata = domain.NewPlaceholderMetadata()
 			}
 			return nil, err
