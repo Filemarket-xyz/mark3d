@@ -54,3 +54,7 @@ func (s *service) GetCollectionWithTokens(ctx context.Context,
 		Tokens:     domain.MapSlice(tokens, domain.TokenToModel),
 	}, nil
 }
+
+func (s *service) GetPublicCollectionWithTokens(ctx context.Context) (*models.CollectionData, *models.ErrorResponse) {
+	return s.GetCollectionWithTokens(ctx, s.cfg.PublicCollectionAddress)
+}

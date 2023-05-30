@@ -6,6 +6,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
+	"github.com/mark3d-xyz/mark3d/indexer/models"
 	"math/big"
 	"strings"
 )
@@ -14,9 +15,13 @@ func (p *postgres) GetCollectionsByAddress(ctx context.Context,
 	tx pgx.Tx, address common.Address) ([]*domain.Collection, error) {
 	// language=PostgreSQL
 	rows, err := tx.Query(ctx, `SELECT address,creator,owner,name,token_id,meta_uri,description,image 
-			FROM collections AS c WHERE owner=$1 OR 
-            	EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)`,
-		strings.ToLower(address.String()))
+			FROM collections AS c 
+			WHERE owner=$1 OR 
+            	EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1) OR 
+            	c.address=$2`,
+		strings.ToLower(address.String()),
+		strings.ToLower(p.cfg.publicCollectionAddress.String()),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -35,6 +40,13 @@ func (p *postgres) GetCollectionsByAddress(ctx context.Context,
 		c.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
 		if !ok {
 			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
+		}
+
+		switch c.Address {
+		case p.cfg.publicCollectionAddress:
+			c.Type = models.CollectionTypePublicCollection
+		default:
+			c.Type = models.CollectionTypeFileMarketCollection
 		}
 		res = append(res, c)
 	}
@@ -58,6 +70,13 @@ func (p *postgres) GetCollection(ctx context.Context,
 	if !ok {
 		return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
 	}
+
+	switch c.Address {
+	case p.cfg.publicCollectionAddress:
+		c.Type = models.CollectionTypePublicCollection
+	default:
+		c.Type = models.CollectionTypeFileMarketCollection
+	}
 	return c, nil
 }
 
@@ -75,6 +94,13 @@ func (p *postgres) GetCollectionsByTokenId(ctx context.Context, tx pgx.Tx,
 		return nil, err
 	}
 	c.Address, c.Owner, c.Creator = common.HexToAddress(collectionAddress), common.HexToAddress(creator), common.HexToAddress(owner)
+
+	switch c.Address {
+	case p.cfg.publicCollectionAddress:
+		c.Type = models.CollectionTypePublicCollection
+	default:
+		c.Type = models.CollectionTypeFileMarketCollection
+	}
 	return c, nil
 }
 

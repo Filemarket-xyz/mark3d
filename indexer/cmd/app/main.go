@@ -69,8 +69,12 @@ func main() {
 		strings.ToLower(cfg.Service.PublicCollectionAddress.String()): 1_000_000,
 	})
 
+	repositoryCfg := &repository.Config{
+		PublicCollectionAddress: cfg.Service.PublicCollectionAddress,
+	}
+
 	indexService, err := service.NewService(
-		repository.NewRepository(pool, rdb),
+		repository.NewRepository(pool, rdb, repositoryCfg),
 		client,
 		seq,
 		healthNotifier,

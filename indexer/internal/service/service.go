@@ -63,6 +63,7 @@ type EthClient interface {
 type Collections interface {
 	GetCollection(ctx context.Context, address common.Address) (*models.Collection, *models.ErrorResponse)
 	GetCollectionWithTokens(ctx context.Context, address common.Address) (*models.CollectionData, *models.ErrorResponse)
+	GetPublicCollectionWithTokens(ctx context.Context) (*models.CollectionData, *models.ErrorResponse)
 }
 
 type Tokens interface {

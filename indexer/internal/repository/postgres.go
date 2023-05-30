@@ -70,12 +70,18 @@ type Orders interface {
 	InsertOrderStatus(ctx context.Context, tx pgx.Tx, orderId int64, status *domain.OrderStatus) error
 }
 
-type postgres struct {
-	pg *pgxpool.Pool
+type postgresConfig struct {
+	publicCollectionAddress common.Address
 }
 
-func NewPostgres(pg *pgxpool.Pool) Postgres {
+type postgres struct {
+	pg  *pgxpool.Pool
+	cfg *postgresConfig
+}
+
+func NewPostgres(pg *pgxpool.Pool, cfg *postgresConfig) Postgres {
 	return &postgres{
-		pg: pg,
+		pg:  pg,
+		cfg: cfg,
 	}
 }

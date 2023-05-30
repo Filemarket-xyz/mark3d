@@ -53,6 +53,22 @@ paths:
           required: true
           type: string
           pattern: "0x[0-9a-f-A-F]{40}"
+  /collections/full/public:
+    get:
+      tags:
+        - collections
+      description: Получение публичной коллекции со всем ее токенами
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Коллекция
+          schema:
+            $ref: "#/definitions/CollectionData"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /tokens/{address}:
     get:
       tags:
@@ -554,6 +570,16 @@ definitions:
       image:
         type: string
         description: Ссылка на пикчу из метаданных
+      type:
+        type: string
+        description: Тип коллекции <br />
+          * `File Market Collection` - Обычные коллекции <br />
+          * `Public Collection` - Общая коллекция, куда может заминтить каждый <br />
+          * `File Bunnies Collection` - Крош. Наша коллекция
+        enum:
+          - "File Market Collection"
+          - "Public Collection"
+          - "File Bunnies Collection"
   Token:
     type: object
     description: Токен

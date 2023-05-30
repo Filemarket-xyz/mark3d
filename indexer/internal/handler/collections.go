@@ -30,3 +30,14 @@ func (h *handler) handleGetFullCollection(w http.ResponseWriter, r *http.Request
 	}
 	sendResponse(w, 200, res)
 }
+
+func (h *handler) handleGetFullPublicCollection(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
+	defer cancel()
+	res, e := h.service.GetPublicCollectionWithTokens(ctx)
+	if e != nil {
+		sendResponse(w, e.Code, e)
+		return
+	}
+	sendResponse(w, 200, res)
+}
