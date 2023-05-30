@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/interfaces/IERC2981.sol";
 
-import "./Mark3dAccessToken.sol";
 import "./IFraudDecider.sol";
 import "./IEncryptedFileToken.sol";
 import "./IEncryptedFileTokenCallbackReceiver.sol";
@@ -50,7 +49,7 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
     uint256 public finalizeTransferTimeout;                    // Time before transfer finalizes automatically 
     uint256 private salesStartTimestamp;                       // Time when users can start transfer tokens 
 
-    /// @dev consturct
+    /// @dev construct
     /// @param name - name of the token
     /// @param symbol - symbol of the token
     /// @param _contractMetaUri - contract-level metadata uri
