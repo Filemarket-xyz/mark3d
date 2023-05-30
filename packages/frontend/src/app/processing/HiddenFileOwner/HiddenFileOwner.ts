@@ -11,6 +11,7 @@ import { IHiddenFileOwner } from './IHiddenFileOwner'
 export class HiddenFileOwner implements IHiddenFileOwner {
   #persistentArgs: PersistentDerivationArgs
   #tokenFullIdArgs: [ArrayBuffer, number]
+  #isFirefox: boolean
 
   constructor(
     public readonly address: string,
@@ -23,6 +24,7 @@ export class HiddenFileOwner implements IHiddenFileOwner {
   ) {
     this.#tokenFullIdArgs = [this.collectionAddress, this.tokenId]
     this.#persistentArgs = [this.globalSalt, ...this.#tokenFullIdArgs]
+    this.#isFirefox = navigator.userAgent.includes('Firefox')
   }
 
   async decryptFile(encryptedFile: ArrayBuffer, meta: FileMeta | undefined): Promise<DecryptResult<File>> {
@@ -41,7 +43,12 @@ export class HiddenFileOwner implements IHiddenFileOwner {
           dealNumber,
         } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullIdArgs)
 
-        const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
+        const { priv } = await this.crypto.eftRsaDerivation(
+          this.seedProvider.seed,
+          ...this.#persistentArgs,
+          dealNumber,
+          { disableWorker: this.#isFirefox },
+        )
         password = await this.crypto.rsaDecrypt(hexToBuffer(encryptedPassword), priv)
       }
 
@@ -84,7 +91,12 @@ export class HiddenFileOwner implements IHiddenFileOwner {
         dealNumber,
       } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullIdArgs)
 
-      const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
+      const { priv } = await this.crypto.eftRsaDerivation(
+        this.seedProvider.seed,
+        ...this.#persistentArgs,
+        dealNumber,
+        { disableWorker: this.#isFirefox },
+      )
       password = await this.crypto.rsaDecrypt(hexToBuffer(lastEncryptedPassword), priv)
     }
 
