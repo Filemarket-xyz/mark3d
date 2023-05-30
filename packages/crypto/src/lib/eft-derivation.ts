@@ -1,11 +1,11 @@
 // See https://outline.customapp.tech/doc/shifrovanie-i-derivaciya-fYE6XPQHkq#h-derivaciya-klyuchej
-
+import { rsaGenerateKeyPair } from './rsa'
 import {AesKeyAndIv, EftAesDerivationFunction, EftRsaDerivationFunction, HkdfFunction, RsaKeyPair} from './types';
 import {aesIVLength, aesKeyLength, aesKeyType, rsaKeyType, rsaModulusLength} from './config';
 import {numberToBuffer} from './utils';
 import {hkdfSha512, hkdfSha512Native} from './hkdf-sha512';
 // @ts-ignore
-// vite handles this and can builds it
+// vite handles this and can build it
 import RsaWorker from '../dedicated-wokrers/rsa.worker?worker'
 
 export const eftAesDerivationNative = (crypto: Crypto): EftAesDerivationFunction =>
@@ -13,12 +13,12 @@ export const eftAesDerivationNative = (crypto: Crypto): EftAesDerivationFunction
     eftAesDerivationAux(hkdfSha512Native(crypto), seed, globalSalt, collectionAddress, tokenId)
 
 export const eftAesDerivation: EftAesDerivationFunction =
-  async (seed, globalSalt, collectionAddress, tokenId) =>
+  async (seed, globalSalt, collectionAddress, tokenId,) =>
     eftAesDerivationAux(hkdfSha512, seed, globalSalt, collectionAddress, tokenId)
 
 export const eftRsaDerivationNative = (crypto: Crypto): EftRsaDerivationFunction =>
-  async (seed, globalSalt, collectionAddress, tokenId, dealNumber) =>
-    eftRsaDerivationAux(hkdfSha512Native(crypto), seed, globalSalt, collectionAddress, tokenId, dealNumber)
+  async (seed, globalSalt, collectionAddress, tokenId, dealNumber, options) =>
+    eftRsaDerivationAux(hkdfSha512Native(crypto), seed, globalSalt, collectionAddress, tokenId, dealNumber, options)
 
 export const eftRsaDerivation: EftRsaDerivationFunction =
   async (seed, globalSalt, collectionAddress, tokenId, dealNumber) =>
@@ -48,7 +48,8 @@ const eftRsaDerivationAux = async (
   globalSalt: ArrayBuffer,
   collectionAddress: ArrayBuffer,
   tokenId: number,
-  dealNumber: number
+  dealNumber: number,
+  options?: { disableWorker: boolean }
 ): Promise<RsaKeyPair> => {
   const OKM = await hkdf(
     globalSalt,
@@ -60,6 +61,10 @@ const eftRsaDerivationAux = async (
       numberToBuffer(dealNumber)]),
     rsaModulusLength,
   )
+
+  if (options?.disableWorker) {
+    return rsaGenerateKeyPair(OKM)
+  }
 
   return new Promise((resolve, reject) => {
     const rsaWorker = new RsaWorker()
