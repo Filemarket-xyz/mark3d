@@ -4,10 +4,8 @@ import {AesKeyAndIv, EftAesDerivationFunction, EftRsaDerivationFunction, HkdfFun
 import {aesIVLength, aesKeyLength, aesKeyType, rsaKeyType, rsaModulusLength} from './config';
 import {numberToBuffer} from './utils';
 import {hkdfSha512, hkdfSha512Native} from './hkdf-sha512';
-// to get the worker into the build
 // @ts-ignore
-// import * as RsaWorker from '../dedicated-wokrers/rsa.worker.js'
-// const rsaWorkerUrl = new URL('../dedicated-wokrers/rsa.worker.js', import.meta.url)
+// vite handles this and can builds it
 import RsaWorker from '../dedicated-wokrers/rsa.worker?worker'
 
 export const eftAesDerivationNative = (crypto: Crypto): EftAesDerivationFunction =>
@@ -64,9 +62,8 @@ const eftRsaDerivationAux = async (
   )
 
   return new Promise((resolve, reject) => {
-    // const rsaWorker = new Worker(rsaWorkerUrl, { type: 'module' })
     const rsaWorker = new RsaWorker()
-    rsaWorker.onmessage = (e: MessageEvent) => resolve(e.data)
+    rsaWorker.onmessage = (e: MessageEvent<RsaKeyPair>) => resolve(e.data)
     rsaWorker.onerror = (e: ErrorEvent) => {
       console.error(e)
       reject(e)
