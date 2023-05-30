@@ -13,6 +13,7 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"log"
 	"math/big"
+	"strings"
 	"time"
 )
 
@@ -25,8 +26,9 @@ func (s *service) onCollectionTransferEvent(
 	tokenId *big.Int,
 	to common.Address,
 ) error {
+	collectionAddress := *t.To()
 	token := &domain.Token{
-		CollectionAddress: *t.To(),
+		CollectionAddress: collectionAddress,
 		TokenId:           tokenId,
 		Owner:             to,
 		Creator:           to,
@@ -129,6 +131,11 @@ func (s *service) onCollectionTransferEvent(
 	}
 	log.Println("token inserted", token.CollectionAddress.String(), token.TokenId.String(), token.Owner.String(),
 		token.MetaUri, token.Metadata)
+
+	if err := s.sequencer.DeleteTokenID(ctx, strings.ToLower(collectionAddress.String()), tokenId.Int64()); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -63,11 +64,15 @@ func main() {
 		KeyPrefix:  cfg.Sequencer.KeyPrefix,
 		TokenIdTTL: cfg.Sequencer.TokenIdTTL,
 	}
-	sequencer := sequencer.New(sequencerCfg, rdb, map[string]int{})
+
+	seq := sequencer.New(sequencerCfg, rdb, map[string]int64{
+		strings.ToLower(cfg.Service.PublicCollectionAddress.String()): 1_000_000,
+	})
 
 	indexService, err := service.NewService(
 		repository.NewRepository(pool, rdb),
 		client,
+		seq,
 		healthNotifier,
 		cfg.Service,
 	) // service who interact with main dependencies

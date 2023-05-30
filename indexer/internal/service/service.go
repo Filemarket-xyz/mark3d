@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/publicCollection"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"io"
 	"log"
 	"math/big"
@@ -46,6 +47,7 @@ type Service interface {
 	Tokens
 	Transfers
 	Orders
+	Sequencer
 	ListenBlockchain() error
 	Shutdown()
 
@@ -86,11 +88,16 @@ type Orders interface {
 	GetAllActiveOrders(ctx context.Context) ([]*models.OrderWithToken, *models.ErrorResponse)
 }
 
+type Sequencer interface {
+	SequencerAcquire(ctx context.Context, address common.Address) (*models.SequencerAcquireResponse, *models.ErrorResponse)
+}
+
 type service struct {
 	repository          repository.Repository
 	healthNotifier      healthnotifier.HealthNotifyer
 	cfg                 *config.ServiceConfig
 	ethClient           ethclient2.EthClient
+	sequencer           *sequencer.Sequencer
 	accessTokenAddress  common.Address
 	accessTokenInstance *access_token.Mark3dAccessToken
 	exchangeAddress     common.Address
@@ -101,6 +108,7 @@ type service struct {
 func NewService(
 	repo repository.Repository,
 	ethClient ethclient2.EthClient,
+	sequencer *sequencer.Sequencer,
 	healthNotifier healthnotifier.HealthNotifyer,
 	cfg *config.ServiceConfig,
 ) (Service, error) {
@@ -118,6 +126,7 @@ func NewService(
 		ethClient:           ethClient,
 		repository:          repo,
 		healthNotifier:      healthNotifier,
+		sequencer:           sequencer,
 		cfg:                 cfg,
 		accessTokenAddress:  cfg.AccessTokenAddress,
 		accessTokenInstance: accessTokenInstance,

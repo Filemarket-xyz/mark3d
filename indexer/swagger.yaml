@@ -408,6 +408,20 @@ paths:
           description: Ошибка
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /sequencer/acquire:
+    get:
+      description: Возвращает рандомный доступный tokenId
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Token Id
+          schema:
+            $ref: "#/definitions/SequencerAcquireResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
 definitions:
   ErrorResponse:
     type: object
@@ -796,6 +810,13 @@ definitions:
     enum:
       - Healthy
       - Unhealthy
+  SequencerAcquireResponse:
+    type: object
+    properties:
+      tokenId:
+        type: string
+        description: Id токена
+        pattern: "^[0-9]+$"
   MetadataProperty:
     type: object
     description: Структура для свойств в метаданных

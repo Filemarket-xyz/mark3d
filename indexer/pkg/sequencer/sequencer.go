@@ -17,10 +17,10 @@ type Config struct {
 type Sequencer struct {
 	Cfg    *Config
 	client *redis.Client
-	timers map[string]map[int]*time.Timer
+	timers map[string]map[int64]*time.Timer
 }
 
-func New(cfg *Config, client *redis.Client, initialAddresses map[string]int) *Sequencer {
+func New(cfg *Config, client *redis.Client, initialAddresses map[string]int64) *Sequencer {
 	// Populating sets
 populateLoop:
 	for addr, idRange := range initialAddresses {
@@ -29,7 +29,7 @@ populateLoop:
 			log.Printf("set with this key already exists: %s", key)
 			break populateLoop
 		}
-		for i := 0; i < idRange; i++ {
+		for i := int64(0); i < idRange; i++ {
 			err := client.SAdd(context.TODO(), key, i).Err()
 			if err != nil {
 				log.Fatalf("failed to append to Redis: %v", err)
@@ -37,10 +37,10 @@ populateLoop:
 		}
 	}
 
-	timers := make(map[string]map[int]*time.Timer)
+	timers := make(map[string]map[int64]*time.Timer)
 	for addr := range initialAddresses {
 		key := fmt.Sprint(cfg.KeyPrefix, addr)
-		timers[key] = make(map[int]*time.Timer)
+		timers[key] = make(map[int64]*time.Timer)
 	}
 
 	return &Sequencer{
@@ -50,7 +50,7 @@ populateLoop:
 	}
 }
 
-func (s *Sequencer) Acquire(ctx context.Context, address string) (int, error) {
+func (s *Sequencer) Acquire(ctx context.Context, address string) (int64, error) {
 	key := fmt.Sprint(s.Cfg.KeyPrefix, address)
 	if s.Count(ctx, key) == 0 {
 		return 0, fmt.Errorf("wrong address or set is empty")
@@ -72,7 +72,7 @@ func (s *Sequencer) Acquire(ctx context.Context, address string) (int, error) {
 	return id, nil
 }
 
-func (s *Sequencer) DeleteTokenID(ctx context.Context, address string, tokenId int) error {
+func (s *Sequencer) DeleteTokenID(ctx context.Context, address string, tokenId int64) error {
 	key := fmt.Sprint(s.Cfg.KeyPrefix, address)
 	okQueue := s.deleteFromQueue(key, tokenId)
 	okSet := s.deleteFromSet(ctx, key, tokenId)
@@ -92,7 +92,7 @@ func (s *Sequencer) Count(ctx context.Context, address string) int64 {
 	return length
 }
 
-func (s *Sequencer) popRandom(ctx context.Context, address string) (int, bool) {
+func (s *Sequencer) popRandom(ctx context.Context, address string) (int64, bool) {
 	key := fmt.Sprint(s.Cfg.KeyPrefix, address)
 	val, err := s.client.SPop(ctx, key).Result()
 	if err != nil {
@@ -104,7 +104,7 @@ func (s *Sequencer) popRandom(ctx context.Context, address string) (int, bool) {
 		return 0, false
 	}
 
-	num, err := strconv.Atoi(val)
+	num, err := strconv.ParseInt(val, 10, 64)
 	if err != nil {
 		log.Println("failed to parse val from redis: ", val)
 		return 0, false
@@ -113,7 +113,7 @@ func (s *Sequencer) popRandom(ctx context.Context, address string) (int, bool) {
 	return num, true
 }
 
-func (s *Sequencer) deleteFromSet(ctx context.Context, address string, tokenId int) bool {
+func (s *Sequencer) deleteFromSet(ctx context.Context, address string, tokenId int64) bool {
 	key := fmt.Sprint(s.Cfg.KeyPrefix, address)
 	val, err := s.client.SRem(ctx, key, tokenId).Result()
 	if err != nil {
@@ -126,7 +126,7 @@ func (s *Sequencer) deleteFromSet(ctx context.Context, address string, tokenId i
 	return true
 }
 
-func (s *Sequencer) append(ctx context.Context, address string, num int) {
+func (s *Sequencer) append(ctx context.Context, address string, num int64) {
 	key := fmt.Sprint(s.Cfg.KeyPrefix, address)
 	if err := s.client.SAdd(ctx, key, num).Err(); err != nil {
 		log.Printf("failed to append to Redis: %v", err)
@@ -134,7 +134,7 @@ func (s *Sequencer) append(ctx context.Context, address string, num int) {
 	}
 }
 
-func (s *Sequencer) deleteFromQueue(address string, tokenId int) bool {
+func (s *Sequencer) deleteFromQueue(address string, tokenId int64) bool {
 	key := fmt.Sprint(s.Cfg.KeyPrefix, address)
 	_, ok := s.timers[key]
 	if !ok {
