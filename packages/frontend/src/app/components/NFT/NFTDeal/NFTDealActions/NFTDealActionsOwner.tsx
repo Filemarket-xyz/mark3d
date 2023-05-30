@@ -29,7 +29,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   transfer,
   tokenFullId,
   reFetchOrder,
-  ownerStatusChanged
+  ownerStatusChanged,
 }) => {
   const { isApprovedExchange, error: isApprovedExchangeError, refetch } = useIsApprovedExchange(tokenFullId)
   const error = isApprovedExchangeError
@@ -40,6 +40,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
       </Txt>
     )
   }
+
   return (
     <>
       <HideAction hide={!transfer || !permissions.canApprove(transfer)}>
@@ -54,9 +55,6 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
       <HideAction hide={!transfer || !permissions.canCancel(transfer)}>
         <ButtonCancelTransfer tokenFullId={tokenFullId} />
       </HideAction>
-      <HideAction hide={!!transfer}>
-        <ButtonInitTransfer tokenFullId={tokenFullId} />
-      </HideAction>
       <HideAction hide={!!transfer || !isApprovedExchange}>
         <ButtonPlaceOrder tokenFullId={tokenFullId} callback={reFetchOrder} />
       </HideAction>
@@ -65,6 +63,9 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
           tokenFullId={tokenFullId}
           callback={refetch}
         />
+      </HideAction>
+      <HideAction hide={!!transfer}>
+        <ButtonInitTransfer tokenFullId={tokenFullId} />
       </HideAction>
     </>
   )

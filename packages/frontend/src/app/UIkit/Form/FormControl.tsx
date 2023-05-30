@@ -1,5 +1,14 @@
 import { styled } from '../../../styles'
 
 export const FormControl = styled('div', {
-  marginBottom: '$4'
+  margin: '0 auto',
+  marginBottom: '$4',
+  maxWidth: '$breakpoints$sm',
+  variants: {
+    size: {
+      lg: {
+        maxWidth: '100%',
+      },
+    },
+  },
 })

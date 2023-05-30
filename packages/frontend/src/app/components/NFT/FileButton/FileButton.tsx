@@ -1,4 +1,4 @@
-import { FC, forwardRef } from 'react'
+import { FC, forwardRef, ReactNode } from 'react'
 import { AriaButtonProps } from 'react-aria'
 
 import { styled } from '../../../../styles'
@@ -8,27 +8,27 @@ import downloadDisabled from './img/DownloadDisabled.svg'
 
 export type FileButtonProps = AriaButtonProps & {
   name?: string
-  caption?: string
+  caption?: ReactNode
 }
 
 const CardStyled = styled(Card, {
   width: 368,
   '@md': {
-    width: '100%'
+    width: '100%',
   },
   cursor: 'pointer',
   overflow: 'hidden',
   position: 'relative',
   transition: 'box-shadow 0.25s ease 0s',
   '&[data-pressed=true]': {
-    boxShadow: '$hover'
+    boxShadow: '$hover',
   },
   '&[data-hovered=true]': {
-    boxShadow: '$hover'
+    boxShadow: '$hover',
   },
   '&[data-disabled=true]': {
-    cursor: 'not-allowed'
-  }
+    cursor: 'not-allowed',
+  },
 })
 
 const ContentStyled = styled('div', {
@@ -37,22 +37,23 @@ const ContentStyled = styled('div', {
   alignItems: 'center',
   flexDirection: 'row',
   flexWrap: 'nowrap',
-  gap: '$2',
+  gap: '10px',
   padding: '$2 $3',
   transition: 'opacity 0.25s ease 0s',
   '&[data-pressed=true]': {
-    opacity: 0.7
+    opacity: 0.7,
   },
   '&[data-hovered=true]': {
-    opacity: 0.7
-  }
+    opacity: 0.7,
+  },
 })
 
 const DownloadIconStyled = styled('img', {
-  width: 48,
-  height: 48,
+  width: 44,
+  height: 44,
   display: 'block',
-  flexShrink: 0
+  flexShrink: 0,
+  filter: 'brightness(0.8)',
 })
 
 const DownloadInfoStyled = styled('div', {
@@ -60,22 +61,27 @@ const DownloadInfoStyled = styled('div', {
   flexDirection: 'column',
   flexWrap: 'nowrap',
   flexGrow: 1,
-  gap: 4
+  fontWeight: '600',
 })
 
 const NameStyled = styled('div', {
   overflow: 'hidden',
   whiteSpace: 'nowrap',
-  color: '$gray800',
+  color: '$blue500',
   width: '278px',
   textOverflow: 'ellipsis',
+  '@xs': {
+    '& span': {
+      fontSize: '14px',
+    },
+  },
   variants: {
-    disabled: {
+    isDisabled: {
       true: {
-        color: '$gray400'
-      }
-    }
-  }
+        color: '$gray600',
+      },
+    },
+  },
 })
 
 const DownloadTextStyled = styled('div', {
@@ -83,14 +89,14 @@ const DownloadTextStyled = styled('div', {
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
-  color: '$blue500',
-  variants: {
-    disabled: {
-      true: {
-        color: '$gray400'
-      }
-    }
-  }
+  color: '$gray400',
+  display: 'flex',
+  alignItems: 'center',
+  fontSize: '14px',
+  gap: '$2',
+  '@xs': {
+    fontSize: '12px',
+  },
 })
 
 export const FileButton: FC<FileButtonProps> = forwardRef<HTMLDivElement, FileButtonProps>(({
@@ -100,6 +106,7 @@ export const FileButton: FC<FileButtonProps> = forwardRef<HTMLDivElement, FileBu
   ...props
 }, ref) => {
   const { buttonRef, buttonProps, dripProps } = useButton({ isDisabled, ...props }, ref)
+
   return (
     <CardStyled
       {...buttonProps}
@@ -120,10 +127,10 @@ export const FileButton: FC<FileButtonProps> = forwardRef<HTMLDivElement, FileBu
           />
         )}
         <DownloadInfoStyled>
-          <NameStyled disabled={isDisabled}>
+          <NameStyled isDisabled={isDisabled}>
             <Txt primary1>{name}</Txt>
           </NameStyled>
-          <DownloadTextStyled disabled={isDisabled}>
+          <DownloadTextStyled>
             {caption}
           </DownloadTextStyled>
         </DownloadInfoStyled>

@@ -16,12 +16,11 @@ export class SeedProvider implements ISeedProvider {
 
   constructor(
     private readonly storage: IStorageProvider,
-    private readonly account: string
+    private readonly account: string,
   ) {
   }
 
   canUnlock(): boolean {
-    console.log('can unlock check', this.seedEncrypted)
     return !!this.seedEncrypted
   }
 

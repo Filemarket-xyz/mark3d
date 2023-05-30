@@ -19,8 +19,9 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'You have granted hidden file access to the buyer',
-    loadingMsg: 'Sending an encrypted encryption password'
+    loadingMsg: 'Sending an encrypted encryption password',
   })
+
   return (
     <>
       <MintModal {...modalProps} />
@@ -28,11 +29,11 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
         primary
         fullWidth
         borderRadiusSecond
+        isDisabled={isLoading}
         onPress={async () => {
           await approveTransfer()
           callback?.()
         }}
-        isDisabled={isLoading}
       >
         Transfer hidden file
       </Button>

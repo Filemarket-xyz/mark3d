@@ -9,11 +9,12 @@ const Spacer = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   flexWrap: 'nowrap',
-  gap: '$3'
+  gap: '$3',
 })
 
 export const AppPlusNav: FC = () => {
   const [isOpen, setIsOpen] = useState(false)
+
   return (
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger>
@@ -25,8 +26,8 @@ export const AppPlusNav: FC = () => {
         <Spacer>
           {paths.map(path => (
             <NavLink
-              to={path.to}
               key={path.to}
+              to={path.to}
               onPress={() => setIsOpen(false)}
             >
               {path.label}

@@ -6,7 +6,7 @@ import MintModal, {
   ErrorBody,
   extractMessageFromError,
   InProgressBody,
-  SuccessNavBody
+  SuccessNavBody,
 } from '../../components/Modal/Modal'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import { Button, PageLayout, textVariant } from '../../UIkit'
@@ -18,40 +18,69 @@ import { useModalProperties } from './hooks/useModalProperties'
 
 export const Title = styled('h1', {
   ...textVariant('h3').true,
-  marginBottom: '$4'
+  marginBottom: '$4',
 })
 
 export const Label = styled('label', {
   ...textVariant('primary1').true,
+  lineHeight: '16px',
   marginBottom: '$2',
-  color: '$blue900',
-  display: 'block'
+  color: '$gray800',
+  display: 'block',
+  variants: {
+    paddingL: {
+      true: {
+        paddingLeft: '$3',
+        '@sm': {
+          paddingLeft: 0,
+        },
+      },
+    },
+  },
 })
 
 export const TextBold = styled('span', {
-  fontWeight: 600
+  ...textVariant('primary1').true,
+  fontSize: '12px',
+  fontWeight: 600,
 })
 
 export const TextGray = styled('span', {
-  color: '$gray400'
+  color: '$gray400',
 })
 
 export const LabelWithCounter = styled('div', {
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'space-between'
+  justifyContent: 'space-between',
 })
 
 export const LetterCounter = styled('span', {
   display: 'block',
   ...textVariant('secondary3').true,
-  color: '$gray400'
+  color: '$gray400',
 })
 
 export const Form = styled('form', {
-  maxWidth: '$breakpoints$sm',
+  maxWidth: 'calc($breakpoints$sm + 32px)',
   marginLeft: 'auto',
-  marginRight: 'auto'
+  marginRight: 'auto',
+})
+
+export const ButtonContainer = styled('div', {
+  paddingTop: '$3',
+  paddingLeft: '$3',
+  width: '100%',
+  display: 'flex',
+  justifyContent: 'flex-start',
+  paddingBottom: '90px',
+  '@md': {
+    paddingBottom: '70px',
+  },
+  '@sm': {
+    paddingLeft: 0,
+    justifyContent: 'center',
+  },
 })
 
 export interface CreateCollectionForm {
@@ -66,14 +95,15 @@ export default function CreateCollectionPage() {
     register,
     handleSubmit,
     formState: { isValid },
-    getValues
+    getValues,
+    resetField,
   } = useForm<CreateCollectionForm>()
 
   const {
     error,
     isLoading,
     result,
-    createCollection: mintCollection
+    createCollection: mintCollection,
   } = useCreateCollection()
 
   const onSubmit: SubmitHandler<CreateCollectionForm> = (data) => {
@@ -97,7 +127,7 @@ export default function CreateCollectionPage() {
       <SuccessNavBody
         buttonText='View collection'
         link={`/collection/${result.collectionTokenAddress}`}
-      />
+      />,
     )
     void setModalOpen(true)
   }, [result])
@@ -110,24 +140,19 @@ export default function CreateCollectionPage() {
   }, [error])
 
   const [textareaLength, setTextareaLength] = useState(
-    getValues('description')?.length ?? 0
+    getValues('description')?.length ?? 0,
   )
 
   return (
     <>
       <MintModal
-        body={modalBody ?? <></>}
+        body={modalBody}
+        open={modalOpen}
         handleClose={() => {
           setModalOpen(false)
         }}
-        open={modalOpen}
       />
-      <PageLayout
-        css={{
-          minHeight: '100vh',
-          paddingBottom: '$4'
-        }}
-      >
+      <PageLayout css={{ minHeight: '100vh' }}>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Title>Create New Collection</Title>
 
@@ -135,6 +160,7 @@ export default function CreateCollectionPage() {
             <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
             <ImageLoader
               registerProps={register('image', { required: true })}
+              resetField={resetField}
             />
           </FormControl>
 
@@ -157,9 +183,13 @@ export default function CreateCollectionPage() {
           <FormControl>
             <LabelWithCounter>
               <Label>
-                Description&nbsp;&nbsp;<TextGray>(Optional)</TextGray>
+                Description&nbsp;&nbsp;
+                <TextGray>(Optional)</TextGray>
               </Label>
-              <LetterCounter>{textareaLength}/1000</LetterCounter>
+              <LetterCounter>
+                {textareaLength}
+                /1000
+              </LetterCounter>
             </LabelWithCounter>
 
             <TextArea
@@ -167,20 +197,22 @@ export default function CreateCollectionPage() {
                 onChange(event) {
                   setTextareaLength(event?.target?.value?.length ?? 0)
                 },
-                maxLength: 1000
+                maxLength: 1000,
               })}
               placeholder='Description of your token collection'
             />
           </FormControl>
 
-          <Button
-            type='submit'
-            primary
-            isDisabled={!isValid}
-            title={isValid ? undefined : 'Required fields must be filled'}
-          >
-            Mint
-          </Button>
+          <ButtonContainer>
+            <Button
+              primary
+              type='submit'
+              isDisabled={!isValid}
+              title={isValid ? undefined : 'Required fields must be filled'}
+            >
+              Mint
+            </Button>
+          </ButtonContainer>
         </Form>
       </PageLayout>
     </>

@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"log"
 	"net/http"
 	"os"
@@ -73,11 +74,19 @@ func main() {
 		PublicCollectionAddress: cfg.Service.PublicCollectionAddress,
 	}
 
+	currencyConverter := currencyconversion.NewCoinMarketCapProvider(cfg.Service.CoinMarketCapApiKey)
+	cacheTTL, err := time.ParseDuration(cfg.Service.CurrencyConversionCacheTTL)
+	if err != nil {
+		log.Panicf("failed to parse `CurrencyConversionCacheTTL` to time.Duration: %v", err)
+	}
+	currencyConverterCache := currencyconversion.NewRedisExchangeRateCache(currencyConverter, rdb, cacheTTL)
+
 	indexService, err := service.NewService(
 		repository.NewRepository(pool, rdb, repositoryCfg),
 		client,
 		seq,
 		healthNotifier,
+		currencyConverterCache,
 		cfg.Service,
 	) // service who interact with main dependencies
 	if err != nil {

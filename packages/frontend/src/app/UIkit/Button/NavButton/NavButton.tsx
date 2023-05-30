@@ -1,9 +1,9 @@
 import {
   ComponentProps,
-  forwardRef
+  forwardRef,
 } from 'react'
 import {
-  AriaButtonProps
+  AriaButtonProps,
 } from 'react-aria'
 import { Link } from 'react-router-dom'
 
@@ -12,6 +12,7 @@ import { buttonStyled } from '../Button.styles'
 import { useButton } from '../useButton'
 
 const NavButtonStyled = buttonStyled(Link)
+
 export type NavButtonProps = AriaButtonProps & ComponentProps<typeof NavButtonStyled>
 
 export const NavButton = forwardRef<HTMLAnchorElement, NavButtonProps>(
@@ -20,9 +21,10 @@ export const NavButton = forwardRef<HTMLAnchorElement, NavButtonProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const { buttonRef, buttonProps, dripProps } = useButton(props, ref)
+
     return (
       <NavButtonStyled
         {...buttonProps}
@@ -32,5 +34,5 @@ export const NavButton = forwardRef<HTMLAnchorElement, NavButtonProps>(
         <Drip {...dripProps} color='white' />
       </NavButtonStyled>
     )
-  }
+  },
 )

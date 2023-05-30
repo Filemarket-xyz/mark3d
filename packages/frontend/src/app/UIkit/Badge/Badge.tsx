@@ -8,16 +8,29 @@ const Wrapper = styled('div', {
   backgroundColor: '$white',
   display: 'flex',
   gap: '$2',
-  padding: '$2 $3',
+  padding: '$2 12px',
   alignItems: 'center',
   borderRadius: '$3',
   width: '220px',
-  boxShadow: '$form'
+  boxShadow: '$form',
+  border: '1px solid $gray300',
+  '@md': {
+    width: '100%',
+  },
+  variants: {
+    nftPage: {
+      true: {
+        '@lg': {
+          width: '100%',
+        },
+      },
+    },
+  },
 })
 
 const Title = styled('p', {
   color: '$gray500',
-  ...textVariant('primary3').true
+  ...textVariant('primary3').true,
 })
 
 const Value = styled('p', {
@@ -26,7 +39,8 @@ const Value = styled('p', {
   textOverflow: 'ellipsis',
   overflow: 'hidden',
   whiteSpace: 'nowrap',
-  width: '100%'
+  width: '100%',
+  fontSize: '14px',
 })
 
 const Content = styled('div', {
@@ -35,7 +49,7 @@ const Content = styled('div', {
   justifyContent: 'center',
   gap: '$1',
   minHeight: 48,
-  width: '140px'
+  width: '140px',
 })
 
 const Image = styled('img', {
@@ -46,19 +60,19 @@ const Image = styled('img', {
   variants: {
     roundVariant: {
       circle: {
-        borderRadius: '50%'
+        borderRadius: '50%',
       },
       roundedSquare: {
-        borderRadius: '$2'
-      }
+        borderRadius: '$2',
+      },
     },
     small: {
       true: {
         width: 40,
-        height: 40
-      }
-    }
-  }
+        height: 40,
+      },
+    },
+  },
 })
 
 export interface BadgeProps {
@@ -81,12 +95,12 @@ export const Badge: FC<BadgeProps> = (props: BadgeProps) => {
       {props.image && (
         <Image
           src={props.image.url}
+          roundVariant={props.image.borderRadius}
+          small={props.small}
           onError={({ currentTarget }) => {
             currentTarget.onerror = null
             currentTarget.src = gradientPlaceholderImg
           }}
-          roundVariant={props.image.borderRadius}
-          small={props.small}
         />
       )}
       <Content>

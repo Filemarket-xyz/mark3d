@@ -16,8 +16,8 @@ import { UnlockSection } from './sections/UnlockSection'
 const ConnectWalletWindowStyle = styled('div', {
   background: 'red',
   '& .nextui-backdrop-content': {
-    maxWidth: 'inherit'
-  }
+    maxWidth: 'inherit',
+  },
 })
 
 export const ConnectFileWalletDialog = observer(({ open, onClose }: AppDialogProps<{}>) => {
@@ -25,27 +25,34 @@ export const ConnectFileWalletDialog = observer(({ open, onClose }: AppDialogPro
   const { adaptive } = useMediaMui()
   const { address } = useAccount()
   const canUnlock = useCanUnlock(address)
+
   return (
     <ConnectWalletWindowStyle>
       <Modal
         closeButton
+        preventClose
         open={open}
-        onClose={onClose}
-        preventClose={true}
         width={adaptive({
           sm: canUnlock ? '300px' : '400px',
           md: canUnlock ? '300px' : '650px',
           lg: canUnlock ? '400px' : '950px',
-          defaultValue: canUnlock ? '500px' : '950px'
+          defaultValue: canUnlock ? '500px' : '950px',
         })}
+        onClose={onClose}
       >
         <ModalTitle><Txt h4>Connect FileWallet</Txt></ModalTitle>
         <Modal.Body>
-          {canUnlock ? (<UnlockSection onSuccess={() => {
-            onClose()
-          }} />) : (<CreateOrImportSection onSuccess={() => {
-            onClose()
-          }} />)}
+          {canUnlock ? (
+            <UnlockSection onSuccess={() => {
+              onClose()
+            }}
+            />
+          ) : (
+            <CreateOrImportSection onSuccess={() => {
+              onClose()
+            }}
+            />
+          )}
         </Modal.Body>
       </Modal>
     </ConnectWalletWindowStyle>

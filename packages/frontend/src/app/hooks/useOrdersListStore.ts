@@ -9,5 +9,6 @@ import { useStores } from './useStores'
 export function useOpenOrderListStore() {
   const { orderListStore } = useStores()
   useActivateDeactivateRequireParams(orderListStore)
+
   return orderListStore
 }

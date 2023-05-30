@@ -10,7 +10,7 @@ const FooterWrapper = styled('footer', {
   backdropFilter: 'blur(12.5px)',
   boxShadow: '$footer',
   color: '$blue900',
-  background: '#131416'
+  background: '#131416',
 })
 
 const FooterContainer = styled(Container, {
@@ -25,11 +25,11 @@ const FooterContainer = styled(Container, {
     justifyContent: 'center',
     flexDirection: 'column',
     paddingTop: '32px',
-    paddingBottom: '16px'
+    paddingBottom: '16px',
   },
   '@sm': {
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 })
 
 const Line = styled('div', {
@@ -38,8 +38,8 @@ const Line = styled('div', {
   background: '#232528',
   margin: '32px 0',
   '@md': {
-    margin: '16px 0'
-  }
+    margin: '16px 0',
+  },
 })
 
 export default function Footer() {

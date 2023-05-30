@@ -1,4 +1,4 @@
-import { ContractReceipt } from 'ethers'
+import { type BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -7,7 +7,7 @@ import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { FileMeta } from '../types'
-import { assertAccount, assertContract, assertSigner } from '../utils'
+import { assertAccount, assertContract, assertSigner, callContract, callContractGetter } from '../utils'
 import { useUploadLighthouse } from './useUploadLighthouse'
 
 export interface MintNFTForm {
@@ -45,14 +45,14 @@ export function useMintNFT(form: MintNFTForm = {}) {
       throw Error('CreateCollection form is not filled')
     }
 
-    const tokenCountBN = await contract.tokensCount()
+    const tokenCountBN = await callContractGetter<BigNumber>({ contract, method: 'tokensCount' })
     const owner = await factory.getOwner(address, collectionAddress, tokenCountBN.toNumber())
 
     const hiddenFileEncrypted = await owner.encryptFile(hiddenFile)
     const hiddenFileMeta: FileMeta = {
       name: hiddenFile.name,
       type: hiddenFile.type,
-      size: hiddenFile.size
+      size: hiddenFile.size,
     }
     const metadata = await upload({
       name,
@@ -64,23 +64,21 @@ export function useMintNFT(form: MintNFTForm = {}) {
       categories,
       license,
       tags,
-      subcategories
+      subcategories,
     })
     console.log('mint metadata', metadata)
 
-    const tx = await contract.mint(
-      address as `0x${string}`,
+    const receipt = await callContract({ contract, signer, method: 'mint' },
+      address,
       tokenCountBN,
       metadata.url,
       '0x00',
-      { gasPrice: mark3dConfig.gasPrice }
+      { gasPrice: mark3dConfig.gasPrice },
     )
-    const receipt = await tx.wait()
-    console.log({ receipt })
 
     return {
       tokenId: tokenCountBN.toString(),
-      receipt
+      receipt,
     }
   }), [contract, signer, address, factory, form, wrapPromise])
 

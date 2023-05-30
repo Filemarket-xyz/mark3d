@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers'
 
 import { ContractProvider, contractProvider } from '../ContractProvider'
-import { bufferToEtherHex, hexToBuffer } from '../utils'
+import { bufferToEtherHex, callContractGetter, hexToBuffer } from '../utils'
 import { IBlockchainDataProvider } from './IBlockchainDataProvider'
 
 export class BlockchainDataProvider implements IBlockchainDataProvider {
@@ -9,7 +9,7 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
 
   constructor(
     private readonly contractProvider: ContractProvider,
-    readonly baseUrl: string = '/api'
+    readonly baseUrl: string = '/api',
   ) {
     this.#url = baseUrl
   }
@@ -27,7 +27,7 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getLastTransferInfo(collectionAddress: ArrayBuffer, tokenId: number) {
     const response = await fetch(
       `${this.#url}/tokens/${bufferToEtherHex(collectionAddress)}/${tokenId}/encrypted_password`,
-      { method: 'GET' }
+      { method: 'GET' },
     )
 
     return this.#stringifyResponse(response)
@@ -36,7 +36,7 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getGlobalSalt() {
     const contract = this.contractProvider.getAccessTokenContract()
 
-    const globalSalt = await contract.globalSalt()
+    const globalSalt = await callContractGetter<`0x${string}`>({ contract, method: 'globalSalt' })
 
     return hexToBuffer(globalSalt)
   }
@@ -44,13 +44,13 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getCollectionCreator(address: ArrayBuffer) {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(address))
 
-    return contract.owner()
+    return callContractGetter<`0x${string}`>({ contract, method: 'owner' })
   }
 
   async getTransferCount(collectionAddress: ArrayBuffer, tokenId: number) {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(collectionAddress))
 
-    const transferCountBN = await contract.transferCounts(BigNumber.from(tokenId))
+    const transferCountBN = await callContractGetter<BigNumber>({ contract, method: 'transferCounts' }, BigNumber.from(tokenId))
 
     return transferCountBN.toNumber()
   }

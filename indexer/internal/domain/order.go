@@ -7,12 +7,13 @@ import (
 )
 
 type Order struct {
-	Id              int64
-	TransferId      int64
-	Price           *big.Int
+	Id         int64
+	TransferId int64
+	Price      *big.Int
 	Currency        common.Address
+	PriceUsd   *big.Float
 	ExchangeAddress common.Address
-	Statuses        []*OrderStatus
+	Statuses   []*OrderStatus
 }
 
 type OrderStatus struct {
@@ -26,11 +27,12 @@ func OrderToModel(o *Order) *models.Order {
 		return nil
 	}
 	return &models.Order{
-		ID:              o.Id,
-		Statuses:        MapSlice(o.Statuses, OrderStatusToModel),
-		TransferID:      o.TransferId,
-		Price:           o.Price.String(),
+		ID:         o.Id,
+		Statuses:   MapSlice(o.Statuses, OrderStatusToModel),
+		TransferID: o.TransferId,
+		Price:      o.Price.String(),
 		Currency:        o.Currency.String(),
+		PriceUsd:   o.PriceUsd.Text('f', 6),
 		ExchangeAddress: o.ExchangeAddress.String(),
 	}
 }

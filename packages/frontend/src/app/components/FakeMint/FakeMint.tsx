@@ -20,10 +20,10 @@ const FakeMintStyle = styled(Container, {
   paddingBottom: '80px',
   marginBottom: '48px',
   '& a': {
-    color: 'white'
+    color: 'white',
   },
   '& .topText': {
-    marginBottom: '24px'
+    marginBottom: '24px',
   },
   '& .buttons': {
     width: '100%',
@@ -42,45 +42,59 @@ const FakeMintStyle = styled(Container, {
       borderRadius: '24px',
       textDecoration: 'dashed',
       textDecorationLine: 'underline',
-      textUnderlineOffset: '5px'
-    }
+      textUnderlineOffset: '5px',
+    },
   },
   '@lg': {
     '& .tooltip': {
-      width: '48%'
-    }
+      width: '48%',
+    },
   },
 
   '& .tooltip': {
-    width: '49%'
+    width: '49%',
   },
   '@sm': {
     paddingTop: '100px',
     '& .topText span': {
-      fontSize: '24px'
+      fontSize: '24px',
     },
     '& .tooltip': {
-      width: '100%'
-    }
-  }
+      width: '100%',
+    },
+  },
 })
 
 const FakeMint = () => {
   return (
-        <FakeMintStyle>
-            <div className="topText">
-                <Txt h1><a href={'/'}>FileBunnies</a> Minting</Txt>
-            </div>
-            <FakeMintNftSection />
-            <div className="buttons">
-                <Tooltip content={'Все подписываемся на канал демона и андроида!!!'} rounded color="primary" className={'tooltip'}>
-                    <Button>How NFT with EFT works?</Button>
-                </Tooltip>
-                <Tooltip content={'Потому что нам не похуй на андроида!!!'} rounded color="primary" className={'tooltip'}>
-                    <Button>How to MINT FileBunnies?</Button>
-                </Tooltip>
-            </div>
-        </FakeMintStyle>
+    <FakeMintStyle>
+      <div className="topText">
+        <Txt h1>
+          <a href={'/'}>FileBunnies</a>
+          {' '}
+          Minting
+        </Txt>
+      </div>
+      <FakeMintNftSection />
+      <div className="buttons">
+        <Tooltip
+          rounded
+          content={'Все подписываемся на канал демона и андроида!!!'}
+          color="primary"
+          className={'tooltip'}
+        >
+          <Button>How NFT with EFT works?</Button>
+        </Tooltip>
+        <Tooltip
+          rounded
+          content={'Потому что нам не похуй на андроида!!!'}
+          color="primary"
+          className={'tooltip'}
+        >
+          <Button>How to MINT FileBunnies?</Button>
+        </Tooltip>
+      </div>
+    </FakeMintStyle>
   )
 }
 

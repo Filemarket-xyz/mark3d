@@ -10,53 +10,64 @@ export interface UseModalOkArgs {
   statuses: StatusStateType['statuses']
   loadingMsg: ReactNode
   okMsg: ReactNode
+  waitForSign?: boolean
   // error message is retrieved from error
 }
 
-export function useStatusModal({ statuses: { isLoading, result, error }, okMsg, loadingMsg }: UseModalOkArgs) {
+export function useStatusModal({
+  statuses: { isLoading, result, error },
+  okMsg,
+  loadingMsg,
+  waitForSign = true,
+}: UseModalOkArgs) {
   const {
     modalOpen,
     setModalOpen,
     modalBody,
-    setModalBody
+    setModalBody,
   } = useModalProperties()
+
   const handleClose = useCallback(() => {
     setModalOpen(false)
   }, [setModalOpen])
+
   useEffect(() => {
     if (isLoading || result || error) {
       setModalOpen(true)
     }
   }, [isLoading, result, error])
+
   useEffect(() => {
     if (isLoading) {
       setModalBody(
         <InProgressBody
           text={loadingMsg}
-        />
+          waitForSign={waitForSign}
+        />,
       )
     } else if (result) {
       setModalBody(
         <SuccessOkBody
           description={okMsg}
           handleClose={handleClose}
-        />
+        />,
       )
     } else if (error) {
       setModalBody(
         <ErrorBody
           message={extractMessageFromError(error)}
-        />
+        />,
       )
     }
-  }, [isLoading, result, error, loadingMsg, okMsg, handleClose])
+  }, [isLoading, result, error, loadingMsg, okMsg, waitForSign, handleClose])
+
   return {
     modalProps: {
       body: modalBody,
       open: modalOpen,
-      handleClose
+      handleClose,
     },
     setModalOpen,
-    setModalBody
+    setModalBody,
   }
 }

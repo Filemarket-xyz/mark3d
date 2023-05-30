@@ -11,8 +11,8 @@ const SliderContainer = styled('div', {
   gap: '$2',
   '@sm': {
     gap: '$1',
-    height: 200
-  }
+    height: 200,
+  },
 })
 
 const ImageContainer = styled('div', {
@@ -21,7 +21,7 @@ const ImageContainer = styled('div', {
   height: '100%',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
 })
 
 const Slide = styled('img', {
@@ -32,19 +32,19 @@ const Slide = styled('img', {
     'linear-gradient(#fff 0 0) padding-box, $gradients$main border-box',
   objectFit: 'cover',
   boxShadow: '0px 10px 30px rgba(89, 89, 108, 0.4)',
-  borderRadius: '$1'
+  borderRadius: '$1',
 })
 
 const LeftImage = styled(Slide, {
-  transform: 'rotate3d(0, 1, 0, 40deg) scale(1.3)'
+  transform: 'rotate3d(0, 1, 0, 40deg) scale(1.3)',
 })
 
 const CenterImage = styled(Slide, {
-  transform: 'scale(0.93)'
+  transform: 'scale(0.93)',
 })
 
 const RightImage = styled(Slide, {
-  transform: 'rotate3d(0, 1, 0, -40deg) scale(1.3)'
+  transform: 'rotate3d(0, 1, 0, -40deg) scale(1.3)',
 })
 
 const ExplorerInfo = styled('div', {})
@@ -52,14 +52,14 @@ const ExplorerTitle = styled('div', {
   ...textVariant('h3').true,
   marginBottom: '$3',
   textAlign: 'center',
-  color: '$blue900'
+  color: '$blue900',
 })
 
 const ExploreControls = styled('div', {
   display: 'flex',
   justifyContent: 'center',
   gap: '$4',
-  marginBottom: '$4'
+  marginBottom: '$4',
 })
 
 const ExplorerDescription = styled('p', {
@@ -67,8 +67,8 @@ const ExplorerDescription = styled('p', {
   maxWidth: '730px',
   textAlign: 'center',
   '@md': {
-    fontSize: '$body2'
-  }
+    fontSize: '$body2',
+  },
 })
 
 const ArrowButton = styled('div', {
@@ -83,21 +83,21 @@ const ArrowButton = styled('div', {
   variants: {
     rightArrow: {
       true: {
-        transform: 'rotate(180deg)'
-      }
-    }
+        transform: 'rotate(180deg)',
+      },
+    },
   },
   flexShrink: 0,
   '@sm': {
     width: '48px',
-    height: '48px'
-  }
+    height: '48px',
+  },
 })
 
 const ButtonContainer = styled('div', {
   display: 'flex',
   justifyContent: 'center',
-  paddingBottom: '$5'
+  paddingBottom: '$5',
 })
 
 interface SlideProps {

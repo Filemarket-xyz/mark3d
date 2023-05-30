@@ -12,22 +12,22 @@ const filecoinHyperspace: Chain = {
   nativeCurrency: {
     name: 'TFIL',
     symbol: 'TFIL',
-    decimals: 18
+    decimals: 18,
   },
   rpcUrls: {
     default: {
-      http: ['https://rpc.ankr.com/filecoin_testnet', 'https://api.hyperspace.node.glif.io/rpc/v1', 'https://filecoin-hyperspace.chainstacklabs.com/rpc/v1']
+      http: ['https://rpc.ankr.com/filecoin_testnet', 'https://api.hyperspace.node.glif.io/rpc/v1', 'https://filecoin-hyperspace.chainstacklabs.com/rpc/v1'],
     },
     public: {
-      http: ['https://rpc.ankr.com/filecoin_testnet', 'https://api.hyperspace.node.glif.io/rpc/v1', 'https://filecoin-hyperspace.chainstacklabs.com/rpc/v1']
-    }
+      http: ['https://rpc.ankr.com/filecoin_testnet', 'https://api.hyperspace.node.glif.io/rpc/v1', 'https://filecoin-hyperspace.chainstacklabs.com/rpc/v1'],
+    },
   },
   blockExplorers: {
     default: {
       name: 'Hyperspace explorer',
-      url: 'https://hyperspace.filfox.info/en'
-    }
-  }
+      url: 'https://hyperspace.filfox.info/en',
+    },
+  },
 
 }
 
@@ -38,22 +38,22 @@ const filecoinMainnet: Chain = {
   nativeCurrency: {
     name: 'FIL',
     symbol: 'FIL',
-    decimals: 18
+    decimals: 18,
   },
   rpcUrls: {
     default: {
-      http: ['https://filecoin-mainnet.chainstacklabs.com/rpc/v1', 'https://rpc.ankr.com/filecoin', 'https://filecoin.chainup.net/rpc/v1', 'https://api.node.glif.io']
+      http: ['https://rpc.ankr.com/filecoin', 'https://filecoin.chainup.net/rpc/v1', 'https://api.node.glif.io'],
     },
     public: {
-      http: ['https://filecoin-mainnet.chainstacklabs.com/rpc/v1', 'https://rpc.ankr.com/filecoin', 'https://filecoin.chainup.net/rpc/v1', 'https://api.node.glif.io']
-    }
+      http: ['https://rpc.ankr.com/filecoin', 'https://filecoin.chainup.net/rpc/v1', 'https://api.node.glif.io'],
+    },
   },
   blockExplorers: {
     default: {
       name: 'FVM Mainnet explorer',
-      url: 'https://filfox.info/en'
-    }
-  }
+      url: 'https://filfox.info/en',
+    },
+  },
 }
 
 const isMainnet = import.meta.env.VITE_IS_MAINNET
@@ -71,18 +71,18 @@ export const mark3dConfig = {
   accessToken: {
     address: accessTokenAddress,
     abi: accessToken.abi,
-    name: accessToken.contractName
+    name: accessToken.contractName,
   },
   exchangeToken: {
     address: exchangeTokenAddress,
     abi: exchangeToken.abi,
-    name: exchangeToken.contractName
+    name: exchangeToken.contractName,
   },
   collectionToken: {
     // address is created when a new collection is minted
     abi: collectionToken.abi,
-    name: collectionToken.contractName
+    name: collectionToken.contractName,
   },
   externalLink: 'https://filemarket.xyz/',
-  transferTimeout: 24 * 60 * 60 * 1000
+  transferTimeout: 24 * 60 * 60 * 1000,
 } as const

@@ -19,7 +19,7 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
   constructor(
     private readonly seedProviderFactory: ISeedProviderFactory,
     private readonly crypto: FileMarketCrypto,
-    private readonly blockchainDataProvider: IBlockchainDataProvider
+    private readonly blockchainDataProvider: IBlockchainDataProvider,
   ) {}
 
   #tokenFullIdKey(collectionAddress: string, tokenId: number) {
@@ -45,11 +45,11 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
       seedProvider,
       this.#globalSalt,
       hexToBuffer(collectionAddress),
-      tokenId
+      tokenId,
     )
     this.buyers[account] = {
       ...accountBuyers,
-      [key]: buyer
+      [key]: buyer,
     }
 
     return buyer
@@ -75,11 +75,11 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
       seedProvider,
       this.#globalSalt,
       hexToBuffer(collectionAddress),
-      tokenId
+      tokenId,
     )
     this.owners[account] = {
       ...accountOwners,
-      [key]: owner
+      [key]: owner,
     }
 
     return owner
@@ -92,5 +92,5 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
 export const hiddenFileProcessorFactory = new HiddenFileProcessorFactory(
   seedProviderFactory,
   fileMarketCrypto,
-  blockchainDataProvider
+  blockchainDataProvider,
 )

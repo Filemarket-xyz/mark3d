@@ -6,6 +6,7 @@ export function useStatusState<ResultType>() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string>()
   const [result, setResult] = useState<ResultType>()
+
   const wrapPromise = useCallback((call: () => Promise<ResultType>) => {
     return async () => {
       setResult(undefined)
@@ -21,15 +22,16 @@ export function useStatusState<ResultType>() {
       }
     }
   }, [setIsLoading, setError, setResult])
+
   return {
     statuses: {
       isLoading,
       error,
-      result
+      result,
     },
     setIsLoading,
     setError,
     setResult,
-    wrapPromise
+    wrapPromise,
   }
 }

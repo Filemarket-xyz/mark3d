@@ -17,8 +17,9 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, cal
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Order cancelled',
-    loadingMsg: 'Cancelling order'
+    loadingMsg: 'Cancelling order',
   })
+
   return (
     <>
       <MintModal {...modalProps} />
@@ -26,11 +27,11 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, cal
         primary
         fullWidth
         borderRadiusSecond
+        isDisabled={isLoading}
         onPress={async () => {
           await cancelOrder()
           callback?.()
         }}
-        isDisabled={isLoading}
       >
         Cancel order
       </Button>

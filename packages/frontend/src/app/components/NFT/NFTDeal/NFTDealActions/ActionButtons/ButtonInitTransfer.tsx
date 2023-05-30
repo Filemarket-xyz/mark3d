@@ -22,8 +22,9 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, c
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Transfer initialized. Recipient should now accept it.',
-    loadingMsg: 'Initializing transfer'
+    loadingMsg: 'Initializing transfer',
   })
+
   return (
     <>
       <Modal
@@ -41,13 +42,13 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, c
           />
         </Modal.Body>
       </Modal>
-      <MintModal {...modalProps} ></MintModal>
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth
         borderRadiusSecond
-        onPress={openModal}
         isDisabled={isLoading}
+        onPress={openModal}
       >
         Gift
       </Button>

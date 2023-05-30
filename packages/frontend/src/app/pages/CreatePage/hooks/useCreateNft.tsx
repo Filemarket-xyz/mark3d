@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useAfterDidMountEffect } from '../../../hooks/useDidMountEffect'
 import {
   MintNFTForm as FormToTransfer,
-  useMintNFT
+  useMintNFT,
 } from '../../../processing/nft-interaction'
 import { CreateNFTForm } from '../CreateNFTPage'
 
@@ -18,7 +18,7 @@ const convertFormDataToNftDTO = (form: CreateNFTForm): FormToTransfer => {
     subcategories: [form.subcategory?.title],
     license: form.license.title,
     licenseUrl: form.licenseUrl,
-    tags: form.tagsValue
+    tags: form.tagsValue,
   }
 }
 
@@ -29,7 +29,7 @@ export const useCreateNft = () => {
     description: '',
     hiddenFile: undefined,
     image: undefined,
-    name: ''
+    name: '',
   })
 
   const {
@@ -37,11 +37,12 @@ export const useCreateNft = () => {
     setError,
     setIsLoading,
     setResult,
-    statuses: { error, isLoading, result }
+    statuses: { error, isLoading, result },
   } = useMintNFT(formToTransfer)
 
   useAfterDidMountEffect(() => {
-    void mintNFT()
+    console.log(formToTransfer.description)
+    mintNFT()
   }, [formToTransfer])
 
   return {
@@ -53,6 +54,6 @@ export const useCreateNft = () => {
     isLoading,
     setIsLoading,
     result,
-    setResult
+    setResult,
   }
 }

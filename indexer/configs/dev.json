@@ -20,6 +20,7 @@
       "keyPrefix": "sequencer.",
       "tokenIdTTL": "30m"
     },
+    "currencyConversionCacheTTL": "1h",
     "mode": "dev"
   }
 }

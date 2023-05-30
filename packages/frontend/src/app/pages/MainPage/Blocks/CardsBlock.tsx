@@ -8,31 +8,31 @@ import { CardBlackOptions, CardGradientOptions, CardWhiteOptions } from '../help
 const CardsBlockContainer = styled(Container, {
   paddingTB: '160px',
   '@lg': {
-    paddingTB: '128px'
+    paddingTB: '128px',
   },
   '@md': {
-    paddingTB: '96px'
+    paddingTB: '96px',
   },
   '@sm': {
-    paddingTB: '48px'
-  }
+    paddingTB: '48px',
+  },
 })
 
 const WhiteBlock = styled('div', {
   width: '100%',
-  height: '100%'
+  height: '100%',
 })
 
 const BlackBlock = styled('div', {
   width: '100%',
   height: '100%',
-  background: '#131416'
+  background: '#131416',
 })
 
 const GradientBlock = styled('div', {
   width: '100%',
   height: '100%',
-  background: 'linear-gradient(291.31deg, #0291FC 0%, #4AC6D1 100%)'
+  background: 'linear-gradient(291.31deg, #0291FC 0%, #4AC6D1 100%)',
 
 })
 
@@ -41,24 +41,35 @@ const CardsBlockInfo = styled('div', {
   flexDirection: 'column',
   gap: '208px',
   '@lg': {
-    gap: '120px'
+    gap: '120px',
   },
   '@md': {
-    gap: '80px'
+    gap: '80px',
   },
   '@sm': {
-    gap: '40px'
-  }
+    gap: '40px',
+  },
 })
 
 const CardsBlock = () => {
-  return (<>
+  return (
+    <>
       <WhiteBlock>
         <CardsBlockContainer>
           <CardsBlockInfo>
             {CardWhiteOptions.map((item, index) => {
-              return <Card cardType={item.cardType} headerText={item.headerText} img={item.img} text={item.text}
-                           rightBottomContent={item.rightBottomContent} isImgRight={item.isImgRight} linear={item.linear} key={index} />
+              return (
+                <Card
+                  key={index}
+                  cardType={item.cardType}
+                  headerText={item.headerText}
+                  img={item.img}
+                  text={item.text}
+                  rightBottomContent={item.rightBottomContent}
+                  isImgRight={item.isImgRight}
+                  linear={item.linear}
+                />
+              )
             })}
           </CardsBlockInfo>
         </CardsBlockContainer>
@@ -67,9 +78,18 @@ const CardsBlock = () => {
         <CardsBlockContainer>
           <CardsBlockInfo>
             {CardBlackOptions.map((item, index) => {
-              return <Card theme={'black'} cardType={item.cardType} headerText={item.headerText} img={item.img}
-                           text={item.text} rightBottomContent={item.rightBottomContent} isImgRight={item.isImgRight}
-                           key={index} />
+              return (
+                <Card
+                  key={index}
+                  theme={'black'}
+                  cardType={item.cardType}
+                  headerText={item.headerText}
+                  img={item.img}
+                  text={item.text}
+                  rightBottomContent={item.rightBottomContent}
+                  isImgRight={item.isImgRight}
+                />
+              )
             })}
           </CardsBlockInfo>
         </CardsBlockContainer>
@@ -78,9 +98,17 @@ const CardsBlock = () => {
         <CardsBlockContainer>
           <CardsBlockInfo>
             {CardGradientOptions.map((item, index) => {
-              return <Card cardType={item.cardType} headerText={item.headerText} img={item.img}
-                           text={item.text} rightBottomContent={item.rightBottomContent} isImgRight={item.isImgRight}
-                           key={index} />
+              return (
+                <Card
+                  key={index}
+                  cardType={item.cardType}
+                  headerText={item.headerText}
+                  img={item.img}
+                  text={item.text}
+                  rightBottomContent={item.rightBottomContent}
+                  isImgRight={item.isImgRight}
+                />
+              )
             })}
           </CardsBlockInfo>
         </CardsBlockContainer>

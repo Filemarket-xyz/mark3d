@@ -6,7 +6,7 @@ import { textVariant } from '../Txt'
 
 export const BlueText = styled('h5', {
   ...textVariant('primary2').true,
-  color: '$blue500'
+  color: '$blue500',
 })
 
 export const TagStyle = styled(BlueText, {
@@ -16,9 +16,10 @@ export const TagStyle = styled(BlueText, {
   borderRadius: '20px',
   display: 'flex',
   gap: '10px',
+  border: '1px solid $gray300',
   '& img': {
-    cursor: 'pointer'
-  }
+    cursor: 'pointer',
+  },
 })
 
 export interface TagOptions {
@@ -34,10 +35,10 @@ interface TagProps {
 
 const Tag: FC<TagProps> = ({ tagOptions, children, value }) => {
   return (
-        <TagStyle>
-            {children}
-            {tagOptions?.isCanDelete && <img src={deleteImg} onClick={() => { console.log(value); tagOptions?.onDelete?.(value) }} />}
-        </TagStyle>
+    <TagStyle>
+      {children}
+      {tagOptions?.isCanDelete && <img src={deleteImg} onClick={() => { tagOptions?.onDelete?.(value) }} />}
+    </TagStyle>
   )
 }
 

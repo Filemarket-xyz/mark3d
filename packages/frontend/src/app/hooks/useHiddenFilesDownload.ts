@@ -8,7 +8,6 @@ import { Token } from '../../swagger/Api'
 import { useHiddenFileProcessorFactory } from '../processing'
 import { DecryptResult } from '../processing/types'
 import { ipfsService } from '../services/IPFSService'
-import { ErrorStore } from '../stores/Error/ErrorStore'
 import { TokenMetaStore } from '../stores/Token/TokenMetaStore'
 import { getIpfsCidWithFilePath } from '../utils/nfts/getHttpLinkFromIpfsString'
 
@@ -16,13 +15,13 @@ export interface HiddenFileDownload {
   cid: string
   name: string
   size: number
-  download: () => void
+  download: () => Promise<boolean | void>
   getFile: () => Promise<DecryptResult<File>>
 }
 
 // массив, потому что в будущем предполагается прикрепление нескольких скрытых файлов
 export function useHiddenFileDownload(
-  tokenMetaStore: TokenMetaStore, errorStore: ErrorStore, token?: Token
+  tokenMetaStore: TokenMetaStore, token?: Token,
 ): HiddenFileDownload[] {
   const factory = useHiddenFileProcessorFactory()
   const { address } = useAccount()
@@ -46,17 +45,21 @@ export function useHiddenFileDownload(
         const encryptedFile = await ipfsService.fetchBytes(hiddenFileURI)
         const owner = await factory.getOwner(address, collectionAddress, tokenId)
         const file = await owner.decryptFile(encryptedFile, hiddenMeta)
+
         if (file.ok) {
           saveAs(file.result, file.result.name)
-        } else {
-          errorStore.showError(file.error)
+
+          return file.ok
         }
+
+        throw new Error(file.error)
       },
       getFile: async () => {
         const encryptedFile = await ipfsService.fetchBytes(hiddenFileURI)
         const owner = await factory.getOwner(address, collectionAddress, tokenId)
+
         return owner.decryptFile(encryptedFile, hiddenMeta)
-      }
+      },
     }]
   }, [factory, token, address, meta])
 }

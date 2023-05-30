@@ -18,17 +18,19 @@ export interface TransferFormProps {
 
 const ButtonContainer = styled('div', {
   display: 'flex',
-  justifyContent: 'end'
+  justifyContent: 'end',
 })
 
 export const TransferForm: FC<TransferFormProps> = ({ defaultValues, onSubmit }) => {
   const { register, handleSubmit } = useForm<TransferFormValue>({
-    defaultValues
+    defaultValues,
   })
+
   return (
     <form onSubmit={handleSubmit(values => {
       onSubmit?.(values)
-    })}>
+    })}
+    >
       <FormControl>
         <Label>Send to</Label>
         <Input
@@ -39,8 +41,8 @@ export const TransferForm: FC<TransferFormProps> = ({ defaultValues, onSubmit })
       </FormControl>
       <ButtonContainer>
         <Button
-          type="submit"
           secondary
+          type="submit"
         >
           Initialize transfer
         </Button>

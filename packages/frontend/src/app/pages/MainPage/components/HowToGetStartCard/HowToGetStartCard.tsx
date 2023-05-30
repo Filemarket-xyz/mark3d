@@ -17,37 +17,44 @@ const HowToGetStartCardStyle = styled('div', {
       small: {
         width: '32.36%',
         '@xl': {
-          width: '32.26%'
+          width: '32.26%',
         },
         '@lg': {
-          width: '31.5%'
+          width: '31.5%',
         },
         '@md': {
-          width: '48.17%'
+          width: '48.17%',
         },
         '@sm': {
-          width: '100%'
-        }
+          width: '100%',
+        },
       },
       medium: {
         width: '49.17%',
         '@lg': {
-          width: '48.5%'
+          width: '48.5%',
         },
         '@md': {
-          width: '100%'
-        }
+          width: '100%',
+        },
       },
       big: {
         width: '65.861%',
         height: '120px',
         padding: '16px',
         '@md': {
-          width: '100%'
-        }
-      }
-    }
-  }
+          width: '100%',
+        },
+      },
+    },
+    miniImg: {
+      true: {
+        '& img': {
+          width: '20px',
+        },
+      },
+    },
+  },
 })
 
 const RightPartBlockStyle = styled('div', {
@@ -55,13 +62,13 @@ const RightPartBlockStyle = styled('div', {
   gap: '8px',
   height: '100%',
   alignItems: 'center',
-  paddingRight: '5px'
+  paddingRight: '5px',
 })
 
 const Line = styled('div', {
   height: '100%',
   width: '1px',
-  background: '$gray300'
+  background: '$gray300',
 })
 
 type HowToGetStartCardProps = ComponentProps<typeof HowToGetStartCardStyle> & {
@@ -70,14 +77,19 @@ type HowToGetStartCardProps = ComponentProps<typeof HowToGetStartCardStyle> & {
   img: string
 }
 
-const HowToGetStartCard: FC<HowToGetStartCardProps> = ({ number, content, img, size }) => {
+const HowToGetStartCard: FC<HowToGetStartCardProps> = ({ number, content, img, size, miniImg }) => {
   return (
-    <HowToGetStartCardStyle size={size}>
+    <HowToGetStartCardStyle size={size} miniImg={miniImg}>
       <RightPartBlockStyle>
-        <Txt h3 style={{
-          fontSize: '18px',
-          lineHeight: 'inherit'
-        }}>{number}</Txt>
+        <Txt
+          h3
+          style={{
+            fontSize: '18px',
+            lineHeight: 'inherit',
+          }}
+        >
+          {number}
+        </Txt>
         <Line />
         {content}
       </RightPartBlockStyle>

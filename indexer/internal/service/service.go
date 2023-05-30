@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/publicCollection"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
@@ -62,23 +63,23 @@ type EthClient interface {
 
 type Collections interface {
 	GetCollection(ctx context.Context, address common.Address) (*models.Collection, *models.ErrorResponse)
-	GetCollectionWithTokens(ctx context.Context, address common.Address) (*models.CollectionData, *models.ErrorResponse)
+	GetCollectionWithTokens(ctx context.Context, address common.Address, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
 	GetPublicCollectionWithTokens(ctx context.Context) (*models.CollectionData, *models.ErrorResponse)
 }
 
 type Tokens interface {
 	GetToken(ctx context.Context, address common.Address, tokenId *big.Int) (*models.Token, *models.ErrorResponse)
 	GetTokenEncryptedPassword(ctx context.Context, address common.Address, tokenId *big.Int) (*models.EncryptedPasswordResponse, *models.ErrorResponse)
-	GetCollectionTokens(ctx context.Context, address common.Address) ([]*models.Token, *models.ErrorResponse)
-	GetTokensByAddress(ctx context.Context, address common.Address) (*models.TokensResponse, *models.ErrorResponse)
+	GetCollectionTokens(ctx context.Context, address common.Address, lastTokenId *big.Int, limit int) (*models.TokensByCollectionResponse, *models.ErrorResponse)
+	GetTokensByAddress(ctx context.Context, address common.Address, lastCollectionAddress *common.Address, collectionLimit int, lastTokenCollectionAddress *common.Address, lastTokenId *big.Int, tokenLimit int) (*models.TokensResponse, *models.ErrorResponse)
 }
 
 type Transfers interface {
-	GetTransfers(ctx context.Context, address common.Address) (*models.TransfersResponse, *models.ErrorResponse)
-	GetTransfersHistory(ctx context.Context, address common.Address) (*models.TransfersResponse, *models.ErrorResponse)
+	GetTransfers(ctx context.Context, address common.Address, lastIncomingTransferId *int64, incomingLimit int, lastOutgoingTransferId *int64, outgoingLimit int) (*models.TransfersResponse, *models.ErrorResponse)
+	GetTransfersHistory(ctx context.Context, address common.Address, lastIncomingTransferId *int64, incomingLimit int, lastOutgoingTransferId *int64, outgoingLimit int) (*models.TransfersResponse, *models.ErrorResponse)
 	GetTransfer(ctx context.Context, address common.Address, tokenId *big.Int) (*models.Transfer, *models.ErrorResponse)
-	GetTransfersV2(ctx context.Context, address common.Address) (*models.TransfersResponseV2, *models.ErrorResponse)
-	GetTransfersHistoryV2(ctx context.Context, address common.Address) (*models.TransfersResponseV2, *models.ErrorResponse)
+	GetTransfersV2(ctx context.Context, address common.Address, lastIncomingTransferId *int64, incomingLimit int, lastOutgoingTransferId *int64, outgoingLimit int) (*models.TransfersResponseV2, *models.ErrorResponse)
+	GetTransfersHistoryV2(ctx context.Context, address common.Address, lastIncomingTransferId *int64, incomingLimit int, lastOutgoingTransferId *int64, outgoingLimit int) (*models.TransfersResponseV2, *models.ErrorResponse)
 	GetTransferV2(ctx context.Context, address common.Address, tokenId *big.Int) (*models.TransferWithData, *models.ErrorResponse)
 }
 
@@ -86,7 +87,7 @@ type Orders interface {
 	GetOrders(ctx context.Context, address common.Address) (*models.OrdersResponse, *models.ErrorResponse)
 	GetOrdersHistory(ctx context.Context, address common.Address) (*models.OrdersResponse, *models.ErrorResponse)
 	GetOrder(ctx context.Context, address common.Address, tokenId *big.Int) (*models.Order, *models.ErrorResponse)
-	GetAllActiveOrders(ctx context.Context) ([]*models.OrderWithToken, *models.ErrorResponse)
+	GetAllActiveOrders(ctx context.Context, lastOrderId *int64, limit int) (*models.OrdersAllActiveResponse, *models.ErrorResponse)
 }
 
 type Sequencer interface {
@@ -103,6 +104,7 @@ type service struct {
 	accessTokenInstance *access_token.Mark3dAccessToken
 	exchangeAddress     common.Address
 	exchangeInstance    *exchange.Mark3dExchange
+	currencyConverter   currencyconversion.CurrencyConversionProvider
 	closeCh             chan struct{}
 }
 
@@ -111,6 +113,7 @@ func NewService(
 	ethClient ethclient2.EthClient,
 	sequencer *sequencer.Sequencer,
 	healthNotifier healthnotifier.HealthNotifyer,
+	currencyConverter currencyconversion.CurrencyConversionProvider,
 	cfg *config.ServiceConfig,
 ) (Service, error) {
 	accessTokenInstance, err := access_token.NewMark3dAccessToken(cfg.AccessTokenAddress, nil)
@@ -133,6 +136,7 @@ func NewService(
 		accessTokenInstance: accessTokenInstance,
 		exchangeAddress:     cfg.ExchangeAddress,
 		exchangeInstance:    exchangeInstance,
+		currencyConverter:   currencyConverter,
 		closeCh:             make(chan struct{}),
 	}, nil
 }
@@ -397,7 +401,7 @@ func (s *service) processCollectionCreation(
 		}
 	}
 
-	meta := domain.NewPlaceholderMetadata()
+	meta := *domain.NewPlaceholderMetadata()
 	metaUri, ok := metaUriAny.(string)
 	if !ok {
 		return errors.New("failed to cast metaUri to string")
@@ -455,7 +459,7 @@ func (s *service) processCollectionCreation(
 
 func (s *service) processCollectionTransfer(ctx context.Context, tx pgx.Tx,
 	t *types.Transaction, ev *access_token.Mark3dAccessTokenTransfer) error {
-	c, err := s.repository.GetCollectionsByTokenId(ctx, tx, ev.TokenId)
+	c, err := s.repository.GetCollectionByTokenId(ctx, tx, ev.TokenId)
 	if err != nil {
 		return err
 	}
@@ -578,6 +582,7 @@ func (s *service) tryProcessPublicCollectionTransferEvent(
 	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To, royalty); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -596,6 +601,7 @@ func (s *service) tryProcessTransferInit(
 		return err
 	}
 	return nil
+
 }
 
 func (s *service) tryProcessPublicCollectionTransferInit(
@@ -886,6 +892,7 @@ func (s *service) tryProcessTransferCancel(
 	}
 	return nil
 }
+
 
 func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.Transaction) error {
 	log.Println("processing collection tx", t.Hash())

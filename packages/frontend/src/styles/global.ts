@@ -2,6 +2,7 @@ import interRegular from '../assets/fonts/Inter-Regular.ttf'
 import montserratBold from '../assets/fonts/Montserrat-Bold.ttf'
 import montserratSemiBold from '../assets/fonts/Montserrat-SemiBold.ttf'
 import montserratRegular400 from '../assets/fonts/Montserrat-VariableFont_wght.ttf'
+import montserratReg from '../assets/fonts/Montserrat-VariableFont_wght500.ttf'
 import soraBold from '../assets/fonts/Sora-Bold.ttf'
 import SpaceGrotesk from '../assets/fonts/SpaceGrotesk-VariableFont_wght.ttf'
 import { globalCss } from './stitches.config'
@@ -12,69 +13,77 @@ export const globalStyles = globalCss({
       fontFamily: 'Montserrat',
       fontStyle: 'normal',
       fontWeight: 600,
-      src: `local(''), url('${montserratSemiBold}') format('truetype')`
+      src: `local(''), url('${montserratSemiBold}') format('truetype')`,
+    },
+    {
+      fontFamily: 'Montserrat',
+      fontStyle: 'normal',
+      fontWeight: 500,
+      src: `local(''), url('${montserratReg}') format('truetype')`,
     },
     {
       fontFamily: 'Montserrat',
       fontStyle: 'normal',
       fontWeight: 700,
-      src: `local(''), url('${montserratBold}') format('truetype')`
+      src: `local(''), url('${montserratBold}') format('truetype')`,
     },
     {
       fontFamily: 'Montserrat',
       fontStyle: 'normal',
       fontWeight: 400,
-      src: `local(''), url('${montserratRegular400}') format('truetype')`
+      src: `local(''), url('${montserratRegular400}') format('truetype')`,
     },
     {
       fontFamily: 'Sora',
       fontStyle: 'normal',
       fontWeight: 700,
-      src: `local(''), url('${soraBold}') format('truetype')`
+      src: `local(''), url('${soraBold}') format('truetype')`,
     },
     {
       fontFamily: 'Inter',
       fontStyle: 'normal',
       fontWeight: 400,
-      src: `local(''), url('${interRegular}') format('truetype')`
+      src: `local(''), url('${interRegular}') format('truetype')`,
     },
     {
       fontFamily: 'Space Grotesk',
       fontStyle: 'normal',
       fontWeight: 700,
-      src: `local(''), url('${SpaceGrotesk}') format('truetype')`
-    }
+      src: `local(''), url('${SpaceGrotesk}') format('truetype')`,
+    },
   ],
   'html, body, #root, #root>div': {
     fontFamily: '$primary',
     fontSize: '$html',
-    height: '100%'
+    height: '100%',
+  },
+  a: {
+    textDecoration: 'none',
   },
   html: {
     // breaks popovers
     // overflowY: 'hidden'
   },
   body: {
-    overflow: 'overlay'
+    overflow: 'overlay',
   },
   '*::-webkit-scrollbar, html *::-webkit-scrollbar': {
-    width: '5px',
-    height: '4px'
+    width: '12px',
+    height: '4px',
   },
   '*::-webkit-scrollbar-track, html *::-webkit-scrollbar-track': {
     background: 'none',
-    boxShadow: 'inset 0 0 5px 5px #80C8FF',
-    border: 'solid 3px transparent'
+    boxShadow: 'inset 0 0 5px 5px #0090FF',
+    border: 'solid 7px transparent',
   },
 
   '*::-webkit-scrollbar-thumb, html *::-webkit-scrollbar-thumb': {
-    background: '#80C8FF',
-    borderRadius: '5px',
-    boxShadow: 'inset 0 0 5px 5px #80C8FF',
-    border: 'solid 3px transparent'
+    background: '#0090FF',
+    borderRadius: '8px',
+    border: 'solid 1px rgba(255, 255, 255, 0.5)',
   },
 
   '#root': {
-    height: '100%'
-  }
+    height: '100%',
+  },
 })

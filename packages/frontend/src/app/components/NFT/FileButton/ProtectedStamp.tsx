@@ -4,6 +4,7 @@ import React, { FC, PropsWithChildren } from 'react'
 import Protected from '../../../../assets/img/Protected.svg'
 import QuestionMark from '../../../../assets/img/QuestionMark.svg'
 import { styled } from '../../../../styles'
+import { useMediaMui } from '../../../hooks/useMediaMui'
 import { Button } from '../../../UIkit'
 
 const LayoutStyled = styled('div', {
@@ -29,12 +30,12 @@ const LayoutStyled = styled('div', {
       backgroundClip: 'text',
       textFillColor: 'transparent',
       '& .firstImg': {
-        paddingRight: '8px'
+        paddingRight: '8px',
       },
       '& .secondImg': {
-        paddingLeft: '4px'
-      }
-    }
+        paddingLeft: '4px',
+      },
+    },
   },
   '@md': {
     flexDirection: 'column',
@@ -47,25 +48,47 @@ const LayoutStyled = styled('div', {
         '& span': {
           fontSize: '12px',
           '& .firstImg': {
-            width: '60px'
-          }
-        }
-      }
+            width: '60px',
+          },
+        },
+      },
     },
     '& .tooltip': {
-      width: '100% !important'
-    }
-  }
+      width: '100% !important',
+    },
+  },
 })
 
 export const ProtectedStamp: FC<PropsWithChildren> = ({ children }) => {
+  const { adaptive } = useMediaMui()
+
   return (
     <LayoutStyled>
       {children}
-      <Tooltip content={'Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT.'}
-               rounded color="primary" className={'tooltip'}>
+      <Tooltip
+        rounded
+        placement={'bottom'}
+        trigger={'hover'}
+        content={<div>{'Allows users to mint NFTs with attached encrypted files of any size stored on Filecoin, which can only be accessed exclusively by the owner of the NFT.'}</div>}
+        color="primary"
+        className={'tooltip'}
+        css={{
+          width: `${adaptive({
+            sm: '90%',
+            md: '520px',
+            defaultValue: '400px',
+          })}`,
+        }}
+      >
         <div className="buttons">
-          <Button className={'buttons'}><span><img src={Protected} className={'firstImg'} />Protected by EFT techology <img src={QuestionMark} className={'secondImg'} /></span></Button>
+          <Button className={'buttons'} style={{ height: '64px ' }}>
+            <span>
+              <img src={Protected} className={'firstImg'} />
+              Protected by EFT Protocol
+              {' '}
+              <img src={QuestionMark} className={'secondImg'} />
+            </span>
+          </Button>
         </div>
       </Tooltip>
     </LayoutStyled>

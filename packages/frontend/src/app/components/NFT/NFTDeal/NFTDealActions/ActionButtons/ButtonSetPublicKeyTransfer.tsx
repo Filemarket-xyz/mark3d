@@ -13,14 +13,14 @@ export interface ButtonSetPublicKeyTransferProps {
 
 export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = ({
   tokenFullId,
-  callback
+  callback,
 }) => {
   const { setPublicKey, ...statuses } = useSetPublicKey(tokenFullId)
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Public key was sent. The owner can now give you access to the hidden file.',
-    loadingMsg: 'Sending keys, so owner could encrypt the file password and transfer it to you'
+    loadingMsg: 'Sending keys, so owner could encrypt the file password and transfer it to you',
   })
 
   const onPress = async () => {
@@ -35,8 +35,8 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
         primary
         fullWidth
         borderRadiusSecond
-        onPress={onPress}
         isDisabled={isLoading}
+        onPress={onPress}
       >
         Accept transfer
       </Button>

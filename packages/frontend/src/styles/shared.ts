@@ -4,55 +4,65 @@ import { css, theme } from './stitches.config'
 export const cssShowIn = css({
   variants: {
     showIn: {
+      xs: {
+        '@xsUp': {
+          display: 'none',
+        },
+      },
       sm: {
         '@smUp': {
-          display: 'none'
-        }
+          display: 'none',
+        },
       },
       md: {
         '@mdUp': {
-          display: 'none'
-        }
+          display: 'none',
+        },
       },
       lg: {
         '@lgUp': {
-          display: 'none'
-        }
+          display: 'none',
+        },
       },
       xl: {
         '@xlUp': {
-          display: 'none'
-        }
-      }
-    }
-  }
+          display: 'none',
+        },
+      },
+    },
+  },
 })
 
 export const cssHideIn = css({
   variants: {
     hideIn: {
+      xs: {
+        '@xs': {
+          display: 'none',
+        },
+      },
       sm: {
         '@sm': {
-          display: 'none'
-        }
+          display: 'none',
+        },
       },
       md: {
         '@md': {
-          display: 'none'
-        }
+          display: 'none',
+        },
       },
       lg: {
         '@lg': {
-          display: 'none'
-        }
+          display: 'none',
+        },
       },
       xl: {
         '@xl': {
-          display: 'none'
-        }
-      }
-    }
-  }
+          display: 'none',
+        },
+      },
+    },
+  },
 })
 
 export const cssShowHideIn = css(cssShowIn, cssHideIn)

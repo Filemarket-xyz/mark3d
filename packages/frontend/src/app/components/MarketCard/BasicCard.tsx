@@ -9,8 +9,8 @@ export const BasicCard = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   '&:hover': {
-    height: '375px'
-  }
+    height: '375px',
+  },
 })
 
 export const BasicCardSquareImg = styled('img', {
@@ -21,7 +21,7 @@ export const BasicCardSquareImg = styled('img', {
   outlineOffset: '-1px',
   objectFit: 'cover',
   margin: '0 auto',
-  position: 'relative'
+  position: 'relative',
 })
 
 export const BasicCardControls = styled('div', {
@@ -30,7 +30,7 @@ export const BasicCardControls = styled('div', {
   borderBottomLeftRadius: '0',
   borderBottomRightRadius: '0',
   backgroundColor: '$white',
-  padding: '$3 11px'
+  padding: '$3 11px',
 })
 
 export default BasicCard

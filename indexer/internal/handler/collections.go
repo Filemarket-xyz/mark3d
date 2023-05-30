@@ -21,9 +21,21 @@ func (h *handler) handleGetCollection(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) handleGetFullCollection(w http.ResponseWriter, r *http.Request) {
 	address := mux.Vars(r)["address"]
+	lastTokenId, err := parseLastTokenIdParam(r)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	limit, err := parseLimitParam(r, "limit", 10000, 10000)
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+
 	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
 	defer cancel()
-	res, e := h.service.GetCollectionWithTokens(ctx, common.HexToAddress(address))
+
+	res, e := h.service.GetCollectionWithTokens(ctx, common.HexToAddress(address), lastTokenId, limit)
 	if e != nil {
 		sendResponse(w, e.Code, e)
 		return

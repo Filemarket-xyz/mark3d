@@ -18,5 +18,5 @@ export const ToolCard = styled(Card, {
   backdropFilter: 'blur(4px)',
   borderRadius: '$2',
   position: 'relative',
-  overflow: 'hidden'
+  overflow: 'hidden',
 })

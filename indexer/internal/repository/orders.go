@@ -6,17 +6,58 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
+	"math"
 	"math/big"
 	"strings"
 )
 
-func (p *postgres) GetAllActiveOrders(ctx context.Context, tx pgx.Tx) ([]*domain.Order, error) {
+// GetAllActiveOrders
+// Parameters:
+// - lastTransferId: pass `nil` for first page.
+func (p *postgres) GetAllActiveOrders(
+	ctx context.Context,
+	tx pgx.Tx,
+	lastOrderId *int64,
+	limit int,
+) ([]*domain.Order, error) {
+	// Returns orders, where the latest order status=='Created' and latest transfer status NOT IN ('Finished', 'Cancelled')
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address FROM orders AS o 
-    	JOIN transfers t on o.transfer_id = t.id WHERE 
-    	    NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
-                ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
-                    ANY('{Finished,Cancelled}') ORDER BY o.id DESC `)
+	query := `
+		WITH latest_transfer_statuses AS (
+			SELECT transfer_id, status, RANK() OVER(PARTITION BY transfer_id ORDER BY timestamp DESC) as rank
+			FROM transfer_statuses
+		),
+		latest_order_statuses AS (
+			SELECT order_id, status, timestamp, tx_id, RANK() OVER(PARTITION BY order_id ORDER BY timestamp DESC) as rank
+			FROM order_statuses
+		),
+		filtered_orders AS (
+			SELECT o.id, o.transfer_id, o.price,o.currency,o.exchange_address
+			FROM orders AS o
+			JOIN transfers t on o.transfer_id = t.id
+			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
+			WHERE lts.rank = 1 
+			  AND lts.status NOT IN ('Finished', 'Cancelled') 
+			  AND o.id < $1
+		)
+		SELECT fo.id, fo.transfer_id, fo.price, fo.currency, fo.exchange_address, los.timestamp, los.status, los.tx_id
+		FROM filtered_orders fo
+		JOIN latest_order_statuses los ON fo.id = los.order_id
+		WHERE los.rank = 1 
+		  AND los.status = 'Created'
+		ORDER BY fo.id DESC
+		LIMIT $2
+	`
+
+	var lastOrderIdParam int64 = math.MaxInt64
+	if lastOrderId != nil {
+		lastOrderIdParam = *lastOrderId
+	}
+	if limit == 0 {
+		limit = 10000
+	}
+
+	rows, err := tx.Query(ctx, query, lastOrderIdParam, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -26,41 +67,94 @@ func (p *postgres) GetAllActiveOrders(ctx context.Context, tx pgx.Tx) ([]*domain
 		ids []int64
 	)
 	for rows.Next() {
-		var price, currency, exchangeAddress string
-		o := &domain.Order{}
-		if err := rows.Scan(&o.Id, &o.TransferId, &price, &currency, &exchangeAddress); err != nil {
+		var price, currency, exchangeAddress, txId string
+		status := &domain.OrderStatus{}
+		o := &domain.Order{
+			Statuses: make([]*domain.OrderStatus, 0, 1),
+		}
+
+		if err := rows.Scan(
+			&o.Id,
+			&o.TransferId,
+			&price,
+			&currency,
+			&exchangeAddress,
+			&status.Timestamp,
+			&status.Status,
+			&txId,
+		); err != nil {
 			return nil, err
 		}
+
+		status.TxId = common.HexToHash(txId)
+		o.Statuses = append(o.Statuses, status)
+		o.Currency = common.HexToAddress(currency)
+		o.ExchangeAddress = common.HexToAddress(exchangeAddress)
+
 		var ok bool
 		o.Price, ok = big.NewInt(0).SetString(price, 10)
 		if !ok {
 			return nil, fmt.Errorf("failed to parse big int: %s", price)
 		}
 
-		o.Currency = common.HexToAddress(currency)
-		o.ExchangeAddress = common.HexToAddress(exchangeAddress)
-
 		res, ids = append(res, o), append(ids, o.Id)
-	}
-	statuses, err := p.getOrderStatuses(ctx, tx, ids)
-	if err != nil {
-		return nil, err
-	}
-	for _, t := range res {
-		t.Statuses = statuses[t.Id]
 	}
 	return res, nil
 }
 
-func (p *postgres) GetIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx,
-	address common.Address) ([]*domain.Order, error) {
+func (p *postgres) GetAllActiveOrdersTotal(
+	ctx context.Context,
+	tx pgx.Tx,
+) (uint64, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address FROM orders AS o 
-    	JOIN transfers t on o.transfer_id = t.id WHERE t.to_address=$1 ORDER BY o.id DESC `,
-		strings.ToLower(address.String()))
+	query := `
+		WITH latest_transfer_statuses AS (
+			SELECT transfer_id, status, RANK() OVER(PARTITION BY transfer_id ORDER BY timestamp DESC) as rank
+			FROM transfer_statuses
+		),
+		latest_order_statuses AS (
+			SELECT order_id, status, timestamp, tx_id, RANK() OVER(PARTITION BY order_id ORDER BY timestamp DESC) as rank
+			FROM order_statuses
+		),
+		filtered_orders AS (
+			SELECT o.id, o.transfer_id, o.price,o.currency,o.exchange_address
+			FROM orders AS o
+			JOIN transfers t on o.transfer_id = t.id
+			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
+			WHERE lts.rank = 1 AND lts.status NOT IN ('Finished', 'Cancelled')
+		)
+		SELECT COUNT(*) as total
+		FROM filtered_orders fo
+		JOIN latest_order_statuses los ON fo.id = los.order_id
+		WHERE los.rank = 1 AND los.status = 'Created'
+	`
+
+	var total uint64
+	if err := tx.QueryRow(ctx, query).Scan(&total); err != nil {
+		return 0, err
+	}
+	return total, nil
+}
+
+func (p *postgres) GetIncomingOrdersByAddress(
+	ctx context.Context,
+	tx pgx.Tx,
+	address common.Address,
+) ([]*domain.Order, error) {
+
+	// language=PostgreSQL
+	query := `
+		SELECT o.id, o.transfer_id, o.price, o.currency, o.exchange_address 
+		FROM orders AS o 
+    	JOIN transfers t on o.transfer_id = t.id 
+		WHERE t.to_address=$1
+		ORDER BY o.id DESC
+	`
+	rows, err := tx.Query(ctx, query, strings.ToLower(address.String()))
 	if err != nil {
 		return nil, err
 	}
+
 	defer rows.Close()
 	var (
 		res []*domain.Order
@@ -72,14 +166,14 @@ func (p *postgres) GetIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx,
 		if err := rows.Scan(&o.Id, &o.TransferId, &price, &currency, &exchangeAddress); err != nil {
 			return nil, err
 		}
+		o.Currency = common.HexToAddress(currency)
+		o.ExchangeAddress = common.HexToAddress(exchangeAddress)
+
 		var ok bool
 		o.Price, ok = big.NewInt(0).SetString(price, 10)
 		if !ok {
 			return nil, fmt.Errorf("failed to parse big int: %s", price)
 		}
-
-		o.Currency = common.HexToAddress(currency)
-		o.ExchangeAddress = common.HexToAddress(exchangeAddress)
 
 		res, ids = append(res, o), append(ids, o.Id)
 	}
@@ -112,14 +206,14 @@ func (p *postgres) GetOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, ad
 		if err := rows.Scan(&o.Id, &o.TransferId, &price, &currency, &exchangeAddress); err != nil {
 			return nil, err
 		}
+		o.Currency = common.HexToAddress(currency)
+		o.ExchangeAddress = common.HexToAddress(exchangeAddress)
+
 		var ok bool
 		o.Price, ok = big.NewInt(0).SetString(price, 10)
 		if !ok {
 			return nil, fmt.Errorf("failed to parse big int: %s", price)
 		}
-
-		o.Currency = common.HexToAddress(currency)
-		o.ExchangeAddress = common.HexToAddress(exchangeAddress)
 
 		res, ids = append(res, o), append(ids, o.Id)
 	}
@@ -155,14 +249,14 @@ func (p *postgres) GetActiveIncomingOrdersByAddress(ctx context.Context, tx pgx.
 		if err := rows.Scan(&o.Id, &o.TransferId, &price, &currency, &exchangeAddress); err != nil {
 			return nil, err
 		}
+		o.Currency = common.HexToAddress(currency)
+		o.ExchangeAddress = common.HexToAddress(exchangeAddress)
+
 		var ok bool
 		o.Price, ok = big.NewInt(0).SetString(price, 10)
 		if !ok {
 			return nil, fmt.Errorf("failed to parse big int: %s", price)
 		}
-
-		o.Currency = common.HexToAddress(currency)
-		o.ExchangeAddress = common.HexToAddress(exchangeAddress)
 
 		res, ids = append(res, o), append(ids, o.Id)
 	}
@@ -262,7 +356,6 @@ func (p *postgres) GetOrder(ctx context.Context, tx pgx.Tx, id int64) (*domain.O
 	if err != nil {
 		return nil, err
 	}
-
 	o.Statuses = statuses[o.Id]
 	o.Currency = common.HexToAddress(currency)
 	o.ExchangeAddress = common.HexToAddress(exchangeAddress)
@@ -294,7 +387,6 @@ func (p *postgres) GetActiveOrder(ctx context.Context, tx pgx.Tx, contractAddres
 	if err != nil {
 		return nil, err
 	}
-
 	o.Statuses = statuses[o.Id]
 	o.Currency = common.HexToAddress(currency)
 	o.ExchangeAddress = common.HexToAddress(exchangeAddress)

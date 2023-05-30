@@ -8,7 +8,7 @@ import { useStatusState } from '../../hooks'
 import { useCollectionContract, useExchangeContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
 import { TokenFullId } from '../types'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex } from '../utils'
+import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, callContract } from '../utils'
 
 /**
  * Fulfills an existing order.
@@ -18,7 +18,7 @@ import { assertAccount, assertCollection, assertContract, assertSigner, assertTo
  */
 export function useFulfillOrder(
   { collectionAddress, tokenId }: Partial<TokenFullId> = {},
-  price?: BigNumberish
+  price?: BigNumberish,
 ) {
   const { contract: exchangeContract, signer } = useExchangeContract()
   const { contract: collectionContract } = useCollectionContract(collectionAddress)
@@ -39,17 +39,17 @@ export function useFulfillOrder(
     const publicKey = await buyer.initBuy()
     console.log('fulfill order', { collectionAddress, publicKey, tokenId, price })
 
-    const tx = await exchangeContract.fulfillOrder(
+    return callContract(
+      { contract: exchangeContract, signer, method: 'fulfillOrder', minBalance: BigNumber.from(price) },
       utils.getAddress(collectionAddress),
       bufferToEtherHex(publicKey),
       BigNumber.from(tokenId),
       {
         value: BigNumber.from(price),
-        gasPrice: mark3dConfig.gasPrice
-      }
+        gasPrice: mark3dConfig.gasPrice,
+      },
     )
-
-    return tx.wait()
   }), [exchangeContract, collectionContract, address, wrapPromise, signer, collectionAddress, tokenId, price])
+
   return { ...statuses, fulfillOrder }
 }

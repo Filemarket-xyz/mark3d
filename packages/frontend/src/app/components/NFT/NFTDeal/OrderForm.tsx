@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 
 import { styled } from '../../../../styles'
 import { Label } from '../../../pages/CreatePage/CreateCollectionPage'
-import { Button } from '../../../UIkit'
+import { Button, textVariant } from '../../../UIkit'
 import { FormControl } from '../../../UIkit/Form/FormControl'
 import { Input } from '../../../UIkit/Form/Input'
 import { fromCurrency, toCurrency } from '../../../utils/web3/currency'
@@ -18,11 +18,11 @@ interface OrderFormRawValue {
 }
 
 const importFormValue = (value?: OrderFormValue): OrderFormRawValue => ({
-  price: value ? toCurrency(value.price) : null
+  price: value ? toCurrency(value.price) : null,
 })
 
 const exportFormValue = (rawValue: OrderFormRawValue): OrderFormValue => ({
-  price: fromCurrency(rawValue.price ?? 0)
+  price: fromCurrency(rawValue.price ?? 0),
 })
 
 export interface OrderFormProps {
@@ -30,32 +30,51 @@ export interface OrderFormProps {
   onSubmit?: (value: OrderFormValue) => void
 }
 
+const FormControlStyle = styled(FormControl, {
+  '& .inputDiv': {
+    position: 'relative',
+  },
+  '& .inputDiv:after': {
+    content: 'FIL',
+    position: 'absolute',
+    color: '$gray400',
+    ...textVariant('primary1').true,
+    fontWeight: '600',
+    top: '14px',
+    right: '16px',
+  },
+})
+
 const ButtonContainer = styled('div', {
   display: 'flex',
-  justifyContent: 'end'
+  justifyContent: 'end',
 })
 
 export const OrderForm: FC<OrderFormProps> = ({ defaultValues, onSubmit }) => {
   const { register, handleSubmit } = useForm<OrderFormRawValue>({
-    defaultValues: importFormValue(defaultValues)
+    defaultValues: importFormValue(defaultValues),
   })
+
   return (
     <form onSubmit={handleSubmit(values => {
       onSubmit?.(exportFormValue(values))
-    })}>
-      <FormControl>
+    })}
+    >
+      <FormControlStyle>
         <Label>Price</Label>
-        <Input
-          type="number"
-          step="any"
-          placeholder='1.01'
-          {...register('price', { required: true })}
-        />
-      </FormControl>
+        <div className='inputDiv'>
+          <Input
+            type="number"
+            step="any"
+            placeholder='1.01'
+            {...register('price', { required: true })}
+          />
+        </div>
+      </FormControlStyle>
       <ButtonContainer>
         <Button
-          type="submit"
           secondary
+          type="submit"
         >
           Place order
         </Button>

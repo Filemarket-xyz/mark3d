@@ -22,8 +22,9 @@ export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callb
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Order placed! Now be ready to transfer hidden files, if someone fulfills the order.',
-    loadingMsg: 'Placing order'
+    loadingMsg: 'Placing order',
   })
+
   return (
     <>
       <Modal
@@ -31,7 +32,7 @@ export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callb
         open={modalOpen}
         onClose={closeModal}
       >
-        <ModalTitle>Order</ModalTitle>
+        <ModalTitle>Put on sale</ModalTitle>
         <Modal.Body>
           <OrderForm
             onSubmit={form => {
@@ -46,10 +47,10 @@ export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callb
         primary
         fullWidth
         borderRadiusSecond
-        onPress={openModal}
         isDisabled={isLoading}
+        onPress={openModal}
       >
-        Place order
+        Put on sale
       </Button>
     </>
   )

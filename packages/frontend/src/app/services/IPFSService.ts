@@ -5,7 +5,7 @@ export class IPFSService {
     return fetch(
       getHttpLinkFromIpfsString(fileURI), {
         method: 'GET',
-        mode: 'cors'
+        mode: 'cors',
       }).then(async resp => {
       if (resp.ok) {
         return resp
@@ -25,7 +25,7 @@ export class IPFSService {
     return fetch(
       getHttpLinkFromIpfsString(fileURI), {
         method: 'GET',
-        mode: 'cors'
+        mode: 'cors',
       }).then(async resp => {
       if (resp.ok) {
         return resp

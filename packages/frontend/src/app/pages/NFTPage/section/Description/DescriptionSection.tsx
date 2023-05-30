@@ -1,18 +1,46 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 
+import { styled } from '../../../../../styles'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
-import { Params } from '../../../../utils/router/Params'
-import { GridBlock, P, PropertyTitle } from '../../helper/styles/style'
+import { textVariant } from '../../../../UIkit'
+import { Params } from '../../../../utils/router'
+import { GridBlock, PropertyTitle } from '../../helper/styles/style'
+
+const DescriptionSectionStyle = styled(GridBlock, {
+  paddingTop: '32px',
+  paddingBottom: '32px',
+  '@md': {
+    paddingTop: '16px',
+    paddingBottom: '16px',
+  },
+  '@sm': {
+    paddingTop: '8px',
+    paddingBottom: '8px',
+  },
+})
+
+const Pre = styled('pre', {
+  ...textVariant('body4').true,
+  color: '$gray800',
+  fontWeight: 400,
+  whiteSpace: 'pre-wrap',
+  wordWrap: 'break-word',
+})
 
 const DescriptionSection = () => {
   const { collectionAddress, tokenId } = useParams<Params>()
   const { data: token } = useTokenStore(collectionAddress, tokenId)
+
   return (
-            <GridBlock>
-            <PropertyTitle>Description</PropertyTitle>
-            <P>{token?.description ?? 'Description is missing'}</P>
-            </GridBlock>
+    <>
+      {token?.description && (
+        <DescriptionSectionStyle style={{ gridArea: 'Description' }}>
+          <PropertyTitle>Description</PropertyTitle>
+          <Pre>{token?.description}</Pre>
+        </DescriptionSectionStyle>
+      )}
+    </>
   )
 }
 

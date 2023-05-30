@@ -13,11 +13,16 @@ import { marketRoutes } from './MarketPage/routes'
 import NFTPage from './NFTPage/NFTPage'
 import ProfilePage from './ProfilePage/ProfilePage'
 import { profileRoutes } from './ProfilePage/routes'
+import SuccessSubscribePage from './SuccessSubscribePage/SuccessSubscribePage'
 
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <GetAccessPage />
+    element: <GetAccessPage />,
+  },
+  {
+    path: 'successGetAccess',
+    element: <SuccessSubscribePage />,
   },
   {
     path: '/',
@@ -25,40 +30,40 @@ const routes: RouteObject[] = [
     children: [
       {
         path: 'explorer',
-        element: <ExplorerPage />
+        element: <ExplorerPage />,
       },
       {
         path: 'mainpage',
-        element: <MainPage />
+        element: <MainPage />,
       },
       {
         path: 'market',
         element: <MarketPage />,
-        children: marketRoutes
+        children: marketRoutes,
       },
       {
         path: 'create',
-        children: createRoutes
+        children: createRoutes,
       },
       {
         path: `profile/:${Params.profileAddress}`,
         element: <ProfilePage />,
-        children: profileRoutes
+        children: profileRoutes,
       },
       {
         path: `collection/:${Params.collectionAddress}`,
         element: <CollectionPage />,
-        children: collectionPageRoutes
+        children: collectionPageRoutes,
       },
       {
         path: `collection/:${Params.collectionAddress}/:${Params.tokenId}`,
-        element: <NFTPage />
+        element: <NFTPage />,
       },
       {
         path: '*',
-        element: <Navigate to={''} />
-      }
-    ]
-  }
+        element: <Navigate to={''} />,
+      },
+    ],
+  },
 ]
 export const router = createBrowserRouter(routes)

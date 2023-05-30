@@ -7,7 +7,7 @@ import {
   IStoreRequester,
   RequestContext,
   storeRequestFetch,
-  storeReset
+  storeReset,
 } from '../../utils/store'
 import { ErrorStore } from '../Error/ErrorStore'
 
@@ -28,7 +28,7 @@ export class TokenMetaStore implements IActivateDeactivate<[string]>, IStoreRequ
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
     makeAutoObservable(this, {
-      errorStore: false
+      errorStore: false,
     })
   }
 
@@ -38,7 +38,7 @@ export class TokenMetaStore implements IActivateDeactivate<[string]>, IStoreRequ
       ipfsService.fetchText(metaURI),
       data => {
         this.meta = JSON.parse(data)
-      }
+      },
     )
   }
 

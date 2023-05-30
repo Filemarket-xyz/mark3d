@@ -17,8 +17,9 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'The deal is finished!',
-    loadingMsg: 'Finalizing the deal'
+    loadingMsg: 'Finalizing the deal',
   })
+
   return (
     <>
       <MintModal {...modalProps} />
@@ -26,11 +27,11 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
         primary
         fullWidth
         borderRadiusSecond
+        isDisabled={isLoading}
         onPress={async () => {
           await finalizeTransfer()
           callback?.()
         }}
-        isDisabled={isLoading}
       >
         Send payment
       </Button>
