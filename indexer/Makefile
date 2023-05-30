@@ -6,14 +6,12 @@ build-contracts:
 	(cd ../sol-contracts && yarn && yarn hardhat compile && cp -r artifacts/contracts/* ../indexer/contracts/build)
 	mkdir -p contracts/access_token
 	mkdir -p contracts/collection
-	mkdir -p contracts/collectionV2
+	mkdir -p contracts/publicCollection
 	mkdir -p contracts/exchange
-	mkdir -p contracts/exchangeV2
 	jq ".abi" contracts/build/Mark3dAccessToken.sol/Mark3dAccessToken.json > contracts/build/Mark3dAccessToken.sol/Mark3dAccessToken.abi
 	jq ".abi" contracts/build/Mark3dCollection.sol/Mark3dCollection.json > contracts/build/Mark3dCollection.sol/Mark3dCollection.abi
-	jq ".abi" contracts/build/FilemarketCollectionV2.sol/FilemarketCollectionV2.json > contracts/build/FilemarketCollectionV2.sol/FilemarketCollectionV2.abi
+	jq ".abi" contracts/build/PublicCollection.sol/PublicCollection.json > contracts/build/PublicCollection.sol/PublicCollection.abi
 	jq ".abi" contracts/build/Mark3dExchange.sol/Mark3dExchange.json > contracts/build/Mark3dExchange.sol/Mark3dExchange.abi
-	jq ".abi" contracts/build/FilemarketExchangeV2.sol/FilemarketExchangeV2.json > contracts/build/FilemarketExchangeV2.sol/FilemarketExchangeV2.abi
 	abigen --abi contracts/build/Mark3dAccessToken.sol/Mark3dAccessToken.abi \
 		--pkg access_token \
 		--type Mark3dAccessToken \
@@ -22,18 +20,14 @@ build-contracts:
         --pkg collection \
         --type Mark3dCollection \
         --out contracts/collection/collection.go
-	abigen --abi contracts/build/FilemarketCollectionV2.sol/FilemarketCollectionV2.abi \
-        --pkg collectionV2 \
-        --type FilemarketCollectionV2 \
-        --out contracts/collectionV2/collectionV2.go
+	abigen --abi contracts/build/PublicCollection.sol/PublicCollection.abi \
+        --pkg publicCollection \
+        --type PublicCollection \
+        --out contracts/publicCollection/publicCollection.go
 	abigen --abi contracts/build/Mark3dExchange.sol/Mark3dExchange.abi \
         --pkg exchange \
         --type Mark3dExchange \
         --out contracts/exchange/exchange.go
-	abigen --abi contracts/build/FilemarketExchangeV2.sol/FilemarketExchangeV2.abi \
-        --pkg exchangeV2 \
-        --type FilemarketExchangeV2 \
-        --out contracts/exchangeV2/exchangeV2.go
 
 build-models:
 	docker run --rm --user $(shell id -u):$(shell id -g) -e GOPATH=$(go env GOPATH):/go -v ${HOME}:${HOME} -w $(shell pwd) quay.io/goswagger/swagger generate model --spec=./swagger.yaml

@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"log"
 	"net/http"
 	"os"
@@ -57,6 +58,12 @@ func main() {
 	healthNotifier := &healthnotifier.TelegramHealthNotifier{
 		Addr: cfg.Service.TelegramHealthNotifierAddr,
 	}
+
+	sequencerCfg := &sequencer.Config{
+		KeyPrefix:  cfg.Sequencer.KeyPrefix,
+		TokenIdTTL: cfg.Sequencer.TokenIdTTL,
+	}
+	sequencer := sequencer.New(sequencerCfg, rdb, map[string]int{})
 
 	indexService, err := service.NewService(
 		repository.NewRepository(pool, rdb),

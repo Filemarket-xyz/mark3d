@@ -7,7 +7,7 @@ ALTER TABLE public.orders
     ADD COLUMN exchange_address CHAR(42);
 UPDATE public.orders
     SET currency = '0x0000000000000000000000000000000000000000',
-        exchange_address = '0xfdd2ef676c5c5de3476ffcf6eeca86e4cb8499d4'
+        exchange_address = '0x0000000000000000000000000000000000000000'
     WHERE currency IS NULL AND
           exchange_address IS NULL;
 ALTER TABLE public.orders

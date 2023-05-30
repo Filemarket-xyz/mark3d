@@ -11,11 +11,17 @@ import (
 
 type (
 	Config struct {
-		Postgres *PostgresConfig
-		Server   *ServerConfig
-		Handler  *HandlerConfig
-		Service  *ServiceConfig
-		Redis    *RedisConfig
+		Postgres  *PostgresConfig
+		Server    *ServerConfig
+		Handler   *HandlerConfig
+		Service   *ServiceConfig
+		Redis     *RedisConfig
+		Sequencer *SequencerConfig
+	}
+
+	SequencerConfig struct {
+		KeyPrefix  string
+		TokenIdTTL time.Duration
 	}
 
 	PostgresConfig struct {
@@ -42,7 +48,7 @@ type (
 		RpcUrls                      []string
 		AccessTokenAddress           common.Address
 		ExchangeAddress              common.Address
-		ExchangeV2Address            common.Address
+		PublicCollectionAddress      common.Address
 		FraudDeciderWeb2Address      common.Address
 		AllowedBlockNumberDifference int64
 		TelegramHealthNotifierAddr   string
@@ -95,7 +101,7 @@ func Init(configPath string) (*Config, error) {
 			AccessTokenAddress:           common.HexToAddress(jsonCfg.GetString("service.accessTokenAddress")),
 			FraudDeciderWeb2Address:      common.HexToAddress(jsonCfg.GetString("service.fraudDeciderWeb2Address")),
 			ExchangeAddress:              common.HexToAddress(jsonCfg.GetString("service.exchangeAddress")),
-			ExchangeV2Address:            common.HexToAddress(jsonCfg.GetString("service.exchangeV2Address")),
+			PublicCollectionAddress:      common.HexToAddress(jsonCfg.GetString("service.publicCollectionAddress")),
 			AllowedBlockNumberDifference: jsonCfg.GetInt64("service.allowedBlockNumberDifference"),
 			TelegramHealthNotifierAddr:   envCfg.GetString("TELEGRAM_HEALTH_NOTIFIER_ADDRESS"),
 			HealthCheckInterval:          jsonCfg.GetInt("service.healthCheckInterval"),
@@ -104,6 +110,10 @@ func Init(configPath string) (*Config, error) {
 		Redis: &RedisConfig{
 			Addr:     envCfg.GetString("REDIS_ADDRESS"),
 			Password: envCfg.GetString("REDIS_PASSWORD"),
+		},
+		Sequencer: &SequencerConfig{
+			KeyPrefix:  jsonCfg.GetString("service.sequencer.keyPrefix"),
+			TokenIdTTL: jsonCfg.GetDuration("service.sequencer.tokenIdTTL"),
 		},
 	}, nil
 }

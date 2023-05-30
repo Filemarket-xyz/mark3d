@@ -12,10 +12,14 @@
   "service": {
     "accessTokenAddress": "0xE47AAb76dF0A9CD8d142753198AcaaB475Bf2A21",
     "exchangeAddress": "0x387EE91bA3f6bA73Ef323DeFab14FC2aa80db923",
-    "exchangeV2Address": "",
+    "publicCollectionAddress": "0x",
     "fraudDeciderWeb2Address": "0x730E5fAa6a0A88eFF1D37114C82725C593D16943",
     "allowedBlockNumberDifference": 20,
     "healthCheckInterval": 60,
+    "sequencer": {
+      "keyPrefix": "sequencer.",
+      "tokenIdTTL": "30m"
+    },
     "mode": "dev"
   }
 }
