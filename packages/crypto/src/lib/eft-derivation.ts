@@ -6,8 +6,9 @@ import {numberToBuffer} from './utils';
 import {hkdfSha512, hkdfSha512Native} from './hkdf-sha512';
 // to get the worker into the build
 // @ts-ignore
-import * as RsaWorker from '../dedicated-wokrers/rsa.worker.js'
-const rsaWorkerUrl = new URL('../dedicated-wokrers/rsa.worker.js', import.meta.url)
+// import * as RsaWorker from '../dedicated-wokrers/rsa.worker.js'
+// const rsaWorkerUrl = new URL('../dedicated-wokrers/rsa.worker.js', import.meta.url)
+import RsaWorker from '../dedicated-wokrers/rsa.worker?worker'
 
 export const eftAesDerivationNative = (crypto: Crypto): EftAesDerivationFunction =>
   async (seed, globalSalt, collectionAddress, tokenId) =>
@@ -63,7 +64,8 @@ const eftRsaDerivationAux = async (
   )
 
   return new Promise((resolve, reject) => {
-    const rsaWorker = new Worker(rsaWorkerUrl, { type: 'module' })
+    // const rsaWorker = new Worker(rsaWorkerUrl, { type: 'module' })
+    const rsaWorker = new RsaWorker()
     rsaWorker.onmessage = (e: MessageEvent) => resolve(e.data)
     rsaWorker.onerror = (e: ErrorEvent) => {
       console.error(e)
