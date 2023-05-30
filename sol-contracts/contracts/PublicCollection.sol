@@ -39,7 +39,7 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
     string private contractMetaUri;                            // contract-level metadata
     mapping(uint256 => string) public tokenUris;               // mapping of token metadata uri
     mapping(uint256 => bytes) public tokenData;                // mapping of token additional data
-    mapping(uint256 => uint256) private royalties;             // mapping of token to royalty
+    mapping(uint256 => uint256) public royalties;              // mapping of token to royalty
     address public royaltyReceiver;
     uint256 public tokensCount;                                // count of minted tokens
     mapping(uint256 => TransferInfo) private transfers;        // transfer details

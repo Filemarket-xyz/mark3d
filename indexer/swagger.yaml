@@ -599,6 +599,10 @@ definitions:
         type: string
       licenseUrl:
         type: string
+      royalty:
+        type: number
+        description: Роялти в формате, где 100% = 10000
+        format: uint64
       mintTxHash:
         type: string
         description: Хэш транзакции минта

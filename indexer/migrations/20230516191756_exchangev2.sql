@@ -13,6 +13,9 @@ UPDATE public.orders
 ALTER TABLE public.orders
     ALTER COLUMN currency SET NOT NULL,
     ALTER COLUMN exchange_address SET NOT NULL;
+
+ALTER TABLE public.tokens
+    ADD COLUMN royalty BIGINT NOT NULL DEFAULT 0;
 -- +goose Down
 -- +goose StatementBegin
 SELECT 'down SQL query';
@@ -20,3 +23,6 @@ SELECT 'down SQL query';
 ALTER TABLE public.orders
     DROP COLUMN currency,
     DROP COLUMN exchange_address;
+
+ALTER TABLE public.tokens
+    DROP COLUMN royalty;

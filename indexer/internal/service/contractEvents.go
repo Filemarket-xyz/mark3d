@@ -25,6 +25,7 @@ func (s *service) onCollectionTransferEvent(
 	block *types.Block,
 	tokenId *big.Int,
 	to common.Address,
+	royalty *big.Int,
 ) error {
 	collectionAddress := *t.To()
 	token := &domain.Token{
@@ -32,6 +33,7 @@ func (s *service) onCollectionTransferEvent(
 		TokenId:           tokenId,
 		Owner:             to,
 		Creator:           to,
+		Royalty:           royalty.Uint64(),
 		MintTxTimestamp:   block.Time(),
 		MintTxHash:        t.Hash(),
 	}
@@ -135,7 +137,8 @@ func (s *service) onCollectionTransferEvent(
 	if err := s.sequencer.DeleteTokenID(ctx, strings.ToLower(collectionAddress.String()), tokenId.Int64()); err != nil {
 		return err
 	}
-
+	log.Println("tokenId deleted from set", token.CollectionAddress.String(), token.TokenId.String(), token.Owner.String(),
+		token.MetaUri, token.Metadata)
 	return nil
 }
 
