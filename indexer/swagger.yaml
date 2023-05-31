@@ -627,6 +627,13 @@ paths:
           description: Ошибка
           schema:
             $ref: '#/definitions/ErrorResponse'
+      parameters:
+      - name: address
+        description: Адрес коллекции
+        in: path
+        required: true
+        type: string
+        pattern: "0x[0-9a-f-A-F]{40}"
 definitions:
   ErrorResponse:
     type: object

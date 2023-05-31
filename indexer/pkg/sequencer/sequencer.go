@@ -2,32 +2,36 @@ package sequencer
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"log"
 	"strconv"
+	"sync"
 	"time"
 )
 
 type Config struct {
-	KeyPrefix  string
-	TokenIdTTL time.Duration
+	KeyPrefix     string
+	TokenIdTTL    time.Duration
+	CheckInterval time.Duration
 }
 
 type Sequencer struct {
 	Cfg    *Config
 	client *redis.Client
-	timers map[string]map[int64]*time.Timer
+
+	lastCheck time.Time
+	checkMu   sync.Mutex
 }
 
 func New(cfg *Config, client *redis.Client, initialAddresses map[string]int64) *Sequencer {
 	// Populating sets
-populateLoop:
 	for addr, idRange := range initialAddresses {
 		key := fmt.Sprint(cfg.KeyPrefix, addr)
 		if client.Exists(context.TODO(), key).Val() != 0 {
 			log.Printf("set with this key already exists: %s", key)
-			break populateLoop
+			continue
 		}
 		for i := int64(0); i < idRange; i++ {
 			err := client.SAdd(context.TODO(), key, i).Err()
@@ -37,45 +41,42 @@ populateLoop:
 		}
 	}
 
-	timers := make(map[string]map[int64]*time.Timer)
-	for addr := range initialAddresses {
-		key := fmt.Sprint(cfg.KeyPrefix, addr)
-		timers[key] = make(map[int64]*time.Timer)
-	}
-
 	return &Sequencer{
 		Cfg:    cfg,
 		client: client,
-		timers: timers,
 	}
 }
 
 func (s *Sequencer) Acquire(ctx context.Context, address string) (int64, error) {
-	key := fmt.Sprint(s.Cfg.KeyPrefix, address)
-	if s.Count(ctx, key) == 0 {
+	if s.Count(ctx, address) == 0 {
 		return 0, fmt.Errorf("wrong address or set is empty")
 	}
 
-	id, ok := s.popRandom(ctx, key)
+	if err := s.releaseTokens(ctx, address); err != nil {
+		log.Println("failed to releaseTokens in sequencer: ", err)
+	}
+	tokenId, ok := s.popRandom(ctx, address)
 	if !ok {
 		return 0, fmt.Errorf("failed to get random")
 	}
 
-	if t, _ := s.timers[key][id]; t != nil {
-		return 0, fmt.Errorf("tokenId was already Acquired, so timer for it exists")
+	timerKey := fmt.Sprintf("%s%s.timer.%d", s.Cfg.KeyPrefix, address, tokenId)
+	if _, err := s.client.Get(ctx, timerKey).Result(); err == nil {
+		log.Printf("shouldn't happen! `popRandom` returned tokenId, but timer for it exists. address: %s, id: %d", address, tokenId)
+		return 0, fmt.Errorf("tokenId was already acquired, so timer for it exists")
 	}
-	s.timers[key][id] = time.AfterFunc(s.Cfg.TokenIdTTL, func() {
-		s.append(ctx, key, id)
-		delete(s.timers[key], id)
-	})
 
-	return id, nil
+	expireAt := time.Now().Add(s.Cfg.TokenIdTTL).Unix()
+	if _, err := s.client.Set(ctx, timerKey, expireAt, 0).Result(); err != nil {
+		return 0, err
+	}
+
+	return tokenId, nil
 }
 
 func (s *Sequencer) DeleteTokenID(ctx context.Context, address string, tokenId int64) error {
-	key := fmt.Sprint(s.Cfg.KeyPrefix, address)
-	okQueue := s.deleteFromQueue(key, tokenId)
-	okSet := s.deleteFromSet(ctx, key, tokenId)
+	okQueue := s.deleteFromQueue(ctx, address, tokenId)
+	okSet := s.deleteFromSet(ctx, address, tokenId)
 	if !okSet && !okQueue {
 		return fmt.Errorf("tokenId does not exists")
 	}
@@ -84,6 +85,11 @@ func (s *Sequencer) DeleteTokenID(ctx context.Context, address string, tokenId i
 
 func (s *Sequencer) Count(ctx context.Context, address string) int64 {
 	key := fmt.Sprint(s.Cfg.KeyPrefix, address)
+
+	if err := s.releaseTokens(ctx, address); err != nil {
+		log.Println("failed to releaseTokens in sequencer: ", err)
+	}
+
 	length, err := s.client.SCard(ctx, key).Result()
 	if err != nil {
 		return 0
@@ -126,28 +132,76 @@ func (s *Sequencer) deleteFromSet(ctx context.Context, address string, tokenId i
 	return true
 }
 
-func (s *Sequencer) append(ctx context.Context, address string, num int64) {
+func (s *Sequencer) releaseTokens(ctx context.Context, address string) error {
+	s.checkMu.Lock()
+	defer s.checkMu.Unlock()
+
+	if time.Since(s.lastCheck) <= s.Cfg.CheckInterval {
+		return nil
+	}
+
+	keyStr := fmt.Sprintf("%s%s.timer.*", s.Cfg.KeyPrefix, address)
+	keys, err := s.client.Keys(ctx, keyStr).Result()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(keys)
+
+	var globalErr error
+	now := time.Now()
+	nowUnix := now.Unix()
+	for _, key := range keys {
+		timestampStr, err := s.client.Get(ctx, key).Result()
+		if err != nil {
+			continue
+		}
+
+		timestamp, _ := strconv.ParseInt(timestampStr, 10, 64)
+
+		fmt.Println(timestampStr, timestamp, nowUnix)
+		if timestamp < nowUnix {
+			padding := len(keyStr) - 1
+			tokenIdStr := key[padding:]
+			fmt.Println(tokenIdStr)
+			tokenId, err := strconv.ParseInt(tokenIdStr, 10, 64)
+			fmt.Println(tokenId)
+			if err != nil {
+				globalErr = errors.Join(globalErr, err)
+			}
+			s.append(ctx, address, tokenId)
+			if ok := s.deleteFromQueue(ctx, address, tokenId); !ok {
+				globalErr = errors.Join(globalErr, fmt.Errorf("failed to delete key from redis: %s", key))
+			}
+		}
+	}
+
+	if globalErr != nil {
+		return err
+	}
+
+	s.lastCheck = now
+
+	return nil
+}
+
+func (s *Sequencer) append(ctx context.Context, address string, tokenId int64) {
 	key := fmt.Sprint(s.Cfg.KeyPrefix, address)
-	if err := s.client.SAdd(ctx, key, num).Err(); err != nil {
+	if err := s.client.SAdd(ctx, key, tokenId).Err(); err != nil {
 		log.Printf("failed to append to Redis: %v", err)
 		return
 	}
 }
 
-func (s *Sequencer) deleteFromQueue(address string, tokenId int64) bool {
-	key := fmt.Sprint(s.Cfg.KeyPrefix, address)
-	_, ok := s.timers[key]
-	if !ok {
+func (s *Sequencer) deleteFromQueue(ctx context.Context, address string, tokenId int64) bool {
+	key := fmt.Sprint(s.Cfg.KeyPrefix, address, ".timer.", tokenId)
+	keysRemoved, err := s.client.Del(ctx, key).Result()
+	if err != nil {
+		log.Println("failed ot delete key from redis: ", key)
 		return false
 	}
-	timer, ok := s.timers[key][tokenId]
-	if !ok {
+	if keysRemoved < 1 {
 		return false
 	}
-
-	if !timer.Stop() {
-		<-timer.C
-	}
-	delete(s.timers[key], tokenId)
 	return true
 }
