@@ -146,8 +146,6 @@ func (s *Sequencer) releaseTokens(ctx context.Context, address string) error {
 		return err
 	}
 
-	fmt.Println(keys)
-
 	var globalErr error
 	now := time.Now()
 	nowUnix := now.Unix()
@@ -159,13 +157,10 @@ func (s *Sequencer) releaseTokens(ctx context.Context, address string) error {
 
 		timestamp, _ := strconv.ParseInt(timestampStr, 10, 64)
 
-		fmt.Println(timestampStr, timestamp, nowUnix)
 		if timestamp < nowUnix {
 			padding := len(keyStr) - 1
 			tokenIdStr := key[padding:]
-			fmt.Println(tokenIdStr)
 			tokenId, err := strconv.ParseInt(tokenIdStr, 10, 64)
-			fmt.Println(tokenId)
 			if err != nil {
 				globalErr = errors.Join(globalErr, err)
 			}
