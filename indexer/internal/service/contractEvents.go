@@ -247,7 +247,7 @@ func (s *service) onTransferDraftEvent(
 			order.Token = orderV1.Token
 			order.TokenId = orderV1.TokenId
 			order.Price = orderV1.Price
-			order.Currency = common.HexToAddress(zeroAddress)
+			order.Currency = orderV1.Currency
 			order.Initiator = orderV1.Initiator
 			order.Receiver = orderV1.Receiver
 			order.Fulfilled = orderV1.Fulfilled

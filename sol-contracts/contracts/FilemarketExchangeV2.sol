@@ -217,24 +217,18 @@ contract FilemarketExchangeV2 is IEncryptedFileTokenCallbackReceiver, Context, O
         }
     }
 
-    function withdrawFees(address payable to) external onlyOwner {
-        require(accumulatedFees > 0 || tokensReceived.length > 0, "FilemarketExchangeV2: No fees to withdraw");
-        if (accumulatedFees > 0) {
+
+    function withdrawFees(address payable to, IERC20 currency) external onlyOwner {
+        if (currency == IERC20(address(0))) {
+            require(accumulatedFees > 0, "Mark3dExchange: No fee to withdraw");
             uint256 amount = accumulatedFees;
             accumulatedFees = 0;
-
             to.transfer(amount);
-        }
-
-        if (tokensReceived.length > 0) {
-            for (uint i = 0; i < tokensReceived.length; i++) {
-                IERC20 token = tokensReceived[i];
-                uint256 feeAmount = accumulatedFeesERC20[token];
-                if (feeAmount > 0) {
-                  accumulatedFeesERC20[token] = 0;
-                  token.safeTransfer(to, feeAmount);
-                }
-            }
+        } else {
+            require(accumulatedFeesERC20[currency] > 0, "Mark3dExchange: No fee to withdraw");
+            uint256 feeAmount = accumulatedFeesERC20[currency];
+            accumulatedFeesERC20[currency] = 0;
+            currency.safeTransfer(to, feeAmount);
         }
     }
 }

@@ -54,6 +54,7 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
     /// @param symbol - symbol of the token
     /// @param _contractMetaUri - contract-level metadata uri
     /// @param _owner - collection creator
+    /// @param _royaltyReceiver - address that will receive royalty
     /// @param _data - additional collection data
     /// @param _fraudDecider - fraud decider instance
     /// @param _fraudLateDecisionEnabled - if fraud decision is not instant
@@ -108,6 +109,7 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
     /// @param to - token receiver
     /// @param id - token id
     /// @param metaUri - metadata uri
+    /// @param royalty - royalty
     /// @param _data - additional token data
     function mint(
         address to,
@@ -124,7 +126,7 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
     /// @param to - token receiver
     /// @param metaUri - metadata uri
     /// @param _data - additional token data
-    /// @param royalty - royalty percentage * 1000
+    /// @param royalty - royalty
     function mintWithoutId(
         address to,
         string memory metaUri,
@@ -142,7 +144,7 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
     /// @param count - tokens quantity to mint
     /// @param metaUris - metadata uri list
     /// @param _data - additional token data list
-    /// @param royalty - royalty percentage * 1000
+    /// @param royalty - royalty list
     function mintBatch(address to, uint256 count, string[] memory metaUris, bytes[] memory _data, uint256[] memory royalty) external onlyOwner {
         require(count == metaUris.length, "PublicCollection: metaUri list length must be equal to count");
         require(count == _data.length, "PublicCollection: _data list length must be equal to count");
@@ -383,7 +385,7 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
     /// @param id - token id
     /// @param metaUri - metadata uri
     /// @param data - additional token data
-    /// @param royalty - royalty percentage * 1000
+    /// @param royalty - royalty
     function _mint(address to, uint256 id, string memory metaUri, bytes memory data, uint256 royalty) internal {
         require(id == tokensCount, "PublicCollection: wrong id");
         require(royalty <= ROYALTY_CEILING, "PublicCollection: royalty too high");

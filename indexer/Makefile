@@ -11,7 +11,7 @@ build-contracts:
 	jq ".abi" contracts/build/Mark3dAccessToken.sol/Mark3dAccessToken.json > contracts/build/Mark3dAccessToken.sol/Mark3dAccessToken.abi
 	jq ".abi" contracts/build/Mark3dCollection.sol/Mark3dCollection.json > contracts/build/Mark3dCollection.sol/Mark3dCollection.abi
 	jq ".abi" contracts/build/PublicCollection.sol/PublicCollection.json > contracts/build/PublicCollection.sol/PublicCollection.abi
-	jq ".abi" contracts/build/Mark3dExchange.sol/Mark3dExchange.json > contracts/build/Mark3dExchange.sol/Mark3dExchange.abi
+	jq ".abi" contracts/build/FilemarketExchangeV2.sol/FilemarketExchangeV2.json > contracts/build/FilemarketExchangeV2.sol/FilemarketExchangeV2.abi
 	abigen --abi contracts/build/Mark3dAccessToken.sol/Mark3dAccessToken.abi \
 		--pkg access_token \
 		--type Mark3dAccessToken \
@@ -24,9 +24,9 @@ build-contracts:
         --pkg publicCollection \
         --type PublicCollection \
         --out contracts/publicCollection/publicCollection.go
-	abigen --abi contracts/build/Mark3dExchange.sol/Mark3dExchange.abi \
+	abigen --abi contracts/build/FilemarketExchangeV2.sol/FilemarketExchangeV2.abi \
         --pkg exchange \
-        --type Mark3dExchange \
+        --type FilemarketExchangeV2 \
         --out contracts/exchange/exchange.go
 
 build-models:

@@ -103,7 +103,7 @@ type service struct {
 	accessTokenAddress  common.Address
 	accessTokenInstance *access_token.Mark3dAccessToken
 	exchangeAddress     common.Address
-	exchangeInstance    *exchange.Mark3dExchange
+	exchangeInstance    *exchange.FilemarketExchangeV2
 	currencyConverter   currencyconversion.CurrencyConversionProvider
 	closeCh             chan struct{}
 }
@@ -121,7 +121,7 @@ func NewService(
 		return nil, err
 	}
 
-	exchangeInstance, err := exchange.NewMark3dExchange(cfg.ExchangeAddress, nil)
+	exchangeInstance, err := exchange.NewFilemarketExchangeV2(cfg.ExchangeAddress, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -250,20 +250,22 @@ func (s *service) getExchangeOrder(
 	Token     common.Address
 	TokenId   *big.Int
 	Price     *big.Int
+	Currency  common.Address
 	Initiator common.Address
 	Receiver  common.Address
 	Fulfilled bool
 }, error) {
 	var err error
 	for _, cli := range s.ethClient.Clients() {
-		var exchangeInstance *exchange.Mark3dExchange
+		var exchangeInstance *exchange.FilemarketExchangeV2
 
-		exchangeInstance, err = exchange.NewMark3dExchange(s.exchangeAddress, cli)
+		exchangeInstance, err = exchange.NewFilemarketExchangeV2(s.exchangeAddress, cli)
 		if err != nil {
 			return struct {
 				Token     common.Address
 				TokenId   *big.Int
 				Price     *big.Int
+				Currency  common.Address
 				Initiator common.Address
 				Receiver  common.Address
 				Fulfilled bool
@@ -273,6 +275,7 @@ func (s *service) getExchangeOrder(
 			Token     common.Address
 			TokenId   *big.Int
 			Price     *big.Int
+			Currency  common.Address
 			Initiator common.Address
 			Receiver  common.Address
 			Fulfilled bool
@@ -297,6 +300,7 @@ func (s *service) getExchangeOrder(
 		Token     common.Address
 		TokenId   *big.Int
 		Price     *big.Int
+		Currency  common.Address
 		Initiator common.Address
 		Receiver  common.Address
 		Fulfilled bool
