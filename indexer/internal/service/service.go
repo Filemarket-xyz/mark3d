@@ -101,7 +101,7 @@ type service struct {
 	ethClient           ethclient2.EthClient
 	sequencer           *sequencer.Sequencer
 	accessTokenAddress  common.Address
-	accessTokenInstance *access_token.Mark3dAccessToken
+	accessTokenInstance *access_token.Mark3dAccessTokenV2
 	exchangeAddress     common.Address
 	exchangeInstance    *exchange.FilemarketExchangeV2
 	currencyConverter   currencyconversion.CurrencyConversionProvider
@@ -116,7 +116,7 @@ func NewService(
 	currencyConverter currencyconversion.CurrencyConversionProvider,
 	cfg *config.ServiceConfig,
 ) (Service, error) {
-	accessTokenInstance, err := access_token.NewMark3dAccessToken(cfg.AccessTokenAddress, nil)
+	accessTokenInstance, err := access_token.NewMark3dAccessTokenV2(cfg.AccessTokenAddress, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -187,9 +187,9 @@ func (s *service) tokenURI(ctx context.Context,
 
 	var err error
 	for _, cli := range s.ethClient.Clients() {
-		var instance *access_token.Mark3dAccessToken
+		var instance *access_token.Mark3dAccessTokenV2
 
-		instance, err = access_token.NewMark3dAccessToken(s.accessTokenAddress, cli)
+		instance, err = access_token.NewMark3dAccessTokenV2(s.accessTokenAddress, cli)
 		if err != nil {
 			return "", err
 		}
@@ -216,9 +216,9 @@ func (s *service) collectionTokenURI(ctx context.Context,
 	address common.Address, tokenId *big.Int) (string, error) {
 	var err error
 	for _, cli := range s.ethClient.Clients() {
-		var instance *collection.Mark3dCollection
+		var instance *collection.FilemarketCollectionV2
 
-		instance, err = collection.NewMark3dCollection(address, cli)
+		instance, err = collection.NewFilemarketCollectionV2(address, cli)
 		if err != nil {
 			return "", err
 		}
@@ -354,7 +354,7 @@ func (s *service) processCollectionCreation(
 	tx pgx.Tx,
 	t *types.Transaction,
 	blockNumber uint64,
-	ev *access_token.Mark3dAccessTokenCollectionCreation,
+	ev *access_token.Mark3dAccessTokenV2CollectionCreation,
 ) error {
 	from, err := types.Sender(types.LatestSignerForChainID(t.ChainId()), t)
 	if err != nil {
@@ -462,7 +462,7 @@ func (s *service) processCollectionCreation(
 }
 
 func (s *service) processCollectionTransfer(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, ev *access_token.Mark3dAccessTokenTransfer) error {
+	t *types.Transaction, ev *access_token.Mark3dAccessTokenV2Transfer) error {
 	c, err := s.repository.GetCollectionByTokenId(ctx, tx, ev.TokenId)
 	if err != nil {
 		return err
@@ -530,7 +530,7 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 func (s *service) tryProcessCollectionTransferEvent(
 	ctx context.Context,
 	tx pgx.Tx,
-	instance *collection.Mark3dCollection,
+	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
 	blockNumber *big.Int,
@@ -593,7 +593,7 @@ func (s *service) tryProcessPublicCollectionTransferEvent(
 func (s *service) tryProcessTransferInit(
 	ctx context.Context,
 	tx pgx.Tx,
-	instance *collection.Mark3dCollection,
+	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
 ) error {
@@ -645,7 +645,7 @@ func (s *service) tryProcessPublicCollectionTransferDraft(
 func (s *service) tryProcessTransferDraft(
 	ctx context.Context,
 	tx pgx.Tx,
-	instance *collection.Mark3dCollection,
+	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
 ) error {
@@ -679,7 +679,7 @@ func (s *service) tryProcessPublicCollectionTransferDraftCompletion(
 func (s *service) tryProcessTransferDraftCompletion(
 	ctx context.Context,
 	tx pgx.Tx,
-	instance *collection.Mark3dCollection,
+	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
 ) error {
@@ -713,7 +713,7 @@ func (s *service) tryProcessPublicCollectionPublicKeySet(
 func (s *service) tryProcessPublicKeySet(
 	ctx context.Context,
 	tx pgx.Tx,
-	instance *collection.Mark3dCollection,
+	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
 ) error {
@@ -747,7 +747,7 @@ func (s *service) tryProcessPublicCollectionPasswordSet(
 func (s *service) tryProcessPasswordSet(
 	ctx context.Context,
 	tx pgx.Tx,
-	instance *collection.Mark3dCollection,
+	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
 ) error {
@@ -781,7 +781,7 @@ func (s *service) tryProcessPublicCollectionTransferFinish(
 func (s *service) tryProcessTransferFinish(
 	ctx context.Context,
 	tx pgx.Tx,
-	instance *collection.Mark3dCollection,
+	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
 ) error {
@@ -815,7 +815,7 @@ func (s *service) tryProcessPublicCollectionTransferFraudReported(
 func (s *service) tryProcessTransferFraudReported(
 	ctx context.Context,
 	tx pgx.Tx,
-	instance *collection.Mark3dCollection,
+	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
 ) error {
@@ -849,7 +849,7 @@ func (s *service) tryProcessPublicCollectionTransferFraudDecided(
 func (s *service) tryProcessTransferFraudDecided(
 	ctx context.Context,
 	tx pgx.Tx,
-	instance *collection.Mark3dCollection,
+	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
 ) error {
@@ -883,7 +883,7 @@ func (s *service) tryProcessPublicCollectionTransferCancel(
 func (s *service) tryProcessTransferCancel(
 	ctx context.Context,
 	tx pgx.Tx,
-	instance *collection.Mark3dCollection,
+	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
 ) error {
@@ -905,7 +905,7 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 	}
 
 	for _, l := range receipt.Logs {
-		instance, instanceErr := collection.NewMark3dCollection(l.Address, nil)
+		instance, instanceErr := collection.NewFilemarketCollectionV2(l.Address, nil)
 		if instanceErr == nil {
 			err := s.processFileMarketCollectionEvents(ctx, tx, t, l, instance, receipt.BlockNumber)
 			if err != nil {
@@ -961,7 +961,7 @@ func (s *service) processPublicCollectionEvents(ctx context.Context, tx pgx.Tx, 
 	return nil
 }
 
-func (s *service) processFileMarketCollectionEvents(ctx context.Context, tx pgx.Tx, t *types.Transaction, l *types.Log, instance *collection.Mark3dCollection, blockNumber *big.Int) error {
+func (s *service) processFileMarketCollectionEvents(ctx context.Context, tx pgx.Tx, t *types.Transaction, l *types.Log, instance *collection.FilemarketCollectionV2, blockNumber *big.Int) error {
 	if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process collection transfer: %w", err)
 	}

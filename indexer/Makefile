@@ -8,17 +8,17 @@ build-contracts:
 	mkdir -p contracts/collection
 	mkdir -p contracts/publicCollection
 	mkdir -p contracts/exchange
-	jq ".abi" contracts/build/Mark3dAccessToken.sol/Mark3dAccessToken.json > contracts/build/Mark3dAccessToken.sol/Mark3dAccessToken.abi
-	jq ".abi" contracts/build/Mark3dCollection.sol/Mark3dCollection.json > contracts/build/Mark3dCollection.sol/Mark3dCollection.abi
+	jq ".abi" contracts/build/Mark3dAccessTokenV2.sol/Mark3dAccessTokenV2.json > contracts/build/Mark3dAccessTokenV2.sol/Mark3dAccessTokenV2.abi
+	jq ".abi" contracts/build/FilemarketCollectionV2.sol/FilemarketCollectionV2.json > contracts/build/FilemarketCollectionV2.sol/FilemarketCollectionV2.abi
 	jq ".abi" contracts/build/PublicCollection.sol/PublicCollection.json > contracts/build/PublicCollection.sol/PublicCollection.abi
 	jq ".abi" contracts/build/FilemarketExchangeV2.sol/FilemarketExchangeV2.json > contracts/build/FilemarketExchangeV2.sol/FilemarketExchangeV2.abi
-	abigen --abi contracts/build/Mark3dAccessToken.sol/Mark3dAccessToken.abi \
+	abigen --abi contracts/build/Mark3dAccessTokenV2.sol/Mark3dAccessTokenV2.abi \
 		--pkg access_token \
-		--type Mark3dAccessToken \
+		--type Mark3dAccessTokenV2 \
 		--out contracts/access_token/access_token.go
-	abigen --abi contracts/build/Mark3dCollection.sol/Mark3dCollection.abi \
+	abigen --abi contracts/build/FilemarketCollectionV2.sol/FilemarketCollectionV2.abi \
         --pkg collection \
-        --type Mark3dCollection \
+        --type FilemarketCollectionV2 \
         --out contracts/collection/collection.go
 	abigen --abi contracts/build/PublicCollection.sol/PublicCollection.abi \
         --pkg publicCollection \
