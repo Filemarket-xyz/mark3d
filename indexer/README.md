@@ -17,3 +17,4 @@ bafkreifkjpnkion2ztxrvrzl4yjadjorx4fck34x5fx7s6qfnqkvuekfcm - метаданны
 
 bafkreic2d5w64m7aspwshkklq6rkq2nq3thm4rt7wzbpwdomcfywnrmp5m - метаданные со сломанным файлом
 
+
