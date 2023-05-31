@@ -43,7 +43,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeableV2, ERC721Enume
     string private contractMetaUri;                            // contract-level metadata
     mapping(uint256 => string) public tokenUris;               // mapping of token metadata uri
     mapping(uint256 => bytes) public tokenData;                // mapping of token additional data
-    mapping(uint256 => uint256) private royalties;             // mapping of token to royalty
+    mapping(uint256 => uint256) public royalties;             // mapping of token to royalty
     address public royaltyReceiver;
     uint256 public tokensCount;                                // count of minted tokens
     uint256 public tokensLimit;                                // mint limit

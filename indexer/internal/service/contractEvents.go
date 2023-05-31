@@ -134,11 +134,12 @@ func (s *service) onCollectionTransferEvent(
 	log.Println("token inserted", token.CollectionAddress.String(), token.TokenId.String(), token.Owner.String(),
 		token.MetaUri, token.Metadata)
 
-	if err := s.sequencer.DeleteTokenID(ctx, strings.ToLower(collectionAddress.String()), tokenId.Int64()); err != nil {
-		return err
+	// TODO: add file bunnies
+	if collectionAddress == s.cfg.PublicCollectionAddress {
+		if err := s.sequencer.DeleteTokenID(ctx, strings.ToLower(token.CollectionAddress.String()), token.TokenId.Int64()); err != nil {
+			log.Printf("failed deleting token from sequencer. Address: %s. TokendId: %d. Error: %v", token.CollectionAddress.String(), token.TokenId.String(), err)
+		}
 	}
-	log.Println("tokenId deleted from set", token.CollectionAddress.String(), token.TokenId.String(), token.Owner.String(),
-		token.MetaUri, token.Metadata)
 	return nil
 }
 

@@ -547,9 +547,15 @@ func (s *service) tryProcessCollectionTransferEvent(
 		return nil
 	}
 
-	// TODO: add royalty here for collectionV2
+	royalty, err := instance.Royalties(&bind.CallOpts{
+		BlockNumber: blockNumber,
+		Context:     ctx,
+	}, transfer.TokenId)
+	if err != nil {
+		return nil
+	}
 
-	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To, big.NewInt(0)); err != nil {
+	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To, royalty); err != nil {
 		return err
 	}
 	return nil
