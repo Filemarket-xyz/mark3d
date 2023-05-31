@@ -20,8 +20,9 @@ type (
 	}
 
 	SequencerConfig struct {
-		KeyPrefix  string
-		TokenIdTTL time.Duration
+		KeyPrefix     string
+		TokenIdTTL    time.Duration
+		CheckInterval time.Duration
 	}
 
 	PostgresConfig struct {
@@ -116,8 +117,9 @@ func Init(configPath string) (*Config, error) {
 			Password: envCfg.GetString("REDIS_PASSWORD"),
 		},
 		Sequencer: &SequencerConfig{
-			KeyPrefix:  jsonCfg.GetString("service.sequencer.keyPrefix"),
-			TokenIdTTL: jsonCfg.GetDuration("service.sequencer.tokenIdTTL"),
+			KeyPrefix:     jsonCfg.GetString("service.sequencer.keyPrefix"),
+			TokenIdTTL:    jsonCfg.GetDuration("service.sequencer.tokenIdTTL"),
+			CheckInterval: jsonCfg.GetDuration("service.sequencer.checkInterval"),
 		},
 	}, nil
 }

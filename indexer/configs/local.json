@@ -18,7 +18,8 @@
     "healthCheckInterval": 60,
     "sequencer": {
       "keyPrefix": "sequencer.",
-      "tokenIdTTL": "30m"
+      "tokenIdTTL": "30m",
+      "checkInterval": "5m"
     },
     "currencyConversionCacheTTL": "1h"
   }

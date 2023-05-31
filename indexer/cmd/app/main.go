@@ -4,8 +4,8 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"log"
 	"net/http"
 	"os"
@@ -62,8 +62,9 @@ func main() {
 	}
 
 	sequencerCfg := &sequencer.Config{
-		KeyPrefix:  cfg.Sequencer.KeyPrefix,
-		TokenIdTTL: cfg.Sequencer.TokenIdTTL,
+		KeyPrefix:     cfg.Sequencer.KeyPrefix,
+		TokenIdTTL:    cfg.Sequencer.TokenIdTTL,
+		CheckInterval: cfg.Sequencer.CheckInterval,
 	}
 
 	seq := sequencer.New(sequencerCfg, rdb, map[string]int64{
