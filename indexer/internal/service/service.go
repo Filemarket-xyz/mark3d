@@ -911,6 +911,17 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 	}
 
 	for _, l := range receipt.Logs {
+		var instanceErr, instance2Err error
+
+		if l.Address == s.cfg.PublicCollectionAddress {
+			instance2, instance2Err := publicCollection.NewPublicCollection(l.Address, nil)
+			if instance2Err == nil {
+				err := s.processPublicCollectionEvents(ctx, tx, t, l, instance2, receipt.BlockNumber)
+				if err != nil {
+					return err
+				}
+			}
+		}
 		instance, instanceErr := collection.NewFilemarketCollectionV2(l.Address, nil)
 		if instanceErr == nil {
 			err := s.processFileMarketCollectionEvents(ctx, tx, t, l, instance, receipt.BlockNumber)
@@ -919,13 +930,6 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 			}
 		}
 
-		instance2, instance2Err := publicCollection.NewPublicCollection(l.Address, nil)
-		if instance2Err == nil {
-			err := s.processPublicCollectionEvents(ctx, tx, t, l, instance2, receipt.BlockNumber)
-			if err != nil {
-				return err
-			}
-		}
 		if instanceErr != nil && instance2Err != nil {
 			return errors.Join(instanceErr, instance2Err)
 		}
