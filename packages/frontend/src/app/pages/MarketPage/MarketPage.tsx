@@ -10,7 +10,7 @@ const TabsContainer = styled('div', {
 })
 
 const MarketPage = observer(() => {
-  const { nftCards } = useOpenOrderListStore()
+  const { data } = useOpenOrderListStore()
 
   return (
     <PageLayout>
@@ -21,7 +21,7 @@ const MarketPage = observer(() => {
             {
               name: 'EFTs',
               url: '/market/efts',
-              amount: nftCards?.length,
+              amount: data.total ?? 0,
             },
           ]}
         />

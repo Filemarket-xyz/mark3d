@@ -119,6 +119,12 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
     return incoming.length < incomingTotal || outgoing.length < outgoingTotal
   }
 
+  get total() {
+    const { incomingTotal = 0, outgoingTotal = 0 } = this.data
+
+    return incomingTotal + outgoingTotal
+  }
+
   get transferCards(): TransferCardProps[] {
     const { incoming = [], outgoing = [] } = this.data
 

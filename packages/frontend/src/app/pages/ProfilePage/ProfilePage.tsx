@@ -78,36 +78,34 @@ const ProfilePage: React.FC = observer(() => {
   const { profileAddress } = useParams<Params>()
   const { address: currentAddress } = useAccount()
 
-  const { tableRows: table } = useTransfersHistoryStore(profileAddress)
-
-  const { data } = useCollectionAndTokenListStore(profileAddress)
-
-  const { transferCards } = useUserTransferStore(profileAddress)
+  const transferHistoryStore = useTransfersHistoryStore(profileAddress)
+  const collectionAndTokenListStore = useCollectionAndTokenListStore(profileAddress)
+  const userTransferStore = useUserTransferStore(profileAddress)
 
   const tabs = useMemo(() => {
     const tabs: TabItem[] = [
       {
         name: 'Owned',
         url: 'owned',
-        amount: data.tokens?.length,
+        amount: collectionAndTokenListStore.data.tokensTotal ?? 0,
       },
       {
         name: 'History',
         url: 'history',
-        amount: table.length,
+        amount: transferHistoryStore.total,
       },
     ]
 
     if (currentAddress === profileAddress) {
       tabs.push({
-        amount: transferCards.length,
+        amount: userTransferStore.total,
         url: 'transfers',
         name: 'Transfers',
       })
     }
 
     return tabs
-  }, [data.tokens, table, transferCards])
+  }, [collectionAndTokenListStore.data.tokensTotal, transferHistoryStore.tableRows, userTransferStore.total])
 
   return (
     <GrayOverlay>
