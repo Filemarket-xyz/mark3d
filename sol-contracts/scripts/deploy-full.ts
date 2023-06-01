@@ -21,7 +21,7 @@ async function callRpc(method: string, params: string) {
   if (network === 'filecoin') {
     url = 'https://filecoin-mainnet.chainstacklabs.com/rpc/v1';
   } else {
-    url = 'https://api.hyperspace.node.glif.io/rpc/v1';
+    url = 'https://filecoin-calibration.chainup.net/rpc/v1';
   }
   const options = {
     method: "POST",
@@ -80,7 +80,7 @@ async function main() {
       {
         maxPriorityFeePerGas: priorityFee,
       });
-  console.log("public collection address: ", accessToken.address);
+  console.log("public collection address: ", publicCollection.address);
   let exchange = await exchangeFactory.deploy({
     maxPriorityFeePerGas: priorityFee,
   });
