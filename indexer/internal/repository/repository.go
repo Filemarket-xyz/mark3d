@@ -4,7 +4,10 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/log"
 )
+
+var logger = log.GetLogger()
 
 type Repository interface {
 	Postgres
