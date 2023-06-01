@@ -37,7 +37,7 @@ contract FraudDeciderWeb2V2 is IFraudDecider, AccessControl {
 
     function lateDecision(address tokenInstance, uint256 tokenId, bool approve) external onlyRole(DEFAULT_ADMIN_ROLE) {
         Report storage report = reports[tokenInstance][tokenId];
-        require(bytes(report.cid).length != 0, "FraudDeciderWeb2V2: report doesn't exist");
+        require(bytes(report.publicKey).length != 0, "FraudDeciderWeb2V2: report doesn't exist");
         report.tokenInstance.applyFraudDecision(tokenId, approve);
     }
 }
