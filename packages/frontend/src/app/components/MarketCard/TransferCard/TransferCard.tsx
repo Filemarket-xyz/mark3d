@@ -1,12 +1,15 @@
 import React from 'react'
 
+import { HiddenFileMetaData } from '../../../../swagger/Api'
 import { NftCardBase, NftCardInfoRow, NftCardUserInfo } from '../../../UIkit'
+import { FileType } from '../FileType'
 import { StyledTxtName, StyledTxtValue } from './TransferCard.styles'
 
 export interface TransferCardProps {
   imageURL: string
   title: string
   collectionName: string
+  hiddenFileMeta?: HiddenFileMetaData
   user: {
     img: string
     address: string
@@ -23,6 +26,7 @@ export const TransferCard: React.FC<TransferCardProps> = ({
   imageURL,
   title,
   collectionName,
+  hiddenFileMeta,
   user,
   price,
   status,
@@ -34,6 +38,7 @@ export const TransferCard: React.FC<TransferCardProps> = ({
       imgSrc={imageURL}
       title={title}
       collectionName={collectionName}
+      fileType={<FileType hiddenFileMeta={hiddenFileMeta} />}
       button={{ to: button.link, text: button.text }}
     >
       <NftCardUserInfo img={user.img} address={user.address} />

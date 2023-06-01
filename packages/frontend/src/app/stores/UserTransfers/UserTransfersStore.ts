@@ -30,6 +30,7 @@ const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
     collectionName: transfer.collection?.name ?? '',
     imageURL: getHttpLinkFromIpfsString(transfer.token?.image ?? ''),
     title: transfer.token?.name ?? '',
+    hiddenFileMeta: transfer.token?.hiddenFileMeta,
     user: {
       address: reduceAddress(transfer.token?.owner ?? '—'),
       img: getProfileImageUrl(transfer.token?.owner ?? ''),

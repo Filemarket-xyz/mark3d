@@ -104,6 +104,7 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
         img: getProfileImageUrl(token.owner ?? ''),
         address: reduceAddress(token.owner ?? ''),
       },
+      hiddenFileMeta: token.hiddenFileMeta,
       button: {
         text: 'Go to page',
         link: `/collection/${token.collectionAddress}/${token.tokenId}`,
