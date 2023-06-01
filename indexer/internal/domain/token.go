@@ -13,6 +13,7 @@ type Token struct {
 	TokenId           *big.Int
 	Owner             common.Address
 	Creator           common.Address
+	Royalty           uint64
 	MintTxTimestamp   uint64
 	MintTxHash        common.Hash
 	MetaUri           string
@@ -36,6 +37,7 @@ func TokenToModel(t *Token) *models.Token {
 		Image:           t.Metadata.Image,
 		License:         t.Metadata.License,
 		LicenseURL:      t.Metadata.LicenseUrl,
+		Royalty:         t.Royalty,
 		MintTxTimestamp: t.MintTxTimestamp,
 		MintTxHash:      t.MintTxHash.String(),
 		MetaURI:         t.MetaUri,

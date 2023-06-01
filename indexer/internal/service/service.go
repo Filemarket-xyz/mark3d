@@ -6,8 +6,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/mark3d-xyz/mark3d/indexer/contracts/publicCollection"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"io"
 	"log"
 	"math/big"
@@ -46,6 +48,7 @@ type Service interface {
 	Tokens
 	Transfers
 	Orders
+	Sequencer
 	ListenBlockchain() error
 	Shutdown()
 
@@ -61,6 +64,7 @@ type EthClient interface {
 type Collections interface {
 	GetCollection(ctx context.Context, address common.Address) (*models.Collection, *models.ErrorResponse)
 	GetCollectionWithTokens(ctx context.Context, address common.Address, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
+	GetPublicCollectionWithTokens(ctx context.Context, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
 }
 
 type Tokens interface {
@@ -86,15 +90,20 @@ type Orders interface {
 	GetAllActiveOrders(ctx context.Context, lastOrderId *int64, limit int) (*models.OrdersAllActiveResponse, *models.ErrorResponse)
 }
 
+type Sequencer interface {
+	SequencerAcquire(ctx context.Context, address common.Address) (*models.SequencerAcquireResponse, *models.ErrorResponse)
+}
+
 type service struct {
 	repository          repository.Repository
 	healthNotifier      healthnotifier.HealthNotifyer
 	cfg                 *config.ServiceConfig
 	ethClient           ethclient2.EthClient
+	sequencer           *sequencer.Sequencer
 	accessTokenAddress  common.Address
-	accessTokenInstance *access_token.Mark3dAccessToken
+	accessTokenInstance *access_token.Mark3dAccessTokenV2
 	exchangeAddress     common.Address
-	exchangeInstance    *exchange.Mark3dExchange
+	exchangeInstance    *exchange.FilemarketExchangeV2
 	currencyConverter   currencyconversion.CurrencyConversionProvider
 	closeCh             chan struct{}
 }
@@ -102,16 +111,17 @@ type service struct {
 func NewService(
 	repo repository.Repository,
 	ethClient ethclient2.EthClient,
+	sequencer *sequencer.Sequencer,
 	healthNotifier healthnotifier.HealthNotifyer,
 	currencyConverter currencyconversion.CurrencyConversionProvider,
 	cfg *config.ServiceConfig,
 ) (Service, error) {
-	accessTokenInstance, err := access_token.NewMark3dAccessToken(cfg.AccessTokenAddress, nil)
+	accessTokenInstance, err := access_token.NewMark3dAccessTokenV2(cfg.AccessTokenAddress, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	exchangeInstance, err := exchange.NewMark3dExchange(cfg.ExchangeAddress, nil)
+	exchangeInstance, err := exchange.NewFilemarketExchangeV2(cfg.ExchangeAddress, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -120,6 +130,7 @@ func NewService(
 		ethClient:           ethClient,
 		repository:          repo,
 		healthNotifier:      healthNotifier,
+		sequencer:           sequencer,
 		cfg:                 cfg,
 		accessTokenAddress:  cfg.AccessTokenAddress,
 		accessTokenInstance: accessTokenInstance,
@@ -176,9 +187,9 @@ func (s *service) tokenURI(ctx context.Context,
 
 	var err error
 	for _, cli := range s.ethClient.Clients() {
-		var instance *access_token.Mark3dAccessToken
+		var instance *access_token.Mark3dAccessTokenV2
 
-		instance, err = access_token.NewMark3dAccessToken(s.accessTokenAddress, cli)
+		instance, err = access_token.NewMark3dAccessTokenV2(s.accessTokenAddress, cli)
 		if err != nil {
 			return "", err
 		}
@@ -205,9 +216,9 @@ func (s *service) collectionTokenURI(ctx context.Context,
 	address common.Address, tokenId *big.Int) (string, error) {
 	var err error
 	for _, cli := range s.ethClient.Clients() {
-		var instance *collection.Mark3dCollection
+		var instance *collection.FilemarketCollectionV2
 
-		instance, err = collection.NewMark3dCollection(address, cli)
+		instance, err = collection.NewFilemarketCollectionV2(address, cli)
 		if err != nil {
 			return "", err
 		}
@@ -233,26 +244,28 @@ func (s *service) collectionTokenURI(ctx context.Context,
 func (s *service) getExchangeOrder(
 	ctx context.Context,
 	blockNum *big.Int,
-	address common.Address,
+	collectionAddress common.Address,
 	tokenId *big.Int,
 ) (struct {
 	Token     common.Address
 	TokenId   *big.Int
 	Price     *big.Int
+	Currency  common.Address
 	Initiator common.Address
 	Receiver  common.Address
 	Fulfilled bool
 }, error) {
 	var err error
 	for _, cli := range s.ethClient.Clients() {
-		var exchangeInstance *exchange.Mark3dExchange
+		var exchangeInstance *exchange.FilemarketExchangeV2
 
-		exchangeInstance, err = exchange.NewMark3dExchange(s.exchangeAddress, cli)
+		exchangeInstance, err = exchange.NewFilemarketExchangeV2(s.exchangeAddress, cli)
 		if err != nil {
 			return struct {
 				Token     common.Address
 				TokenId   *big.Int
 				Price     *big.Int
+				Currency  common.Address
 				Initiator common.Address
 				Receiver  common.Address
 				Fulfilled bool
@@ -262,6 +275,7 @@ func (s *service) getExchangeOrder(
 			Token     common.Address
 			TokenId   *big.Int
 			Price     *big.Int
+			Currency  common.Address
 			Initiator common.Address
 			Receiver  common.Address
 			Fulfilled bool
@@ -269,12 +283,12 @@ func (s *service) getExchangeOrder(
 		order, err = exchangeInstance.Orders(&bind.CallOpts{
 			Context:     ctx,
 			BlockNumber: blockNum,
-		}, address, tokenId)
+		}, collectionAddress, tokenId)
 		if err != nil {
-			log.Println("get exchange order failed", address, tokenId, err)
+			log.Println("get exchange order failed", collectionAddress, tokenId, err)
 		} else if order.Token == common.HexToAddress(zeroAddress) {
 			err = errors.New("empty collection address")
-			log.Println("get exchange order empty", address, tokenId)
+			log.Println("get exchange order empty", collectionAddress, tokenId)
 		} else {
 			return order, nil
 		}
@@ -286,6 +300,7 @@ func (s *service) getExchangeOrder(
 		Token     common.Address
 		TokenId   *big.Int
 		Price     *big.Int
+		Currency  common.Address
 		Initiator common.Address
 		Receiver  common.Address
 		Fulfilled bool
@@ -293,6 +308,9 @@ func (s *service) getExchangeOrder(
 }
 
 func (s *service) isCollection(ctx context.Context, tx pgx.Tx, address common.Address) (bool, error) {
+	if address == s.cfg.PublicCollectionAddress {
+		return true, nil
+	}
 	_, err := s.repository.GetCollection(ctx, tx, address)
 	if err != nil {
 		if err == pgx.ErrNoRows {
@@ -336,7 +354,7 @@ func (s *service) processCollectionCreation(
 	tx pgx.Tx,
 	t *types.Transaction,
 	blockNumber uint64,
-	ev *access_token.Mark3dAccessTokenCollectionCreation,
+	ev *access_token.Mark3dAccessTokenV2CollectionCreation,
 ) error {
 	from, err := types.Sender(types.LatestSignerForChainID(t.ChainId()), t)
 	if err != nil {
@@ -444,7 +462,7 @@ func (s *service) processCollectionCreation(
 }
 
 func (s *service) processCollectionTransfer(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, ev *access_token.Mark3dAccessTokenTransfer) error {
+	t *types.Transaction, ev *access_token.Mark3dAccessTokenV2Transfer) error {
 	c, err := s.repository.GetCollectionByTokenId(ctx, tx, ev.TokenId)
 	if err != nil {
 		return err
@@ -512,7 +530,7 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 func (s *service) tryProcessCollectionTransferEvent(
 	ctx context.Context,
 	tx pgx.Tx,
-	instance *collection.Mark3dCollection,
+	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
 	blockNumber *big.Int,
@@ -524,581 +542,363 @@ func (s *service) tryProcessCollectionTransferEvent(
 	if transfer.From != common.HexToAddress(zeroAddress) {
 		return nil
 	}
-
 	block, err := s.ethClient.BlockByNumber(ctx, blockNumber)
 	if err != nil {
 		return nil
 	}
 
-	token := &domain.Token{
-		CollectionAddress: *t.To(),
-		TokenId:           transfer.TokenId,
-		Owner:             transfer.To,
-		Creator:           transfer.To,
-		MintTxTimestamp:   block.Time(),
-		MintTxHash:        t.Hash(),
-	}
-
-	// Get token metadata
-	shouldLoadMetadata := true
-	shouldCreatePlaceholder := false
-
-	backoff := &retry.ExponentialBackoff{
-		InitialInterval: 3,
-		RandFactor:      0.5,
-		Multiplier:      2,
-		MaxInterval:     10,
-	}
-	metaUriRetryOpts := retry.Options{
-		Fn: func(ctx context.Context, args ...any) (any, error) {
-			collectionAddress, caOk := args[0].(common.Address)
-			tokenId, tiOk := args[1].(*big.Int)
-
-			if !caOk || !tiOk {
-				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
-			}
-			return s.collectionTokenURI(ctx, collectionAddress, tokenId)
-		},
-		FnArgs:          []any{l.Address, transfer.TokenId},
-		RetryOnAnyError: true,
-		Backoff:         backoff,
-		MaxElapsedTime:  30 * time.Second,
-	}
-
-	metaUriAny, err := retry.OnErrors(ctx, metaUriRetryOpts)
+	royalty, err := instance.Royalties(&bind.CallOpts{
+		BlockNumber: blockNumber,
+		Context:     ctx,
+	}, transfer.TokenId)
 	if err != nil {
-		var failedErr *retry.FailedErr
-		if errors.As(err, &failedErr) {
-			shouldLoadMetadata = false
-			log.Printf("failed to get metadataUri: %v", failedErr)
-		} else {
-			return err
-		}
+		return nil
 	}
 
-	var meta domain.TokenMetadata
-	var metaUri string
-
-	if shouldLoadMetadata {
-		var ok bool
-		metaUri, ok = metaUriAny.(string)
-		if !ok {
-			return errors.New("failed to cast metaUri to string")
-		}
-
-		loadMetaRetryOpts := retry.Options{
-			Fn: func(ctx context.Context, args ...any) (any, error) {
-				uri, ok := args[0].(string)
-				if !ok {
-					return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
-				}
-				return s.loadTokenParams(ctx, uri)
-			},
-			FnArgs:          []any{metaUri},
-			RetryOnAnyError: true,
-			Backoff:         backoff,
-			MaxElapsedTime:  30 * time.Second,
-		}
-
-		metaAny, err := retry.OnErrors(ctx, loadMetaRetryOpts)
-		if err != nil {
-			var failedErr *retry.FailedErr
-			if errors.As(err, &failedErr) {
-				shouldCreatePlaceholder = true
-				log.Printf("failed to load metadata: %v", failedErr)
-			} else {
-				return fmt.Errorf("failed to loadTokenParams: %w", err)
-			}
-		}
-
-		meta, ok = metaAny.(domain.TokenMetadata)
-		if !ok {
-			return errors.New("failed to cast to Metadata")
-		}
-	}
-
-	// Inserting placeholder metadata in case data is corrupted by self-mint
-	if shouldCreatePlaceholder || !shouldLoadMetadata {
-		log.Printf("inserting placeholder metadata for Token(address: %s, id: %s)",
-			token.CollectionAddress.String(),
-			token.TokenId.String(),
-		)
-		meta = *domain.NewPlaceholderMetadata()
-	}
-
-	token.Metadata = &meta
-	token.MetaUri = metaUri
-
-	if err := s.repository.InsertToken(ctx, tx, token); err != nil {
+	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To, royalty); err != nil {
 		return err
 	}
-	log.Println("token inserted", token.CollectionAddress.String(), token.TokenId.String(), token.Owner.String(),
-		token.MetaUri, token.Metadata)
 	return nil
 }
 
-func (s *service) tryProcessTransferInit(ctx context.Context, tx pgx.Tx,
-	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
+func (s *service) tryProcessPublicCollectionTransferEvent(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *publicCollection.PublicCollection,
+	t *types.Transaction,
+	l *types.Log,
+	blockNumber *big.Int,
+) error {
+	transfer, err := instance.ParseTransfer(*l)
+	if err != nil {
+		return nil
+	}
+	if transfer.From != common.HexToAddress(zeroAddress) {
+		return nil
+	}
+	block, err := s.ethClient.BlockByNumber(ctx, blockNumber)
+	if err != nil {
+		return nil
+	}
+
+	royalty, err := instance.Royalties(&bind.CallOpts{
+		BlockNumber: blockNumber,
+		Context:     ctx,
+	}, transfer.TokenId)
+	if err != nil {
+		return nil
+	}
+
+	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To, royalty); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *service) tryProcessTransferInit(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *collection.FilemarketCollectionV2,
+	t *types.Transaction,
+	l *types.Log,
+) error {
 	initEv, err := instance.ParseTransferInit(*l)
 	if err != nil {
 		return nil
 	}
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusCreated))
-	if err != nil {
+	if err := s.onCollectionTransferInitEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.To, initEv.TransferNumber); err != nil {
 		return err
 	}
-	if exists {
+	return nil
+
+}
+
+func (s *service) tryProcessPublicCollectionTransferInit(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *publicCollection.PublicCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	initEv, err := instance.ParseTransferInit(*l)
+	if err != nil {
 		return nil
 	}
-	_, err = s.repository.GetToken(ctx, tx, l.Address, initEv.TokenId)
-	if err != nil {
-		if err == pgx.ErrNoRows {
-			return nil
-		}
-		return err
-	}
-	transfer := &domain.Transfer{
-		CollectionAddress: *t.To(),
-		TokenId:           initEv.TokenId,
-		FromAddress:       initEv.From,
-		ToAddress:         initEv.To,
-		Number:            initEv.TransferNumber,
-	}
-	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
-	if err != nil {
-		return err
-	}
-	transfer.Id = id
-	if err := s.repository.InsertTransferStatus(ctx, tx, id, &domain.TransferStatus{
-		Timestamp: now.Now().UnixMilli(),
-		Status:    string(models.TransferStatusCreated),
-		TxId:      t.Hash(),
-	}); err != nil {
+	if err := s.onCollectionTransferInitEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.To, initEv.TransferNumber); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *service) tryProcessTransferDraft(ctx context.Context, tx pgx.Tx,
-	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
+func (s *service) tryProcessPublicCollectionTransferDraft(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *publicCollection.PublicCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
 	initEv, err := instance.ParseTransferDraft(*l)
 	if err != nil {
 		return nil
 	}
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusDrafted))
-	if err != nil {
-		return err
-	}
-	if exists {
-		return nil
-	}
-	_, err = s.repository.GetToken(ctx, tx, l.Address, initEv.TokenId)
-	if err != nil {
-		if err == pgx.ErrNoRows {
-			return nil
-		}
-		return err
-	}
-
-	backoff := &retry.ExponentialBackoff{
-		InitialInterval: 3,
-		RandFactor:      0.5,
-		Multiplier:      2,
-		MaxInterval:     10,
-	}
-	getOrderRetryOpts := retry.Options{
-		Fn: func(ctx context.Context, args ...any) (any, error) {
-			blockNum, bnOk := args[0].(*big.Int)
-			address, aOk := args[1].(common.Address)
-			tokenId, tiOk := args[2].(*big.Int)
-
-			if !bnOk || !aOk || !tiOk {
-				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
-			}
-			return s.getExchangeOrder(ctx, blockNum, address, tokenId)
-		},
-		FnArgs: []any{
-			big.NewInt(0).SetUint64(l.BlockNumber),
-			l.Address,
-			initEv.TokenId,
-		},
-		RetryOnAnyError: true,
-		Backoff:         backoff,
-		MaxElapsedTime:  30 * time.Second,
-	}
-
-	orderAny, err := retry.OnErrors(ctx, getOrderRetryOpts)
-	if err != nil {
-		return err
-	}
-
-	order, ok := orderAny.(struct {
-		Token     common.Address
-		TokenId   *big.Int
-		Price     *big.Int
-		Initiator common.Address
-		Receiver  common.Address
-		Fulfilled bool
-	})
-	if !ok {
-		return errors.New("failed to cast order")
-	}
-
-	transfer := &domain.Transfer{
-		CollectionAddress: l.Address,
-		TokenId:           initEv.TokenId,
-		FromAddress:       initEv.From,
-		Number:            initEv.TransferNumber,
-	}
-	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
-	if err != nil {
-		return err
-	}
-	transfer.Id = id
-	timestamp := now.Now().UnixMilli()
-	if err := s.repository.InsertTransferStatus(ctx, tx, id, &domain.TransferStatus{
-		Timestamp: now.Now().UnixMilli(),
-		Status:    string(models.TransferStatusDrafted),
-		TxId:      t.Hash(),
-	}); err != nil {
-		return err
-	}
-	o := &domain.Order{
-		TransferId: id,
-		Price:      order.Price,
-	}
-	orderId, err := s.repository.InsertOrder(ctx, tx, o)
-	if err != nil {
-		return err
-	}
-	if err := s.repository.InsertOrderStatus(ctx, tx, orderId, &domain.OrderStatus{
-		Timestamp: timestamp,
-		Status:    string(models.OrderStatusCreated),
-		TxId:      t.Hash(),
-	}); err != nil {
+	if err := s.onTransferDraftEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.TransferNumber); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *service) tryProcessTransferDraftCompletion(ctx context.Context, tx pgx.Tx,
-	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
+func (s *service) tryProcessTransferDraft(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *collection.FilemarketCollectionV2,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	initEv, err := instance.ParseTransferDraft(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onTransferDraftEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.TransferNumber); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *service) tryProcessPublicCollectionTransferDraftCompletion(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *publicCollection.PublicCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
 	ev, err := instance.ParseTransferDraftCompletion(*l)
 	if err != nil {
 		return nil
 	}
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusCreated))
-	if err != nil {
-		return err
-	}
-	if exists {
-		return nil
-	}
-	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		if err == pgx.ErrNoRows {
-			return nil
-		}
-		return err
-	}
-	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		return err
-	}
-	order, err := s.repository.GetOrder(ctx, tx, transfer.OrderId)
-	if err != nil {
-		return err
-	}
-	timestamp := now.Now().UnixMilli()
-	transfer.ToAddress = ev.To
-	if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
-		return err
-	}
-	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
-		Timestamp: timestamp,
-		Status:    string(models.TransferStatusCreated),
-		TxId:      t.Hash(),
-	}); err != nil {
-		return err
-	}
-	if err := s.repository.InsertOrderStatus(ctx, tx, order.Id, &domain.OrderStatus{
-		Timestamp: timestamp,
-		Status:    string(models.OrderStatusFulfilled),
-		TxId:      t.Hash(),
-	}); err != nil {
+	if err := s.onTransferDraftCompletionEvent(ctx, tx, t, l, ev.TokenId, ev.To); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *service) tryProcessPublicKeySet(ctx context.Context, tx pgx.Tx,
-	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
+func (s *service) tryProcessTransferDraftCompletion(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *collection.FilemarketCollectionV2,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferDraftCompletion(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onTransferDraftCompletionEvent(ctx, tx, t, l, ev.TokenId, ev.To); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *service) tryProcessPublicCollectionPublicKeySet(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *publicCollection.PublicCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
 	ev, err := instance.ParseTransferPublicKeySet(*l)
 	if err != nil {
 		return nil
 	}
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusPublicKeySet))
-	if err != nil {
-		return err
-	}
-	if exists {
-		return nil
-	}
-	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		if err == pgx.ErrNoRows {
-			return nil
-		}
-		return err
-	}
-	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		return err
-	}
-	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
-		Timestamp: now.Now().UnixMilli(),
-		Status:    string(models.TransferStatusPublicKeySet),
-		TxId:      t.Hash(),
-	}); err != nil {
-		return err
-	}
-	transfer.PublicKey = hex.EncodeToString(ev.PublicKey)
-	if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
+	if err := s.onPublicKeySetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.PublicKey)); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *service) tryProcessPasswordSet(ctx context.Context, tx pgx.Tx,
-	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
+func (s *service) tryProcessPublicKeySet(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *collection.FilemarketCollectionV2,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferPublicKeySet(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onPublicKeySetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.PublicKey)); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *service) tryProcessPublicCollectionPasswordSet(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *publicCollection.PublicCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
 	ev, err := instance.ParseTransferPasswordSet(*l)
 	if err != nil {
 		return nil
 	}
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusPasswordSet))
-	if err != nil {
-		return err
-	}
-	if exists {
-		return nil
-	}
-	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		if err == pgx.ErrNoRows {
-			return nil
-		}
-		return err
-	}
-	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		return err
-	}
-	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
-		Timestamp: now.Now().UnixMilli(),
-		Status:    string(models.TransferStatusPasswordSet),
-		TxId:      t.Hash(),
-	}); err != nil {
-		return err
-	}
-	transfer.EncryptedPassword = hex.EncodeToString(ev.EncryptedPassword)
-	if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
+	if err := s.onPasswordSetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.EncryptedPassword)); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *service) tryProcessTransferFinish(ctx context.Context, tx pgx.Tx,
-	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
+func (s *service) tryProcessPasswordSet(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *collection.FilemarketCollectionV2,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferPasswordSet(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onPasswordSetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.EncryptedPassword)); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *service) tryProcessPublicCollectionTransferFinish(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *publicCollection.PublicCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
 	ev, err := instance.ParseTransferFinished(*l)
 	if err != nil {
 		return nil
 	}
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusFinished))
-	if err != nil {
-		return err
-	}
-	if exists {
-		return nil
-	}
-	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		if err == pgx.ErrNoRows {
-			return nil
-		}
-		return err
-	}
-	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		return err
-	}
-	timestamp := now.Now().UnixMilli()
-	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
-		Timestamp: timestamp,
-		Status:    string(models.TransferStatusFinished),
-		TxId:      t.Hash(),
-	}); err != nil {
-		return err
-	}
-	if transfer.OrderId != 0 {
-		if err := s.repository.InsertOrderStatus(ctx, tx, transfer.OrderId, &domain.OrderStatus{
-			Timestamp: timestamp,
-			Status:    string(models.OrderStatusFinished),
-			TxId:      t.Hash(),
-		}); err != nil {
-			return err
-		}
-	}
-	token, err := s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		return err
-	}
-	token.Owner = transfer.ToAddress
-	if err := s.repository.UpdateToken(ctx, tx, token); err != nil {
+	if err := s.onTransferFinishEvent(ctx, tx, t, l, ev.TokenId); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *service) tryProcessTransferFraudReported(ctx context.Context, tx pgx.Tx,
-	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
+func (s *service) tryProcessTransferFinish(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *collection.FilemarketCollectionV2,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferFinished(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onTransferFinishEvent(ctx, tx, t, l, ev.TokenId); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *service) tryProcessPublicCollectionTransferFraudReported(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *publicCollection.PublicCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
 	ev, err := instance.ParseTransferFraudReported(*l)
 	if err != nil {
 		return nil
 	}
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusFraudReported))
-	if err != nil {
-		return err
-	}
-	if exists {
-		return nil
-	}
-	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		if err == pgx.ErrNoRows {
-			return nil
-		}
-		return err
-	}
-	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		return err
-	}
-	timestamp := now.Now().UnixMilli()
-	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
-		Timestamp: timestamp,
-		Status:    string(models.TransferStatusFraudReported),
-		TxId:      t.Hash(),
-	}); err != nil {
+	if err := s.onTransferFraudReportedEvent(ctx, tx, t, l, ev.TokenId); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *service) tryProcessTransferFraudDecided(ctx context.Context, tx pgx.Tx,
-	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
+func (s *service) tryProcessTransferFraudReported(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *collection.FilemarketCollectionV2,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferFraudReported(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onTransferFraudReportedEvent(ctx, tx, t, l, ev.TokenId); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *service) tryProcessPublicCollectionTransferFraudDecided(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *publicCollection.PublicCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
 	ev, err := instance.ParseTransferFraudDecided(*l)
 	if err != nil {
 		return nil
 	}
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusFinished))
-	if err != nil {
+	if err := s.onTransferFraudDecidedEvent(ctx, tx, t, l, ev.TokenId, ev.Approved); err != nil {
 		return err
-	}
-	if exists {
-		return nil
-	}
-	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		if err == pgx.ErrNoRows {
-			return nil
-		}
-		return err
-	}
-	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		return err
-	}
-	timestamp := now.Now().UnixMilli()
-	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
-		Timestamp: timestamp,
-		Status:    string(models.TransferStatusFinished),
-		TxId:      t.Hash(),
-	}); err != nil {
-		return err
-	}
-	if transfer.OrderId != 0 {
-		var orderStatus string
-		if ev.Approved {
-			orderStatus = string(models.OrderStatusFraudApproved)
-		} else {
-			orderStatus = string(models.OrderStatusFinished)
-		}
-		if err := s.repository.InsertOrderStatus(ctx, tx, transfer.OrderId, &domain.OrderStatus{
-			Timestamp: timestamp,
-			Status:    orderStatus,
-			TxId:      t.Hash(),
-		}); err != nil {
-			return err
-		}
-	}
-	if ev.Approved {
-		transfer.FraudApproved = true
-		if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
-			return err
-		}
-	} else {
-		token, err := s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
-		if err != nil {
-			return err
-		}
-		token.Owner = transfer.ToAddress
-		if err := s.repository.UpdateToken(ctx, tx, token); err != nil {
-			return err
-		}
 	}
 	return nil
 }
 
-func (s *service) tryProcessTransferCancel(ctx context.Context, tx pgx.Tx,
-	instance *collection.Mark3dCollection, t *types.Transaction, l *types.Log) error {
+func (s *service) tryProcessTransferFraudDecided(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *collection.FilemarketCollectionV2,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferFraudDecided(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onTransferFraudDecidedEvent(ctx, tx, t, l, ev.TokenId, ev.Approved); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *service) tryProcessPublicCollectionTransferCancel(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *publicCollection.PublicCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
 	ev, err := instance.ParseTransferCancellation(*l)
 	if err != nil {
 		return nil
 	}
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusCancelled))
-	if err != nil {
+	if err := s.onTransferCancel(ctx, tx, t, l, ev.TokenId); err != nil {
 		return err
 	}
-	if exists {
+	return nil
+}
+
+func (s *service) tryProcessTransferCancel(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *collection.FilemarketCollectionV2,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferCancellation(*l)
+	if err != nil {
 		return nil
 	}
-	_, err = s.repository.GetToken(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		if err == pgx.ErrNoRows {
-			return nil
-		}
+	if err := s.onTransferCancel(ctx, tx, t, l, ev.TokenId); err != nil {
 		return err
-	}
-	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, ev.TokenId)
-	if err != nil {
-		return err
-	}
-	timestamp := now.Now().UnixMilli()
-	if err := s.repository.InsertTransferStatus(ctx, tx, transfer.Id, &domain.TransferStatus{
-		Timestamp: timestamp,
-		Status:    string(models.TransferStatusCancelled),
-		TxId:      t.Hash(),
-	}); err != nil {
-		return err
-	}
-	if transfer.OrderId != 0 {
-		if err := s.repository.InsertOrderStatus(ctx, tx, transfer.OrderId, &domain.OrderStatus{
-			Timestamp: timestamp,
-			Status:    string(models.OrderStatusCancelled),
-			TxId:      t.Hash(),
-		}); err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1111,40 +911,96 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 	}
 
 	for _, l := range receipt.Logs {
-		instance, err := collection.NewMark3dCollection(l.Address, nil)
-		if err != nil {
-			return err
+		var instanceErr, instance2Err error
+
+		if l.Address == s.cfg.PublicCollectionAddress {
+			instance2, instance2Err := publicCollection.NewPublicCollection(l.Address, nil)
+			if instance2Err == nil {
+				err := s.processPublicCollectionEvents(ctx, tx, t, l, instance2, receipt.BlockNumber)
+				if err != nil {
+					return err
+				}
+			}
 		}
-		if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l, receipt.BlockNumber); err != nil {
-			return fmt.Errorf("process collection transfer: %w", err)
+		instance, instanceErr := collection.NewFilemarketCollectionV2(l.Address, nil)
+		if instanceErr == nil {
+			err := s.processFileMarketCollectionEvents(ctx, tx, t, l, instance, receipt.BlockNumber)
+			if err != nil {
+				return err
+			}
 		}
-		if err := s.tryProcessTransferInit(ctx, tx, instance, t, l); err != nil {
-			return fmt.Errorf("process transfer init: %w", err)
+
+		if instanceErr != nil && instance2Err != nil {
+			return errors.Join(instanceErr, instance2Err)
 		}
-		if err := s.tryProcessTransferDraft(ctx, tx, instance, t, l); err != nil {
-			return fmt.Errorf("process transfer draft: %w", err)
-		}
-		if err := s.tryProcessTransferDraftCompletion(ctx, tx, instance, t, l); err != nil {
-			return fmt.Errorf("process draft completion: %w", err)
-		}
-		if err := s.tryProcessPublicKeySet(ctx, tx, instance, t, l); err != nil {
-			return fmt.Errorf("process public key set: %w", err)
-		}
-		if err := s.tryProcessPasswordSet(ctx, tx, instance, t, l); err != nil {
-			return fmt.Errorf("process password set: %w", err)
-		}
-		if err := s.tryProcessTransferFinish(ctx, tx, instance, t, l); err != nil {
-			return fmt.Errorf("process transfer finish: %w", err)
-		}
-		if err := s.tryProcessTransferFraudReported(ctx, tx, instance, t, l); err != nil {
-			return fmt.Errorf("process fraud reported: %w", err)
-		}
-		if err := s.tryProcessTransferFraudDecided(ctx, tx, instance, t, l); err != nil {
-			return fmt.Errorf("process fraud decided: %w", err)
-		}
-		if err := s.tryProcessTransferCancel(ctx, tx, instance, t, l); err != nil {
-			return fmt.Errorf("process transfer cancel: %w", err)
-		}
+	}
+	return nil
+}
+
+func (s *service) processPublicCollectionEvents(ctx context.Context, tx pgx.Tx, t *types.Transaction, l *types.Log, instance *publicCollection.PublicCollection, blockNumber *big.Int) error {
+	if err := s.tryProcessPublicCollectionTransferEvent(ctx, tx, instance, t, l, blockNumber); err != nil {
+		return fmt.Errorf("process public collection transfer: %w", err)
+	}
+	if err := s.tryProcessPublicCollectionTransferInit(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection transfer init: %w", err)
+	}
+	if err := s.tryProcessPublicCollectionTransferDraft(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection transfer draft: %w", err)
+	}
+	if err := s.tryProcessPublicCollectionTransferDraftCompletion(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection draft completion: %w", err)
+	}
+	if err := s.tryProcessPublicCollectionPublicKeySet(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection public key set: %w", err)
+	}
+	if err := s.tryProcessPublicCollectionPasswordSet(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection password set: %w", err)
+	}
+	if err := s.tryProcessPublicCollectionTransferFinish(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection transfer finish: %w", err)
+	}
+	if err := s.tryProcessPublicCollectionTransferFraudReported(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection fraud reported: %w", err)
+	}
+	if err := s.tryProcessPublicCollectionTransferFraudDecided(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection fraud decided: %w", err)
+	}
+	if err := s.tryProcessPublicCollectionTransferCancel(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process transfer cancel: %w", err)
+	}
+	return nil
+}
+
+func (s *service) processFileMarketCollectionEvents(ctx context.Context, tx pgx.Tx, t *types.Transaction, l *types.Log, instance *collection.FilemarketCollectionV2, blockNumber *big.Int) error {
+	if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l, blockNumber); err != nil {
+		return fmt.Errorf("process collection transfer: %w", err)
+	}
+	if err := s.tryProcessTransferInit(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process transfer init: %w", err)
+	}
+	if err := s.tryProcessTransferDraft(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process transfer draft: %w", err)
+	}
+	if err := s.tryProcessTransferDraftCompletion(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process draft completion: %w", err)
+	}
+	if err := s.tryProcessPublicKeySet(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public key set: %w", err)
+	}
+	if err := s.tryProcessPasswordSet(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process password set: %w", err)
+	}
+	if err := s.tryProcessTransferFinish(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process transfer finish: %w", err)
+	}
+	if err := s.tryProcessTransferFraudReported(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process fraud reported: %w", err)
+	}
+	if err := s.tryProcessTransferFraudDecided(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process fraud decided: %w", err)
+	}
+	if err := s.tryProcessTransferCancel(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process transfer cancel: %w", err)
 	}
 	return nil
 }

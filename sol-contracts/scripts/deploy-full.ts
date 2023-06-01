@@ -1,5 +1,11 @@
 import {ethers} from "hardhat";
-import {FraudDeciderWeb2__factory, Mark3dAccessToken__factory, Mark3dCollection__factory, Mark3dExchange__factory} from "../typechain-types";
+import {
+  FilemarketCollectionV2__factory,
+  FilemarketExchangeV2__factory,
+  FraudDeciderWeb2V2__factory,
+  Mark3dAccessTokenV2__factory,
+  PublicCollection__factory
+} from "../typechain-types";
 import "@nomicfoundation/hardhat-chai-matchers";
 const util = require("util")
 const request = util.promisify(require("request"))
@@ -15,7 +21,7 @@ async function callRpc(method: string, params: string) {
   if (network === 'filecoin') {
     url = 'https://filecoin-mainnet.chainstacklabs.com/rpc/v1';
   } else {
-    url = 'https://api.hyperspace.node.glif.io/rpc/v1';
+    url = 'https://filecoin-calibration.chainup.net/rpc/v1';
   }
   const options = {
     method: "POST",
@@ -38,10 +44,11 @@ async function callRpc(method: string, params: string) {
 async function main() {
   let accounts = await ethers.getSigners();
 
-  const accessTokenFactory = new Mark3dAccessToken__factory(accounts[0]);
-  const fraudDeciderFactory = new FraudDeciderWeb2__factory(accounts[0]);
-  const collectionFactory = new Mark3dCollection__factory(accounts[0]);
-  const exchangeFactory = new Mark3dExchange__factory(accounts[0]);
+  const accessTokenFactory = new Mark3dAccessTokenV2__factory(accounts[0]);
+  const fraudDeciderFactory = new FraudDeciderWeb2V2__factory(accounts[0]);
+  const collectionFactory = new FilemarketCollectionV2__factory(accounts[0]);
+  const publicCollectionFactory = new PublicCollection__factory(accounts[0]);
+  const exchangeFactory = new FilemarketExchangeV2__factory(accounts[0]);
 
   const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "")
 
@@ -61,6 +68,19 @@ async function main() {
         maxPriorityFeePerGas: priorityFee,
       });
   console.log("access token address: ", accessToken.address);
+  let publicCollection = await publicCollectionFactory.deploy(
+      "FileMarket Public Collection",
+      "FileMarketPublic",
+      "",
+      accounts[0].getAddress(),
+      accounts[0].getAddress(),
+      "0x",
+      fraudDecider.address,
+      true,
+      {
+        maxPriorityFeePerGas: priorityFee,
+      });
+  console.log("public collection address: ", publicCollection.address);
   let exchange = await exchangeFactory.deploy({
     maxPriorityFeePerGas: priorityFee,
   });

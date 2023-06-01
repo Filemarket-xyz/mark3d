@@ -12,9 +12,15 @@
   "service": {
     "accessTokenAddress": "0x2905A2Ad979ABfeb50C12F042Ab2b2A1359a47E4",
     "exchangeAddress": "0xFDD2eF676C5c5dE3476FFCf6EECa86E4cb8499d4",
+    "publicCollectionAddress": "0x",
     "fraudDeciderWeb2Address": "0xf3b3a65500b7753ADbeC9576cc2a346bdf35Fb64",
     "allowedBlockNumberDifference": 20,
     "healthCheckInterval": 60,
+    "sequencer": {
+      "keyPrefix": "sequencer.",
+      "tokenIdTTL": "30m",
+      "checkInterval": "5m"
+    },
     "currencyConversionCacheTTL": "1h",
     "mode": "main"
   }

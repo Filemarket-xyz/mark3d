@@ -57,8 +57,8 @@ describe("Success transfer", async () => {
 
   it("init transfer", async () => {
     const tokenId = BN.from(0);
-    let transfernNumber = await collectionInstance.transferCounts(tokenId);
-    transfernNumber = transfernNumber.add(1); // count increments in initTransfer and before emitting
+    let transferNumber = await collectionInstance.transferCounts(tokenId);
+    transferNumber = transferNumber.add(1); // count increments in initTransfer and before emitting
 
     const tx = await collectionInstance
       .connect(accounts[1])
@@ -71,7 +71,7 @@ describe("Success transfer", async () => {
     await expect(tx)
       .to
       .emit(collectionInstance, "TransferInit")
-      .withArgs(BN.from(0), await accounts[1].getAddress(), await accounts[2].getAddress(), transfernNumber);
+      .withArgs(BN.from(0), await accounts[1].getAddress(), await accounts[2].getAddress(), transferNumber);
   });
 
   it("set public key", async () => {
@@ -176,8 +176,8 @@ describe("Transfer with fraud", async () => {
 
   it("init transfer", async () => {
     const tokenId = BN.from(0);
-    let transfernNumber = await collectionInstance.transferCounts(tokenId);
-    transfernNumber = transfernNumber.add(1); // count increments in initTransfer and before emitting
+    let transferNumber = await collectionInstance.transferCounts(tokenId);
+    transferNumber = transferNumber.add(1); // count increments in initTransfer and before emitting
 
     const tx = await collectionInstance.connect(accounts[1])
       .initTransfer(BN.from(0),
@@ -185,7 +185,7 @@ describe("Transfer with fraud", async () => {
     await expect(tx)
       .to
       .emit(collectionInstance, "TransferInit")
-      .withArgs(BN.from(0), await accounts[1].getAddress(), await accounts[2].getAddress(), transfernNumber);
+      .withArgs(BN.from(0), await accounts[1].getAddress(), await accounts[2].getAddress(), transferNumber);
   });
 
   it("set public key", async () => {

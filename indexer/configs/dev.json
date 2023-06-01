@@ -10,11 +10,17 @@
     "swaggerHost": "https://dev-indexer-swagger.mark3d.xyz"
   },
   "service": {
-    "accessTokenAddress": "0xE47AAb76dF0A9CD8d142753198AcaaB475Bf2A21",
-    "exchangeAddress": "0x387EE91bA3f6bA73Ef323DeFab14FC2aa80db923",
-    "fraudDeciderWeb2Address": "0x730E5fAa6a0A88eFF1D37114C82725C593D16943",
+    "accessTokenAddress": "0xC3F07F620715Fec92db305f718C7FA10C708Bf7A",
+    "exchangeAddress": "0xc7477BC829f77A2eE5d6AFbEfefcA0c3E87Bd392",
+    "publicCollectionAddress": "0x2D856488d18A711ACEc8a7fF4A139a34161f88De",
+    "fraudDeciderWeb2Address": "0x09bdE52a5251C02B1Be69b40dd6fBdA536Af5164",
     "allowedBlockNumberDifference": 20,
     "healthCheckInterval": 60,
+    "sequencer": {
+      "keyPrefix": "sequencer.",
+      "tokenIdTTL": "30m",
+      "checkInterval": "5m"
+    },
     "currencyConversionCacheTTL": "1h",
     "mode": "dev"
   }

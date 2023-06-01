@@ -6,6 +6,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
+	"github.com/mark3d-xyz/mark3d/indexer/models"
 	"math/big"
 	"strings"
 )
@@ -23,10 +24,11 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 		SELECT address,creator,owner,name,token_id,meta_uri,description,image
 		FROM collections AS c 
 		WHERE (owner=$1 OR 
-            EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)) AND
-		    address > $2
+            EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1) OR 
+		    c.address=$2) AND
+		    address > $3
 		ORDER BY address
-		LIMIT $3
+		LIMIT $4
 	`
 
 	lastCollectionAddressStr := ""
@@ -39,6 +41,7 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 
 	rows, err := tx.Query(ctx, query,
 		strings.ToLower(address.String()),
+		strings.ToLower(p.cfg.publicCollectionAddress.String()),
 		lastCollectionAddressStr,
 		limit,
 	)
@@ -64,6 +67,13 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 		if !ok {
 			return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
 		}
+
+		switch c.Address {
+		case p.cfg.publicCollectionAddress:
+			c.Type = models.CollectionTypePublicCollection
+		default:
+			c.Type = models.CollectionTypeFileMarketCollection
+		}
 		res = append(res, c)
 	}
 	return res, nil
@@ -79,10 +89,14 @@ func (p *postgres) GetCollectionsByOwnerAddressTotal(
 		SELECT COUNT(*) AS total
 		FROM collections AS c 
 		WHERE (owner=$1 OR 
-            EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1))
+            EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1)) OR 
+		    c.address=$2
 	`
 	var total uint64
-	row := tx.QueryRow(ctx, query, strings.ToLower(address.String()))
+	row := tx.QueryRow(ctx, query,
+		strings.ToLower(address.String()),
+		strings.ToLower(p.cfg.publicCollectionAddress.String()),
+	)
 	if err := row.Scan(&total); err != nil {
 		return 0, err
 	}
@@ -106,6 +120,13 @@ func (p *postgres) GetCollection(ctx context.Context,
 	c.TokenId, ok = big.NewInt(0).SetString(tokenId, 10)
 	if !ok {
 		return nil, fmt.Errorf("failed to parse big int: %s", tokenId)
+	}
+
+	switch c.Address {
+	case p.cfg.publicCollectionAddress:
+		c.Type = models.CollectionTypePublicCollection
+	default:
+		c.Type = models.CollectionTypeFileMarketCollection
 	}
 	return c, nil
 }
@@ -139,11 +160,16 @@ func (p *postgres) GetCollectionByTokenId(
 		return nil, err
 	}
 
-	c.TokenId = tokenId
 	c.Address = common.HexToAddress(collectionAddress)
 	c.Owner = common.HexToAddress(owner)
 	c.Creator = common.HexToAddress(creator)
 
+	switch c.Address {
+	case p.cfg.publicCollectionAddress:
+		c.Type = models.CollectionTypePublicCollection
+	default:
+		c.Type = models.CollectionTypeFileMarketCollection
+	}
 	return c, nil
 }
 
