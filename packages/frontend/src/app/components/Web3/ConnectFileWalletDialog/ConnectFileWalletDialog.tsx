@@ -1,4 +1,3 @@
-import { Modal } from '@nextui-org/react'
 import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { useAccount } from 'wagmi'
@@ -8,8 +7,8 @@ import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useCanUnlock } from '../../../processing/SeedProvider/useCanUnlock'
 import { Txt } from '../../../UIkit'
+import { FWIcon, Modal, ModalBody, ModalTitle } from '../../../UIkit/Modal/Modal'
 import { AppDialogProps } from '../../../utils/dialog'
-import { ModalTitle } from '../../Modal/Modal'
 import { CreateOrImportSection } from './sections/CreateOrImportSection'
 import { UnlockSection } from './sections/UnlockSection'
 
@@ -29,19 +28,23 @@ export const ConnectFileWalletDialog = observer(({ open, onClose }: AppDialogPro
   return (
     <ConnectWalletWindowStyle>
       <Modal
-        closeButton
         preventClose
         open={open}
         width={adaptive({
-          sm: canUnlock ? '300px' : '400px',
-          md: canUnlock ? '300px' : '650px',
-          lg: canUnlock ? '400px' : '950px',
-          defaultValue: canUnlock ? '500px' : '950px',
+          sm: '400px',
+          md: '650px',
+          lg: '664px',
+          defaultValue: '664px',
         })}
         onClose={onClose}
       >
-        <ModalTitle><Txt h4>Connect FileWallet</Txt></ModalTitle>
-        <Modal.Body>
+        <ModalTitle style={{ marginBottom: '0' }}>
+          {' '}
+          <FWIcon />
+          {' '}
+          <Txt h4>Connect FileWallet</Txt>
+        </ModalTitle>
+        <ModalBody style={{ paddingBottom: canUnlock ? 0 : '40px' }}>
           {canUnlock ? (
             <UnlockSection onSuccess={() => {
               onClose()
@@ -53,7 +56,7 @@ export const ConnectFileWalletDialog = observer(({ open, onClose }: AppDialogPro
             }}
             />
           )}
-        </Modal.Body>
+        </ModalBody>
       </Modal>
     </ConnectWalletWindowStyle>
   )

@@ -1,4 +1,3 @@
-import { Modal } from '@nextui-org/react'
 import { mnemonicToEntropy } from 'bip39'
 import React, { useState } from 'react'
 import { useAccount } from 'wagmi'
@@ -7,35 +6,18 @@ import { styled } from '../../../../styles'
 import { useStores } from '../../../hooks'
 import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useMediaMui } from '../../../hooks/useMediaMui'
+import { useStatusModal } from '../../../hooks/useStatusModal'
 import { useSeedProvider } from '../../../processing'
-import { Txt } from '../../../UIkit'
+import { Modal, ModalTitle } from '../../../UIkit/Modal/Modal'
 import { AppDialogProps } from '../../../utils/dialog'
-import { ModalTitle } from '../../Modal/Modal'
+import MintModal from '../../Modal/Modal'
 import { EnterSeedPhraseForm } from './EnterSeedPhraseForm/EnterSeedPhraseForm'
-
-const ModalStyle = styled(Modal, {
-  fontSize: '20px',
-})
 
 const InputWindowStyle = styled('div', {
   width: '100%',
   display: 'flex',
   justifyContent: 'center',
   position: 'relative',
-
-  '& button': {
-    padding: '5px',
-    marginTop: '20px',
-    color: 'white',
-  },
-  '& .contentModalWindow': {
-    width: '100%',
-  },
-
-  '& .closeButton': {
-    top: '-35px !important',
-  },
-  paddingBottom: '30px',
 })
 
 export function EnterSeedPhraseDialog({ open, onClose }: AppDialogProps<{}>): JSX.Element {
@@ -46,39 +28,43 @@ export function EnterSeedPhraseDialog({ open, onClose }: AppDialogProps<{}>): JS
   const { address } = useAccount()
   const { seedProvider } = useSeedProvider(address)
 
+  const { modalProps } = useStatusModal({
+    statuses: { result: isSuccess, isLoading: false, error: undefined },
+    okMsg: 'FileWallet successfully connected!',
+    loadingMsg: '',
+  })
+
   return (
-    <ModalStyle
-      closeButton
-      open={open}
-      width={adaptive({
-        sm: '400px',
-        md: '650px',
-        lg: '950px',
-        defaultValue: '950px',
-      })}
-      onClose={() => {
-        onClose()
-      }}
-    >
-      <ModalTitle>{seedProvider?.mnemonic ? 'Enter a new seed-phrase' : 'Enter a seed-phrase'}</ModalTitle>
-      <InputWindowStyle>
-        <div className="contentModalWindow">
-          {!isSuccess
-            ? (
-              <EnterSeedPhraseForm
-                onSubmit={async (value) => {
-                  const seed = mnemonicToEntropy(value.seedPhrase)
-                  await seedProvider?.set(Buffer.from(seed, 'hex'), value.password)
-                  setIsSuccess(true)
-                  dialogStore.closeDialogByName('ConnectMain')
-                }
-                }
-              />
-            )
-            : <Txt h2>{'SUCCESS!'}</Txt>
-          }
-        </div>
-      </InputWindowStyle>
-    </ModalStyle>
+    <>
+      {!isSuccess ? (
+        <Modal
+          open={open}
+          width={adaptive({
+            sm: '400px',
+            md: '550px',
+            lg: '710px',
+            defaultValue: '710px',
+          })}
+          onClose={() => {
+            onClose()
+          }}
+        >
+          <ModalTitle isFW style={{ marginBottom: '40px' }}>Connect FileWallet</ModalTitle>
+          <InputWindowStyle>
+            <EnterSeedPhraseForm
+              onSubmit={async (value) => {
+                const seed = mnemonicToEntropy(value.seedPhrase)
+                await seedProvider?.set(Buffer.from(seed, 'hex'), value.password)
+                setIsSuccess(true)
+                dialogStore.closeDialogByName('ConnectMain')
+              }
+              }
+            />
+          </InputWindowStyle>
+        </Modal>
+      )
+        : <MintModal {...modalProps} />
+      }
+    </>
   )
 }

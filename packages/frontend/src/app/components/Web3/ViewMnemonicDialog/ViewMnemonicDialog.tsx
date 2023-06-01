@@ -1,21 +1,13 @@
-import { Modal } from '@nextui-org/react'
 import React, { useState } from 'react'
 import { useAccount } from 'wagmi'
 
-import { styled } from '../../../../styles'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeedProvider } from '../../../processing'
-import { Txt } from '../../../UIkit'
+import { ButtonGlowing, Txt } from '../../../UIkit'
+import { FWIcon, Modal, ModalBanner, ModalBody, ModalButtonContainer, ModalTitle } from '../../../UIkit/Modal/Modal'
 import { AppDialogProps } from '../../../utils/dialog'
-import { ModalTitle } from '../../Modal/Modal'
 import { UnlockSection } from '../ConnectFileWalletDialog/sections/UnlockSection'
-
-const MnemonicStyle = styled('div', {
-  paddingBottom: '16px',
-  display: 'flex',
-  justifyContent: 'center',
-  width: '100%',
-})
+import ViewMnemonicSection from './ViewMnemonicSection/ViewMnemonicSection'
 
 export function ViewMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX.Element {
   const { adaptive } = useMediaMui()
@@ -25,24 +17,46 @@ export function ViewMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX.E
 
   return (
     <Modal
-      closeButton
       aria-labelledby='modal-title'
       open={open}
       width={adaptive({
-        sm: !canWatch ? '300px' : '400px',
-        md: !canWatch ? '300px' : '650px',
-        lg: !canWatch ? '400px' : '950px',
-        defaultValue: !canWatch ? '500px' : '950px',
+        sm: !canWatch ? '400px' : '400px',
+        md: !canWatch ? '650px' : '500px',
+        lg: !canWatch ? '664px' : '710px',
+        defaultValue: !canWatch ? '664px' : '710px',
       })}
       onClose={onClose}
     >
-      <ModalTitle>{canWatch && 'Your FileWallet seed phrases'}</ModalTitle>
-      <Modal.Body>
+      <ModalTitle style={{ marginBottom: 0 }}>
+        {' '}
+        <FWIcon />
+        {' '}
+        {canWatch ? 'FileWallet seed phrases' : 'Show FileWallet seed phrase'}
+      </ModalTitle>
+      <ModalBody style={{ paddingBottom: 0 }}>
         {canWatch
           ? (
-            <MnemonicStyle>
-              <Txt h5>{seedProvider?.mnemonic}</Txt>
-            </MnemonicStyle>
+            <>
+              <ViewMnemonicSection mnemonic={seedProvider?.mnemonic ?? ''} />
+              <ModalBanner>
+                <Txt primary1 style={{ fontWeight: '400', lineHeight: '28px' }}>
+                  This is a key to your files in EFTs.
+                  {' '}
+                  <Txt primary1 style={{ lineHeight: '24px' }}>
+                    Keep it save
+                  </Txt>
+                </Txt>
+              </ModalBanner>
+              <ModalButtonContainer>
+                <ButtonGlowing
+                  modalButton
+                  whiteWithBlue
+                  onPress={onClose}
+                >
+                  Close
+                </ButtonGlowing>
+              </ModalButtonContainer>
+            </>
           ) : (
             <UnlockSection onSuccess={() => {
               setCanWatch(true)
@@ -50,7 +64,7 @@ export function ViewMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX.E
             />
           )
         }
-      </Modal.Body>
+      </ModalBody>
     </Modal>
   )
 };

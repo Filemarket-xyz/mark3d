@@ -1,24 +1,23 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { useForm } from 'react-hook-form'
-import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../../styles'
-import { useSeedProvider } from '../../../../processing'
-import { Button, Txt } from '../../../../UIkit'
+import { ButtonGlowing, Txt } from '../../../../UIkit'
 import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
-import { FormControl } from '../../../../UIkit/Form/FormControl'
-import { Input } from '../../../../UIkit/Form/Input'
+import { InputModalTitleText, ModalBanner } from '../../../../UIkit/Modal/Modal'
+import PasswordInput from '../../../Form/PasswordInput/PasswordInput'
 import { validateImportMnemonic, validatePassword } from '../../ConnectFileWalletDialog/utils/validate'
+import { FormControlStyle } from '../../CreateMnemonicDialog/CreatePasswordForm/CreatePasswordForm'
 
 const FormEnterSeedPhraseStyle = styled('form', {
-  paddingTop: '2rem',
-  width: '90%',
+  width: '100%',
   margin: '0 auto',
 })
 
 export interface EnterSeedPhraseValue {
   seedPhrase: string
   password: string
+  repeatPassword: string
 }
 
 export interface EnterSeedPhraseProps {
@@ -31,38 +30,66 @@ const ButtonContainer = styled('div', {
 })
 
 export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<EnterSeedPhraseValue>()
-  const { address } = useAccount()
-  const { seedProvider } = useSeedProvider(address)
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<EnterSeedPhraseValue>()
+
+  const password = watch('password')
+  const passwordRepeat = watch('repeatPassword')
 
   return (
     <FormEnterSeedPhraseStyle onSubmit={handleSubmit(onSubmit)}>
-      <FormControl>
-        <Input
-          type="string"
-          placeholder={seedProvider?.mnemonic ? 'Enter a new seed-phrase' : 'Enter a seed-phrase'}
-          {...register('seedPhrase', { validate: validateImportMnemonic })}
-          isError={!!errors?.seedPhrase}
+      <FormControlStyle>
+        <InputModalTitleText>FileWallet seed phrase</InputModalTitleText>
+        <PasswordInput
+          inputProps={{
+            type: 'password',
+            ...register('seedPhrase', { validate: validateImportMnemonic }),
+            isError: !!errors?.seedPhrase,
+          }}
         />
         {errors?.seedPhrase && <ErrorMessage><Txt h5>{errors.seedPhrase?.message}</Txt></ErrorMessage>}
-      </FormControl>
-      <FormControl>
-        <Input
-          type="password"
-          placeholder='Enter your password'
-          {...register('password', { validate: validatePassword })}
-          isError={!!errors?.password}
+      </FormControlStyle>
+      <FormControlStyle>
+        <InputModalTitleText>Create password</InputModalTitleText>
+        <PasswordInput
+          inputProps={{
+            type: 'password',
+            ...register('password', { validate: validatePassword }),
+            isError: !!errors?.password,
+          }}
         />
         {errors?.password && <ErrorMessage><Txt h5>{errors.password?.message}</Txt></ErrorMessage>}
-      </FormControl>
+      </FormControlStyle>
+      <FormControlStyle style={{ marginBottom: '0' }}>
+        <InputModalTitleText>Repeat password</InputModalTitleText>
+        <PasswordInput
+          inputProps={{
+            type: 'password',
+            ...register('repeatPassword', { validate: () => password === passwordRepeat ? undefined : 'Password are not matching' }),
+            isError: !!errors?.repeatPassword,
+          }}
+        />
+        {errors?.repeatPassword && <ErrorMessage><Txt h5>{errors.repeatPassword?.message}</Txt></ErrorMessage>}
+      </FormControlStyle>
+      <ModalBanner
+        style={{
+          marginBottom: '40px',
+        }}
+      >
+        <Txt primary1 style={{ fontSize: '20px', lineHeight: '24px' }}>Note about password</Txt>
+        <Txt primary1 style={{ fontWeight: '400', lineHeight: '24px' }}>
+          The password will be attached to your current browser/device.
+          You can use the same password as on other devices or create a new one.
+        </Txt>
+      </ModalBanner>
       <ButtonContainer>
-        <Button
-          primary
+        <ButtonGlowing
+          whiteWithBlue
+          modalButton
           type="submit"
-          isDisabled={!!(errors.seedPhrase || errors.password)}
+          isDisabled={!!(errors.password)}
         >
-          Sign in
-        </Button>
+          Connect
+        </ButtonGlowing>
       </ButtonContainer>
     </FormEnterSeedPhraseStyle>
   )

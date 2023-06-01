@@ -207,12 +207,22 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
       },
       whiteWithBlue: {
         true: {
-          background: 'none',
+          background: 'white',
           ...textVariant('primary1').true,
           fontSize: '18px',
           border: '2px solid #028FFF',
           borderRadius: '12px',
           color: '#028FFF',
+          '&[data-hovered=true]': {
+            opacity: 1,
+            filter: 'brightness(1.1)',
+          },
+        },
+      },
+      modalButton: {
+        true: {
+          width: '240px',
+          height: '48px',
         },
       },
     },

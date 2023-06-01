@@ -1,4 +1,3 @@
-import { Modal } from '@nextui-org/react'
 import { mnemonicToEntropy } from 'bip39'
 import React, { useState } from 'react'
 import { useAccount } from 'wagmi'
@@ -7,50 +6,17 @@ import { styled } from '../../../../styles'
 import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeedProviderFactory } from '../../../processing'
-import { Button, Txt } from '../../../UIkit'
+import { ButtonGlowing } from '../../../UIkit'
+import { FWIcon, Modal, ModalButtonContainer, modalStyle, ModalTitle } from '../../../UIkit/Modal/Modal'
 import { AppDialogProps } from '../../../utils/dialog'
-import { ButtonContainer } from '../../MarketCard/NamespaceCard/NamespaceCard.styles'
-import { ModalTitle } from '../../Modal/Modal'
 import { createMnemonic } from '../ConnectFileWalletDialog/utils/createMnemonic'
+import ShowMnemonic from '../ShowMnemonic/ShowMnemonic'
 import { CreatePasswordForm } from './CreatePasswordForm/CreatePasswordForm'
 
 const CreatedMnemonicStyle = styled('div', {
-  width: '90%',
+  width: '100%',
   position: 'relative',
   margin: '0 auto',
-  fontSize: '12px',
-  '& button': {
-    padding: '5px',
-    marginTop: '20px',
-    color: 'white',
-  },
-
-  '& .contentModalWindow': {
-    width: '100%',
-  },
-
-  '& .closeButton': {
-    top: '-35px !important',
-  },
-  paddingBottom: '30px',
-
-  '& .grayText span': {
-    color: '$gray400',
-    fontSize: '0.8rem',
-  },
-  '& .mnemonic': {
-    textAlign: 'justify',
-    '& span': {
-      fontSize: '1.25rem',
-    },
-    padding: '$4 0',
-  },
-  '@md': {
-    fontSize: '15px',
-  },
-  '@ld': {
-    fontSize: '18px',
-  },
 })
 
 interface CreateMnemonicDialogProps {
@@ -70,56 +36,53 @@ export const CreateMnemonicDialog: React.FC<AppDialogProps<CreateMnemonicDialogP
 
   return (
     <Modal
-      closeButton
       open={open}
+      css={{
+        ...modalStyle,
+      }}
       width={adaptive({
         sm: '400px',
         md: '650px',
-        lg: '950px',
-        defaultValue: '950px',
+        lg: '710px',
+        defaultValue: '710px',
       })}
       onClose={onClose}
     >
-      <ModalTitle>{mnemonic ? 'Remember and save this seed phrase (mnemonic) ' : 'Enter a password'}</ModalTitle>
+      <ModalTitle>
+        {' '}
+        <FWIcon />
+        {' '}
+        {mnemonic ? 'FileWallet seed phrase' : 'Setup FileWallet password'}
+      </ModalTitle>
       <CreatedMnemonicStyle>
         <div className="contentModalWindow">
-          {mnemonic && (
-            <>
-              <div className="mnemonic">
-                <Txt h5>{mnemonic}</Txt>
-              </div>
-              <div className="grayText">
-                <Txt h5>
-                  You need to save this phrase somewhere, because it can be used
-                  to log in from other devices or to restore your account in the future
-                </Txt>
-              </div>
-            </>
-          )}
-          {!mnemonic && (
-            <CreatePasswordForm onSubmit={async ({ password }) => {
-              if (address) {
-                const seedProvider = await seedProviderFactory.getSeedProvider(address)
-                const newMnemonic = createMnemonic()
-                const seed = Buffer.from(mnemonicToEntropy(newMnemonic), 'hex')
-                await seedProvider.set(seed, password)
-                setMnemonic(newMnemonic)
-                onSuccess?.()
-              }
-            }}
-            />
-          )}
+          {mnemonic ? <ShowMnemonic mnemonic={mnemonic} />
+            : (
+              <CreatePasswordForm onSubmit={async ({ password }) => {
+                if (address) {
+                  const seedProvider = await seedProviderFactory.getSeedProvider(address)
+                  const newMnemonic = createMnemonic()
+                  const seed = Buffer.from(mnemonicToEntropy(newMnemonic), 'hex')
+                  await seedProvider.set(seed, password)
+                  setMnemonic(newMnemonic)
+                  onSuccess?.()
+                }
+              }}
+              />
+            )}
         </div>
         {mnemonic && (
-          <ButtonContainer>
-            <Button
+          <ModalButtonContainer>
+            <ButtonGlowing
+              whiteWithBlue
+              modalButton
               primary
               type="submit"
               onClick={onClose}
             >
-              Ok
-            </Button>
-          </ButtonContainer>
+              Got it
+            </ButtonGlowing>
+          </ModalButtonContainer>
         )}
       </CreatedMnemonicStyle>
     </Modal>
