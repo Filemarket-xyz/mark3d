@@ -10,7 +10,9 @@ type Order struct {
 	Id         int64
 	TransferId int64
 	Price      *big.Int
+	Currency        common.Address
 	PriceUsd   *big.Float
+	ExchangeAddress common.Address
 	Statuses   []*OrderStatus
 }
 
@@ -29,7 +31,9 @@ func OrderToModel(o *Order) *models.Order {
 		Statuses:   MapSlice(o.Statuses, OrderStatusToModel),
 		TransferID: o.TransferId,
 		Price:      o.Price.String(),
+		Currency:        o.Currency.String(),
 		PriceUsd:   o.PriceUsd.Text('f', 6),
+		ExchangeAddress: o.ExchangeAddress.String(),
 	}
 }
 

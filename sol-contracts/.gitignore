@@ -23,5 +23,6 @@ finish_transfer.sh
 test.sh
 .mumbai-secret
 .hyperspace-secret
+.calibration-secret
 .yarn
 .mainnet-secret

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/ethereum/go-ethereum/log"
 	"math/big"
 	"strings"
 
@@ -13,9 +12,6 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 )
 
-// GetCollectionTokens returns all tokens in collection.
-// Parameters:
-// - lastTokenId: pagination cursor. Pass 0 for the first page.
 func (p *postgres) GetCollectionTokens(
 	ctx context.Context,
 	tx pgx.Tx,
@@ -26,7 +22,7 @@ func (p *postgres) GetCollectionTokens(
 	// language=PostgreSQL
 	query := `
 		SELECT 
-		    t.token_id, t.owner, t.meta_uri, t.creator, t.mint_transaction_timestamp, t.mint_transaction_hash,
+		    t.token_id, t.owner, t.meta_uri, t.creator, t.royalty, t.mint_transaction_timestamp, t.mint_transaction_hash,
 		    c.name
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
@@ -63,6 +59,7 @@ func (p *postgres) GetCollectionTokens(
 				&owner,
 				&t.MetaUri,
 				&creator,
+				&t.Royalty,
 				&t.MintTxTimestamp,
 				&mintTxHash,
 				&t.CollectionName,
@@ -93,7 +90,7 @@ func (p *postgres) GetCollectionTokens(
 		metadata, err := p.GetMetadata(ctx, tx, r.CollectionAddress, r.TokenId)
 		if err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
-				log.Warn(fmt.Sprintf("couldn't get metadata for token with collection address: %s, tokenId: %s", r.CollectionAddress, r.TokenId.String()))
+				logger.Warnf("couldn't get metadata for token with collection address: %s, tokenId: %s", r.CollectionAddress, r.TokenId.String())
 				metadata = domain.NewPlaceholderMetadata()
 			}
 			return nil, err
@@ -135,7 +132,7 @@ func (p *postgres) GetTokensByAddress(
 	// language=PostgreSQL
 	query := `
 		SELECT 
-		    t.collection_address, t.token_id, t.meta_uri, t.creator, 
+		    t.collection_address, t.token_id, t.meta_uri, t.creator, t.royalty, 
 		    t.mint_transaction_timestamp, t.mint_transaction_hash,
 		    c.name
 		FROM tokens t
@@ -181,6 +178,7 @@ func (p *postgres) GetTokensByAddress(
 				&tokenId,
 				&t.MetaUri,
 				&creator,
+				&t.Royalty,
 				&t.MintTxTimestamp,
 				&mintTxHash,
 				&t.CollectionName,
@@ -211,7 +209,7 @@ func (p *postgres) GetTokensByAddress(
 		metadata, err := p.GetMetadata(ctx, tx, r.CollectionAddress, r.TokenId)
 		if err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
-				log.Warn(fmt.Sprintf("couldn't get metadata for token with collection address: %s, tokenId: %s", r.CollectionAddress, r.TokenId.String()))
+				logger.Warnf("couldn't get metadata for token with collection address: %s, tokenId: %s", r.CollectionAddress, r.TokenId.String())
 				metadata = domain.NewPlaceholderMetadata()
 			}
 			return nil, err
@@ -251,7 +249,7 @@ func (p *postgres) GetToken(
 	// language=PostgreSQL
 	query := `
 		SELECT 
-		    t.owner, t.meta_uri, t.creator, t.mint_transaction_timestamp, t.mint_transaction_hash,
+		    t.owner, t.meta_uri, t.creator, t.royalty, t.mint_transaction_timestamp, t.mint_transaction_hash,
 		    c.name
 		FROM tokens t
 		INNER JOIN collections c ON t.collection_address = c.address
@@ -270,6 +268,7 @@ func (p *postgres) GetToken(
 		&owner,
 		&t.MetaUri,
 		&creator,
+		&t.Royalty,
 		&t.MintTxTimestamp,
 		&mintTxHash,
 		&t.CollectionName,
@@ -297,9 +296,9 @@ func (p *postgres) InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Tok
 	// language=PostgreSQL
 	query := `
 		INSERT INTO tokens (
-		    collection_address, token_id, owner, meta_uri, creator, mint_transaction_timestamp, mint_transaction_hash
+		    collection_address, token_id, owner, meta_uri, creator, royalty, mint_transaction_timestamp, mint_transaction_hash
 		)
-		VALUES ($1,$2,$3,$4,$5,$6,$7) 
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8) 
 		ON CONFLICT ON CONSTRAINT tokens_pkey DO NOTHING
 	`
 	_, err := tx.Exec(ctx, query,
@@ -308,6 +307,7 @@ func (p *postgres) InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Tok
 		strings.ToLower(token.Owner.String()),
 		token.MetaUri,
 		strings.ToLower(token.Creator.String()),
+		token.Royalty,
 		token.MintTxTimestamp,
 		strings.ToLower(token.MintTxHash.Hex()),
 	)

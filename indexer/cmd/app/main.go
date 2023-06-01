@@ -5,10 +5,12 @@ import (
 	"flag"
 	"fmt"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
-	"log"
+	log "github.com/mark3d-xyz/mark3d/indexer/pkg/log"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -24,8 +26,9 @@ import (
 	healthnotifier "github.com/mark3d-xyz/mark3d/indexer/pkg/health_notifier"
 )
 
+var logger = log.GetLogger()
+
 func main() {
-	log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
 	var cfgPath string
 	flag.StringVar(&cfgPath, "cfg", "configs/local", "config path")
 	flag.Parse()
@@ -33,17 +36,17 @@ func main() {
 	// initializing config, basically sets values from yml configs and env into a struct
 	cfg, err := config.Init(cfgPath)
 	if err != nil {
-		log.Panicln(err)
+		logger.WithFields(log.Fields{"error": err}).Fatal("failed to init config", nil)
 	}
 
 	ctx := context.Background()
 
 	pool, err := pgxpool.Connect(ctx, cfg.Postgres.PgSource())
 	if err != nil {
-		log.Panicln(err)
+		logger.WithFields(log.Fields{"error": err}).Fatal("failed to connect to pg", nil)
 	}
 	if err := pool.Ping(ctx); err != nil {
-		log.Panicln(err)
+		logger.WithFields(log.Fields{"error": err}).Fatal("failed to ping pg", nil)
 	}
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     cfg.Redis.Addr,
@@ -52,29 +55,44 @@ func main() {
 
 	client, err := ethclient.NewEthClient(cfg.Service.RpcUrls)
 	if err != nil {
-		log.Panicln(err)
+		logger.WithFields(log.Fields{"error": err}).Fatal("failed to init eth client", nil)
 	}
 
 	healthNotifier := &healthnotifier.TelegramHealthNotifier{
 		Addr: cfg.Service.TelegramHealthNotifierAddr,
 	}
 
+	sequencerCfg := &sequencer.Config{
+		KeyPrefix:     cfg.Sequencer.KeyPrefix,
+		TokenIdTTL:    cfg.Sequencer.TokenIdTTL,
+		CheckInterval: cfg.Sequencer.CheckInterval,
+	}
+
+	seq := sequencer.New(sequencerCfg, rdb, map[string]int64{
+		strings.ToLower(cfg.Service.PublicCollectionAddress.String()): 1_000_000,
+	})
+
+	repositoryCfg := &repository.Config{
+		PublicCollectionAddress: cfg.Service.PublicCollectionAddress,
+	}
+
 	currencyConverter := currencyconversion.NewCoinMarketCapProvider(cfg.Service.CoinMarketCapApiKey)
 	cacheTTL, err := time.ParseDuration(cfg.Service.CurrencyConversionCacheTTL)
 	if err != nil {
-		log.Panicf("failed to parse `CurrencyConversionCacheTTL` to time.Duration: %v", err)
+		logger.WithFields(log.Fields{"error": err}).Fatal("failed to parse `CurrencyConversionCacheTTL` to time.Duration", nil)
 	}
 	currencyConverterCache := currencyconversion.NewRedisExchangeRateCache(currencyConverter, rdb, cacheTTL)
 
 	indexService, err := service.NewService(
-		repository.NewRepository(pool, rdb),
+		repository.NewRepository(pool, rdb, repositoryCfg),
 		client,
+		seq,
 		healthNotifier,
 		currencyConverterCache,
 		cfg.Service,
 	) // service who interact with main dependencies
 	if err != nil {
-		log.Panicln(err)
+		logger.WithFields(log.Fields{"error": err}).Fatal("failed to create service", nil)
 	}
 	indexHandler := handler.NewHandler(cfg.Handler, indexService) // handler who interact with a service and hashManager
 	router := indexHandler.Init()                                 // gorilla mux here
@@ -83,18 +101,18 @@ func main() {
 	// goroutine in which server running
 	go func() {
 		if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Panicln(err)
+			logger.WithFields(log.Fields{"error": err}).Fatal("http server error", nil)
 		}
 	}()
 
-	log.Printf("server listening on port %d\n", cfg.Server.Port)
+	logger.Infof("server listening on port %d\n", cfg.Server.Port)
 
 	// graceful shutdown here
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	go func() {
 		if err := indexService.ListenBlockchain(); err != service.ErrSubFailed {
-			log.Panicln(err)
+			logger.WithFields(log.Fields{"error": err}).Fatal("ListenBlockchain failed", nil)
 		}
 		quit <- syscall.SIGTERM
 	}()
@@ -112,14 +130,14 @@ func main() {
 				if err != nil {
 					err := healthNotifier.Notify(ctx, fmt.Sprintf("%v", err))
 					if err != nil {
-						log.Printf("Falied to send health notification %v", err)
+						logger.WithFields(log.Fields{"error": err}).Fatal("failed to send healthcheck", nil)
 					}
 					return
 				}
 				if resp.Status != models.HealthStatusHealthy {
 					err := healthNotifier.Notify(ctx, fmt.Sprintf("%v", *resp))
 					if err != nil {
-						log.Printf("Falied to send health notification %v", err)
+						logger.Error("Failed to send health notification", err, nil)
 					}
 				}
 			case <-quit:
@@ -132,11 +150,14 @@ func main() {
 	<-quit
 
 	if err = srv.Shutdown(ctx); err != nil {
-		log.Panicln(err)
+		logger.WithFields(log.Fields{"error": err}).Fatal("failed to shutdown server", nil)
 	}
 	indexService.Shutdown()
 
-	log.Println("server shutdown")
+	logger.Info("server shutdown", nil)
 
+	if err := logger.Flush(); err != nil {
+		logger.WithFields(log.Fields{"error": err}).Fatal("failed to flush logger", nil)
+	}
 	pool.Close()
 }
