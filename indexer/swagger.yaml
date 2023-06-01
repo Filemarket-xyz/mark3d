@@ -613,7 +613,7 @@ paths:
           description: Ошибка
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /sequencer/acquire:
+  /sequencer/acquire/{address}:
     get:
       description: Возвращает рандомный доступный tokenId
       produces:
