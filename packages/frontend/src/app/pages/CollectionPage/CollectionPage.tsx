@@ -158,7 +158,7 @@ const CollectionPage = observer(() => {
               {
                 name: 'EFTs',
                 url: 'efts',
-                amount: collectionAndNfts?.tokens?.length ?? 0,
+                amount: collectionAndNfts?.total ?? 0,
               },
             ]}
           />

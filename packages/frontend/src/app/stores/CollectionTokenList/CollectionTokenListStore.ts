@@ -14,6 +14,7 @@ import {
   storeRequest,
   storeReset,
 } from '../../utils/store'
+import { lastItem } from '../../utils/structs'
 import { ErrorStore } from '../Error/ErrorStore'
 
 export class CollectionTokenListStore implements IActivateDeactivate<[string]>, IStoreRequester {
@@ -36,20 +37,36 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
     })
   }
 
-  private request(collectionAddress: string) {
-    storeRequest<CollectionData>(
+  setData(data: CollectionData) {
+    this.data = data || {}
+  }
+
+  addData(data: CollectionData) {
+    this.data.tokens?.push(...(data?.tokens ?? []))
+    this.data.total = data.total
+  }
+
+  private request() {
+    storeRequest(
       this,
-      api.collections.fullDetail(collectionAddress),
-      (resp) => {
-        this.data = resp || {}
-      },
+      api.collections.fullDetail(this.collectionAddress, { limit: 20 }),
+      (data) => this.setData(data),
+    )
+  }
+
+  requestMore() {
+    const lastTokenId = lastItem(this.data.tokens ?? [])?.tokenId
+    storeRequest(
+      this,
+      api.collections.fullDetail(this.collectionAddress, { lastTokenId, limit: 20 }),
+      (data) => this.addData(data),
     )
   }
 
   activate(collectionAddress: string): void {
     this.isActivated = true
     this.collectionAddress = collectionAddress
-    this.request(collectionAddress)
+    this.request()
   }
 
   deactivate(): void {
@@ -62,20 +79,25 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
   }
 
   reload(): void {
-    this.request(this.collectionAddress)
+    this.request()
+  }
+
+  get hasMoreData() {
+    const { total = 0, tokens = [] } = this.data
+
+    return tokens.length < total
   }
 
   get nftCards(): NFTCardProps[] {
-    const tokens = this.data.tokens ?? []
-    const collection = this.data.collection
+    if (!this.data.tokens) return []
 
-    return tokens.map((token) => ({
-      collectionName: collection?.name ?? '',
+    return this.data.tokens.map((token) => ({
+      collectionName: this.data.collection?.name ?? '',
       imageURL: token.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
       title: token.name ?? '—',
       user: {
         img: getProfileImageUrl(token.owner ?? ''),
-        address: reduceAddress(collection?.owner ?? ''),
+        address: reduceAddress(this.data.collection?.owner ?? ''),
       },
       button: {
         link: `/collection/${token.collectionAddress}/${token.tokenId}`,

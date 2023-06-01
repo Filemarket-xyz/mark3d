@@ -126,6 +126,7 @@ export const StyledCard = styled(NavLink, {
   '&:hover': {
     background: '$blue500',
     borderColor: 'transparent',
+    filter: 'drop-shadow(0px 12px 24px rgba(0, 0, 0, 0.2))',
   },
   [`&:hover ${StyledFileTypeContainer.selector} > div > div`]: {
     backgroundColor: '$whiteOp75',

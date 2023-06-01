@@ -5,10 +5,10 @@ import accessToken from '../../abi/Mark3dAccessToken'
 import collectionToken from '../../abi/Mark3dCollection'
 import exchangeToken from '../../abi/Mark3dExchange'
 
-const filecoinHyperspace: Chain = {
-  id: 3141,
-  name: 'Filecoin - Hyperspace testnet',
-  network: 'Hyperspace',
+const filecoinCalibration: Chain = {
+  id: 314159,
+  name: 'Filecoin - Calibration testnet',
+  network: 'Calibration',
   nativeCurrency: {
     name: 'TFIL',
     symbol: 'TFIL',
@@ -16,16 +16,16 @@ const filecoinHyperspace: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ['https://rpc.ankr.com/filecoin_testnet', 'https://api.hyperspace.node.glif.io/rpc/v1', 'https://filecoin-hyperspace.chainstacklabs.com/rpc/v1'],
+      http: ['https://filecoin-calibration.chainup.net/rpc/v1'],
     },
     public: {
-      http: ['https://rpc.ankr.com/filecoin_testnet', 'https://api.hyperspace.node.glif.io/rpc/v1', 'https://filecoin-hyperspace.chainstacklabs.com/rpc/v1'],
+      http: ['https://api.calibration.node.glif.io/rpc/v1'],
     },
   },
   blockExplorers: {
     default: {
-      name: 'Hyperspace explorer',
-      url: 'https://hyperspace.filfox.info/en',
+      name: 'Calibration filscan',
+      url: 'https://calibration.filscan.io',
     },
   },
 
@@ -58,11 +58,11 @@ const filecoinMainnet: Chain = {
 
 const isMainnet = import.meta.env.VITE_IS_MAINNET
 
-const mark3dChain = isMainnet ? filecoinMainnet : filecoinHyperspace
+const mark3dChain = isMainnet ? filecoinMainnet : filecoinCalibration
 
-const accessTokenAddress = isMainnet ? '0x2905A2Ad979ABfeb50C12F042Ab2b2A1359a47E4' : '0xE47AAb76dF0A9CD8d142753198AcaaB475Bf2A21'
+const accessTokenAddress = isMainnet ? '0x2905A2Ad979ABfeb50C12F042Ab2b2A1359a47E4' : '0xC3F07F620715Fec92db305f718C7FA10C708Bf7A'
 
-const exchangeTokenAddress = isMainnet ? '0xFDD2eF676C5c5dE3476FFCf6EECa86E4cb8499d4' : '0x387EE91bA3f6bA73Ef323DeFab14FC2aa80db923'
+const exchangeTokenAddress = isMainnet ? '0xFDD2eF676C5c5dE3476FFCf6EECa86E4cb8499d4' : '0xc7477BC829f77A2eE5d6AFbEfefcA0c3E87Bd392'
 
 export const mark3dConfig = {
   chain: mark3dChain,
