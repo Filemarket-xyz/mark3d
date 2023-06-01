@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 SELECT 'up SQL query';
 -- +goose StatementEnd
-CREATE TABLE public.collections
+IF EXISTS CREATE TABLE public.collections
 (
     address     CHAR(42)     NOT NULL,
     creator     CHAR(42)     NOT NULL,
