@@ -16,18 +16,18 @@ const InputWithPrefix = styled('div', {
   transition: 'outline-width 0.3s',
   '&:hover': {
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    outline: '1px solid #38BCC9'
+    outline: '1px solid #38BCC9',
   },
   '&:focus': {
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
     outline: '3px solid #38BCC9',
-    animation: `${glow} 800ms ease-out infinite alternate`
+    animation: `${glow} 800ms ease-out infinite alternate`,
   },
   '&:focus-within': {
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
     outline: '3px solid #38BCC9',
-    animation: `${glow} 800ms ease-out infinite alternate`
-  }
+    animation: `${glow} 800ms ease-out infinite alternate`,
+  },
 })
 
 const InputPostfix = styled('div', {
@@ -35,7 +35,7 @@ const InputPostfix = styled('div', {
   ...textVariant('primary1').true,
   fontWeight: 600,
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
 })
 
 interface PrefixedInputProps {
@@ -60,12 +60,12 @@ export default function PostfixedInput(props: PrefixedInputProps) {
           '&:focus': {
             boxShadow: 'none',
             outline: 'none',
-            animation: 'none'
+            animation: 'none',
           },
           '&:hover': {
             outline: 'none',
-            boxShadow: 'none'
-          }
+            boxShadow: 'none',
+          },
         }}
         {...props.inputProps}
         isDisabledFocusStyle

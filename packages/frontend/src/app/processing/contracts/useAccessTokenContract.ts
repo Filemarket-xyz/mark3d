@@ -8,7 +8,8 @@ export function useAccessTokenContract() {
   const contract = useContract({
     address: mark3dConfig.accessToken.address,
     abi: mark3dConfig.accessToken.abi,
-    signerOrProvider: signer
+    signerOrProvider: signer,
   })
+
   return { contract, signer }
 }

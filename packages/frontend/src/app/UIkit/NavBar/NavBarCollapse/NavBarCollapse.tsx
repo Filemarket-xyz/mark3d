@@ -18,10 +18,10 @@ const StyledNavBarCollapse = styled('div', {
     isOpen: {
       true: {
         top: '$layout$navBarHeight',
-        height: '100%'
-      }
-    }
-  }
+        height: '100%',
+      },
+    },
+  },
 })
 
 export type NavBarCollapseProps = ComponentProps<typeof StyledNavBarCollapse> & {
@@ -31,13 +31,13 @@ export type NavBarCollapseProps = ComponentProps<typeof StyledNavBarCollapse> & 
 const StyledScrollContainer = styled('div', {
   overflowY: 'hidden', // make scroll if nav overflows
   height: '100%',
-  maxHeight: '100%'
+  maxHeight: '100%',
 })
 
 const StyledContent = styled('div', {
   paddingLeft: '$3',
   paddingTop: '$4',
-  paddingBottom: '$layout$navBarHeight'
+  paddingBottom: '$layout$navBarHeight',
 })
 
 export const NavBarCollapse: FC<NavBarCollapseProps> = ({ children, isOpen }) => {

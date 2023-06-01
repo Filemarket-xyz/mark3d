@@ -10,5 +10,6 @@ import { useStores } from './useStores'
 export function useCollectionAndTokenListStore(address?: string): CollectionAndTokenListStore {
   const { collectionAndTokenList } = useStores()
   useActivateDeactivateRequireParams(collectionAndTokenList, address)
+
   return collectionAndTokenList
 }

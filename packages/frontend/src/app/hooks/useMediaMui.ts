@@ -27,6 +27,7 @@ export function useMediaMui() {
     if (xlValue && xl) {
       return xl
     }
+
     return defaultValue
   }
 

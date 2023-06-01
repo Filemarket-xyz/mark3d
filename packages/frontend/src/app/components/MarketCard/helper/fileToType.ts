@@ -19,6 +19,7 @@ export const fileToType = (file: HiddenFileMetaData): typeFiles | undefined => {
   for (const [key, value] of Object.entries(typeOptions)) {
     if (value.includes(`.${typeFileName}`)) return key as typeFiles
   }
+
   return 'another'
 }
 
@@ -28,5 +29,6 @@ export const filenameToType = (filename: string): typeFiles | undefined => {
   for (const [key, value] of Object.entries(typeOptions)) {
     if (value.includes(`.${typeFileName}`)) return key as typeFiles
   }
+
   return 'another'
 }

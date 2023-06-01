@@ -9,7 +9,7 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
 
   constructor(
     private readonly contractProvider: ContractProvider,
-    readonly baseUrl: string = '/api'
+    readonly baseUrl: string = '/api',
   ) {
     this.#url = baseUrl
   }
@@ -27,7 +27,7 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getLastTransferInfo(collectionAddress: ArrayBuffer, tokenId: number) {
     const response = await fetch(
       `${this.#url}/tokens/${bufferToEtherHex(collectionAddress)}/${tokenId}/encrypted_password`,
-      { method: 'GET' }
+      { method: 'GET' },
     )
 
     return this.#stringifyResponse(response)

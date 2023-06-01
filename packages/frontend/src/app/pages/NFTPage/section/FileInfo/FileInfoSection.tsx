@@ -3,6 +3,7 @@ import React, { FC, useEffect } from 'react'
 import { styled } from '../../../../../styles'
 import { HiddenFileMetaData } from '../../../../../swagger/Api'
 import { FileButton, MintModal, ProtectedStamp } from '../../../../components'
+import { filenameToExtension } from '../../../../components/MarketCard/helper/fileToType'
 import { useStatusState } from '../../../../hooks'
 import { HiddenFileDownload } from '../../../../hooks/useHiddenFilesDownload'
 import { useStatusModal } from '../../../../hooks/useStatusModal'
@@ -20,27 +21,27 @@ const FileInfoSectionStyle = styled('div', {
   justifyContent: 'space-between',
   padding: '12px',
   '@md': {
-    width: '100%'
-  }
+    width: '100%',
+  },
 })
 
 const FileList = styled('div', {
   '& li:not(:last-child)': {
-    marginBottom: '$2'
-  }
+    marginBottom: '$2',
+  },
 })
 
 const FileInfoSectionTitle = styled(PropertyTitle, {
   color: '#232528',
   fontWeight: '600',
   fontSize: '20px',
-  marginBottom: '12px'
+  marginBottom: '12px',
 })
 
 const Line = styled('div', {
   height: '15px',
   width: '2px',
-  background: '$gray400'
+  background: '$gray400',
 })
 
 interface FileInfoSectionProps {
@@ -56,12 +57,22 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
     statuses,
     okMsg: 'File decrypted and download started',
     loadingMsg: 'Decrypt file in progress',
-    waitForSign: false
+    waitForSign: false,
   })
 
   useEffect(() => {
     console.log(files)
   }, [files])
+
+  const fileName = (name: string | undefined): string | undefined => {
+    const maxCountAvailable = 30
+    if ((name?.length ?? 0) < 30) return name
+    const extension = filenameToExtension(name ?? '')
+    const secondPartName = name?.substring(name.indexOf(`.${extension}`) - 3, name.length)
+    const firstPartName = name?.substring(0, maxCountAvailable - (secondPartName?.length ?? 0) - 3)
+
+    return `${firstPartName}...${secondPartName}`
+  }
 
   return (
     <>
@@ -75,7 +86,7 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
                 <ProtectedStamp key={cid}>
                   <FileButton
                     caption={formatFileSize(size)}
-                    name={name}
+                    name={fileName(name)}
                     onPress={wrapPromise(download)}
                   />
                 </ProtectedStamp>
@@ -85,7 +96,7 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
                 <ProtectedStamp key={index}>
                   <FileButton
                     isDisabled
-                    name={name}
+                    name={fileName(name)}
                     caption={(
                       <>
                         <Txt>{formatFileSize(size ?? 0)}</Txt>

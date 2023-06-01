@@ -9,6 +9,7 @@ import { IHiddenFileBuyer } from './IHiddenFileBuyer'
 export class HiddenFileBuyer implements IHiddenFileBuyer {
   #tokenFullIdArgs: [ArrayBuffer, number]
   #persistentArgs: PersistentDerivationArgs
+  #isFirefox: boolean
 
   constructor(
     public readonly crypto: FileMarketCrypto,
@@ -16,17 +17,23 @@ export class HiddenFileBuyer implements IHiddenFileBuyer {
     public readonly seedProvider: ISeedProvider,
     public readonly globalSalt: ArrayBuffer,
     public readonly collectionAddress: ArrayBuffer,
-    public readonly tokenId: number
+    public readonly tokenId: number,
   ) {
     this.#tokenFullIdArgs = [this.collectionAddress, this.tokenId]
     this.#persistentArgs = [this.globalSalt, ...this.#tokenFullIdArgs]
+    this.#isFirefox = navigator.userAgent.includes('Firefox')
   }
 
   async initBuy(): Promise<ArrayBuffer> {
     assertSeed(this.seedProvider.seed)
 
     const dealNumber = await this.blockchainDataProvider.getTransferCount(...this.#tokenFullIdArgs)
-    const { pub } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
+    const { pub } = await this.crypto.eftRsaDerivation(
+      this.seedProvider.seed,
+      ...this.#persistentArgs,
+      dealNumber,
+      { disableWorker: this.#isFirefox },
+    )
 
     return pub
   }
@@ -35,7 +42,12 @@ export class HiddenFileBuyer implements IHiddenFileBuyer {
     assertSeed(this.seedProvider.seed)
 
     const dealNumber = await this.blockchainDataProvider.getTransferCount(...this.#tokenFullIdArgs)
-    const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
+    const { priv } = await this.crypto.eftRsaDerivation(
+      this.seedProvider.seed,
+      ...this.#persistentArgs,
+      dealNumber,
+      { disableWorker: this.#isFirefox },
+    )
 
     return priv
   }

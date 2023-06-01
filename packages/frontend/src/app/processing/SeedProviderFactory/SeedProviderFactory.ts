@@ -16,6 +16,7 @@ export class SeedProviderFactory implements ISeedProviderFactory {
     const seedProvider = new SeedProvider(storageProvider, account)
     await seedProvider.init()
     this.seedProviders[account] = seedProvider
+
     return seedProvider
   }
 
@@ -30,6 +31,7 @@ export class SeedProviderFactory implements ISeedProviderFactory {
       job = this.createSeedProvider(account)
       this.jobs[account] = job
     }
+
     return job
   }
 }

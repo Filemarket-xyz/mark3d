@@ -8,8 +8,8 @@ const SupportedByStyle = styled('div', {
   width: '777px',
   marginTop: '64px',
   '@md': {
-    width: '100%'
-  }
+    width: '100%',
+  },
 })
 
 const SupportedContainerBlocks = styled('div', {
@@ -22,8 +22,8 @@ const SupportedContainerBlocks = styled('div', {
     marginBottom: '100px',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
-    gapColumn: '32px'
-  }
+    gapColumn: '32px',
+  },
 })
 
 const SupportedBy = () => {
@@ -31,9 +31,18 @@ const SupportedBy = () => {
     <SupportedByStyle>
       <Txt ternary3 style={{ paddingLeft: '16px', marginBottom: '24px' }}>Supported By</Txt>
       <SupportedContainerBlocks>
-          {supportedByData.map((item, index) => {
-            return <a href={item.url} target={'_blank'} key={index} rel="noreferrer"><img src={item.src} /></a>
-          })}
+        {supportedByData.map((item, index) => {
+          return (
+            <a
+              key={index}
+              href={item.url}
+              target={'_blank'}
+              rel="noreferrer"
+            >
+              <img src={item.src} />
+            </a>
+          )
+        })}
       </SupportedContainerBlocks>
     </SupportedByStyle>
   )

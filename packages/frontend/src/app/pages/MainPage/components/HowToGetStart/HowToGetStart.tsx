@@ -29,11 +29,11 @@ const HowToGetStartStyle = styled('div', {
   flexDirection: 'column',
   gap: '48px',
   '@md': {
-    gap: '24px'
+    gap: '24px',
   },
   '& img': {
-    width: '32px'
-  }
+    width: '32px',
+  },
 })
 
 const ArrowContent = styled('div', {
@@ -41,12 +41,12 @@ const ArrowContent = styled('div', {
   gap: '12px',
   '& span': {
     '@md': {
-      fontSize: '16px !important'
+      fontSize: '16px !important',
     },
     '@sm': {
-      fontSize: '14px !important'
-    }
-  }
+      fontSize: '14px !important',
+    },
+  },
 
 })
 
@@ -62,15 +62,15 @@ const Line = styled('div', {
         marginTop: '$3',
         '@lg': {
           marginBottom: '$2',
-          marginTop: '$2'
+          marginTop: '$2',
         },
         '@sm': {
           marginBottom: '$1',
-          marginTop: '$1'
-        }
-      }
-    }
-  }
+          marginTop: '$1',
+        },
+      },
+    },
+  },
 })
 
 const Block = styled('div', {
@@ -79,8 +79,8 @@ const Block = styled('div', {
   gap: '24px',
   fontSize: '16px',
   '@md': {
-    fontSize: '12px'
-  }
+    fontSize: '12px',
+  },
 })
 
 const Header = styled('h3', {
@@ -88,8 +88,8 @@ const Header = styled('h3', {
   fontSize: '24px',
   lineHeight: '32px',
   '@md': {
-    fontSize: '20px'
-  }
+    fontSize: '20px',
+  },
 })
 
 const CardBlocks = styled('div', {
@@ -97,7 +97,7 @@ const CardBlocks = styled('div', {
   justifyContent: 'space-between',
   alignItems: 'center',
   flexWrap: 'wrap',
-  gap: '16px'
+  gap: '16px',
 })
 
 const Text = styled('h4', {
@@ -106,16 +106,16 @@ const Text = styled('h4', {
   lineHeight: '16px',
   fontWeight: '500',
   '@md': {
-    fontSize: '12px'
+    fontSize: '12px',
   },
   '@sm': {
-    fontSize: '11px'
+    fontSize: '11px',
   },
   variants: {
     blue: {
       true: {
-        color: '$blue500'
-      }
+        color: '$blue500',
+      },
     },
     linear: {
       true: {
@@ -128,11 +128,11 @@ const Text = styled('h4', {
         backgroundClip: 'text',
         textFillColor: 'transparent',
         '@md': {
-          fontSize: '12px'
-        }
-      }
-    }
-  }
+          fontSize: '12px',
+        },
+      },
+    },
+  },
 })
 
 const Title = styled('h3', {
@@ -141,11 +141,11 @@ const Title = styled('h3', {
   fontSize: '32px',
   color: '#0090FF',
   '@md': {
-    fontSize: '24px'
+    fontSize: '24px',
   },
   '@sm': {
-    fontSize: '16px'
-  }
+    fontSize: '16px',
+  },
 })
 
 const HowToGetStart = () => {
@@ -163,8 +163,8 @@ const HowToGetStart = () => {
         borderRadius: '24px',
         padding: '12px 32px',
         '& .nextui-collapse-title-content': {
-          width: '80%'
-        }
+          width: '80%',
+        },
       }}
       arrowIcon={(
         <ArrowContent>
@@ -193,7 +193,7 @@ const HowToGetStart = () => {
                   target={'_blank'}
                   href={'https://medium.com/filemarket-xyz/how-to-buy-fil-and-use-fil-in-the-filecoin-virtual-machine-d67fa90764d5'}
                   style={{
-                    textDecoration: 'underline'
+                    textDecoration: 'underline',
                   }}
                 >
                   Top up your wallet with $FIL
@@ -208,7 +208,7 @@ const HowToGetStart = () => {
                 <Link
                   howToGetStart
                   style={{
-                    textDecoration: 'underline'
+                    textDecoration: 'underline',
                   }}
                   onPress={() => {
                     !isConnected && open()
@@ -241,7 +241,7 @@ const HowToGetStart = () => {
                 <Link
                   howToGetStart
                   style={{
-                    textDecoration: 'underline'
+                    textDecoration: 'underline',
                   }}
                   onPress={() => {
                     navigate('/market')
@@ -254,7 +254,7 @@ const HowToGetStart = () => {
           </CardBlocks>
         </Block>
         <Block style={{
-          gap: '16px'
+          gap: '16px',
         }}
         >
           <Txt h5 style={{ fontWeight: '600', fontSize: '1.25em' }}>Why create a FileWallet?</Txt>
@@ -276,7 +276,7 @@ const HowToGetStart = () => {
                 <Link
                   howToGetStart
                   style={{
-                    textDecoration: 'underline'
+                    textDecoration: 'underline',
                   }}
                   onPress={() => {
                     !isConnected && open()
@@ -321,7 +321,7 @@ const HowToGetStart = () => {
                   href={'/create/collection'}
                   target={'_blank'}
                   style={{
-                    textDecoration: 'underline'
+                    textDecoration: 'underline',
                   }}
                 >
                   Create a collection
@@ -335,10 +335,10 @@ const HowToGetStart = () => {
               content={(
                 <Link
                   howToGetStart
-                  href={'/create/nft'}
+                  href={'/create/eft'}
                   target={'_blank'}
                   style={{
-                    textDecoration: 'underline'
+                    textDecoration: 'underline',
                   }}
                 >
                   Mint an EFT with a hidden file
@@ -394,7 +394,7 @@ const HowToGetStart = () => {
                 <Link
                   howToGetStart
                   style={{
-                    textDecoration: 'underline'
+                    textDecoration: 'underline',
                   }}
                   onPress={() => {
                     navigate('/market')

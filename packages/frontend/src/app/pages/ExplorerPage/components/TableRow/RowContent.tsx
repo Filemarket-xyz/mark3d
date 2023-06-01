@@ -13,19 +13,19 @@ const ContentWrapper = styled('div', {
   fontSize: '14px',
   padding: '$4',
   '@sm': {
-    paddingLR: '$3'
+    paddingLR: '$3',
   },
-  paddingTop: 0
+  paddingTop: 0,
 })
 
 const Content = styled('section', {
   paddingTop: '$4',
   display: 'flex',
   '@md': {
-    flexDirection: 'column-reverse'
+    flexDirection: 'column-reverse',
   },
   justifyContent: 'space-between',
-  gap: '$4'
+  gap: '$4',
 })
 
 const Description = styled('p', {
@@ -34,22 +34,22 @@ const Description = styled('p', {
   marginBottom: '$4',
   ...textVariant('secondary1').true,
   fontSize: '14px',
-  lineHeight: '129%'
+  lineHeight: '129%',
 })
 
 const MainInfo = styled('div', {
-  flexGrow: '1'
+  flexGrow: '1',
 })
 
 const Preview = styled('div', {
   width: '50%',
   '@md': {
-    width: '100%'
-  }
+    width: '100%',
+  },
 })
 
 const A = styled('a', {
-  textDecoration: 'none'
+  textDecoration: 'none',
 })
 
 interface Props extends IRowContent {
@@ -60,7 +60,7 @@ export default function RowContent({
   description,
   imageURLS,
   title,
-  link
+  link,
 }: Props) {
   return (
     <ContentWrapper>

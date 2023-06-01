@@ -1,9 +1,9 @@
 import {
   ComponentProps,
-  forwardRef
+  forwardRef,
 } from 'react'
 import {
-  AriaButtonProps
+  AriaButtonProps,
 } from 'react-aria'
 
 import { Drip } from '../../Drip'
@@ -19,9 +19,10 @@ export const LinkButton = forwardRef<HTMLAnchorElement, LinkButtonProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const { buttonRef, buttonProps, dripProps } = useButton(props, ref)
+
     return (
       <LinkButtonStyled
         {...buttonProps}
@@ -31,5 +32,5 @@ export const LinkButton = forwardRef<HTMLAnchorElement, LinkButtonProps>(
         <Drip {...dripProps} color='white' />
       </LinkButtonStyled>
     )
-  }
+  },
 )

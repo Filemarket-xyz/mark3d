@@ -11,7 +11,7 @@ export interface PageState {
 export const initialPage = (): PageState => ({
   page: 0,
   size: defaultPageSize,
-  total: 0
+  total: 0,
 })
 
 export class PageStore {

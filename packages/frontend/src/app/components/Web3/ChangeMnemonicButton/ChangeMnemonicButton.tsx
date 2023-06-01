@@ -15,19 +15,19 @@ export const ChangeMnemonicButton: FC<ChangeMnemonicButtonProps> = ({ onPress })
   const openDialog = () => {
     dialogStore.openDialog({
       component: EnterSeedPhraseDialog,
-      props: {}
+      props: {},
     })
   }
 
   return (
-        <Link
-            type="button"
-            onPress={(e) => {
-              openDialog()
-              onPress?.(e)
-            }}
-        >
-            Change mnemonic
-        </Link>
+    <Link
+      type="button"
+      onPress={(e) => {
+        openDialog()
+        onPress?.(e)
+      }}
+    >
+      Change mnemonic
+    </Link>
   )
 }

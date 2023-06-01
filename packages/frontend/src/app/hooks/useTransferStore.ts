@@ -10,5 +10,6 @@ import { useStores } from './useStores'
 export function useTransferStore(collectionAddress?: string, tokenId?: string) {
   const { transferStore } = useStores()
   useActivateDeactivateRequireParams(transferStore, collectionAddress, tokenId)
+
   return transferStore
 }

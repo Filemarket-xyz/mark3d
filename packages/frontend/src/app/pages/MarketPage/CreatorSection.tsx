@@ -13,8 +13,8 @@ const card: CreatorCardProps = {
   user: {
     imageUrl: userImg,
     name: 'UnderKong',
-    social: '@UnderKong`s twitter'
-  }
+    social: '@UnderKong`s twitter',
+  },
 }
 
 const cards: CreatorCardProps[] = []

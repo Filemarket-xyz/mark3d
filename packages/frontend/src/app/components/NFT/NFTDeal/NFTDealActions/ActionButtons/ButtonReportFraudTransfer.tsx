@@ -17,8 +17,9 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ 
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Fraud reported! Expect a decision within a few minutes',
-    loadingMsg: 'Reporting fraud'
+    loadingMsg: 'Reporting fraud',
   })
+
   return (
     <>
       <MintModal {...modalProps} />
@@ -26,11 +27,11 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ 
         primary
         fullWidth
         borderRadiusSecond
+        isDisabled={isLoading}
         onPress={async () => {
           await reportFraud()
           callback?.()
         }}
-        isDisabled={isLoading}
       >
         Report fraud
       </Button>

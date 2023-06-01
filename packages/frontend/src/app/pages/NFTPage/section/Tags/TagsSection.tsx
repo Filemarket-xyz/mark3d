@@ -10,23 +10,23 @@ const Categories = styled('div', {
   fontSize: '20px',
   alignItems: 'center',
   color: '#A7A8A9',
-  flexWrap: 'wrap'
+  flexWrap: 'wrap',
 })
 
 const Tags = styled('div', {
   display: 'flex',
   gap: '8px',
-  flexWrap: 'wrap'
+  flexWrap: 'wrap',
 })
 
 const Category = styled(BlueText, {
-  fontSize: '20px'
+  fontSize: '20px',
 })
 
 const GridBlockDisplay = styled(GridBlock, {
   display: 'flex',
   flexDirection: 'column',
-  gap: '16px'
+  gap: '16px',
 })
 
 interface TagsSectionProps {

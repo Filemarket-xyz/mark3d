@@ -18,11 +18,11 @@ interface OrderFormRawValue {
 }
 
 const importFormValue = (value?: OrderFormValue): OrderFormRawValue => ({
-  price: value ? toCurrency(value.price) : null
+  price: value ? toCurrency(value.price) : null,
 })
 
 const exportFormValue = (rawValue: OrderFormRawValue): OrderFormValue => ({
-  price: fromCurrency(rawValue.price ?? 0)
+  price: fromCurrency(rawValue.price ?? 0),
 })
 
 export interface OrderFormProps {
@@ -32,7 +32,7 @@ export interface OrderFormProps {
 
 const FormControlStyle = styled(FormControl, {
   '& .inputDiv': {
-    position: 'relative'
+    position: 'relative',
   },
   '& .inputDiv:after': {
     content: 'FIL',
@@ -41,19 +41,20 @@ const FormControlStyle = styled(FormControl, {
     ...textVariant('primary1').true,
     fontWeight: '600',
     top: '14px',
-    right: '16px'
-  }
+    right: '16px',
+  },
 })
 
 const ButtonContainer = styled('div', {
   display: 'flex',
-  justifyContent: 'end'
+  justifyContent: 'end',
 })
 
 export const OrderForm: FC<OrderFormProps> = ({ defaultValues, onSubmit }) => {
   const { register, handleSubmit } = useForm<OrderFormRawValue>({
-    defaultValues: importFormValue(defaultValues)
+    defaultValues: importFormValue(defaultValues),
   })
+
   return (
     <form onSubmit={handleSubmit(values => {
       onSubmit?.(exportFormValue(values))

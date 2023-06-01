@@ -3,7 +3,9 @@ import React, { FC, PropsWithChildren } from 'react'
 
 import { styled } from '../../../../styles'
 import { Order, Transfer } from '../../../../swagger/Api'
+import { useIsOwner } from '../../../processing'
 import { TokenFullId } from '../../../processing/types'
+import { Txt } from '../../../UIkit'
 import { NFTDealActions } from './NFTDealActions/NFTDealActions'
 import { NFTDealPrice } from './NFTDealPrice'
 
@@ -16,17 +18,26 @@ export type NFTDealProps = PropsWithChildren<{
 
 const NFTDealStyle = styled('div', {
   width: '400px',
-  height: '160px',
   background: 'linear-gradient(0deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), #232528',
   borderRadius: '20px',
   display: 'flex',
   justifyContent: 'center',
+  gap: '$3',
   alignItems: 'center',
   flexDirection: 'column',
+  paddingTB: '$3',
   '@md': {
     width: '100%',
-    height: '201px'
-  }
+  },
+  variants: {
+    isNotListed: {
+      true: {
+        background: 'none',
+        height: '64px',
+        padding: '0',
+      },
+    },
+  },
 })
 
 const DealContainerInfo = styled('div', {
@@ -34,12 +45,11 @@ const DealContainerInfo = styled('div', {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  marginBottom: '$3',
   gap: '$3',
   padding: '0 16px',
   '@sm': {
-    flexDirection: 'column'
-  }
+    flexDirection: 'column',
+  },
 })
 
 const ButtonsContainer = styled('div', {
@@ -51,8 +61,19 @@ const ButtonsContainer = styled('div', {
   padding: '0 16px',
   '@sm': {
     flexDirection: 'column',
-    gap: '$3'
-  }
+    gap: '$3',
+  },
+})
+
+const IsNotListedContainer = styled('div', {
+  width: '100%',
+  height: '100%',
+  border: '1px solid $gray300',
+  borderRadius: '20px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  cursor: 'not-allowed',
 })
 
 export const NFTDeal: FC<NFTDealProps> = observer(({
@@ -60,10 +81,12 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
   order,
   tokenFullId,
   reFetchOrder,
-  children
+  children,
 }) => {
+  const { isOwner } = useIsOwner(tokenFullId)
+
   return (
-    <NFTDealStyle>
+    <NFTDealStyle isNotListed={!transfer && !isOwner}>
       {(children || order) && (
         <DealContainerInfo>
           {children}
@@ -83,6 +106,11 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
           reFetchOrder={reFetchOrder}
         />
       </ButtonsContainer>
+      {(!transfer && !isOwner) && (
+        <IsNotListedContainer>
+          <Txt primary1 style={{ fontSize: '24px', color: '#A7A8A9' }}> EFT is not listed</Txt>
+        </IsNotListedContainer>
+      )}
     </NFTDealStyle>
   )
 })

@@ -1,25 +1,24 @@
 // See https://outline.customapp.tech/doc/shifrovanie-i-derivaciya-fYE6XPQHkq#h-derivaciya-klyuchej
-
+import { rsaGenerateKeyPair } from './rsa'
 import {AesKeyAndIv, EftAesDerivationFunction, EftRsaDerivationFunction, HkdfFunction, RsaKeyPair} from './types';
 import {aesIVLength, aesKeyLength, aesKeyType, rsaKeyType, rsaModulusLength} from './config';
 import {numberToBuffer} from './utils';
 import {hkdfSha512, hkdfSha512Native} from './hkdf-sha512';
-// to get the worker into the build
 // @ts-ignore
-import * as RsaWorker from '../dedicated-wokrers/rsa.worker.js'
-const rsaWorkerUrl = new URL('../dedicated-wokrers/rsa.worker.js', import.meta.url)
+// vite handles this and can build it
+import RsaWorker from '../dedicated-wokrers/rsa.worker?worker'
 
 export const eftAesDerivationNative = (crypto: Crypto): EftAesDerivationFunction =>
   async (seed, globalSalt, collectionAddress, tokenId) =>
     eftAesDerivationAux(hkdfSha512Native(crypto), seed, globalSalt, collectionAddress, tokenId)
 
 export const eftAesDerivation: EftAesDerivationFunction =
-  async (seed, globalSalt, collectionAddress, tokenId) =>
+  async (seed, globalSalt, collectionAddress, tokenId,) =>
     eftAesDerivationAux(hkdfSha512, seed, globalSalt, collectionAddress, tokenId)
 
 export const eftRsaDerivationNative = (crypto: Crypto): EftRsaDerivationFunction =>
-  async (seed, globalSalt, collectionAddress, tokenId, dealNumber) =>
-    eftRsaDerivationAux(hkdfSha512Native(crypto), seed, globalSalt, collectionAddress, tokenId, dealNumber)
+  async (seed, globalSalt, collectionAddress, tokenId, dealNumber, options) =>
+    eftRsaDerivationAux(hkdfSha512Native(crypto), seed, globalSalt, collectionAddress, tokenId, dealNumber, options)
 
 export const eftRsaDerivation: EftRsaDerivationFunction =
   async (seed, globalSalt, collectionAddress, tokenId, dealNumber) =>
@@ -49,7 +48,8 @@ const eftRsaDerivationAux = async (
   globalSalt: ArrayBuffer,
   collectionAddress: ArrayBuffer,
   tokenId: number,
-  dealNumber: number
+  dealNumber: number,
+  options?: { disableWorker: boolean }
 ): Promise<RsaKeyPair> => {
   const OKM = await hkdf(
     globalSalt,
@@ -62,9 +62,17 @@ const eftRsaDerivationAux = async (
     rsaModulusLength,
   )
 
-  return new Promise((resolve) => {
-    const rsaWorker = new Worker(rsaWorkerUrl, { type: 'module' })
-    rsaWorker.onmessage = (e) => resolve(e.data)
+  if (options?.disableWorker) {
+    return rsaGenerateKeyPair(OKM)
+  }
+
+  return new Promise((resolve, reject) => {
+    const rsaWorker = new RsaWorker()
+    rsaWorker.onmessage = (e: MessageEvent<RsaKeyPair>) => resolve(e.data)
+    rsaWorker.onerror = (e: ErrorEvent) => {
+      console.error(e)
+      reject(e)
+    }
 
     rsaWorker.postMessage({ seed: OKM })
   })

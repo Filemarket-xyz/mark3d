@@ -8,7 +8,7 @@ import { Button } from './Button'
 
 const story: ComponentMeta<typeof Button> = {
   component: Button,
-  title: 'UIKit/Button'
+  title: 'UIKit/Button',
 }
 export default story
 
@@ -16,13 +16,14 @@ const Template: ComponentStory<typeof Button> = (props) => {
   const pressHandler = () => {
     alert('button clicked!')
   }
+
   return (
     <StitchesProvider>
       <div style={{ marginBottom: 20 }}>
         <Button {...props} onPress={pressHandler}>Button</Button>
       </div>
       <div>
-        <Button {...props} isDisabled={true}>Disabled</Button>
+        <Button {...props} isDisabled>Disabled</Button>
       </div>
     </StitchesProvider>
   )
@@ -34,6 +35,7 @@ const IconTemplate: ComponentStory<typeof Button> = ({ children, ...props }) => 
   const pressHandler = () => {
     alert('button clicked!')
   }
+
   return (
     <StitchesProvider>
       <div style={{ marginBottom: 20 }}>
@@ -42,7 +44,7 @@ const IconTemplate: ComponentStory<typeof Button> = ({ children, ...props }) => 
         </Button>
       </div>
       <div>
-        <Button {...props} isDisabled={true}>
+        <Button {...props} isDisabled>
           {children}
         </Button>
       </div>
@@ -52,37 +54,37 @@ const IconTemplate: ComponentStory<typeof Button> = ({ children, ...props }) => 
 
 export const Primary = Template.bind({})
 Primary.args = {
-  primary: true
+  primary: true,
 }
 
 export const Secondary = Template.bind({})
 Secondary.args = {
-  secondary: true
+  secondary: true,
 }
 
 export const Tertiary = Template.bind({})
 Tertiary.args = {
-  tertiary: true
+  tertiary: true,
 }
 
 export const Icon = IconTemplate.bind({})
 Icon.args = {
   children: <Mark3d />,
-  icon: true
+  icon: true,
 }
 
 export const IconSmall = IconTemplate.bind({})
 IconSmall.args = {
   children: <Mark3d />,
   icon: true,
-  small: true
+  small: true,
 }
 
 export const IconPrimary = IconTemplate.bind({})
 IconPrimary.args = {
   children: <img src={Plus} alt="plus" />,
   icon: true,
-  primary: true
+  primary: true,
 }
 
 export const IconPrimarySmall = IconTemplate.bind({})
@@ -90,7 +92,7 @@ IconPrimarySmall.args = {
   children: <img src={Plus} alt="plus" />,
   icon: true,
   primary: true,
-  small: true
+  small: true,
 }
 
 export const IconCover = IconTemplate.bind({})
@@ -98,5 +100,5 @@ IconCover.args = {
   children: <img src={BearJedi} alt="plus" />,
   icon: true,
   primary: true,
-  iconCover: true
+  iconCover: true,
 }

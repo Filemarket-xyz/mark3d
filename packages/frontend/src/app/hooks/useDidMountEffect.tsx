@@ -10,7 +10,7 @@ const numberOfRerendersInCurrentMode =
 /** Applies the same behaivour as useEffect, but does not render on first load */
 export const useAfterDidMountEffect = (
   effect: React.EffectCallback,
-  deps?: React.DependencyList | undefined
+  deps?: React.DependencyList | undefined,
 ) => {
   const rerendersCount = useRef(0)
 

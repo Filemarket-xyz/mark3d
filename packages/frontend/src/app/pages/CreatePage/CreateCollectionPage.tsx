@@ -6,7 +6,7 @@ import MintModal, {
   ErrorBody,
   extractMessageFromError,
   InProgressBody,
-  SuccessNavBody
+  SuccessNavBody,
 } from '../../components/Modal/Modal'
 import ImageLoader from '../../components/Uploaders/ImageLoader/ImageLoader'
 import { Button, PageLayout, textVariant } from '../../UIkit'
@@ -18,7 +18,7 @@ import { useModalProperties } from './hooks/useModalProperties'
 
 export const Title = styled('h1', {
   ...textVariant('h3').true,
-  marginBottom: '$4'
+  marginBottom: '$4',
 })
 
 export const Label = styled('label', {
@@ -32,39 +32,39 @@ export const Label = styled('label', {
       true: {
         paddingLeft: '$3',
         '@sm': {
-          paddingLeft: 0
-        }
-      }
-    }
-  }
+          paddingLeft: 0,
+        },
+      },
+    },
+  },
 })
 
 export const TextBold = styled('span', {
   ...textVariant('primary1').true,
   fontSize: '12px',
-  fontWeight: 600
+  fontWeight: 600,
 })
 
 export const TextGray = styled('span', {
-  color: '$gray400'
+  color: '$gray400',
 })
 
 export const LabelWithCounter = styled('div', {
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'space-between'
+  justifyContent: 'space-between',
 })
 
 export const LetterCounter = styled('span', {
   display: 'block',
   ...textVariant('secondary3').true,
-  color: '$gray400'
+  color: '$gray400',
 })
 
 export const Form = styled('form', {
   maxWidth: 'calc($breakpoints$sm + 32px)',
   marginLeft: 'auto',
-  marginRight: 'auto'
+  marginRight: 'auto',
 })
 
 export const ButtonContainer = styled('div', {
@@ -73,10 +73,14 @@ export const ButtonContainer = styled('div', {
   width: '100%',
   display: 'flex',
   justifyContent: 'flex-start',
+  paddingBottom: '90px',
+  '@md': {
+    paddingBottom: '70px',
+  },
   '@sm': {
     paddingLeft: 0,
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
 })
 
 export interface CreateCollectionForm {
@@ -92,14 +96,14 @@ export default function CreateCollectionPage() {
     handleSubmit,
     formState: { isValid },
     getValues,
-    resetField
+    resetField,
   } = useForm<CreateCollectionForm>()
 
   const {
     error,
     isLoading,
     result,
-    createCollection: mintCollection
+    createCollection: mintCollection,
   } = useCreateCollection()
 
   const onSubmit: SubmitHandler<CreateCollectionForm> = (data) => {
@@ -123,7 +127,7 @@ export default function CreateCollectionPage() {
       <SuccessNavBody
         buttonText='View collection'
         link={`/collection/${result.collectionTokenAddress}`}
-      />
+      />,
     )
     void setModalOpen(true)
   }, [result])
@@ -136,24 +140,19 @@ export default function CreateCollectionPage() {
   }, [error])
 
   const [textareaLength, setTextareaLength] = useState(
-    getValues('description')?.length ?? 0
+    getValues('description')?.length ?? 0,
   )
 
   return (
     <>
       <MintModal
-        body={modalBody ?? <></>}
+        body={modalBody}
         open={modalOpen}
         handleClose={() => {
           setModalOpen(false)
         }}
       />
-      <PageLayout
-        css={{
-          minHeight: '100vh',
-          paddingBottom: '$4'
-        }}
-      >
+      <PageLayout css={{ minHeight: '100vh' }}>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Title>Create New Collection</Title>
 
@@ -198,7 +197,7 @@ export default function CreateCollectionPage() {
                 onChange(event) {
                   setTextareaLength(event?.target?.value?.length ?? 0)
                 },
-                maxLength: 1000
+                maxLength: 1000,
               })}
               placeholder='Description of your token collection'
             />

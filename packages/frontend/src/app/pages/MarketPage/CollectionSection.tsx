@@ -7,9 +7,9 @@ import { CardsContainer } from './NftSection'
 
 const card: CollectionCardProps = {
   imageUrl: collectionImg,
-  description: `FileMarket NFT collection for
+  description: `FileMarket EFT collection for
   3D Internet and virtual worlds`,
-  iconURL: icon
+  iconURL: icon,
 }
 
 const cards: CollectionCardProps[] = []

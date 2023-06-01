@@ -21,10 +21,11 @@ const ConvertKitStyle = styled(ConvertKitForm, {
     width: '60%',
     '@sm': {
       width: '80%',
-      margin: '0 auto'
-    }
+      margin: '0 auto',
+    },
   },
   '& button': {
+    cursor: 'pointer',
     background: 'none',
     ...textVariant('primary1').true,
     border: '2px solid #028FFF',
@@ -34,15 +35,15 @@ const ConvertKitStyle = styled(ConvertKitForm, {
     height: '48px',
     '@sm': {
       width: '80%',
-      margin: '0 auto'
-    }
+      margin: '0 auto',
+    },
   },
   '& #ck-first-name': {
-    display: 'none'
+    display: 'none',
   },
   '@sm': {
-    flexDirection: 'column'
-  }
+    flexDirection: 'column',
+  },
 })
 
 const EmailForm = () => {

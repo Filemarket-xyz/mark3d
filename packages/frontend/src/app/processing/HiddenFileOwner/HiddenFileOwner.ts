@@ -11,6 +11,7 @@ import { IHiddenFileOwner } from './IHiddenFileOwner'
 export class HiddenFileOwner implements IHiddenFileOwner {
   #persistentArgs: PersistentDerivationArgs
   #tokenFullIdArgs: [ArrayBuffer, number]
+  #isFirefox: boolean
 
   constructor(
     public readonly address: string,
@@ -19,10 +20,11 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     public readonly seedProvider: ISeedProvider,
     public readonly globalSalt: ArrayBuffer,
     public readonly collectionAddress: ArrayBuffer,
-    public readonly tokenId: number
+    public readonly tokenId: number,
   ) {
     this.#tokenFullIdArgs = [this.collectionAddress, this.tokenId]
     this.#persistentArgs = [this.globalSalt, ...this.#tokenFullIdArgs]
+    this.#isFirefox = navigator.userAgent.includes('Firefox')
   }
 
   async decryptFile(encryptedFile: ArrayBuffer, meta: FileMeta | undefined): Promise<DecryptResult<File>> {
@@ -38,10 +40,15 @@ export class HiddenFileOwner implements IHiddenFileOwner {
       } else {
         const {
           encryptedPassword,
-          dealNumber
+          dealNumber,
         } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullIdArgs)
 
-        const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
+        const { priv } = await this.crypto.eftRsaDerivation(
+          this.seedProvider.seed,
+          ...this.#persistentArgs,
+          dealNumber,
+          { disableWorker: this.#isFirefox },
+        )
         password = await this.crypto.rsaDecrypt(hexToBuffer(encryptedPassword), priv)
       }
 
@@ -49,12 +56,12 @@ export class HiddenFileOwner implements IHiddenFileOwner {
 
       return {
         ok: true,
-        result: new File([decryptedFile], meta?.name || 'hidden_file', { type: meta?.type })
+        result: new File([decryptedFile], meta?.name || 'hidden_file', { type: meta?.type }),
       }
     } catch (error) {
       return {
         ok: false,
-        error: `Decrypt failed: ${error}`
+        error: `Decrypt failed: ${error}`,
       }
     }
   }
@@ -81,10 +88,15 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     } else {
       const {
         encryptedPassword: lastEncryptedPassword,
-        dealNumber
+        dealNumber,
       } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullIdArgs)
 
-      const { priv } = await this.crypto.eftRsaDerivation(this.seedProvider.seed, ...this.#persistentArgs, dealNumber)
+      const { priv } = await this.crypto.eftRsaDerivation(
+        this.seedProvider.seed,
+        ...this.#persistentArgs,
+        dealNumber,
+        { disableWorker: this.#isFirefox },
+      )
       password = await this.crypto.rsaDecrypt(hexToBuffer(lastEncryptedPassword), priv)
     }
 

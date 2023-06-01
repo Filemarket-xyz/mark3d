@@ -28,7 +28,7 @@ export class TransferStore implements IStoreRequester,
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore
     makeAutoObservable(this, {
-      errorStore: false
+      errorStore: false,
     })
   }
 
@@ -90,8 +90,8 @@ export class TransferStore implements IStoreRequester,
         to,
         statuses: [{
           status: TransferStatus.Created,
-          timestamp: Date.now()
-        }]
+          timestamp: Date.now(),
+        }],
       }
     })
   }
@@ -104,8 +104,8 @@ export class TransferStore implements IStoreRequester,
         from,
         statuses: [{
           status: TransferStatus.Drafted,
-          timestamp: Date.now()
-        }]
+          timestamp: Date.now(),
+        }],
       }
     })
   }
@@ -121,7 +121,7 @@ export class TransferStore implements IStoreRequester,
       data.publicKey = publicKeyHex
       data.statuses?.unshift({
         status: TransferStatus.PublicKeySet,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     })
   }
@@ -131,7 +131,7 @@ export class TransferStore implements IStoreRequester,
       data.encryptedPassword = encryptedPasswordHex
       data.statuses?.unshift({
         status: TransferStatus.PasswordSet,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     })
   }
@@ -146,7 +146,7 @@ export class TransferStore implements IStoreRequester,
     this.checkData(tokenId, data => {
       data.statuses?.unshift({
         status: TransferStatus.FraudReported,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     })
   }
@@ -156,7 +156,7 @@ export class TransferStore implements IStoreRequester,
       data.fraudApproved = approved
       data.statuses?.unshift({
         status: TransferStatus.Finished,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     })
   }

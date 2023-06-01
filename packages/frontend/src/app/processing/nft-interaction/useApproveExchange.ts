@@ -26,12 +26,12 @@ export function useApproveExchange({ collectionAddress, tokenId }: Partial<Token
     return callContract({ contract, method: 'approve' },
       mark3dConfig.exchangeToken.address,
       BigNumber.from(tokenId),
-      { gasPrice: mark3dConfig.gasPrice }
+      { gasPrice: mark3dConfig.gasPrice },
     )
   }), [wrapPromise, contract, signer, tokenId])
 
   return {
     ...statuses,
-    approveExchange
+    approveExchange,
   }
 }

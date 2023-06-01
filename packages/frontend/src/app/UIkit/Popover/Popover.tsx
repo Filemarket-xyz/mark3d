@@ -8,10 +8,10 @@ export const PopoverContent = styled(NextUIPopover.Content, {
   paddingTB: '$4',
   paddingLR: '30px',
   '@md': {
-    padding: '$3'
+    padding: '$3',
   },
   backgroundColor: '$white',
   border: '2px solid $gray200',
   borderRadius: '$3',
-  boxShadow: '$form'
+  boxShadow: '$form',
 })
