@@ -67,6 +67,7 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
         <ButtonGlowing
           modalButton
           whiteWithBlue
+          modalButtonFontSize
           type="submit"
           isDisabled={!!(errors.password)}
           style={{ marginTop: '16px' }}

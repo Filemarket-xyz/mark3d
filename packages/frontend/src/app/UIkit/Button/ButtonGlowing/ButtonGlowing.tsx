@@ -10,7 +10,7 @@ export const ButtonGlowing = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 
   return (
     <StyledWrapper>
-      <StyledGlow />
+      <StyledGlow isDisabled={props.disabled} />
       <StyledButton
         {...buttonProps}
         ref={buttonRef}

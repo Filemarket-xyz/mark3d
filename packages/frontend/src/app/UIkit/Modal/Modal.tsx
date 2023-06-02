@@ -4,6 +4,7 @@ import React, { ComponentProps } from 'react'
 import CloseButtonImg from '../../../assets/img/CloseButton.svg'
 import FWIconImg from '../../../assets/img/FWicon.svg'
 import { styled } from '../../../styles'
+import { useMediaMui } from '../../hooks/useMediaMui'
 import { FormControl } from '../Form/FormControl'
 import { textVariant } from '../Txt'
 
@@ -48,19 +49,28 @@ export const FormControlModal = styled(FormControl, {
 })
 
 export const Modal = (props: ComponentProps<typeof ModalBase>) => {
+  const { adaptive } = useMediaMui()
+
   return (
     <ModalBase
       {...props}
+      closeButton={false}
       css={{
         ...modalStyle,
         ...props.css,
         color: '#232528',
+        padding: adaptive({
+          sm: '20px',
+          defaultValue: '32px',
+        }),
       }}
     >
       {props.children}
-      <CloseButton onClick={props.onClose}>
-        <img src={CloseButtonImg} />
-      </CloseButton>
+      {props.closeButton && (
+        <CloseButton onClick={() => { !props.preventClose && props.onClose?.() }}>
+          <img src={CloseButtonImg} />
+        </CloseButton>
+      )}
     </ModalBase>
   )
 }
@@ -78,7 +88,7 @@ export const ModalTitle = styled('h3', {
   marginBottom: '16px',
   position: 'relative',
   '@sm': {
-    fontSize: '20px',
+    fontSize: '19px',
   },
 })
 

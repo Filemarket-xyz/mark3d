@@ -164,6 +164,13 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           borderRadius: '32px',
         },
       },
+      disconnect: {
+        true: {
+          border: '2px solid #C54B5C',
+          color: '#C54B5C',
+          background: 'white',
+        },
+      },
       fakeNftRarity: {
         common: {
           background: 'linear-gradient(90deg, #ACCBEE 0%, #77AFFF 100%)',
@@ -217,12 +224,29 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             opacity: 1,
             filter: 'brightness(1.1)',
           },
+          '&[data-disabled=true]': {
+            color: '$gray600',
+            border: '2px solid $gray600 !important',
+            cursor: 'not-allowed',
+          },
+        },
+      },
+      isDisabled: {
+        true: {
+          color: '$gray600',
+          border: '2px solid $gray600 !important',
+          cursor: 'not-allowed',
         },
       },
       modalButton: {
         true: {
           width: '240px',
           height: '48px',
+        },
+      },
+      modalButtonFontSize: {
+        true: {
+          fontSize: '16px',
         },
       },
     },

@@ -36,6 +36,7 @@ export const CreateMnemonicDialog: React.FC<AppDialogProps<CreateMnemonicDialogP
 
   return (
     <Modal
+      closeButton
       open={open}
       css={{
         ...modalStyle,
@@ -76,6 +77,7 @@ export const CreateMnemonicDialog: React.FC<AppDialogProps<CreateMnemonicDialogP
             <ButtonGlowing
               whiteWithBlue
               modalButton
+              modalButtonFontSize
               primary
               type="submit"
               onClick={onClose}

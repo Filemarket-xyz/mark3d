@@ -8,7 +8,7 @@ import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useStatusModal } from '../../../hooks/useStatusModal'
 import { useSeedProvider } from '../../../processing'
-import { Modal, ModalTitle } from '../../../UIkit/Modal/Modal'
+import { FWIcon, Modal, ModalTitle } from '../../../UIkit/Modal/Modal'
 import { AppDialogProps } from '../../../utils/dialog'
 import MintModal from '../../Modal/Modal'
 import { EnterSeedPhraseForm } from './EnterSeedPhraseForm/EnterSeedPhraseForm'
@@ -38,6 +38,7 @@ export function EnterSeedPhraseDialog({ open, onClose }: AppDialogProps<{}>): JS
     <>
       {!isSuccess ? (
         <Modal
+          closeButton
           open={open}
           width={adaptive({
             sm: '400px',
@@ -49,7 +50,13 @@ export function EnterSeedPhraseDialog({ open, onClose }: AppDialogProps<{}>): JS
             onClose()
           }}
         >
-          <ModalTitle isFW style={{ marginBottom: '40px' }}>Connect FileWallet</ModalTitle>
+          <ModalTitle style={{ marginBottom: '40px' }}>
+            <FWIcon />
+            {' '}
+            {' '}
+            {' '}
+            Connect FileWallet
+          </ModalTitle>
           <InputWindowStyle>
             <EnterSeedPhraseForm
               onSubmit={async (value) => {

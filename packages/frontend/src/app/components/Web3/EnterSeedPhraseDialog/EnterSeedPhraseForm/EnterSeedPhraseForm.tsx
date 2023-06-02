@@ -85,6 +85,7 @@ export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit }) => {
         <ButtonGlowing
           whiteWithBlue
           modalButton
+          modalButtonFontSize
           type="submit"
           isDisabled={!!(errors.password)}
         >

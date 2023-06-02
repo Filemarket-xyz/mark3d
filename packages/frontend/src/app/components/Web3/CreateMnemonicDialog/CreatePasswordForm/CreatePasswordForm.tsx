@@ -67,6 +67,7 @@ export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
         <ButtonGlowing
           modalButton
           whiteWithBlue
+          modalButtonFontSize
           type="submit"
           isDisabled={!!(errors.password)}
         >

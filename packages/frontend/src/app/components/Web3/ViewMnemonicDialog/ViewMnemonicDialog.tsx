@@ -17,6 +17,7 @@ export function ViewMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX.E
 
   return (
     <Modal
+      closeButton
       aria-labelledby='modal-title'
       open={open}
       width={adaptive({
@@ -51,6 +52,7 @@ export function ViewMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX.E
                 <ButtonGlowing
                   modalButton
                   whiteWithBlue
+                  modalButtonFontSize
                   onPress={onClose}
                 >
                   Close
