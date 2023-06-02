@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"log"
 	"math/big"
 )
@@ -148,6 +149,13 @@ func (s *service) GetTransfersV2(
 		log.Println("get active outgoing transfers total failed: ", err)
 		return nil, internalError
 	}
+
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+	if err != nil {
+		log.Println("failed to get conversion rate: ", err)
+		return nil, internalError
+	}
+
 	incoming, outgoing := make([]*models.TransferWithData, len(incomingTransfers)), make([]*models.TransferWithData, len(outgoingTransfers))
 	for i, t := range incomingTransfers {
 		token, err := s.repository.GetToken(ctx, tx, t.CollectionAddress, t.TokenId)
@@ -164,6 +172,7 @@ func (s *service) GetTransfersV2(
 			if err != nil {
 				return nil, internalError
 			}
+			order.PriceUsd = currencyconversion.Convert(rate, order.Price)
 		}
 		incoming[i] = &models.TransferWithData{
 			Collection: domain.CollectionToModel(collection),
@@ -187,6 +196,7 @@ func (s *service) GetTransfersV2(
 			if err != nil {
 				return nil, internalError
 			}
+			order.PriceUsd = currencyconversion.Convert(rate, order.Price)
 		}
 		outgoing[i] = &models.TransferWithData{
 			Collection: domain.CollectionToModel(collection),
@@ -237,6 +247,13 @@ func (s *service) GetTransfersHistoryV2(
 		log.Println("get outgoing transfers failed: ", err)
 		return nil, internalError
 	}
+
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+	if err != nil {
+		log.Println("failed to get conversion rate: ", err)
+		return nil, internalError
+	}
+
 	incoming, outgoing := make([]*models.TransferWithData, len(incomingTransfers)), make([]*models.TransferWithData, len(outgoingTransfers))
 	for i, t := range incomingTransfers {
 		token, err := s.repository.GetToken(ctx, tx, t.CollectionAddress, t.TokenId)
@@ -253,6 +270,8 @@ func (s *service) GetTransfersHistoryV2(
 			if err != nil {
 				return nil, internalError
 			}
+
+			order.PriceUsd = currencyconversion.Convert(rate, order.Price)
 		}
 		incoming[i] = &models.TransferWithData{
 			Collection: domain.CollectionToModel(collection),
@@ -276,6 +295,8 @@ func (s *service) GetTransfersHistoryV2(
 			if err != nil {
 				return nil, internalError
 			}
+
+			order.PriceUsd = currencyconversion.Convert(rate, order.Price)
 		}
 		outgoing[i] = &models.TransferWithData{
 			Collection: domain.CollectionToModel(collection),
