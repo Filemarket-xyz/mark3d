@@ -17,10 +17,14 @@ const ConnectWalletWindowStyle = styled('div', {
   },
 })
 
-export const ConnectFileWalletDialog = observer(({ open, onClose, openWeb3Modal }: AppDialogProps<{ openWeb3Modal?: () => void }>) => {
+type IConnectFileWalletDialog = AppDialogProps<{}> & {
+  openWeb3Modal: () => void
+}
+
+export const ConnectFileWalletDialog = observer(({ open, onClose, openWeb3Modal }: IConnectFileWalletDialog) => {
   const { adaptive, smValue } = useMediaMui()
   const { isOpen } = useWeb3Modal()
-  const { isConnected, address } = useAccount()
+  const { address } = useAccount()
   const canUnlock = useCanUnlock(address)
 
   return (

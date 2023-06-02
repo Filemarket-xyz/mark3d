@@ -53,8 +53,6 @@ export function EnterSeedPhraseDialog({ open, onClose }: AppDialogProps<{}>): JS
           <ModalTitle style={{ marginBottom: '40px' }}>
             <FWIcon />
             {' '}
-            {' '}
-            {' '}
             Connect FileWallet
           </ModalTitle>
           <InputWindowStyle>
