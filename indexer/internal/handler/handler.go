@@ -45,7 +45,7 @@ func (h *handler) Init() http.Handler {
 	router.HandleFunc("/orders_history/{address:0x[0-9a-f-A-F]{40}}", h.handleGetOrdersHistory)
 	router.HandleFunc("/orders/{address:0x[0-9a-f-A-F]{40}}/{id:[0-9]+}", h.handleGetOrder)
 	router.HandleFunc("/orders/all_active", h.handleGetAllActiveOrders)
-	router.HandleFunc("/sequencer/acquire", h.handleSequencerAcquire)
+	router.HandleFunc("/sequencer/acquire/{address:0x[0-9a-f-A-F]{40}}", h.handleSequencerAcquire)
 	router.HandleFunc("/healthcheck", h.handleHealthCheck)
 	router.Use(h.corsMiddleware)
 
