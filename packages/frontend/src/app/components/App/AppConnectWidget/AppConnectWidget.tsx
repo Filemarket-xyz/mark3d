@@ -26,6 +26,7 @@ export const AppConnectWidget: FC = observer(() => {
     dialogStore.openDialog({
       component: ConnectFileWalletDialog,
       props: {
+        // @ts-expect-error
         name: 'ConnectMain',
         openWeb3Modal,
       },
