@@ -1,6 +1,6 @@
 import { useWeb3Modal } from '@web3modal/react'
 import { observer } from 'mobx-react-lite'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
 import { useStores } from '../../../hooks'
@@ -13,8 +13,7 @@ import { AppPlusNav } from '../AppPlusNav'
 export const AppConnectWidget: FC = observer(() => {
   const { isConnected, address } = useAccount()
   const { dialogStore } = useStores()
-  const { isOpen, open: openWeb3Modal } = useWeb3Modal()
-  const [isCloseForConnect, setIsCloseForConnect] = useState<boolean>(false)
+  const { open: openWeb3Modal } = useWeb3Modal()
   const canUnlock = useCanUnlock(address)
   const connect = useCallback(() => {
     if (canUnlock) {
@@ -28,8 +27,7 @@ export const AppConnectWidget: FC = observer(() => {
       component: ConnectFileWalletDialog,
       props: {
         name: 'ConnectMain',
-        isOpen,
-        openWeb3Modal: () => { openWeb3Modal(); setIsCloseForConnect(true) },
+        openWeb3Modal,
       },
     })
   }
