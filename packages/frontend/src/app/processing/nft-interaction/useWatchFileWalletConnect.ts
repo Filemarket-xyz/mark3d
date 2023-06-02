@@ -2,24 +2,28 @@ import { useCallback, useEffect, useState } from 'react'
 import { useAccount, useDisconnect } from 'wagmi'
 
 import { ConnectFileWalletDialog } from '../../components/Web3/ConnectFileWalletDialog'
+import { UnlockFWDialog } from '../../components/Web3/UnlockFWDialog/UnlockFWDialog'
 import { useStores } from '../../hooks'
 import { useSeedProvider } from '../SeedProvider'
+import { useCanUnlock } from '../SeedProvider/useCanUnlock'
 
 export default function useWatchFileWalletConnect(): void {
   const { address } = useAccount()
   const { disconnect } = useDisconnect()
   const { dialogStore } = useStores()
-  const [checkHasSeed, setCheckHasSeed] = useState(false)
+  const [checkHasSeed, setCheckHasSeed] = useState(true)
   const { seedProvider } = useSeedProvider(address)
+  const canUnlock = useCanUnlock(address)
 
   const openConnectFileWalletDialog = useCallback(() => {
+    dialogStore.closeDialogByName('ConnectMain')
     dialogStore.openDialog({
-      component: ConnectFileWalletDialog,
+      component: canUnlock ? UnlockFWDialog : ConnectFileWalletDialog,
       props: {
-        name: 'ConnectMain',
+        name: canUnlock ? 'UnlockFWDialog' : 'ConnectMain',
       },
     }).onClose(() => setCheckHasSeed(true))
-  }, [dialogStore, setCheckHasSeed])
+  }, [dialogStore, setCheckHasSeed, canUnlock])
 
   const checkGetAccessPagePath = () => {
     return window.location.pathname === '/' || window.location.pathname === '/successGetAccess'
@@ -27,7 +31,7 @@ export default function useWatchFileWalletConnect(): void {
 
   useEffect(() => {
     if (checkGetAccessPagePath()) return
-    if (checkHasSeed && !seedProvider?.seed) {
+    if ((checkHasSeed && !seedProvider?.seed)) {
       disconnect()
     }
     setCheckHasSeed(false)
@@ -49,6 +53,7 @@ export default function useWatchFileWalletConnect(): void {
   useEffect(() => {
     if (checkGetAccessPagePath()) return
     if (address && seedProvider && seedProvider.isForAccount(address) && !seedProvider?.seed) {
+      console.log('OPEN')
       openConnectFileWalletDialog()
     }
   }, [address, seedProvider, openConnectFileWalletDialog])

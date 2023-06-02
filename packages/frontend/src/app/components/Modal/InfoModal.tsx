@@ -3,8 +3,8 @@ import React, { ReactNode } from 'react'
 
 import { styled } from '../../../styles'
 import { useMediaMui } from '../../hooks/useMediaMui'
+import { ModalTitle } from '../../UIkit/Modal/Modal'
 import { AppDialogProps } from '../../utils/dialog'
-import { ModalTitle } from './Modal'
 
 const InfoModalStyle = styled('div', {
   width: '85%',

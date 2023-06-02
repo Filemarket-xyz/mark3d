@@ -38,6 +38,7 @@ const NFTPreviewContainer = styled('div', {
   zIndex: '1',
   position: 'relative',
   '@sm': {
+    marginTop: '53px',
     height: 390,
   },
 })
@@ -60,6 +61,9 @@ const MainInfo = styled(PageLayout, {
   '@md': {
     height: 'unset',
     borderRadius: '24px 24px 0px 0px',
+  },
+  '@sm': {
+    marginTop: '60px',
   },
 })
 

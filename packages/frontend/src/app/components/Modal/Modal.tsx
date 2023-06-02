@@ -1,25 +1,11 @@
-import { Loading, Modal } from '@nextui-org/react'
+import { Loading } from '@nextui-org/react'
 import React, { FC, ReactNode } from 'react'
 
+import SuccessfullImg from '../../../assets/img/SuccesfullIcon.svg'
 import { styled } from '../../../styles'
-import { Button, NavButton, textVariant } from '../../UIkit'
+import { ButtonGlowing, NavButton } from '../../UIkit'
+import { Modal, ModalBody, ModalButtonContainer, ModalP, ModalTitle } from '../../UIkit/Modal/Modal'
 import { stringifyError } from '../../utils/error'
-
-export const ModalTitle = styled('h3', {
-  ...textVariant('primary1'),
-  fontSize: '$h5',
-  color: '$blue900',
-  fontWeight: 600,
-  textAlign: 'center',
-  paddingTop: '$3',
-})
-
-const ModalP = styled('p', {
-  ...textVariant('primary1'),
-  color: '$gray500',
-  textAlign: 'center',
-  paddingTop: '$2',
-})
 
 interface InProcessBodyProps {
   text: ReactNode
@@ -58,17 +44,17 @@ export interface SuccessOkBodyProps {
 }
 
 const Center = styled('div', {
-  dflex: 'center',
+  flex: 'center',
 })
 
 export const SuccessOkBody: FC<SuccessOkBodyProps> = ({ description, handleClose }) => (
   <>
-    <ModalTitle>Success</ModalTitle>
-    <ModalP>{description}</ModalP>
+    <ModalTitle style={{ marginBottom: '40px' }}><img src={SuccessfullImg} /></ModalTitle>
+    <ModalP style={{ marginBottom: '40px' }}>{description}</ModalP>
     {handleClose && (
-      <Center>
-        <Button secondary onPress={handleClose}>Ok</Button>
-      </Center>
+      <ModalButtonContainer style={{ justifyContent: 'center' }}>
+        <ButtonGlowing whiteWithBlue modalButton onPress={handleClose}>Cool</ButtonGlowing>
+      </ModalButtonContainer>
     )}
   </>
 )
@@ -104,6 +90,7 @@ interface MintModalProps {
   handleClose: () => void
   body?: ReactNode
   footer?: ReactNode
+  onOpen?: () => void
 }
 
 export default function MintModal({
@@ -111,16 +98,18 @@ export default function MintModal({
   open,
   body,
   footer,
+  onOpen,
 }: MintModalProps) {
   return (
     <Modal
-      closeButton
       aria-labelledby='modal-title'
       open={open}
+      width={'max-content'}
       onClose={handleClose}
+      onOpen={onOpen}
     >
-      {body && <Modal.Body>{body}</Modal.Body>}
-      <Modal.Footer>{footer}</Modal.Footer>
+      {body && <ModalBody style={{ padding: 0 }}>{body}</ModalBody>}
+      {footer}
     </Modal>
   )
 }
