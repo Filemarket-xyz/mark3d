@@ -70,7 +70,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // TransferFraudReported listening
     loop {
-        thread::sleep(Duration::from_millis(200));
+        thread::sleep(Duration::from_millis(1000));
         // get latest block
         let new_block_num: u64 = match get_latest_block_num_no_extra(&transport2).await {
             Ok(n) => {
