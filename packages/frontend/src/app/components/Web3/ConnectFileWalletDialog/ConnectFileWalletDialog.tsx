@@ -1,7 +1,7 @@
 import { useWeb3Modal } from '@web3modal/react'
 import { observer } from 'mobx-react-lite'
 import React from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useDisconnect } from 'wagmi'
 
 import { styled } from '../../../../styles'
 import { useMediaMui } from '../../../hooks/useMediaMui'
@@ -24,8 +24,9 @@ type IConnectFileWalletDialog = AppDialogProps<{}> & {
 export const ConnectFileWalletDialog = observer(({ open, onClose, openWeb3Modal }: IConnectFileWalletDialog) => {
   const { adaptive, smValue } = useMediaMui()
   const { isOpen } = useWeb3Modal()
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
   const canUnlock = useCanUnlock(address)
+  const { disconnect } = useDisconnect()
 
   return (
     <ConnectWalletWindowStyle>
@@ -39,6 +40,9 @@ export const ConnectFileWalletDialog = observer(({ open, onClose, openWeb3Modal 
           defaultValue: '743px',
         })}
         onClose={onClose}
+        onCloseButtonClick={() => {
+          isConnected && disconnect()
+        }}
       >
         <ModalTitle style={{ fontSize: smValue ? '24px' : '32px', lineHeight: smValue ? '32px' : '40px', marginBottom: '32px' }}>
           <FWIcon />

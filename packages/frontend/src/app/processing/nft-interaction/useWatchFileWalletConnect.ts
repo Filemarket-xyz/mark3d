@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useAccount, useDisconnect } from 'wagmi'
 
 import { ConnectFileWalletDialog } from '../../components/Web3/ConnectFileWalletDialog'
@@ -11,32 +11,23 @@ export default function useWatchFileWalletConnect(): void {
   const { address } = useAccount()
   const { disconnect } = useDisconnect()
   const { dialogStore } = useStores()
-  const [checkHasSeed, setCheckHasSeed] = useState(true)
   const { seedProvider } = useSeedProvider(address)
   const canUnlock = useCanUnlock(address)
 
   const openConnectFileWalletDialog = useCallback(() => {
-    dialogStore.closeDialogByName('ConnectMain')
+    if (dialogStore.isDialogOpenByName(canUnlock ? 'UnlockFWDialog' : 'ConnectMain')) return
     dialogStore.openDialog({
       component: canUnlock ? UnlockFWDialog : ConnectFileWalletDialog,
       props: {
         // @ts-expect-error
         name: canUnlock ? 'UnlockFWDialog' : 'ConnectMain',
       },
-    }).onClose(() => setCheckHasSeed(true))
-  }, [dialogStore, setCheckHasSeed, canUnlock])
+    })
+  }, [dialogStore, canUnlock])
 
   const checkGetAccessPagePath = () => {
     return window.location.pathname === '/' || window.location.pathname === '/successGetAccess'
   }
-
-  useEffect(() => {
-    if (checkGetAccessPagePath()) return
-    if ((checkHasSeed && !seedProvider?.seed)) {
-      disconnect()
-    }
-    setCheckHasSeed(false)
-  }, [checkHasSeed, setCheckHasSeed, seedProvider])
 
   useEffect(() => {
     console.log('init watch file wallet connect')
@@ -53,11 +44,10 @@ export default function useWatchFileWalletConnect(): void {
   // opens connect dialog if account has connected, but there is no seed
   useEffect(() => {
     if (checkGetAccessPagePath()) return
-    if (address && seedProvider && seedProvider.isForAccount(address) && !seedProvider?.seed) {
-      console.log('OPEN')
+    if (address && seedProvider && seedProvider.isForAccount(address)) {
       openConnectFileWalletDialog()
     }
-  }, [address, seedProvider, openConnectFileWalletDialog])
+  }, [address, seedProvider, openConnectFileWalletDialog, canUnlock])
 
   // locks seed if account disconnects
   useEffect(() => {

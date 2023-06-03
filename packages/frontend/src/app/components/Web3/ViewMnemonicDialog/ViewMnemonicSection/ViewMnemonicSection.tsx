@@ -1,6 +1,7 @@
 import React from 'react'
 
 import CopyImg from '../../../../../assets/img/Copy.svg'
+import DownloadImg from '../../../../../assets/img/Download.svg'
 import { styled } from '../../../../../styles'
 import { Button } from '../../../../UIkit'
 import ViewMnemonicCard from './ViewMnemonicCard/ViewMnemonicCard'
@@ -72,7 +73,7 @@ const ViewMnemonicSection = ({ mnemonic }: ViewMnemonicSectionProps) => {
           }}
         >
           Download as a file
-          <img src={CopyImg} style={{ paddingLeft: '10px' }} />
+          <img src={DownloadImg} style={{ paddingLeft: '10px' }} />
         </Button>
       </ButtonsContainer>
     </ViewMnemonicSectionStyle>

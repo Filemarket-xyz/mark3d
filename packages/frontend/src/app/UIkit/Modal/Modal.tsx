@@ -67,7 +67,13 @@ export const Modal = (props: ComponentProps<typeof ModalBase>) => {
     >
       {props.children}
       {props.closeButton && (
-        <CloseButton onClick={() => { !props.preventClose && props.onClose?.() }}>
+        <CloseButton onClick={() => {
+          if (!props.preventClose) {
+            props.onClose?.()
+            props.onCloseButtonClick?.()
+          }
+        }}
+        >
           <img src={CloseButtonImg} />
         </CloseButton>
       )}
@@ -88,7 +94,7 @@ export const ModalTitle = styled('h3', {
   marginBottom: '16px',
   position: 'relative',
   '@sm': {
-    fontSize: '19px',
+    fontSize: '18px',
   },
 })
 
