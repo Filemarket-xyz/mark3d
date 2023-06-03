@@ -126,7 +126,7 @@ export default function CreateCollectionPage() {
     void setModalBody(
       <SuccessNavBody
         buttonText='View collection'
-        link={`/collection/${result.collectionTokenAddress}`}
+        link={`/collection/${result.collectionAddress}`}
       />,
     )
     void setModalOpen(true)

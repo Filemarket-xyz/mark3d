@@ -34,7 +34,7 @@ export const useCreateCollection = () => {
   } = useMintCollection(formToTransfer)
 
   useAfterDidMountEffect(() => {
-    void mintCollection()
+    mintCollection()
   }, [formToTransfer])
 
   return {

@@ -10,7 +10,6 @@ import { useAccessTokenContract } from '../contracts'
 import { Mark3dAccessTokenEventNames } from '../types'
 import { callContract } from '../utils'
 import { assertAccount, assertContract, assertSigner } from '../utils/assert'
-import { normalizeCounterId } from '../utils/id'
 import { useUploadLighthouse } from './useUploadLighthouse'
 
 export interface CreateCollectionForm {
@@ -21,10 +20,7 @@ export interface CreateCollectionForm {
 }
 
 interface CreateCollectionResult {
-  collectionId: string
-  collectionTokenAddress: string
-  receipt: ContractReceipt // вся инфа о транзе
-  collectionName: string
+  collectionAddress: string
 }
 
 export function useMintCollection(form: CreateCollectionForm = {}) {
@@ -65,7 +61,6 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       throw Error(`receipt does not contain ${Mark3dAccessTokenEventNames.CollectionCreation} event`)
     }
 
-    const collectionIdArgIndex = 0
     const collectionAddressArgIndex = 1
     const getArg = (index: number): any => {
       const arg = createCollectionEvent.args?.[index]
@@ -74,16 +69,7 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       return arg
     }
 
-    const collectionId = normalizeCounterId(getArg(collectionIdArgIndex))
-    const collectionTokenAddress: string = getArg(collectionAddressArgIndex)
-    const collectionName = 'Test'
-
-    return {
-      collectionId,
-      collectionTokenAddress,
-      collectionName,
-      receipt,
-    }
+    return { collectionAddress: getArg(collectionAddressArgIndex) }
   }), [contract, signer, name, symbol, image, description, wrapPromise, upload])
 
   return { ...statuses, mintCollection }
