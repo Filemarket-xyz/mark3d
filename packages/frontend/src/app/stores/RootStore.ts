@@ -5,6 +5,7 @@ import { DialogStore } from './Dialog/DialogStore'
 import { ErrorStore } from './Error/ErrorStore'
 import { OrderStore } from './Order/OrderStore'
 import { OpenOrderListStore } from './OrderList/OrderListStore'
+import { PublicCollectionStore } from './PublicCollectionStore/PublicCollectionStore'
 import { TokenMetaStore } from './Token/TokenMetaStore'
 import { TokenStore } from './Token/TokenStore'
 import { TransferListStore } from './Transfer/TransferListStore'
@@ -26,6 +27,7 @@ export class RootStore {
   collectionStore: CollectionStore
   transfersHistoryStore: TransfersHistoryStore
   userTransferStore: UserTransferStore
+  publicCollectionStore: PublicCollectionStore
 
   constructor() {
     this.dialogStore = new DialogStore()
@@ -41,6 +43,7 @@ export class RootStore {
     this.collectionStore = new CollectionStore(this)
     this.transfersHistoryStore = new TransfersHistoryStore(this)
     this.userTransferStore = new UserTransferStore(this)
+    this.publicCollectionStore = new PublicCollectionStore(this)
   }
 }
 
