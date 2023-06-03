@@ -25,6 +25,8 @@ export const inputStyles = {
   transition: 'outline-width 0.5s',
   '&:placeholder': {
     color: '#656668',
+    ...textVariant('primary1').true,
+    fontWeight: '400',
   },
   '&:hover': {
     boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',

@@ -2,16 +2,20 @@ import { FC } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { styled } from '../../../../../styles'
-import { Button, Txt } from '../../../../UIkit'
+import { ButtonGlowing, Txt } from '../../../../UIkit'
 import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
-import { FormControl } from '../../../../UIkit/Form/FormControl'
-import { Input } from '../../../../UIkit/Form/Input'
+import { FormControlModal, InputModalTitleText, ModalDescription } from '../../../../UIkit/Modal/Modal'
+import PasswordInput from '../../../Form/PasswordInput/PasswordInput'
 import { validatePassword } from '../../ConnectFileWalletDialog/utils/validate'
 
 const CreatePasswordStyle = styled('form', {
-  paddingTop: '$2',
   width: '100%',
   margin: '0 auto',
+})
+
+export const FormControlStyle = styled(FormControlModal, {
+  display: 'flex',
+  flexDirection: 'column',
 })
 
 export interface CreatePasswordValue {
@@ -28,13 +32,6 @@ const ButtonContainer = styled('div', {
   justifyContent: 'end',
 })
 
-const Description = styled('div', {
-  display: 'flex',
-  justifyContent: 'center',
-  marginBottom: '$4',
-  color: '$gray600',
-})
-
 export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
   const { register, handleSubmit, formState: { errors }, watch } = useForm<CreatePasswordValue>()
 
@@ -43,33 +40,39 @@ export const CreatePasswordForm: FC<CreatePasswordProps> = ({ onSubmit }) => {
 
   return (
     <CreatePasswordStyle onSubmit={handleSubmit(onSubmit)}>
-      <Description><Txt body3>This password will be used to protect your seed phrase.</Txt></Description>
-      <FormControl>
-        <Input
-          type="password"
-          placeholder='Create a password'
-          {...register('password', { validate: validatePassword })}
-          isError={!!errors?.password}
+      <ModalDescription style={{ fontSize: '20px', lineHeight: '28px' }}>This password will be used to protect your seed phrase</ModalDescription>
+      <FormControlStyle>
+        <InputModalTitleText>Enter password</InputModalTitleText>
+        <PasswordInput
+          inputProps={{
+            type: 'password',
+            ...register('password', { validate: validatePassword }),
+            isError: !!errors?.password,
+          }}
         />
         {errors?.password && <ErrorMessage><Txt h5>{errors.password?.message}</Txt></ErrorMessage>}
-      </FormControl>
-      <FormControl>
-        <Input
-          type="password"
-          placeholder='Repeat a password'
-          {...register('repeatPassword', { validate: () => password === passwordRepeat ? undefined : 'Password are not matching' })}
-          isError={!!errors?.repeatPassword}
+      </FormControlStyle>
+      <FormControlStyle style={{ marginBottom: '40px' }}>
+        <InputModalTitleText>Repeat a password</InputModalTitleText>
+        <PasswordInput
+          inputProps={{
+            type: 'password',
+            ...register('repeatPassword', { validate: () => password === passwordRepeat ? undefined : 'Password are not matching' }),
+            isError: !!errors?.repeatPassword,
+          }}
         />
         {errors?.repeatPassword && <ErrorMessage><Txt h5>{errors.repeatPassword?.message}</Txt></ErrorMessage>}
-      </FormControl>
+      </FormControlStyle>
       <ButtonContainer>
-        <Button
-          primary
+        <ButtonGlowing
+          modalButton
+          whiteWithBlue
+          modalButtonFontSize
           type="submit"
           isDisabled={!!(errors.password)}
         >
-          Save
-        </Button>
+          Save password
+        </ButtonGlowing>
       </ButtonContainer>
     </CreatePasswordStyle>
   )

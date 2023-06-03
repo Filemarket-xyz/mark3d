@@ -34,4 +34,15 @@ export const StyledGlow = styled('div', {
   animation: `${animationGlow} 3s linear infinite`,
   animationDelay: '0.5s',
   backgroundSize: '200% 200%',
+  variants: {
+    isDisabled: {
+      true: {
+        animation: 'none',
+        background: 'none',
+      },
+      false: {
+
+      },
+    },
+  },
 })

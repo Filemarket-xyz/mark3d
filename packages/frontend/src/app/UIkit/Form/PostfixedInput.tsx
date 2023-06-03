@@ -39,8 +39,7 @@ const InputPostfix = styled('div', {
 })
 
 interface PrefixedInputProps {
-  postfix: ReactNode
-  placeholder: string
+  postfix?: ReactNode
   inputProps?: ComponentProps<typeof Input>
   postfixProps?: ComponentProps<typeof InputPostfix>
 }
@@ -69,7 +68,6 @@ export default function PostfixedInput(props: PrefixedInputProps) {
         }}
         {...props.inputProps}
         isDisabledFocusStyle
-        placeholder={props.placeholder}
       />
       <InputPostfix {...props.postfixProps}>{props.postfix}</InputPostfix>
     </InputWithPrefix>
