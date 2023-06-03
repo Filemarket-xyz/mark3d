@@ -1,9 +1,9 @@
 import { Chain } from '@web3modal/ethereum'
 import { utils } from 'ethers'
 
-import accessToken from '../../abi/Mark3dAccessToken'
-import collectionToken from '../../abi/Mark3dCollection'
-import exchangeToken from '../../abi/Mark3dExchange'
+import collectionToken from '../../abi/FilemarketCollectionV2'
+import exchangeToken from '../../abi/FilemarketExchangeV2'
+import accessToken from '../../abi/Mark3dAccessTokenV2'
 
 const filecoinCalibration: Chain = {
   id: 314159,
