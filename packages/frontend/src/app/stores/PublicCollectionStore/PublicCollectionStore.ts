@@ -52,10 +52,12 @@ export class PublicCollectionStore implements IActivateDeactivate, IStoreRequest
     this.request()
   }
 
-  get collectionMintOption() {
-    return {
+  get collectionMintOptions() {
+    if (!this.data.collection) return []
+
+    return [{
       title: this.data.collection?.name ?? '',
       id: this.data.collection?.address ?? '',
-    }
+    }]
   }
 }

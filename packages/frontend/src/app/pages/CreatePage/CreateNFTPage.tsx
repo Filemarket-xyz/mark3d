@@ -351,7 +351,7 @@ const CreateNftPage = observer(() => {
                 control={control}
                 rules={{ required: true }}
                 comboboxProps={{
-                  options: [...collectionMintOptions, publicCollectionStore.collectionMintOption],
+                  options: [...collectionMintOptions, ...publicCollectionStore.collectionMintOptions],
                   isLoading: isCollectionLoading,
                 }}
                 onFocus={() => {
