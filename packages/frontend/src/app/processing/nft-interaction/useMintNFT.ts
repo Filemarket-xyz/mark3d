@@ -1,7 +1,8 @@
-import { type BigNumber, ContractReceipt } from 'ethers'
+import { BigNumber, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
+import { api } from '../../config/api'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
@@ -28,7 +29,7 @@ interface MintNFTResult {
   receipt: ContractReceipt // вся инфа о транзе
 }
 
-export function useMintNFT(form: MintNFTForm = {}) {
+export function useMintNFT(form: MintNFTForm = {}, options?: { isPublicCollection?: boolean }) {
   const { contract, signer } = useCollectionContract(form.collectionAddress)
   const { address } = useAccount()
   const { wrapPromise, ...statuses } = useStatusState<MintNFTResult>()
@@ -45,8 +46,14 @@ export function useMintNFT(form: MintNFTForm = {}) {
       throw Error('CreateCollection form is not filled')
     }
 
-    const tokenCountBN = await callContractGetter<BigNumber>({ contract, method: 'tokensCount' })
-    const owner = await factory.getOwner(address, collectionAddress, tokenCountBN.toNumber())
+    let tokenIdBN: BigNumber
+    if (options?.isPublicCollection) {
+      const { data } = await api.sequencer.acquireDetail(collectionAddress)
+      tokenIdBN = BigNumber.from(data.tokenId)
+    } else {
+      tokenIdBN = await callContractGetter<BigNumber>({ contract, method: 'tokensCount' })
+    }
+    const owner = await factory.getOwner(address, collectionAddress, tokenIdBN.toNumber())
 
     const hiddenFileEncrypted = await owner.encryptFile(hiddenFile)
     const hiddenFileMeta: FileMeta = {
@@ -70,17 +77,17 @@ export function useMintNFT(form: MintNFTForm = {}) {
 
     const receipt = await callContract({ contract, signer, method: 'mint' },
       address,
-      tokenCountBN,
+      tokenIdBN,
       metadata.url,
+      '100', // TODO: update
       '0x00',
-      { gasPrice: mark3dConfig.gasPrice },
     )
 
     return {
-      tokenId: tokenCountBN.toString(),
+      tokenId: tokenIdBN.toString(),
       receipt,
     }
-  }), [contract, signer, address, factory, form, wrapPromise])
+  }), [contract, signer, address, factory, form, wrapPromise, options])
 
   return { ...statuses, mintNFT }
 }
