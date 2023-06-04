@@ -32,6 +32,7 @@ export const ConnectFileWalletDialog = observer(({ open, onClose, openWeb3Modal 
     <ConnectWalletWindowStyle>
       <Modal
         closeButton
+        preventClose={isConnected}
         open={open && !isOpen && !canUnlock}
         width={adaptive({
           sm: '400px',

@@ -68,10 +68,8 @@ export const Modal = (props: ComponentProps<typeof ModalBase>) => {
       {props.children}
       {props.closeButton && (
         <CloseButton onClick={() => {
-          if (!props.preventClose) {
-            props.onClose?.()
-            props.onCloseButtonClick?.()
-          }
+          props.onClose?.()
+          props.onCloseButtonClick?.()
         }}
         >
           <img src={CloseButtonImg} />

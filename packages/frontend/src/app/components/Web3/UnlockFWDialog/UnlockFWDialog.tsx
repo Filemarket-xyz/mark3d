@@ -24,6 +24,7 @@ export const UnlockFWDialog = observer(({ open, onClose }: AppDialogProps<{}>) =
   return (
     <ConnectWalletWindowStyle>
       <Modal
+        preventClose
         closeButton
         open={open}
         width={adaptive({
