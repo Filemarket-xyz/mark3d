@@ -50,9 +50,30 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
   async getTransferCount(collectionAddress: ArrayBuffer, tokenId: number) {
     const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(collectionAddress))
 
-    const transferCountBN = await callContractGetter<BigNumber>({ contract, method: 'transferCounts' }, BigNumber.from(tokenId))
+    const transferCountBN = await callContractGetter<BigNumber>(
+      { contract, method: 'transferCounts' },
+      BigNumber.from(tokenId),
+    )
 
     return transferCountBN.toNumber()
+  }
+
+  async getFee() {
+    const contract = this.contractProvider.getExchangeContract()
+
+    return callContractGetter<BigNumber>({ contract, method: 'fee' })
+  }
+
+  async getRoyaltyAmount(collectionAddress: ArrayBuffer, tokenId: number, price: BigNumber) {
+    const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(collectionAddress))
+
+    const { royaltyAmount } = await callContractGetter<{ royaltyAmount: BigNumber }>(
+      { contract, method: 'royaltyInfo' },
+      BigNumber.from(tokenId),
+      price,
+    )
+
+    return royaltyAmount
   }
 }
 
