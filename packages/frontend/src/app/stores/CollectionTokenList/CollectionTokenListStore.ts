@@ -26,7 +26,9 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
   isLoading = false
   isActivated = false
 
-  data: CollectionData = {}
+  data: CollectionData = {
+    total: 0,
+  }
 
   collectionAddress = ''
 
