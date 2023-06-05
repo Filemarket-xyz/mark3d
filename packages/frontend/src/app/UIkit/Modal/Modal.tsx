@@ -41,6 +41,13 @@ export const modalStyle = {
   borderRadius: '16px',
   padding: '32px',
   position: 'relative',
+  variants: {
+    isError: {
+      true: {
+        border: '2px solid $red500',
+      },
+    },
+  },
 }
 
 export const FormControlModal = styled(FormControl, {
@@ -48,7 +55,7 @@ export const FormControlModal = styled(FormControl, {
   maxWidth: 'inherit',
 })
 
-export const Modal = (props: ComponentProps<typeof ModalBase>) => {
+export const Modal = (props: ComponentProps<typeof ModalBase> & { isError?: boolean }) => {
   const { adaptive } = useMediaMui()
 
   return (
@@ -59,6 +66,7 @@ export const Modal = (props: ComponentProps<typeof ModalBase>) => {
         ...modalStyle,
         ...props.css,
         color: '#232528',
+        borderColor: props.isError ? '#C54B5C' : '#232528',
         padding: adaptive({
           sm: '20px',
           defaultValue: '32px',
@@ -67,7 +75,11 @@ export const Modal = (props: ComponentProps<typeof ModalBase>) => {
     >
       {props.children}
       {props.closeButton && (
-        <CloseButton onClick={() => { !props.preventClose && props.onClose?.() }}>
+        <CloseButton onClick={() => {
+          props.onClose?.()
+          props.onCloseButtonClick?.()
+        }}
+        >
           <img src={CloseButtonImg} />
         </CloseButton>
       )}
@@ -88,7 +100,14 @@ export const ModalTitle = styled('h3', {
   marginBottom: '16px',
   position: 'relative',
   '@sm': {
-    fontSize: '19px',
+    fontSize: '18px',
+  },
+  variants: {
+    error: {
+      true: {
+        color: '$red500',
+      },
+    },
   },
 })
 

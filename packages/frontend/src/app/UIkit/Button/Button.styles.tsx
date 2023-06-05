@@ -225,17 +225,23 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
             filter: 'brightness(1.1)',
           },
           '&[data-disabled=true]': {
-            color: '$gray600',
-            border: '2px solid $gray600 !important',
+            color: '$gray400',
+            border: '2px solid $gray400 !important',
             cursor: 'not-allowed',
+            '& img': {
+              filter: 'contrast(0)',
+            },
           },
         },
       },
       isDisabled: {
         true: {
-          color: '$gray600',
-          border: '2px solid $gray600 !important',
+          color: '$gray400',
+          border: '2px solid $gray400 !important',
           cursor: 'not-allowed',
+          '& img': {
+            filter: 'contrast(0), brightness(1.2)',
+          },
         },
       },
       modalButton: {

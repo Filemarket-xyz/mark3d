@@ -103,6 +103,7 @@ export const NavBar: FC<NavBarProps> = ({
                 ) : (
                   <NavBarItem
                     key={index}
+                    replace
                     to={itemTo(item)}
                     hideIn={mobileBp}
                     mock={item.isMock}
@@ -126,6 +127,7 @@ export const NavBar: FC<NavBarProps> = ({
             {items.map((item, index) => (
               <NavBarCollapseItem
                 key={index}
+                replace
                 isVisible={isExpanded}
                 index={index}
                 length={items?.length}

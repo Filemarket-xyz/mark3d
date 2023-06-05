@@ -336,9 +336,16 @@ const CreateNftPage = observer(() => {
 
           <FormControl>
             <Label>Name</Label>
-            <Input
+            <Input<CreateNFTForm>
+              withoutDefaultBorder
               placeholder='Item name'
-              {...register('name', { required: true })}
+              controlledInputProps={{
+                name: 'name',
+                control,
+                rules: {
+                  required: true,
+                },
+              }}
             />
           </FormControl>
 
@@ -382,6 +389,7 @@ const CreateNftPage = observer(() => {
             </LabelWithCounter>
 
             <TextArea
+              withoutDefaultBorder
               placeholder='Description of your item'
               {...register('description', { maxLength: { value: 1000, message: 'Aboba' } })}
             />
