@@ -20,7 +20,7 @@ const InputWindowStyle = styled('div', {
   position: 'relative',
 })
 
-export function EnterSeedPhraseDialog({ open, onClose }: AppDialogProps<{}>): JSX.Element {
+export function EnterSeedPhraseDialog({ open, onClose, isReset }: AppDialogProps<{ isReset?: boolean }>): JSX.Element {
   useCloseIfNotConnected(onClose)
   const [isSuccess, setIsSuccess] = useState<boolean>(false)
   const { adaptive } = useMediaMui()
@@ -30,7 +30,7 @@ export function EnterSeedPhraseDialog({ open, onClose }: AppDialogProps<{}>): JS
 
   const { modalProps } = useStatusModal({
     statuses: { result: isSuccess, isLoading: false, error: undefined },
-    okMsg: 'FileWallet successfully connected!',
+    okMsg: isReset ? 'FileWallet password successfully changed' : 'FileWallet successfully connected!',
     loadingMsg: '',
   })
 
@@ -53,10 +53,11 @@ export function EnterSeedPhraseDialog({ open, onClose }: AppDialogProps<{}>): JS
           <ModalTitle style={{ marginBottom: '40px' }}>
             <FWIcon />
             {' '}
-            Connect FileWallet
+            {isReset ? 'Reset password' : 'Connect FileWallet'}
           </ModalTitle>
           <InputWindowStyle>
             <EnterSeedPhraseForm
+              isReset
               onSubmit={async (value) => {
                 const seed = mnemonicToEntropy(value.seedPhrase)
                 await seedProvider?.set(Buffer.from(seed, 'hex'), value.password)

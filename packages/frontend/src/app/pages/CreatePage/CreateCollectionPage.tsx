@@ -97,6 +97,7 @@ export default function CreateCollectionPage() {
     formState: { isValid },
     getValues,
     resetField,
+    control,
   } = useForm<CreateCollectionForm>()
 
   const {
@@ -166,17 +167,27 @@ export default function CreateCollectionPage() {
 
           <FormControl>
             <Label>Display name</Label>
-            <Input
+            <Input<CreateCollectionForm>
+              withoutDefaultBorder
               placeholder='Collection name'
-              {...register('name', { required: true })}
+              controlledInputProps={{
+                control,
+                name: 'name',
+                rules: { required: true },
+              }}
             />
           </FormControl>
 
           <FormControl>
             <Label>Symbol</Label>
-            <Input
+            <Input<CreateCollectionForm>
+              withoutDefaultBorder
               placeholder='Token symbol'
-              {...register('symbol', { required: true })}
+              controlledInputProps={{
+                control,
+                name: 'symbol',
+                rules: { required: true },
+              }}
             />
           </FormControl>
 
@@ -193,6 +204,7 @@ export default function CreateCollectionPage() {
             </LabelWithCounter>
 
             <TextArea
+              withoutDefaultBorder
               {...register('description', {
                 onChange(event) {
                   setTextareaLength(event?.target?.value?.length ?? 0)

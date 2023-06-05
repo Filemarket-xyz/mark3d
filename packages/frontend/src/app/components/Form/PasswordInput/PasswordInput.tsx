@@ -1,40 +1,18 @@
-import { ComponentProps, useState } from 'react'
+import { useState } from 'react'
 import * as React from 'react'
+import { FieldValues } from 'react-hook-form'
 
 import { styled } from '../../../../styles'
-import { textVariant } from '../../../UIkit'
-import { glow, Input, inputStyles } from '../../../UIkit/Form/Input'
+import { useStores } from '../../../hooks'
+import { textVariant, Txt } from '../../../UIkit'
+import { IInput, IInputControlled, Input } from '../../../UIkit/Form/Input'
+import { EnterSeedPhraseDialog } from '../../Web3/EnterSeedPhraseDialog'
 import EyeImg from '../img/Eye.svg'
 import EyeCloseImg from '../img/EyeClose.svg'
 
 const PasswordInputStyle = styled('div', {
-  ...inputStyles,
-  boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
-  outline: '1px solid $gray600',
   width: '100%',
-  display: 'flex',
-  gap: '$2',
-  alignItems: 'center',
-  transition: 'outline-width 0.3s',
-  '&:hover': {
-    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    outline: '1px solid $blue500',
-  },
-  '&:focus': {
-    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    outline: '3px solid #38BCC9',
-    animation: `${glow} 800ms ease-out infinite alternate`,
-  },
-  '&:focus-within': {
-    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    outline: '3px solid #38BCC9',
-    animation: `${glow} 800ms ease-out infinite alternate`,
-  },
   position: 'relative',
-  ...textVariant('primary1').true,
-  fontWeight: '400',
-  fontSize: '16px',
-  lineHeight: '19px',
   '& img': {
     position: 'absolute',
     color: '$gray400',
@@ -47,41 +25,47 @@ const PasswordInputStyle = styled('div', {
       filter: 'brightness(120%)',
     },
   },
+  '& .resetPassword span': {
+    cursor: 'pointer',
+    '&:hover': {
+      filter: 'brightness(110%)',
+    },
+  },
 })
 
-interface PasswordInputProps {
-  inputProps: ComponentProps<typeof Input>
+interface PasswordInputProps<T extends FieldValues> {
+  inputProps: IInput
+  controlledInputProps: IInputControlled<T>
+  isCanReset?: boolean
 }
 
-export default function PasswordInput(props: PasswordInputProps) {
+export const PasswordInput = <T extends FieldValues>(props: PasswordInputProps<T>) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
+  const { dialogStore } = useStores()
+
+  const openDialog = () => {
+    dialogStore.openDialog({
+      component: EnterSeedPhraseDialog,
+      props: {
+        isReset: true,
+      },
+    })
+  }
 
   return (
     <PasswordInputStyle>
-      <Input
-        css={{
-          paddingLR: 0,
-          borderRadius: 0,
-          border: 'none',
-          flexGrow: 1,
-          height: '100%',
-          boxShadow: 'none',
-          outline: 'none',
-          '&:focus': {
-            boxShadow: 'none',
-            outline: 'none',
-            animation: 'none',
-          },
-          '&:hover': {
-            outline: 'none',
-            boxShadow: 'none',
-          },
-        }}
+      <Input<T>
         {...props.inputProps}
         isDisabledFocusStyle
+        controlledInputProps={props.controlledInputProps}
         placeholder={'Start typing'}
         type={isPasswordVisible ? 'text' : 'password'}
       />
+      {props.isCanReset && (
+        <div className='resetPassword' style={{ width: '100%', textAlign: 'right', marginTop: '8px' }}>
+          <Txt primary1 style={{ color: '#0090FF' }} onClick={() => { openDialog() }}>Reset password</Txt>
+        </div>
+      )}
       <img src={isPasswordVisible ? EyeCloseImg : EyeImg} onClick={() => setIsPasswordVisible((value) => !value)} />
     </PasswordInputStyle>
   )
