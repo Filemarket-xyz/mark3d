@@ -387,7 +387,6 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
     /// @param data - additional token data
     /// @param royalty - royalty
     function _mint(address to, uint256 id, string memory metaUri, bytes memory data, uint256 royalty) internal {
-        require(id == tokensCount, "PublicCollection: wrong id");
         require(royalty <= ROYALTY_CEILING, "PublicCollection: royalty too high");
         tokensCount++;
         _safeMint(to, id);
@@ -398,8 +397,7 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
     
 
     function royaltyInfo(uint256 tokenId, uint256 salePrice) public view override returns (address receiver, uint256 royaltyAmount) {
-        require(tokenId < tokensCount, "ERC2981Royalties: Token does not exist");
-
+        require(_exists(tokenId), "ERC2981Royalties: Token does not exist");
         royaltyAmount = (salePrice * royalties[tokenId]) / PERCENT_MULTIPLIER;
         return (royaltyReceiver, royaltyAmount);
     }
