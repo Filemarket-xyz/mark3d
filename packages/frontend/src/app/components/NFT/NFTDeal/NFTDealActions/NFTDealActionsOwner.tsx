@@ -4,7 +4,7 @@ import { FC } from 'react'
 import { Transfer } from '../../../../../swagger/Api'
 import { useIsApprovedExchange } from '../../../../processing'
 import { TokenFullId } from '../../../../processing/types'
-import { Txt } from '../../../../UIkit'
+import { Button, Txt } from '../../../../UIkit'
 import { stringifyError } from '../../../../utils/error'
 import { transferPermissions } from '../../../../utils/transfer/status'
 import { ButtonApproveExchange } from './ActionButtons/ButtonApproveExchange'
@@ -43,6 +43,16 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
 
   return (
     <>
+      <HideAction hide={!transfer || !permissions.canCancel(transfer)}>
+        <Button
+          primary
+          fullWidth
+          borderRadiusSecond
+          isDisabled
+        >
+          Waiting for buyer
+        </Button>
+      </HideAction>
       <HideAction hide={!transfer || !permissions.canApprove(transfer)}>
         <ButtonApproveTransfer tokenFullId={tokenFullId} transfer={transfer} />
       </HideAction>

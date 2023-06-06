@@ -34,6 +34,16 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
 
   return (
     <>
+      <HideAction hide={!isBuyer || !transfer || !permissions.canWaitSeller(transfer)}>
+        <Button
+          primary
+          fullWidth
+          borderRadiusSecond
+          isDisabled
+        >
+          Waiting for seller
+        </Button>
+      </HideAction>
       <HideAction hide={!transfer || !permissions.canFulfillOrder(transfer)}>
         <ButtonFulfillOrder tokenFullId={tokenFullId} order={order} />
       </HideAction>
@@ -54,16 +64,6 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canCancel(transfer)}>
         <ButtonCancelTransfer tokenFullId={tokenFullId} callback={reFetchOrder} />
-      </HideAction>
-      <HideAction hide={!isBuyer || !transfer || !permissions.canWaitSeller(transfer)}>
-        <Button
-          primary
-          fullWidth
-          borderRadiusSecond
-          isDisabled
-        >
-          Waiting for seller
-        </Button>
       </HideAction>
     </>
   )

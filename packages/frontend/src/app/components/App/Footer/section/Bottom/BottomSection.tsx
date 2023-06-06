@@ -62,7 +62,7 @@ const BottomSection = () => {
           {' '}
           {date.getFullYear()}
           {' '}
-          FileMarket.xyz, Inc
+          FileMarket Labs Ltd.
         </Txt>
         <Divider />
         <div className='links'>
