@@ -296,7 +296,7 @@ contract PublicCollection is IEncryptedFileToken, ERC721Enumerable, Ownable, IER
             if (address(info.callbackReceiver) != address(0)) {
                 info.callbackReceiver.transferFraudDetected(tokenId, approve);
             }
-            if (approve) {
+            if (!approve) {
                 _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
             }
             delete transfers[tokenId];

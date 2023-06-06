@@ -321,7 +321,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeableV2, ERC721Enume
             if (address(info.callbackReceiver) != address(0)) {
                 info.callbackReceiver.transferFraudDetected(tokenId, approve);
             }
-            if (approve) {
+            if (!approve) {
                 _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
             }
             delete transfers[tokenId];
