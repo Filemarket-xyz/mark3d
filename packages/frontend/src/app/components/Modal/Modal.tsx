@@ -88,6 +88,7 @@ export const ErrorBody = ({ message, onClose }: { message: string, onClose?: () 
         whiteWithBlue
         modalButtonFontSize
         onPress={() => {
+          console.log(onClose)
           onClose?.()
         }}
       >
@@ -103,6 +104,7 @@ interface MintModalProps {
   body?: ReactNode
   footer?: ReactNode
   onOpen?: () => void
+  isError?: boolean
 }
 
 export default function MintModal({
@@ -111,12 +113,14 @@ export default function MintModal({
   body,
   footer,
   onOpen,
+  isError,
 }: MintModalProps) {
   return (
     <Modal
       aria-labelledby='modal-title'
       open={open}
       width={'max-content'}
+      isError={isError}
       onClose={handleClose}
       onOpen={onOpen}
     >

@@ -11,11 +11,11 @@ import { textVariant, Txt } from '../Txt'
 
 export const glow = keyframes({
   '0%': {
-    outline: '#38BCC9',
+    outline: '1px solid rgba(56, 188, 201, 0.7);',
     boxShadow: '0px 0px 10px rgba(2, 143, 255, 0.5)',
   },
   '100%': {
-    outline: '#088DFA',
+    outline: '1px solid rgba(8, 141, 250, 0.7);',
     boxShadow: '0px 0px 15px #028FFF',
   },
 })
@@ -68,7 +68,6 @@ export const inputStyles = {
       true: {
         '&:focus': {
           boxShadow: 'none',
-          border: 'none',
         },
       },
     },

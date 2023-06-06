@@ -31,6 +31,7 @@ import {
   LetterCounter,
   TextBold,
   TextGray,
+  TitleGroup,
 } from './CreateCollectionPage'
 import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory, tags } from './helper/data/data'
 import { useCreateNft } from './hooks/useCreateNft'
@@ -98,10 +99,6 @@ const CollectionPickerContainer = styled('div', {
       width: 'calc(100% - 2 * $space$3)',
     },
   },
-})
-
-const TitleGroup = styled(FormControl, {
-  marginBottom: '$4',
 })
 
 const SubTitle = styled('div', {
@@ -225,7 +222,12 @@ const CreateNftPage = observer(() => {
       setModalBody(<InProgressBody text='EFT is being minted' />)
     } else if (nftError) {
       setModalOpen(true)
-      setModalBody(<ErrorBody message={extractMessageFromError(nftError)} />)
+      setModalBody(<ErrorBody
+        message={extractMessageFromError(nftError)}
+        onClose={() => {
+          void setModalOpen(false)
+        }}
+      />)
     } else if (nftResult) {
       setModalOpen(true)
       setModalBody(
@@ -266,6 +268,7 @@ const CreateNftPage = observer(() => {
       <MintModal
         body={modalBody}
         open={modalOpen}
+        isError={!!nftError}
         handleClose={() => {
           setIsNftLoading(false)
           setNftError(undefined)
