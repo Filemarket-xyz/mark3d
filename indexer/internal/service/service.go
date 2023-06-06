@@ -243,6 +243,51 @@ func (s *service) collectionTokenURI(ctx context.Context,
 	return "", err
 }
 
+func (s *service) getRoyalty(ctx context.Context, blockNumber *big.Int, address common.Address, tokenId *big.Int) (*big.Int, error) {
+	var err error
+	if address == s.cfg.PublicCollectionAddress {
+		for _, cli := range s.ethClient.Clients() {
+			var instance *publicCollection.PublicCollection
+
+			instance, err = publicCollection.NewPublicCollection(address, cli)
+			if err != nil {
+				return nil, err
+			}
+			var royalty *big.Int
+			royalty, err = instance.Royalties(&bind.CallOpts{
+				BlockNumber: blockNumber,
+				Context:     ctx,
+			}, tokenId)
+			if err != nil {
+				log.Println("token uri access token failed", tokenId, err)
+			} else {
+				return royalty, nil
+			}
+		}
+	} else {
+		for _, cli := range s.ethClient.Clients() {
+			var instance *collection.FilemarketCollectionV2
+
+			instance, err = collection.NewFilemarketCollectionV2(address, cli)
+			if err != nil {
+				return nil, err
+			}
+			var royalty *big.Int
+			royalty, err = instance.Royalties(&bind.CallOpts{
+				BlockNumber: blockNumber,
+				Context:     ctx,
+			}, tokenId)
+			if err != nil {
+				log.Println("token uri access token failed", tokenId, err)
+			} else {
+				return royalty, nil
+			}
+		}
+	}
+
+	return nil, err
+}
+
 func (s *service) getExchangeOrder(
 	ctx context.Context,
 	blockNum *big.Int,
@@ -549,15 +594,7 @@ func (s *service) tryProcessCollectionTransferEvent(
 		return nil
 	}
 
-	royalty, err := instance.Royalties(&bind.CallOpts{
-		BlockNumber: blockNumber,
-		Context:     ctx,
-	}, transfer.TokenId)
-	if err != nil {
-		return nil
-	}
-
-	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To, royalty); err != nil {
+	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To); err != nil {
 		return err
 	}
 	return nil
@@ -575,7 +612,6 @@ func (s *service) tryProcessPublicCollectionTransferEvent(
 	if err != nil {
 		return nil
 	}
-	logger.Warn("Transfer Event on Public collection", map[string]interface{}{"l": *l, "transfer": *transfer})
 	if transfer.From != common.HexToAddress(zeroAddress) {
 		return nil
 	}
@@ -584,15 +620,7 @@ func (s *service) tryProcessPublicCollectionTransferEvent(
 		return nil
 	}
 
-	royalty, err := instance.Royalties(&bind.CallOpts{
-		BlockNumber: blockNumber,
-		Context:     ctx,
-	}, transfer.TokenId)
-	if err != nil {
-		return nil
-	}
-
-	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To, royalty); err != nil {
+	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To); err != nil {
 		return err
 	}
 
@@ -614,7 +642,6 @@ func (s *service) tryProcessTransferInit(
 		return err
 	}
 	return nil
-
 }
 
 func (s *service) tryProcessPublicCollectionTransferInit(

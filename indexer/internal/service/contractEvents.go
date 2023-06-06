@@ -25,7 +25,6 @@ func (s *service) onCollectionTransferEvent(
 	block *types.Block,
 	tokenId *big.Int,
 	to common.Address,
-	royalty *big.Int,
 ) error {
 	collectionAddress := *t.To()
 	token := &domain.Token{
@@ -33,7 +32,6 @@ func (s *service) onCollectionTransferEvent(
 		TokenId:           tokenId,
 		Owner:             to,
 		Creator:           to,
-		Royalty:           royalty.Uint64(),
 		MintTxTimestamp:   block.Time(),
 		MintTxHash:        t.Hash(),
 	}
@@ -128,6 +126,40 @@ func (s *service) onCollectionTransferEvent(
 	token.Metadata = &meta
 	token.MetaUri = metaUri
 
+	royaltyRetryOpts := retry.Options{
+		Fn: func(ctx context.Context, args ...any) (any, error) {
+			blockNumber, bOk := args[0].(*big.Int)
+			collectionAddress, caOk := args[1].(common.Address)
+			tokenId, tiOk := args[2].(*big.Int)
+
+			if !caOk || !tiOk || !bOk {
+				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
+			}
+			return s.getRoyalty(ctx, blockNumber, collectionAddress, tokenId)
+		},
+		FnArgs:          []any{block.Number(), token.CollectionAddress, token.TokenId},
+		RetryOnAnyError: true,
+		Backoff:         backoff,
+		MaxElapsedTime:  30 * time.Second,
+	}
+
+	royaltyAny, err := retry.OnErrors(ctx, royaltyRetryOpts)
+	if err != nil {
+		var failedErr *retry.FailedErr
+		if errors.As(err, &failedErr) {
+			log.Printf("failed to load royalty: %v", failedErr)
+		} else {
+			return fmt.Errorf("failed to getRoyalty: %w", err)
+		}
+	}
+
+	royalty, ok := royaltyAny.(*big.Int)
+	if !ok {
+		return errors.New("failed to cast royalty to *big.Int")
+	}
+
+	token.Royalty = royalty.Uint64()
+
 	if err := s.repository.InsertToken(ctx, tx, token); err != nil {
 		return err
 	}
@@ -137,7 +169,7 @@ func (s *service) onCollectionTransferEvent(
 	// TODO: add file bunnies
 	if collectionAddress == s.cfg.PublicCollectionAddress {
 		if err := s.sequencer.DeleteTokenID(ctx, strings.ToLower(token.CollectionAddress.String()), token.TokenId.Int64()); err != nil {
-			log.Printf("failed deleting token from sequencer. Address: %s. TokendId: %d. Error: %v", token.CollectionAddress.String(), token.TokenId.String(), err)
+			log.Printf("failed deleting token from sequencer. Address: %s. TokendId: %s. Error: %v", token.CollectionAddress.String(), token.TokenId.String(), err)
 		}
 	}
 	return nil
