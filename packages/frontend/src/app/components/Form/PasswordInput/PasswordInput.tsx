@@ -60,6 +60,9 @@ export const PasswordInput = <T extends FieldValues>(props: PasswordInputProps<T
         controlledInputProps={props.controlledInputProps}
         placeholder={'Start typing'}
         type={isPasswordVisible ? 'text' : 'password'}
+        style={{
+          paddingRight: '48px',
+        }}
       />
       {props.isCanReset && (
         <div className='resetPassword' style={{ width: '100%', textAlign: 'right', marginTop: '8px' }}>
