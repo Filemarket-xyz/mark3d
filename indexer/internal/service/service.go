@@ -571,26 +571,17 @@ func (s *service) tryProcessPublicCollectionTransferEvent(
 	l *types.Log,
 	blockNumber *big.Int,
 ) error {
-	if instance == nil {
-		logger.Warnf("instance is nil. %s %v %v", blockNumber.String(), t, l)
-		return errors.New("Instance object is nil")
-	}
-
 	transfer, err := instance.ParseTransfer(*l)
 	if err != nil {
 		return nil
 	}
+	logger.Warn("Transfer Event on Public collection", map[string]interface{}{"l": *l, "transfer": *transfer})
 	if transfer.From != common.HexToAddress(zeroAddress) {
 		return nil
 	}
 	block, err := s.ethClient.BlockByNumber(ctx, blockNumber)
 	if err != nil {
 		return nil
-	}
-
-	if transfer.TokenId == nil {
-		logger.Warnf("tokenId is nil. %s %v %v %v", blockNumber.String(), t, l, transfer)
-		return errors.New("Instance object is nil")
 	}
 
 	royalty, err := instance.Royalties(&bind.CallOpts{
