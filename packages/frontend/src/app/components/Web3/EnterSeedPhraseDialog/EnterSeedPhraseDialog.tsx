@@ -57,7 +57,7 @@ export function EnterSeedPhraseDialog({ open, onClose, isReset }: AppDialogProps
           </ModalTitle>
           <InputWindowStyle>
             <EnterSeedPhraseForm
-              isReset
+              isReset={isReset}
               onSubmit={async (value) => {
                 const seed = mnemonicToEntropy(value.seedPhrase)
                 await seedProvider?.set(Buffer.from(seed, 'hex'), value.password)
