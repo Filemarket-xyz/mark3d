@@ -62,7 +62,7 @@ const mark3dChain = isMainnet ? filecoinMainnet : filecoinCalibration
 
 const accessTokenAddress = isMainnet ? '0x2905A2Ad979ABfeb50C12F042Ab2b2A1359a47E4' : '0xC3F07F620715Fec92db305f718C7FA10C708Bf7A'
 
-const exchangeTokenAddress = isMainnet ? '0xFDD2eF676C5c5dE3476FFCf6EECa86E4cb8499d4' : '0xc7477BC829f77A2eE5d6AFbEfefcA0c3E87Bd392'
+const exchangeTokenAddress = isMainnet ? '0xFDD2eF676C5c5dE3476FFCf6EECa86E4cb8499d4' : '0x2301D80E8A7e4Cf59a349ffC20A51367cb27A4fc'
 
 export const mark3dConfig = {
   chain: mark3dChain,
