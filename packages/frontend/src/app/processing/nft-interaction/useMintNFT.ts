@@ -1,4 +1,4 @@
-import { BigNumber, ContractReceipt } from 'ethers'
+import { BigNumber, constants, ContractReceipt } from 'ethers'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -79,7 +79,7 @@ export function useMintNFT(form: MintNFTForm = {}, options?: { isPublicCollectio
       address,
       tokenIdBN,
       metadata.url,
-      '100', // TODO: update
+      constants.Zero, // TODO: update
       '0x00',
     )
 

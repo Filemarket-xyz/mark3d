@@ -15,7 +15,9 @@ export class PublicCollectionStore implements IActivateDeactivate, IStoreRequest
   isLoading = false
   isActivated = false
 
-  data: CollectionData = {}
+  data: CollectionData = {
+    total: 0,
+  }
 
   constructor({ errorStore }: RootStore) {
     this.errorStore = errorStore
@@ -53,7 +55,7 @@ export class PublicCollectionStore implements IActivateDeactivate, IStoreRequest
   }
 
   get collectionMintOptions() {
-    if (!this.data.collection) return []
+    if (!this.data?.collection) return []
 
     return [{
       title: this.data.collection?.name ?? '',
