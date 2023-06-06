@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 import * as React from 'react'
 import { useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
@@ -27,7 +27,7 @@ const ButtonContainer = styled('div', {
 })
 
 export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
-  const { handleSubmit, formState: { errors }, watch, control } = useForm<UnlockSectionForm>()
+  const { handleSubmit, formState: { errors }, control } = useForm<UnlockSectionForm>()
 
   const { address } = useAccount()
   const { seedProvider } = useSeedProvider(address)
@@ -37,7 +37,6 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
   const onSubmit = useCallback((v: UnlockSectionForm) => {
     console.log('SUBMIT')
     if (seedProvider) {
-      console.log(v.password)
       seedProvider
         .unlock(v.password)
         .then(() => {
@@ -50,12 +49,6 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
         })
     }
   }, [seedProvider])
-
-  const password = watch('password')
-
-  useEffect(() => {
-    console.log(password)
-  }, [password])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

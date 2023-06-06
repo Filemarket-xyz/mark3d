@@ -2,14 +2,14 @@ import assert from 'assert'
 import { ContractReceipt } from 'ethers'
 import { randomBytes } from 'ethers/lib/utils'
 import { useCallback } from 'react'
+import { useAccount } from 'wagmi'
 
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useAccessTokenContract } from '../contracts'
 import { Mark3dAccessTokenEventNames } from '../types'
 import { callContract } from '../utils'
-import { assertContract, assertSigner } from '../utils/assert'
-import { normalizeCounterId } from '../utils/id'
+import { assertAccount, assertContract, assertSigner } from '../utils/assert'
 import { useUploadLighthouse } from './useUploadLighthouse'
 
 export interface CreateCollectionForm {
@@ -20,13 +20,11 @@ export interface CreateCollectionForm {
 }
 
 interface CreateCollectionResult {
-  collectionId: string
-  collectionTokenAddress: string
-  receipt: ContractReceipt // вся инфа о транзе
-  collectionName: string
+  collectionAddress: string
 }
 
 export function useMintCollection(form: CreateCollectionForm = {}) {
+  const { address } = useAccount()
   const { contract, signer } = useAccessTokenContract()
   const { wrapPromise, ...statuses } = useStatusState<CreateCollectionResult>()
   const upload = useUploadLighthouse()
@@ -34,6 +32,7 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
   const mintCollection = useCallback(wrapPromise(async () => {
     assertContract(contract, mark3dConfig.accessToken.name)
     assertSigner(signer)
+    assertAccount(address)
     assert(name && symbol && image, 'CreateCollection form is not filled')
 
     const metadata = await upload({
@@ -52,8 +51,8 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       symbol,
       metadata.url,
       metadata.url,
+      address,
       '0x00',
-      { gasPrice: mark3dConfig.gasPrice },
     )
 
     const createCollectionEvent = receipt.events
@@ -62,7 +61,6 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       throw Error(`receipt does not contain ${Mark3dAccessTokenEventNames.CollectionCreation} event`)
     }
 
-    const collectionIdArgIndex = 0
     const collectionAddressArgIndex = 1
     const getArg = (index: number): any => {
       const arg = createCollectionEvent.args?.[index]
@@ -71,16 +69,7 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
       return arg
     }
 
-    const collectionId = normalizeCounterId(getArg(collectionIdArgIndex))
-    const collectionTokenAddress: string = getArg(collectionAddressArgIndex)
-    const collectionName = 'Test'
-
-    return {
-      collectionId,
-      collectionTokenAddress,
-      collectionName,
-      receipt,
-    }
+    return { collectionAddress: getArg(collectionAddressArgIndex) }
   }), [contract, signer, name, symbol, image, description, wrapPromise, upload])
 
   return { ...statuses, mintCollection }

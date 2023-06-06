@@ -17,6 +17,7 @@ import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
 import { useCollectionAndTokenListStore, useStores } from '../../hooks'
 import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
 import { useMediaMui } from '../../hooks/useMediaMui'
+import { usePublicCollectionStore } from '../../hooks/usePublicCollectionStore'
 import { Button, Link, PageLayout, textVariant, Txt } from '../../UIkit'
 import { ComboBoxOption, ControlledComboBox } from '../../UIkit/Form/Combobox'
 import { FormControl } from '../../UIkit/Form/FormControl'
@@ -169,6 +170,7 @@ const CreateNftPage = observer(() => {
     collectionMintOptions,
     isLoading: isCollectionLoading,
   } = useCollectionAndTokenListStore(address)
+  const publicCollectionStore = usePublicCollectionStore()
 
   const { collectionAndTokenList } = useStores()
 
@@ -209,7 +211,10 @@ const CreateNftPage = observer(() => {
   const description = watch('description')
 
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
-    createNft({ ...data, tagsValue: chosenTags, licenseUrl })
+    createNft(
+      { ...data, tagsValue: chosenTags, licenseUrl },
+      { isPublicCollection: data.collection.id === publicCollectionStore.data?.collection?.address },
+    )
   }
 
   useEffect(() => {
@@ -222,12 +227,14 @@ const CreateNftPage = observer(() => {
       setModalBody(<InProgressBody text='EFT is being minted' />)
     } else if (nftError) {
       setModalOpen(true)
-      setModalBody(<ErrorBody
-        message={extractMessageFromError(nftError)}
-        onClose={() => {
-          void setModalOpen(false)
-        }}
-      />)
+      setModalBody(
+        <ErrorBody
+          message={extractMessageFromError(nftError)}
+          onClose={() => {
+            void setModalOpen(false)
+          }}
+        />,
+      )
     } else if (nftResult) {
       setModalOpen(true)
       setModalBody(
@@ -258,10 +265,6 @@ const CreateNftPage = observer(() => {
       resetField('tags')
     }
   }
-
-  useEffect(() => {
-    console.log(description)
-  }, [description])
 
   return (
     <>
@@ -360,7 +363,7 @@ const CreateNftPage = observer(() => {
                 control={control}
                 rules={{ required: true }}
                 comboboxProps={{
-                  options: collectionMintOptions,
+                  options: [...collectionMintOptions, ...publicCollectionStore.collectionMintOptions],
                   isLoading: isCollectionLoading,
                 }}
                 onFocus={() => {
