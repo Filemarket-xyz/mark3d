@@ -26,3 +26,5 @@ test.sh
 .calibration-secret
 .yarn
 .mainnet-secret
+
+FileBunniesCollection.sol

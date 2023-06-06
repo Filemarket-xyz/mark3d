@@ -9,16 +9,24 @@ package sequencer
 //		TokenIdTTL:    30 * time.Second,
 //		CheckInterval: 30 * time.Second,
 //	}
-//	seq := New(cfg, client, map[string]int64{"1": 10, "2": 8})
+//	seq := New(cfg, client, map[string]int64{
+//		"1.common":   10,
+//		"1.uncommon": 5,
+//		"2":          8,
+//	})
 //
-//  // `curl "localhost/?address=1"`
-//  // `curl -X POST "localhost/?address=1&tokenId=1"`
+//	// `curl "localhost/?address=1"`
+//	// `curl -X POST "localhost/?address=1&tokenId=1"`
 //	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 //		address := r.URL.Query().Get("address")
-//
+//		suffix := r.URL.Query().Get("suffix")
 //		switch r.Method {
 //		case http.MethodGet:
-//			tokenId, err := seq.Acquire(r.Context(), address)
+//			key := address
+//			if suffix != "" {
+//				key = fmt.Sprintf("%s.%s", address, suffix)
+//			}
+//			tokenId, err := seq.Acquire(r.Context(), key)
 //			if err != nil {
 //				http.Error(w, err.Error(), http.StatusInternalServerError)
 //				return

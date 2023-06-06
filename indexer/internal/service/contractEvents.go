@@ -134,10 +134,24 @@ func (s *service) onCollectionTransferEvent(
 	log.Println("token inserted", token.CollectionAddress.String(), token.TokenId.String(), token.Owner.String(),
 		token.MetaUri, token.Metadata)
 
-	// TODO: add file bunnies
 	if collectionAddress == s.cfg.PublicCollectionAddress {
 		if err := s.sequencer.DeleteTokenID(ctx, strings.ToLower(token.CollectionAddress.String()), token.TokenId.Int64()); err != nil {
 			log.Printf("failed deleting token from sequencer. Address: %s. TokendId: %d. Error: %v", token.CollectionAddress.String(), token.TokenId.String(), err)
+		}
+	}
+
+	if collectionAddress == s.cfg.FileBunniesCollectionAddress {
+		var suffix string
+		if token.TokenId.Cmp(big.NewInt(6000)) == -1 {
+			suffix = "common"
+		} else if token.TokenId.Cmp(big.NewInt(7000)) == -1 {
+			suffix = "uncommon"
+		} else {
+			suffix = "payed"
+		}
+		key := fmt.Sprintf("%s.%s", strings.ToLower(token.CollectionAddress.String()), suffix)
+		if err := s.sequencer.DeleteTokenID(ctx, key, token.TokenId.Int64()); err != nil {
+			log.Printf("failed deleting token from sequencer. Address: %s. Suffix:%s. TokendId: %d. Error: %v", token.CollectionAddress.String(), suffix, token.TokenId.String(), err)
 		}
 	}
 	return nil

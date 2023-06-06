@@ -71,6 +71,8 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 		switch c.Address {
 		case p.cfg.publicCollectionAddress:
 			c.Type = models.CollectionTypePublicCollection
+		case p.cfg.fileBunniesCollectionAddress:
+			c.Type = models.CollectionTypeFileBunniesCollection
 		default:
 			c.Type = models.CollectionTypeFileMarketCollection
 		}
@@ -125,6 +127,8 @@ func (p *postgres) GetCollection(ctx context.Context,
 	switch c.Address {
 	case p.cfg.publicCollectionAddress:
 		c.Type = models.CollectionTypePublicCollection
+	case p.cfg.fileBunniesCollectionAddress:
+		c.Type = models.CollectionTypeFileBunniesCollection
 	default:
 		c.Type = models.CollectionTypeFileMarketCollection
 	}
@@ -167,6 +171,8 @@ func (p *postgres) GetCollectionByTokenId(
 	switch c.Address {
 	case p.cfg.publicCollectionAddress:
 		c.Type = models.CollectionTypePublicCollection
+	case p.cfg.fileBunniesCollectionAddress:
+		c.Type = models.CollectionTypeFileBunniesCollection
 	default:
 		c.Type = models.CollectionTypeFileMarketCollection
 	}

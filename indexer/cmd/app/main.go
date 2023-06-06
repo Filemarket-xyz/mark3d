@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
 	log "github.com/mark3d-xyz/mark3d/indexer/pkg/log"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"net/http"
@@ -69,11 +70,13 @@ func main() {
 	}
 
 	seq := sequencer.New(sequencerCfg, rdb, map[string]int64{
-		strings.ToLower(cfg.Service.PublicCollectionAddress.String()): 1_000_000,
+		strings.ToLower(cfg.Service.PublicCollectionAddress.String()):      1_000_000,
+		strings.ToLower(cfg.Service.FileBunniesCollectionAddress.String()): 10_000,
 	})
 
 	repositoryCfg := &repository.Config{
-		PublicCollectionAddress: cfg.Service.PublicCollectionAddress,
+		PublicCollectionAddress:      cfg.Service.PublicCollectionAddress,
+		FileBunniesCollectionAddress: cfg.Service.FileBunniesCollectionAddress,
 	}
 
 	currencyConverter := currencyconversion.NewCoinMarketCapProvider(cfg.Service.CoinMarketCapApiKey)
@@ -83,12 +86,23 @@ func main() {
 	}
 	currencyConverterCache := currencyconversion.NewRedisExchangeRateCache(currencyConverter, rdb, cacheTTL)
 
+	commonSigner, err := ethsigner.NewEthSigner(cfg.Service.CommonSignerKey)
+	if err != nil {
+		logger.Fatal("failed to create commonSigner", log.Fields{"error": err})
+	}
+	uncommonSigner, err := ethsigner.NewEthSigner(cfg.Service.UncommonSignerKey)
+	if err != nil {
+		logger.Fatal("failed to create uncommonSigner", log.Fields{"error": err})
+	}
+
 	indexService, err := service.NewService(
 		repository.NewRepository(pool, rdb, repositoryCfg),
 		client,
 		seq,
 		healthNotifier,
 		currencyConverterCache,
+		commonSigner,
+		uncommonSigner,
 		cfg.Service,
 	) // service who interact with main dependencies
 	if err != nil {

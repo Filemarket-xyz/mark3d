@@ -73,3 +73,11 @@ func (s *service) GetPublicCollectionWithTokens(
 ) (*models.CollectionData, *models.ErrorResponse) {
 	return s.GetCollectionWithTokens(ctx, s.cfg.PublicCollectionAddress, lastTokenId, limit)
 }
+
+func (s *service) GetFileBunniesCollectionWithTokens(
+	ctx context.Context,
+	lastTokenId *big.Int,
+	limit int,
+) (*models.CollectionData, *models.ErrorResponse) {
+	return s.GetCollectionWithTokens(ctx, s.cfg.FileBunniesCollectionAddress, lastTokenId, limit)
+}
