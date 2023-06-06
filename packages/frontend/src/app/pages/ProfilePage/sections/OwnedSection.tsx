@@ -36,9 +36,11 @@ export const OwnedSection: React.FC = observer(() => {
         render={({ index }) => <NFTCard {...collectionAndTokenListStore.nftCards[index]} key={index} />}
         listCss={nftCardListCss}
       />
-      {!collectionAndTokenListStore.nftCards.length && !collectionAndTokenListStore.isLoading && (
-        <NoNftContainer>
-          {profileAddress === currentAddress && (
+      {
+        !collectionAndTokenListStore.nftCards.length &&
+        !collectionAndTokenListStore.isLoading &&
+        profileAddress === currentAddress && (
+          <NoNftContainer>
             <Plug
               header={'You don`t have any EFTs '}
               mainText={'Create your own EFT or go to the market to find something amazing'}
@@ -53,9 +55,8 @@ export const OwnedSection: React.FC = observer(() => {
                 </>
               )}
             />
-          )}
-        </NoNftContainer>
-      )}
+          </NoNftContainer>
+        )}
     </>
   )
 })
