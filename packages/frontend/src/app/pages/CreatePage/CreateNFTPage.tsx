@@ -213,7 +213,7 @@ const CreateNftPage = observer(() => {
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
     createNft(
       { ...data, tagsValue: chosenTags, licenseUrl },
-      { isPublicCollection: data.collection.id === publicCollectionStore.data.collection?.address },
+      { isPublicCollection: data.collection.id === publicCollectionStore.data?.collection?.address },
     )
   }
 
@@ -227,12 +227,14 @@ const CreateNftPage = observer(() => {
       setModalBody(<InProgressBody text='EFT is being minted' />)
     } else if (nftError) {
       setModalOpen(true)
-      setModalBody(<ErrorBody
-        message={extractMessageFromError(nftError)}
-        onClose={() => {
-          void setModalOpen(false)
-        }}
-      />)
+      setModalBody(
+        <ErrorBody
+          message={extractMessageFromError(nftError)}
+          onClose={() => {
+            void setModalOpen(false)
+          }}
+        />,
+      )
     } else if (nftResult) {
       setModalOpen(true)
       setModalBody(

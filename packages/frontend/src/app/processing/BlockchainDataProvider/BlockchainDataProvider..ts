@@ -41,10 +41,15 @@ export class BlockchainDataProvider implements IBlockchainDataProvider {
     return hexToBuffer(globalSalt)
   }
 
-  async getCollectionCreator(address: ArrayBuffer) {
-    const contract = this.contractProvider.getCollectionContract(bufferToEtherHex(address))
+  async getTokenCreator(collectionAddress: ArrayBuffer, tokenId: number) {
+    const response = await fetch(
+      `${this.#url}/tokens/${bufferToEtherHex(collectionAddress)}/${tokenId}`,
+      { method: 'GET' },
+    )
 
-    return callContractGetter<`0x${string}`>({ contract, method: 'owner' })
+    const data = await this.#stringifyResponse(response)
+
+    return data.creator
   }
 
   async getTransferCount(collectionAddress: ArrayBuffer, tokenId: number) {
