@@ -42,6 +42,7 @@ export function useFulfillOrder(
       utils.getAddress(collectionAddress),
       bufferToEtherHex(publicKey),
       BigNumber.from(tokenId),
+      '0x00',
       {
         value: BigNumber.from(price),
         gasPrice: mark3dConfig.gasPrice,
