@@ -1,6 +1,6 @@
 import { useWeb3Modal } from '@web3modal/react'
 import { observer } from 'mobx-react-lite'
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useAccount, useDisconnect } from 'wagmi'
 
 import { styled } from '../../../../styles'
@@ -28,6 +28,10 @@ export const ConnectFileWalletDialog = observer(({ open, onClose, openWeb3Modal 
   const canUnlock = useCanUnlock(address)
   const { disconnect } = useDisconnect()
 
+  const onCloseButtonClick = useCallback(() => {
+    if (isConnected) disconnect()
+  }, [isConnected])
+
   return (
     <ConnectWalletWindowStyle>
       <Modal
@@ -42,7 +46,7 @@ export const ConnectFileWalletDialog = observer(({ open, onClose, openWeb3Modal 
         })}
         onClose={onClose}
         onCloseButtonClick={() => {
-          isConnected && disconnect()
+          onCloseButtonClick()
         }}
       >
         <ModalTitle style={{ fontSize: smValue ? '24px' : '32px', lineHeight: smValue ? '32px' : '40px', marginBottom: '32px' }}>
@@ -55,6 +59,9 @@ export const ConnectFileWalletDialog = observer(({ open, onClose, openWeb3Modal 
               openWeb3Modal?.()
             }}
             onSuccess={() => {
+              onClose()
+            }}
+            onDisconnect={() => {
               onClose()
             }}
           />

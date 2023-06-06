@@ -59,7 +59,7 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <FormControl>
+      <FormControl style={{ marginBottom: '48px' }}>
         <InputModalTitleText>Password</InputModalTitleText>
         <PasswordInput<UnlockSectionForm>
           isCanReset
@@ -83,7 +83,6 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
           whiteWithBlue
           modalButtonFontSize
           type="submit"
-          style={{ marginTop: '16px' }}
         >
           Unlock
           <img style={{ marginLeft: '10px' }} src={ArrowUnlock} />
