@@ -61,6 +61,9 @@ export const ConnectFileWalletDialog = observer(({ open, onClose, openWeb3Modal 
             onSuccess={() => {
               onClose()
             }}
+            onDisconnect={() => {
+              onClose()
+            }}
           />
         </ModalBody>
       </Modal>

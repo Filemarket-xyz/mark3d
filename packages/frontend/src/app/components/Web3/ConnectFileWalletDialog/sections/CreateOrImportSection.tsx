@@ -121,7 +121,7 @@ const CheckBox = styled('div', {
   },
 })
 
-export const CreateOrImportSection: FC<{ onSuccess?: () => void, connectFunc?: () => void }> = observer(({ onSuccess, connectFunc }) => {
+export const CreateOrImportSection: FC<{ onSuccess?: () => void, connectFunc?: () => void, onDisconnect: () => void }> = observer(({ onSuccess, connectFunc, onDisconnect }) => {
   const { dialogStore } = useStores()
   const { isConnected } = useAccount()
   const { disconnect } = useDisconnect()
@@ -171,6 +171,7 @@ export const CreateOrImportSection: FC<{ onSuccess?: () => void, connectFunc?: (
                     width: mdValue ? (smValue ? '260px' : '414px') : '608px',
                   }}
                   onClick={() => {
+                    onDisconnect()
                     disconnect()
                   }}
                 >
