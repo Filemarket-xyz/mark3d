@@ -29,7 +29,9 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
   isLoading = true
   isActivated = false
 
-  data: OrdersAllActiveResponse = {}
+  data: OrdersAllActiveResponse = {
+    total: 0,
+  }
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore

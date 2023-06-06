@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import React from 'react'
+import { useDisconnect } from 'wagmi'
 
 import { styled } from '../../../../styles'
 import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
@@ -18,10 +19,12 @@ const ConnectWalletWindowStyle = styled('div', {
 export const UnlockFWDialog = observer(({ open, onClose }: AppDialogProps<{}>) => {
   useCloseIfNotConnected(onClose)
   const { adaptive } = useMediaMui()
+  const { disconnect } = useDisconnect()
 
   return (
     <ConnectWalletWindowStyle>
       <Modal
+        preventClose
         closeButton
         open={open}
         width={adaptive({
@@ -30,6 +33,7 @@ export const UnlockFWDialog = observer(({ open, onClose }: AppDialogProps<{}>) =
           lg: '664px',
           defaultValue: '664px',
         })}
+        onCloseButtonClick={disconnect}
         onClose={onClose}
       >
         <ModalTitle style={{ marginBottom: '0' }}>

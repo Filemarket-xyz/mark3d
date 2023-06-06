@@ -32,6 +32,7 @@ import {
   LetterCounter,
   TextBold,
   TextGray,
+  TitleGroup,
 } from './CreateCollectionPage'
 import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory, tags } from './helper/data/data'
 import { useCreateNft } from './hooks/useCreateNft'
@@ -99,10 +100,6 @@ const CollectionPickerContainer = styled('div', {
       width: 'calc(100% - 2 * $space$3)',
     },
   },
-})
-
-const TitleGroup = styled(FormControl, {
-  marginBottom: '$4',
 })
 
 const SubTitle = styled('div', {
@@ -230,7 +227,12 @@ const CreateNftPage = observer(() => {
       setModalBody(<InProgressBody text='EFT is being minted' />)
     } else if (nftError) {
       setModalOpen(true)
-      setModalBody(<ErrorBody message={extractMessageFromError(nftError)} />)
+      setModalBody(<ErrorBody
+        message={extractMessageFromError(nftError)}
+        onClose={() => {
+          void setModalOpen(false)
+        }}
+      />)
     } else if (nftResult) {
       setModalOpen(true)
       setModalBody(
@@ -267,6 +269,7 @@ const CreateNftPage = observer(() => {
       <MintModal
         body={modalBody}
         open={modalOpen}
+        isError={!!nftError}
         handleClose={() => {
           setIsNftLoading(false)
           setNftError(undefined)
@@ -337,9 +340,16 @@ const CreateNftPage = observer(() => {
 
           <FormControl>
             <Label>Name</Label>
-            <Input
+            <Input<CreateNFTForm>
+              withoutDefaultBorder
               placeholder='Item name'
-              {...register('name', { required: true })}
+              controlledInputProps={{
+                name: 'name',
+                control,
+                rules: {
+                  required: true,
+                },
+              }}
             />
           </FormControl>
 
@@ -383,6 +393,7 @@ const CreateNftPage = observer(() => {
             </LabelWithCounter>
 
             <TextArea
+              withoutDefaultBorder
               placeholder='Description of your item'
               {...register('description', { maxLength: { value: 1000, message: 'Aboba' } })}
             />

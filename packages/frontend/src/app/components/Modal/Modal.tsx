@@ -78,10 +78,23 @@ export const extractMessageFromError = (error: any) => {
   return stringifyError(error)
 }
 
-export const ErrorBody = ({ message }: { message: string }) => (
+export const ErrorBody = ({ message, onClose }: { message: string, onClose?: () => void }) => (
   <>
-    <ModalTitle>Error</ModalTitle>
-    <ModalP css={{ color: '$red', wordBreak: 'break-all' }}>{message}</ModalP>
+    <ModalTitle style={{ color: '#C54B5C' }}>Error</ModalTitle>
+    <ModalP css={{ fontSize: '16px', fontWeight: '400', wordBreak: 'break-all', textAlign: 'center' }}>{message}</ModalP>
+    <ModalButtonContainer>
+      <ButtonGlowing
+        modalButton
+        whiteWithBlue
+        modalButtonFontSize
+        onPress={() => {
+          console.log(onClose)
+          onClose?.()
+        }}
+      >
+        Got it
+      </ButtonGlowing>
+    </ModalButtonContainer>
   </>
 )
 
@@ -91,6 +104,7 @@ interface MintModalProps {
   body?: ReactNode
   footer?: ReactNode
   onOpen?: () => void
+  isError?: boolean
 }
 
 export default function MintModal({
@@ -99,12 +113,14 @@ export default function MintModal({
   body,
   footer,
   onOpen,
+  isError,
 }: MintModalProps) {
   return (
     <Modal
       aria-labelledby='modal-title'
       open={open}
       width={'max-content'}
+      isError={isError}
       onClose={handleClose}
       onOpen={onOpen}
     >

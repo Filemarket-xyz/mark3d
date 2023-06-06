@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import * as React from 'react'
 import { useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
@@ -6,13 +6,10 @@ import { useAccount } from 'wagmi'
 import ArrowUnlock from '../../../../../assets/img/ArrowUnlock.svg'
 import { styled } from '../../../../../styles'
 import { useSeedProvider } from '../../../../processing'
-import { ButtonGlowing, Txt } from '../../../../UIkit'
-import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
+import { ButtonGlowing } from '../../../../UIkit'
 import { FormControl } from '../../../../UIkit/Form/FormControl'
 import { InputModalTitleText } from '../../../../UIkit/Modal/Modal'
-import { stringifyError } from '../../../../utils/error'
-import PasswordInput from '../../../Form/PasswordInput/PasswordInput'
-import { CreatePasswordValue } from '../../CreateMnemonicDialog/CreatePasswordForm/CreatePasswordForm'
+import { PasswordInput } from '../../../Form/PasswordInput/PasswordInput'
 
 export interface UnlockSectionProps {
   onSuccess?: () => void
@@ -30,7 +27,7 @@ const ButtonContainer = styled('div', {
 })
 
 export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<CreatePasswordValue>()
+  const { handleSubmit, formState: { errors }, watch, control } = useForm<UnlockSectionForm>()
 
   const { address } = useAccount()
   const { seedProvider } = useSeedProvider(address)
@@ -38,39 +35,54 @@ export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
   const [error, setError] = useState<string>()
 
   const onSubmit = useCallback((v: UnlockSectionForm) => {
+    console.log('SUBMIT')
     if (seedProvider) {
+      console.log(v.password)
       seedProvider
         .unlock(v.password)
         .then(() => {
           onSuccess?.()
+          console.log('SUCESS')
         })
-        .catch(err => setError(stringifyError(err)))
+        .catch((err) => {
+          console.log(err)
+          setError('Incorrect password')
+        })
     }
   }, [seedProvider])
 
+  const password = watch('password')
+
+  useEffect(() => {
+    console.log(password)
+  }, [password])
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <FormControl>
+      <FormControl style={{ marginBottom: '48px' }}>
         <InputModalTitleText>Password</InputModalTitleText>
-        <PasswordInput
+        <PasswordInput<UnlockSectionForm>
+          isCanReset
           inputProps={{
             type: 'password',
             placeholder: 'Enter FileWallet password',
-            ...register('password', { required: 'Please, enter a password' }),
-            isError: !!errors?.password,
+            isError: !!errors?.password || !!error,
+            isDisabledFocusStyle: false,
+            errorMessage: error ?? errors?.password?.message,
+          }}
+          controlledInputProps={{
+            control,
+            name: 'password',
+            rules: { required: true },
           }}
         />
-        {errors?.password && <ErrorMessage><Txt h5>{errors.password?.message}</Txt></ErrorMessage>}
       </FormControl>
       <ButtonContainer>
-        {error && (<ErrorMessage>{error}</ErrorMessage>)}
         <ButtonGlowing
           modalButton
           whiteWithBlue
           modalButtonFontSize
           type="submit"
-          isDisabled={!!(errors.password)}
-          style={{ marginTop: '16px' }}
         >
           Unlock
           <img style={{ marginLeft: '10px' }} src={ArrowUnlock} />

@@ -22,7 +22,7 @@ const ButtonContainer = styled('div', {
 })
 
 export const TransferForm: FC<TransferFormProps> = ({ defaultValues, onSubmit }) => {
-  const { register, handleSubmit } = useForm<TransferFormValue>({
+  const { handleSubmit, control } = useForm<TransferFormValue>({
     defaultValues,
   })
 
@@ -33,10 +33,14 @@ export const TransferForm: FC<TransferFormProps> = ({ defaultValues, onSubmit })
     >
       <FormControl>
         <Label>Send to</Label>
-        <Input
+        <Input<TransferFormValue>
           type="string"
           placeholder='0x1a1F...Df'
-          {...register('address', { pattern: /^0x[0-9a-fA-F]{40}$/ })}
+          controlledInputProps={{
+            control,
+            name: 'address',
+            rules: { pattern: /^0x[0-9a-fA-F]{40}$/ },
+          }}
         />
       </FormControl>
       <ButtonContainer>

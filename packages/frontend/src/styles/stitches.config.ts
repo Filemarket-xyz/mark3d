@@ -39,6 +39,7 @@ export const {
       green: '#00FF0A',
 
       red: '#D81B60',
+      red500: '#C54B5C',
 
       gradient0: '#38BCC9',
       gradient1: '#088DFA',

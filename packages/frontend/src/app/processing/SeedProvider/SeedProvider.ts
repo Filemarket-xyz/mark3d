@@ -1,14 +1,17 @@
 import * as passworder from '@metamask/browser-passworder'
 import { entropyToMnemonic } from 'bip39'
 import { utils } from 'ethers'
+import { sha256 } from 'ethers/lib/utils'
 
 import { IStorageProvider } from '../StorageProvider'
 import { ISeedProvider } from './ISeedProvider'
 
 const seedStorageKey = 'seed'
+const hashSeedStorageKey = 'hashSeed'
 
 export class SeedProvider implements ISeedProvider {
   seed: ArrayBuffer | undefined
+  hashSeed: string | undefined
   private seedEncrypted: string | undefined
 
   private onChangeListeners: Array<(seed: ArrayBuffer | undefined) => void> = []
@@ -26,7 +29,10 @@ export class SeedProvider implements ISeedProvider {
 
   async init(): Promise<void> {
     this.seedEncrypted = await this.storage.get(seedStorageKey)
+    this.hashSeed = await this.storage.get(hashSeedStorageKey)
+
     console.log('init finished', this.seedEncrypted)
+    console.log('init finished', this.hashSeed)
   }
 
   private setSeed(seed: ArrayBuffer | undefined) {
@@ -43,6 +49,7 @@ export class SeedProvider implements ISeedProvider {
       throw new Error('Unable to unlock seed: cannot decrypt seed')
     }
     const seedBuf = Buffer.from(seed, 'hex')
+    await this.storage.set(hashSeedStorageKey, sha256(seedBuf))
     // if (seedBuf.byteLength !== seedByteLength) {
     //   throw new Error(
     //     `Unable to unlock seed: expected seed to be ${seedByteLength} bytes, but got ${seedBuf.byteLength}`
