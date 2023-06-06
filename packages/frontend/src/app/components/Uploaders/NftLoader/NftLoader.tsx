@@ -69,7 +69,6 @@ export const File = styled('label', {
   variants: {
     isImageUpload: {
       true: {
-        height: '320px',
         '&:hover': {
           boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
           '& img, p': {
