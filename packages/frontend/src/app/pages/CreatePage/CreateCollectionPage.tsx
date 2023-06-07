@@ -13,6 +13,7 @@ import { Button, PageLayout, textVariant } from '../../UIkit'
 import { FormControl } from '../../UIkit/Form/FormControl'
 import { Input } from '../../UIkit/Form/Input'
 import { TextArea } from '../../UIkit/Form/Textarea'
+import { Description } from './CreateNFTPage'
 import { useCreateCollection } from './hooks/useCreateCollection'
 import { useModalProperties } from './hooks/useModalProperties'
 
@@ -173,6 +174,18 @@ export default function CreateCollectionPage() {
 
           <FormControl>
             <Label css={{ marginBottom: '$3' }}>Upload a Logo</Label>
+            <Description style={{ width: '320px' }}>
+              <TextBold>Formats:</TextBold>
+              {' '}
+              JPG, PNG or GIF.
+              <TextBold> Max size:</TextBold>
+              {' '}
+              100 MB.
+              {' '}
+              <TextBold>Recommended size:</TextBold>
+              {' '}
+              300x300 px
+            </Description>
             <ImageLoader
               registerProps={register('image', { required: true })}
               resetField={resetField}
