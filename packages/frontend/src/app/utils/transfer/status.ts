@@ -42,6 +42,15 @@ export const transferPermissions = {
       return status === TransferStatus.Drafted &&
         transfer?.orderId !== undefined && transfer?.orderId !== null
     },
+
+    canWaitBuyer: (transfer?: Transfer) => {
+      const status = transferStatus(transfer)
+
+      return (
+        status !== undefined &&
+        status === TransferStatus.PasswordSet
+      )
+    },
   },
   buyer: {
     canCompleteDraft: (transfer?: Transfer) => {
