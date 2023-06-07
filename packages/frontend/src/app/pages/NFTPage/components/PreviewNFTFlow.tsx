@@ -64,14 +64,20 @@ const SwiperStyled = styled(Swiper)
 
 const ImageStyle = styled('img', {
   width: 'max-content',
-  maxWidth: '500px',
+  maxWidth: '1100px',
   height: 'max-content',
   maxHeight: '500px',
   borderRadius: '20px',
+  '@lg': {
+    maxWidth: '812px',
+  },
+  '@md': {
+    maxWidth: '540px',
+  },
   '@sm': {
     maxWidth: 358,
     maxHeight: 358,
-    marginTop: '-10px',
+    marginTop: '13px',
   },
 })
 
@@ -99,7 +105,7 @@ export const PreviewNFTFlow = ({
   useEffect(() => {
     const img = new Image()
     img.onload = function() {
-      setIsObjectFit(img.width > parseInt(adaptive({
+      setIsObjectFit(img.height > parseInt(adaptive({
         sm: '358',
         defaultValue: '500',
       })),
@@ -136,6 +142,11 @@ export const PreviewNFTFlow = ({
 
     return false
   }, [hiddenFile, getFile, canViewFile])
+
+  useEffect(() => {
+    console.log(`isCanView - ${isCanView}`)
+    console.log(`isLoading - ${isLoading}`)
+  }, [isCanView, isLoading])
 
   const handleLoadClick = async () => {
     if (!getFile) return

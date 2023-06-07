@@ -132,6 +132,9 @@ export default function CreateCollectionPage() {
       <SuccessNavBody
         buttonText='View collection'
         link={`/collection/${result.collectionAddress}`}
+        onPress={() => {
+          setModalOpen(false)
+        }}
       />,
     )
     void setModalOpen(true)

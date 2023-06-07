@@ -241,6 +241,9 @@ const CreateNftPage = observer(() => {
         <SuccessNavBody
           buttonText='View EFT'
           link={`/collection/${nftResult.receipt.to}/${nftResult.tokenId}`}
+          onPress={() => {
+            setModalOpen(false)
+          }}
         />,
       )
     }

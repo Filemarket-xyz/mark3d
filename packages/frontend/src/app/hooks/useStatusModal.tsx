@@ -68,6 +68,7 @@ export function useStatusModal({
       open: modalOpen,
       handleClose,
       isError: !!error,
+      isLoading,
     },
     setModalOpen,
     setModalBody,
