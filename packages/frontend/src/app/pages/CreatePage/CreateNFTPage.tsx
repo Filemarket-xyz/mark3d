@@ -157,7 +157,7 @@ export interface CreateNFTForm {
   royalty: number
 }
 
-const CreateNftPage = observer(() => {
+export const CreateNFTPage: React.FC = observer(() => {
   const { address } = useAccount()
   const location = useLocation()
   const predefinedCollection: {
@@ -507,7 +507,7 @@ const CreateNftPage = observer(() => {
               <Input<CreateNFTForm>
                 withoutDefaultBorder
                 type='number'
-                placeholder='Royalty amount'
+                placeholder='Amount of creator’s royalty'
                 controlledInputProps={{
                   name: 'royalty',
                   control,
@@ -571,5 +571,3 @@ const CreateNftPage = observer(() => {
     </>
   )
 })
-
-export default CreateNftPage
