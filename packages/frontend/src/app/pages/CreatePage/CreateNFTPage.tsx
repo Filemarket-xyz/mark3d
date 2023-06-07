@@ -502,10 +502,11 @@ export const CreateNFTPage: React.FC = observer(() => {
           </FormControl>
 
           <FormControl size={'lg'}>
-            <Label paddingL>Royalty (%)</Label>
+            <Label paddingL>Royalty</Label>
             <ContentField>
               <Input<CreateNFTForm>
                 withoutDefaultBorder
+                after="%"
                 type='number'
                 placeholder='Amount of creator’s royalty'
                 controlledInputProps={{

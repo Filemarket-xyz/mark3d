@@ -26,6 +26,7 @@ export const inputStyles = {
   color: '$blue900',
   border: '2px solid transparent',
   transition: 'outline-width 0.5s',
+  width: '100%',
 
   '&:placeholder': {
     color: '#656668',
@@ -49,7 +50,6 @@ export const inputStyles = {
   '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button,': {
     appearance: 'none',
   },
-  width: '100%',
   variants: {
     isError: {
       true: {
@@ -90,6 +90,11 @@ export const StyledErrorMessage = styled('div', {
   color: '$red500',
 })
 
-export const StyledAfterWrapper = styled('div', {
+export const StyledAfterContainer = styled('div', {
   position: 'absolute',
+  right: 16,
+  top: '50%',
+  transform: 'translateY(-50%)',
+  fontWeight: 600,
+  color: '$gray600',
 })
