@@ -234,7 +234,7 @@ export const PreviewNFTFlow = ({
                       src={previewState.data}
                       shadow-intensity='1'
                       touch-action='pan-y'
-                      style={{ width: '100%', height: '100%' }}
+                      style={{ width: '100%', height: '85%' }}
                     />
                   )
                     : (
