@@ -27,7 +27,11 @@ const ButtonContainer = styled('div', {
 })
 
 export const UnlockSection: FC<UnlockSectionProps> = ({ onSuccess }) => {
-  const { handleSubmit, formState: { errors }, control } = useForm<UnlockSectionForm>()
+  const { handleSubmit, formState: { errors }, control } = useForm<UnlockSectionForm>({
+    defaultValues: {
+      password: '',
+    },
+  })
 
   const { address } = useAccount()
   const { seedProvider } = useSeedProvider(address)

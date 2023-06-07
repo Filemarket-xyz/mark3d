@@ -4,8 +4,7 @@ import { FieldValues } from 'react-hook-form'
 
 import { styled } from '../../../../styles'
 import { useStores } from '../../../hooks'
-import { textVariant, Txt } from '../../../UIkit'
-import { IInput, IInputControlled, Input } from '../../../UIkit/Form/Input'
+import { ControlledInputProps, Input, InputProps, textVariant, Txt } from '../../../UIkit'
 import { EnterSeedPhraseDialog } from '../../Web3/EnterSeedPhraseDialog'
 import EyeImg from '../img/Eye.svg'
 import EyeCloseImg from '../img/EyeClose.svg'
@@ -34,8 +33,8 @@ const PasswordInputStyle = styled('div', {
 })
 
 interface PasswordInputProps<T extends FieldValues> {
-  inputProps: IInput
-  controlledInputProps: IInputControlled<T>
+  inputProps: InputProps
+  controlledInputProps: ControlledInputProps<T>
   isCanReset?: boolean
 }
 
