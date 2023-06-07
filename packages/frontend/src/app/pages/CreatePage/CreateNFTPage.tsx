@@ -154,6 +154,7 @@ export interface CreateNFTForm {
   license: ComboBoxOption
   licenseUrl: string
   tagsValue: string[]
+  royalty: number
 }
 
 const CreateNftPage = observer(() => {
@@ -497,6 +498,28 @@ const CreateNftPage = observer(() => {
                   Tags make it easier to find the right content
                 </Description>
               )}
+            </ContentField>
+          </FormControl>
+
+          <FormControl size={'lg'}>
+            <Label paddingL>Royalty (%)</Label>
+            <ContentField>
+              <Input<CreateNFTForm>
+                withoutDefaultBorder
+                type='number'
+                placeholder='Royalty amount'
+                controlledInputProps={{
+                  name: 'royalty',
+                  control,
+                  rules: {
+                    required: true,
+                    max: 50,
+                  },
+                }}
+              />
+              <Description secondary style={{ marginBottom: 0, padding: '0 8px' }}>
+                The allowable limit for specifying your royalty is no more than 50% of the transaction amount
+              </Description>
             </ContentField>
           </FormControl>
 
