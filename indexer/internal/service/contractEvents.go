@@ -135,7 +135,6 @@ func (s *service) onCollectionTransferEvent(
 				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
 			}
 			royalty, err := s.getRoyalty(ctx, collectionAddress, tokenId, block.Number())
-			log.Println("----- DEBUG ", royalty, err, collectionAddress.String(), tokenId.String())
 			return royalty, err
 		},
 		FnArgs:          []any{token.CollectionAddress, token.TokenId},

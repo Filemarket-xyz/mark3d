@@ -248,11 +248,8 @@ func (s *service) getRoyalty(ctx context.Context, address common.Address, tokenI
 	var royalty *big.Int
 	var isFirstCall = true
 
-	log.Println(1)
 	if address == s.cfg.PublicCollectionAddress {
-		log.Println(2)
 		for _, cli := range s.ethClient.Clients() {
-			log.Println(3)
 			var instance *publicCollection.PublicCollection
 
 			instance, err = publicCollection.NewPublicCollection(address, cli)
@@ -263,13 +260,10 @@ func (s *service) getRoyalty(ctx context.Context, address common.Address, tokenI
 				Context:     ctx,
 				BlockNumber: blockNumber,
 			}, tokenId)
-			log.Println(royalty, err)
 			if err != nil {
-				log.Println("get royalty failed", tokenId, err)
 			} else if royalty.Cmp(big.NewInt(0)) == 0 {
 				// For some reason 1 req always returns zero value
 				isFirstCall = false
-				log.Println(royalty.Uint64(), err)
 				err = fmt.Errorf("empty royalty")
 				continue
 			} else {
@@ -289,7 +283,6 @@ func (s *service) getRoyalty(ctx context.Context, address common.Address, tokenI
 				BlockNumber: blockNumber,
 			}, tokenId)
 			if err != nil {
-				log.Println(" get royalty failed", tokenId, err)
 			} else if royalty.Cmp(big.NewInt(0)) == 0 {
 				// For some reason 1 req always returns zero value
 				isFirstCall = false
