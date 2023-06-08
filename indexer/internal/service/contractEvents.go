@@ -134,7 +134,7 @@ func (s *service) onCollectionTransferEvent(
 			if !caOk || !tiOk {
 				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
 			}
-			royalty, err := s.getRoyalty(ctx, collectionAddress, tokenId)
+			royalty, err := s.getRoyalty(ctx, collectionAddress, tokenId, block.Number())
 			log.Println("----- DEBUG ", royalty, err, collectionAddress.String(), tokenId.String())
 			return royalty, err
 		},

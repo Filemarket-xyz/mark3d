@@ -243,22 +243,35 @@ func (s *service) collectionTokenURI(ctx context.Context,
 	return "", err
 }
 
-func (s *service) getRoyalty(ctx context.Context, address common.Address, tokenId *big.Int) (*big.Int, error) {
+func (s *service) getRoyalty(ctx context.Context, address common.Address, tokenId *big.Int, blockNumber *big.Int) (*big.Int, error) {
 	var err error
+	var royalty *big.Int
+	var isFirstCall = true
+
+	log.Println(1)
 	if address == s.cfg.PublicCollectionAddress {
+		log.Println(2)
 		for _, cli := range s.ethClient.Clients() {
+			log.Println(3)
 			var instance *publicCollection.PublicCollection
 
 			instance, err = publicCollection.NewPublicCollection(address, cli)
 			if err != nil {
 				return nil, err
 			}
-			var royalty *big.Int
 			royalty, err = instance.Royalties(&bind.CallOpts{
-				Context: ctx,
+				Context:     ctx,
+				BlockNumber: blockNumber,
 			}, tokenId)
+			log.Println(royalty, err)
 			if err != nil {
 				log.Println("get royalty failed", tokenId, err)
+			} else if royalty.Cmp(big.NewInt(0)) == 0 {
+				// For some reason 1 req always returns zero value
+				isFirstCall = false
+				log.Println(royalty.Uint64(), err)
+				err = fmt.Errorf("empty royalty")
+				continue
 			} else {
 				return royalty, nil
 			}
@@ -271,16 +284,25 @@ func (s *service) getRoyalty(ctx context.Context, address common.Address, tokenI
 			if err != nil {
 				return nil, err
 			}
-			var royalty *big.Int
 			royalty, err = instance.Royalties(&bind.CallOpts{
-				Context: ctx,
+				Context:     ctx,
+				BlockNumber: blockNumber,
 			}, tokenId)
 			if err != nil {
 				log.Println(" get royalty failed", tokenId, err)
+			} else if royalty.Cmp(big.NewInt(0)) == 0 {
+				// For some reason 1 req always returns zero value
+				isFirstCall = false
+				err = fmt.Errorf("empty royalty")
+				continue
 			} else {
 				return royalty, nil
 			}
 		}
+	}
+
+	if royalty.Uint64() == 0 && !isFirstCall {
+		return royalty, nil
 	}
 
 	return nil, err
