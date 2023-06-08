@@ -4,15 +4,19 @@ import "@nomicfoundation/hardhat-toolbox";
 import fs from "fs";
 
 const mumbaiAccounts: string[] = [];
-const hyperspaceAccounts: string[] = [];
+// const hyperspaceAccounts: string[] = [];
+const calibrationAccounts: string[] = [];
 const filecoinAccounts: string[] = [];
 
 if (fs.existsSync(".mumbai-secret")) {
   mumbaiAccounts.push(fs.readFileSync(".mumbai-secret").toString().trim());
 }
-if (fs.existsSync(".hyperspace-secret")) {
-  hyperspaceAccounts.push(fs.readFileSync(".hyperspace-secret").toString().trim());
+if (fs.existsSync(".calibration-secret")) {
+  calibrationAccounts.push(fs.readFileSync(".calibration-secret").toString().trim());
 }
+// if (fs.existsSync(".hyperspace-secret")) {
+//   hyperspaceAccounts.push(fs.readFileSync(".hyperspace-secret").toString().trim());
+// }
 if (fs.existsSync(".mainnet-secret")) {
   filecoinAccounts.push(fs.readFileSync(".mainnet-secret").toString().trim());
 }
@@ -22,12 +26,18 @@ const mumbaiConfig: HttpNetworkUserConfig = {
   chainId: 80001,
   accounts: mumbaiAccounts,
 };
-const hyperspaceConfig: HttpNetworkUserConfig = {
-  url: "https://api.hyperspace.node.glif.io/rpc/v1",
-  chainId: 3141,
-  accounts: hyperspaceAccounts,
+const calibrationConfig: HttpNetworkUserConfig = {
+  url: "https://filecoin-calibration.chainup.net/rpc/v1",
+  chainId: 314159,
+  accounts: calibrationAccounts,
   timeout: 1000000000
 };
+// const hyperspaceConfig: HttpNetworkUserConfig = {
+//   url: "https://api.hyperspace.node.glif.io/rpc/v1",
+//   chainId: 3141,
+//   accounts: hyperspaceAccounts,
+//   timeout: 1000000000
+// };
 if (process.env.POLYGON_QUIKNODE_URL) {
   mumbaiConfig.url = process.env.POLYGON_QUIKNODE_URL;
 }
@@ -38,12 +48,13 @@ const filecoinConfig: HttpNetworkUserConfig = {
   timeout: 1000000000
 }
 console.log("mumbai cfg:", mumbaiConfig);
-console.log("hyperspace cfg:", hyperspaceConfig);
+console.log("calibrationConfig cfg:", calibrationConfig);
+// console.log("hyperspace cfg:", hyperspaceConfig);
 console.log("mainnet cfg:", filecoinConfig)
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.17",
+    version: "0.8.18",
     settings: {
       optimizer: {
         enabled: true,
@@ -53,7 +64,8 @@ const config: HardhatUserConfig = {
   },
   networks: {
     mumbai: mumbaiConfig,
-    hyperspace: hyperspaceConfig,
+    calibration: calibrationConfig,
+    // hyperspace: hyperspaceConfig,
     filecoin: filecoinConfig
   },
   etherscan: {

@@ -198,9 +198,9 @@ function UncontrolledCombobox<T extends FieldValues>(props: ComboboxProps<T>) {
     <div>
       <div {...getRootProps()}>
         <PostfixedInput
-          placeholder={props.placeholder ?? 'Select collection'}
           postfix={props.rightContent ?? <img width={24} height={24} src={bottomArrow} />}
           inputProps={{
+            placeholder: props.placeholder ?? 'Select collection',
             ...getInputProps(),
             onKeyDown: handleKeyDown,
             onKeyUp: handleKeyUp,

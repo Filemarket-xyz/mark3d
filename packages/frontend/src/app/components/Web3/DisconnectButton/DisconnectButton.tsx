@@ -17,6 +17,9 @@ export const DisconnectButton: FC<DisconnectButtonProps> = ({ onPress }) => {
   return (
     <Link
       type="button"
+      style={{
+        color: '#D81B60',
+      }}
       onPress={(e) => {
         seedProvider?.lock()
         disconnect()

@@ -18,6 +18,13 @@ export const StyledWrapper = styled('div', {
   '&:hover > div': {
     animationDuration: '1.5s',
   },
+  variants: {
+    fullWidth: {
+      true: {
+        width: '100%',
+      },
+    },
+  },
 })
 
 export const StyledGlow = styled('div', {
@@ -34,4 +41,15 @@ export const StyledGlow = styled('div', {
   animation: `${animationGlow} 3s linear infinite`,
   animationDelay: '0.5s',
   backgroundSize: '200% 200%',
+  variants: {
+    isDisabled: {
+      true: {
+        animation: 'none',
+        background: 'none',
+      },
+      false: {
+
+      },
+    },
+  },
 })

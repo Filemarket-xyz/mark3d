@@ -62,8 +62,8 @@ export const AppAccountMenu: FC<AppAccountMenuProps> = ({ address }) => {
             <SwitchNetworkButton onPress={close} />
           )}
           <AccountButton address={address} onPress={close} />
-          <DisconnectButton onPress={close} />
           <ViewMnemonicButton />
+          <DisconnectButton onPress={close} />
         </Spacer>
       </PopoverContent>
     </Popover>

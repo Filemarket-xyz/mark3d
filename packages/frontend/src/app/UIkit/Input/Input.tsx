@@ -2,6 +2,7 @@ import React from 'react'
 import { AriaTextFieldOptions, useTextField } from 'react-aria'
 
 import { styled } from '../../../styles'
+import { Txt } from '..'
 
 const InputStyle = styled('div', {
   position: 'relative',
@@ -31,12 +32,18 @@ const InputStyle = styled('div', {
   },
 
   '& .errorInput': {
-    border: '2px solid $red',
+    outline: '1px solid $red500',
   },
 
-  '& .errorMessage': {
-    color: '$red',
-  },
+})
+
+const ErrorMessage = styled('div', {
+  padding: '24px 16px 12px',
+  background: 'rgba(197, 75, 92, 0.05)',
+  border: '1px solid rgba(197, 75, 92, 0.25)',
+  borderRadius: '0px 0px 16px 16px',
+  marginTop: '-12px',
+  color: '$red500',
 })
 
 export const Input = (props: AriaTextFieldOptions<'input'>) => {
@@ -56,9 +63,9 @@ export const Input = (props: AriaTextFieldOptions<'input'>) => {
       )}
       {props.errorMessage &&
                 (
-                  <div {...errorMessageProps} className={'errorMessage'}>
-                    {props.errorMessage}
-                  </div>
+                  <ErrorMessage {...errorMessageProps}>
+                    <Txt primary1>{props.errorMessage}</Txt>
+                  </ErrorMessage>
                 )}
     </InputStyle>
   )

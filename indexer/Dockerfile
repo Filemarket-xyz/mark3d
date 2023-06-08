@@ -1,4 +1,4 @@
-FROM golang:1.18 as build-deps
+FROM golang:1.20 as build-deps
 
 ENV GO111MODULE=on
 

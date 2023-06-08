@@ -1,17 +1,14 @@
-import { Modal } from '@nextui-org/react'
+import { useWeb3Modal } from '@web3modal/react'
 import { observer } from 'mobx-react-lite'
-import React from 'react'
-import { useAccount } from 'wagmi'
+import React, { useCallback } from 'react'
+import { useAccount, useDisconnect } from 'wagmi'
 
 import { styled } from '../../../../styles'
-import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useCanUnlock } from '../../../processing/SeedProvider/useCanUnlock'
-import { Txt } from '../../../UIkit'
+import { FWIcon, Modal, ModalBody, ModalTitle } from '../../../UIkit/Modal/Modal'
 import { AppDialogProps } from '../../../utils/dialog'
-import { ModalTitle } from '../../Modal/Modal'
 import { CreateOrImportSection } from './sections/CreateOrImportSection'
-import { UnlockSection } from './sections/UnlockSection'
 
 const ConnectWalletWindowStyle = styled('div', {
   background: 'red',
@@ -20,40 +17,55 @@ const ConnectWalletWindowStyle = styled('div', {
   },
 })
 
-export const ConnectFileWalletDialog = observer(({ open, onClose }: AppDialogProps<{}>) => {
-  useCloseIfNotConnected(onClose)
-  const { adaptive } = useMediaMui()
-  const { address } = useAccount()
+type IConnectFileWalletDialog = AppDialogProps<{}> & {
+  openWeb3Modal: () => void
+}
+
+export const ConnectFileWalletDialog = observer(({ open, onClose, openWeb3Modal }: IConnectFileWalletDialog) => {
+  const { adaptive, smValue } = useMediaMui()
+  const { isOpen } = useWeb3Modal()
+  const { address, isConnected } = useAccount()
   const canUnlock = useCanUnlock(address)
+  const { disconnect } = useDisconnect()
+
+  const onCloseButtonClick = useCallback(() => {
+    if (isConnected) disconnect()
+  }, [isConnected])
 
   return (
     <ConnectWalletWindowStyle>
       <Modal
         closeButton
-        preventClose
-        open={open}
+        preventClose={isConnected}
+        open={open && !isOpen && !canUnlock}
         width={adaptive({
-          sm: canUnlock ? '300px' : '400px',
-          md: canUnlock ? '300px' : '650px',
-          lg: canUnlock ? '400px' : '950px',
-          defaultValue: canUnlock ? '500px' : '950px',
+          sm: '400px',
+          md: '550px',
+          lg: '743px',
+          defaultValue: '743px',
         })}
         onClose={onClose}
+        onCloseButtonClick={() => {
+          onCloseButtonClick()
+        }}
       >
-        <ModalTitle><Txt h4>Connect FileWallet</Txt></ModalTitle>
-        <Modal.Body>
-          {canUnlock ? (
-            <UnlockSection onSuccess={() => {
+        <ModalTitle style={{ fontSize: smValue ? '24px' : '32px', lineHeight: smValue ? '32px' : '40px', marginBottom: '32px' }}>
+          <FWIcon />
+          Log in / Sign up
+        </ModalTitle>
+        <ModalBody style={{ paddingBottom: '0', paddingTop: '0' }}>
+          <CreateOrImportSection
+            connectFunc={() => {
+              openWeb3Modal?.()
+            }}
+            onSuccess={() => {
               onClose()
             }}
-            />
-          ) : (
-            <CreateOrImportSection onSuccess={() => {
+            onDisconnect={() => {
               onClose()
             }}
-            />
-          )}
-        </Modal.Body>
+          />
+        </ModalBody>
       </Modal>
     </ConnectWalletWindowStyle>
   )

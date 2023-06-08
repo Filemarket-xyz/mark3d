@@ -3,7 +3,7 @@ import { textVariant } from '../../../../UIkit'
 
 export const PropertyTitle = styled('h2', {
   ...textVariant('h5').true,
-  color: '#656669',
+  color: '$gray600',
   marginBottom: '$3',
   fontWeight: '600',
 })

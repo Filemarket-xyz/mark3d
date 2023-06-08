@@ -19,6 +19,7 @@ const convertFormDataToNftDTO = (form: CreateNFTForm): FormToTransfer => {
     license: form.license.title,
     licenseUrl: form.licenseUrl,
     tags: form.tagsValue,
+    royalty: form.royalty,
   }
 }
 
@@ -31,6 +32,7 @@ export const useCreateNft = () => {
     image: undefined,
     name: '',
   })
+  const [options, setOptions] = useState<{ isPublicCollection?: boolean }>()
 
   const {
     mintNFT,
@@ -38,15 +40,16 @@ export const useCreateNft = () => {
     setIsLoading,
     setResult,
     statuses: { error, isLoading, result },
-  } = useMintNFT(formToTransfer)
+  } = useMintNFT(formToTransfer, options)
 
   useAfterDidMountEffect(() => {
     console.log(formToTransfer.description)
     mintNFT()
-  }, [formToTransfer])
+  }, [formToTransfer, options])
 
   return {
-    createNft: (form: CreateNFTForm) => {
+    createNft: (form: CreateNFTForm, options?: { isPublicCollection?: boolean }) => {
+      setOptions(options)
       setFormToTransfer(convertFormDataToNftDTO(form))
     },
     error,

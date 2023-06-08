@@ -1,74 +1,66 @@
-import { Loading, Modal } from '@nextui-org/react'
 import React, { FC, ReactNode } from 'react'
 
+import Capibebra from '../../../assets/img/Capibebra.gif'
+import SuccessfullImg from '../../../assets/img/SuccesfullIcon.svg'
 import { styled } from '../../../styles'
-import { Button, NavButton, textVariant } from '../../UIkit'
+import { ButtonGlowing, ButtonNavGlowing } from '../../UIkit'
+import { Modal, ModalBody, ModalButtonContainer, ModalP, ModalTitle } from '../../UIkit/Modal/Modal'
 import { stringifyError } from '../../utils/error'
-
-export const ModalTitle = styled('h3', {
-  ...textVariant('primary1'),
-  fontSize: '$h5',
-  color: '$blue900',
-  fontWeight: 600,
-  textAlign: 'center',
-  paddingTop: '$3',
-})
-
-const ModalP = styled('p', {
-  ...textVariant('primary1'),
-  color: '$gray500',
-  textAlign: 'center',
-  paddingTop: '$2',
-})
 
 interface InProcessBodyProps {
   text: ReactNode
   waitForSign?: boolean
 }
+
+const Loading = styled('img', {
+  width: '130px',
+  marginBottom: '20px',
+})
+
 export const InProgressBody: React.FC<InProcessBodyProps> = ({ text, waitForSign = true }) => (
   <>
-    <Loading size='xl' type='points' />
+    <Loading src={Capibebra} />
     <ModalTitle>{text}</ModalTitle>
-    {waitForSign && <ModalP>Please check your wallet and sign the transaction</ModalP>}
+    {waitForSign && <ModalP style={{ fontSize: '16px' }}>Please check your wallet and sign the transaction</ModalP>}
   </>
 )
 
 interface SuccessNavBodyProps {
   buttonText: string
   link: string
+  onPress: () => void
 }
-export const SuccessNavBody = ({ buttonText, link }: SuccessNavBodyProps) => (
-  <>
-    <ModalTitle css={{ marginBottom: '$4' }}>Success</ModalTitle>
-    <Center>
-      <NavButton
-        primary
-        to={link}
-        type="button"
-      >
-        {buttonText}
-      </NavButton>
-    </Center>
-  </>
-)
-
+export const SuccessNavBody = ({ buttonText, link, onPress }: SuccessNavBodyProps) => {
+  return (
+    <>
+      <ModalTitle style={{ marginBottom: '40px' }}><img src={SuccessfullImg} /></ModalTitle>
+      <ModalP style={{ marginBottom: '40px' }}>Success</ModalP>
+      <ModalButtonContainer style={{ justifyContent: 'center' }}>
+        <ButtonNavGlowing
+          whiteWithBlue
+          modalButton
+          to={link}
+          onPress={onPress}
+        >
+          {buttonText}
+        </ButtonNavGlowing>
+      </ModalButtonContainer>
+    </>
+  )
+}
 export interface SuccessOkBodyProps {
   description: ReactNode
   handleClose?: () => void
 }
 
-const Center = styled('div', {
-  dflex: 'center',
-})
-
 export const SuccessOkBody: FC<SuccessOkBodyProps> = ({ description, handleClose }) => (
   <>
-    <ModalTitle>Success</ModalTitle>
-    <ModalP>{description}</ModalP>
+    <ModalTitle style={{ marginBottom: '40px' }}><img src={SuccessfullImg} /></ModalTitle>
+    <ModalP style={{ marginBottom: '40px' }}>{description}</ModalP>
     {handleClose && (
-      <Center>
-        <Button secondary onPress={handleClose}>Ok</Button>
-      </Center>
+      <ModalButtonContainer style={{ justifyContent: 'center' }}>
+        <ButtonGlowing whiteWithBlue modalButton onPress={handleClose}>Cool</ButtonGlowing>
+      </ModalButtonContainer>
     )}
   </>
 )
@@ -92,10 +84,23 @@ export const extractMessageFromError = (error: any) => {
   return stringifyError(error)
 }
 
-export const ErrorBody = ({ message }: { message: string }) => (
+export const ErrorBody = ({ message, onClose }: { message: string, onClose?: () => void }) => (
   <>
-    <ModalTitle>Error</ModalTitle>
-    <ModalP css={{ color: '$red', wordBreak: 'break-all' }}>{message}</ModalP>
+    <ModalTitle style={{ color: '#C54B5C' }}>Error</ModalTitle>
+    <ModalP css={{ fontSize: '16px', fontWeight: '400', wordBreak: 'break-all', textAlign: 'center' }}>{message}</ModalP>
+    <ModalButtonContainer>
+      <ButtonGlowing
+        modalButton
+        whiteWithBlue
+        modalButtonFontSize
+        onPress={() => {
+          console.log(onClose)
+          onClose?.()
+        }}
+      >
+        Got it
+      </ButtonGlowing>
+    </ModalButtonContainer>
   </>
 )
 
@@ -104,6 +109,9 @@ interface MintModalProps {
   handleClose: () => void
   body?: ReactNode
   footer?: ReactNode
+  onOpen?: () => void
+  isError?: boolean
+  isLoading?: boolean
 }
 
 export default function MintModal({
@@ -111,16 +119,25 @@ export default function MintModal({
   open,
   body,
   footer,
+  onOpen,
+  isError,
+  isLoading,
 }: MintModalProps) {
   return (
     <Modal
-      closeButton
       aria-labelledby='modal-title'
       open={open}
+      width={'max-content'}
+      isError={isError}
+      preventClose={isLoading}
+      style={{
+        maxWidth: '690px',
+      }}
       onClose={handleClose}
+      onOpen={onOpen}
     >
-      {body && <Modal.Body>{body}</Modal.Body>}
-      <Modal.Footer>{footer}</Modal.Footer>
+      {body && <ModalBody style={{ padding: 0 }}>{body}</ModalBody>}
+      {footer}
     </Modal>
   )
 }

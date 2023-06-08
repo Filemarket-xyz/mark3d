@@ -20,7 +20,7 @@ func main() {
 	if err != nil {
 		log.Panicln(err)
 	}
-	accessTokenInstance, err := access_token.NewMark3dAccessToken(common.HexToAddress(address), c.Clients()[0])
+	accessTokenInstance, err := access_token.NewMark3dAccessTokenV2(common.HexToAddress(address), c.Clients()[0])
 	if err != nil {
 		log.Panicln(err)
 	}

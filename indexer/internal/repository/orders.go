@@ -32,7 +32,7 @@ func (p *postgres) GetAllActiveOrders(
 			FROM order_statuses
 		),
 		filtered_orders AS (
-			SELECT o.id, o.transfer_id, o.price
+			SELECT o.id, o.transfer_id, o.price,o.currency,o.exchange_address
 			FROM orders AS o
 			JOIN transfers t on o.transfer_id = t.id
 			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
@@ -40,7 +40,7 @@ func (p *postgres) GetAllActiveOrders(
 			  AND lts.status NOT IN ('Finished', 'Cancelled') 
 			  AND o.id < $1
 		)
-		SELECT fo.id, fo.transfer_id, fo.price, los.timestamp, los.status, los.tx_id
+		SELECT fo.id, fo.transfer_id, fo.price, fo.currency, fo.exchange_address, los.timestamp, los.status, los.tx_id
 		FROM filtered_orders fo
 		JOIN latest_order_statuses los ON fo.id = los.order_id
 		WHERE los.rank = 1 
@@ -67,7 +67,7 @@ func (p *postgres) GetAllActiveOrders(
 		ids []int64
 	)
 	for rows.Next() {
-		var price, txId string
+		var price, currency, exchangeAddress, txId string
 		status := &domain.OrderStatus{}
 		o := &domain.Order{
 			Statuses: make([]*domain.OrderStatus, 0, 1),
@@ -77,6 +77,8 @@ func (p *postgres) GetAllActiveOrders(
 			&o.Id,
 			&o.TransferId,
 			&price,
+			&currency,
+			&exchangeAddress,
 			&status.Timestamp,
 			&status.Status,
 			&txId,
@@ -86,6 +88,8 @@ func (p *postgres) GetAllActiveOrders(
 
 		status.TxId = common.HexToHash(txId)
 		o.Statuses = append(o.Statuses, status)
+		o.Currency = common.HexToAddress(currency)
+		o.ExchangeAddress = common.HexToAddress(exchangeAddress)
 
 		var ok bool
 		o.Price, ok = big.NewInt(0).SetString(price, 10)
@@ -95,7 +99,6 @@ func (p *postgres) GetAllActiveOrders(
 
 		res, ids = append(res, o), append(ids, o.Id)
 	}
-
 	return res, nil
 }
 
@@ -114,7 +117,7 @@ func (p *postgres) GetAllActiveOrdersTotal(
 			FROM order_statuses
 		),
 		filtered_orders AS (
-			SELECT o.id, o.transfer_id, o.price
+			SELECT o.id, o.transfer_id, o.price,o.currency,o.exchange_address
 			FROM orders AS o
 			JOIN transfers t on o.transfer_id = t.id
 			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
@@ -138,30 +141,34 @@ func (p *postgres) GetIncomingOrdersByAddress(
 	tx pgx.Tx,
 	address common.Address,
 ) ([]*domain.Order, error) {
+
 	// language=PostgreSQL
 	query := `
-		SELECT o.id, o.transfer_id, o.price 
+		SELECT o.id, o.transfer_id, o.price, o.currency, o.exchange_address 
 		FROM orders AS o 
     	JOIN transfers t on o.transfer_id = t.id 
 		WHERE t.to_address=$1
 		ORDER BY o.id DESC
 	`
-
 	rows, err := tx.Query(ctx, query, strings.ToLower(address.String()))
 	if err != nil {
 		return nil, err
 	}
+
 	defer rows.Close()
 	var (
 		res []*domain.Order
 		ids []int64
 	)
 	for rows.Next() {
-		var price string
+		var price, currency, exchangeAddress string
 		o := &domain.Order{}
-		if err := rows.Scan(&o.Id, &o.TransferId, &price); err != nil {
+		if err := rows.Scan(&o.Id, &o.TransferId, &price, &currency, &exchangeAddress); err != nil {
 			return nil, err
 		}
+		o.Currency = common.HexToAddress(currency)
+		o.ExchangeAddress = common.HexToAddress(exchangeAddress)
+
 		var ok bool
 		o.Price, ok = big.NewInt(0).SetString(price, 10)
 		if !ok {
@@ -182,7 +189,7 @@ func (p *postgres) GetIncomingOrdersByAddress(
 
 func (p *postgres) GetOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price FROM orders AS o 
+	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address FROM orders AS o 
     	JOIN transfers t on o.transfer_id = t.id WHERE t.from_address=$1 ORDER BY o.id DESC `,
 		strings.ToLower(address.String()))
 	if err != nil {
@@ -194,11 +201,14 @@ func (p *postgres) GetOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, ad
 		ids []int64
 	)
 	for rows.Next() {
-		var price string
+		var price, currency, exchangeAddress string
 		o := &domain.Order{}
-		if err := rows.Scan(&o.Id, &o.TransferId, &price); err != nil {
+		if err := rows.Scan(&o.Id, &o.TransferId, &price, &currency, &exchangeAddress); err != nil {
 			return nil, err
 		}
+		o.Currency = common.HexToAddress(currency)
+		o.ExchangeAddress = common.HexToAddress(exchangeAddress)
+
 		var ok bool
 		o.Price, ok = big.NewInt(0).SetString(price, 10)
 		if !ok {
@@ -220,7 +230,7 @@ func (p *postgres) GetOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, ad
 func (p *postgres) GetActiveIncomingOrdersByAddress(ctx context.Context, tx pgx.Tx,
 	address common.Address) ([]*domain.Order, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price FROM orders AS o 
+	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address FROM orders AS o 
     	JOIN transfers t on o.transfer_id = t.id WHERE t.to_address=$1 AND 
     	    NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
                 ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
@@ -234,11 +244,14 @@ func (p *postgres) GetActiveIncomingOrdersByAddress(ctx context.Context, tx pgx.
 		ids []int64
 	)
 	for rows.Next() {
-		var price string
+		var price, currency, exchangeAddress string
 		o := &domain.Order{}
-		if err := rows.Scan(&o.Id, &o.TransferId, &price); err != nil {
+		if err := rows.Scan(&o.Id, &o.TransferId, &price, &currency, &exchangeAddress); err != nil {
 			return nil, err
 		}
+		o.Currency = common.HexToAddress(currency)
+		o.ExchangeAddress = common.HexToAddress(exchangeAddress)
+
 		var ok bool
 		o.Price, ok = big.NewInt(0).SetString(price, 10)
 		if !ok {
@@ -259,7 +272,7 @@ func (p *postgres) GetActiveIncomingOrdersByAddress(ctx context.Context, tx pgx.
 
 func (p *postgres) GetActiveOutgoingOrdersByAddress(ctx context.Context, tx pgx.Tx, address common.Address) ([]*domain.Order, error) {
 	// language=PostgreSQL
-	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price FROM orders AS o 
+	rows, err := tx.Query(ctx, `SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address FROM orders AS o 
     	JOIN transfers t on o.transfer_id = t.id WHERE t.from_address=$1 AND
     	    NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
                 ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
@@ -273,9 +286,9 @@ func (p *postgres) GetActiveOutgoingOrdersByAddress(ctx context.Context, tx pgx.
 		ids []int64
 	)
 	for rows.Next() {
-		var price string
+		var price, currency, exchangeAddress string
 		o := &domain.Order{}
-		if err := rows.Scan(&o.Id, &o.TransferId, &price); err != nil {
+		if err := rows.Scan(&o.Id, &o.TransferId, &price, &currency, &exchangeAddress); err != nil {
 			return nil, err
 		}
 		var ok bool
@@ -283,6 +296,9 @@ func (p *postgres) GetActiveOutgoingOrdersByAddress(ctx context.Context, tx pgx.
 		if !ok {
 			return nil, fmt.Errorf("failed to parse big int: %s", price)
 		}
+
+		o.Currency = common.HexToAddress(currency)
+		o.ExchangeAddress = common.HexToAddress(exchangeAddress)
 
 		res, ids = append(res, o), append(ids, o.Id)
 	}
@@ -323,11 +339,11 @@ func (p *postgres) getOrderStatuses(ctx context.Context, tx pgx.Tx,
 
 func (p *postgres) GetOrder(ctx context.Context, tx pgx.Tx, id int64) (*domain.Order, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `SELECT id,transfer_id,price FROM orders WHERE id=$1`, id)
+	row := tx.QueryRow(ctx, `SELECT id,transfer_id,price,currency,exchange_address FROM orders WHERE id=$1`, id)
 
-	var price string
+	var price, currency, exchangeAddress string
 	o := &domain.Order{}
-	if err := row.Scan(&o.Id, &o.TransferId, &price); err != nil {
+	if err := row.Scan(&o.Id, &o.TransferId, &price, &currency, &exchangeAddress); err != nil {
 		return nil, err
 	}
 	var ok bool
@@ -341,21 +357,24 @@ func (p *postgres) GetOrder(ctx context.Context, tx pgx.Tx, id int64) (*domain.O
 		return nil, err
 	}
 	o.Statuses = statuses[o.Id]
+	o.Currency = common.HexToAddress(currency)
+	o.ExchangeAddress = common.HexToAddress(exchangeAddress)
+
 	return o, nil
 }
 
 func (p *postgres) GetActiveOrder(ctx context.Context, tx pgx.Tx, contractAddress common.Address, tokenId *big.Int) (*domain.Order, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `SELECT o.id,o.transfer_id,o.price FROM orders AS o 
+	row := tx.QueryRow(ctx, `SELECT o.id,o.transfer_id,o.price,o.currency,o.exchange_address FROM orders AS o 
     	JOIN transfers t on t.id = o.transfer_id
     	WHERE collection_address=$1 AND token_id=$2 AND
               NOT (SELECT ts.status FROM transfer_statuses AS ts WHERE ts.transfer_id=t.id AND 
                 ts.timestamp=(SELECT MAX(ts2.timestamp) FROM transfer_statuses AS ts2 WHERE ts2.transfer_id=t.id))=
                     ANY('{Finished,Cancelled}')`, strings.ToLower(contractAddress.String()), tokenId.String())
 
-	var price string
+	var price, currency, exchangeAddress string
 	o := &domain.Order{}
-	if err := row.Scan(&o.Id, &o.TransferId, &price); err != nil {
+	if err := row.Scan(&o.Id, &o.TransferId, &price, &currency, &exchangeAddress); err != nil {
 		return nil, err
 	}
 	var ok bool
@@ -369,13 +388,20 @@ func (p *postgres) GetActiveOrder(ctx context.Context, tx pgx.Tx, contractAddres
 		return nil, err
 	}
 	o.Statuses = statuses[o.Id]
+	o.Currency = common.HexToAddress(currency)
+	o.ExchangeAddress = common.HexToAddress(exchangeAddress)
+
 	return o, nil
 }
 
 func (p *postgres) InsertOrder(ctx context.Context, tx pgx.Tx, order *domain.Order) (int64, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `INSERT INTO orders VALUES (DEFAULT,$1,$2) RETURNING id`,
-		order.TransferId, order.Price.String())
+	row := tx.QueryRow(ctx, `INSERT INTO orders VALUES (DEFAULT,$1,$2,$3,$4) RETURNING id`,
+		order.TransferId,
+		order.Price.String(),
+		strings.ToLower(order.Currency.String()),
+		strings.ToLower(order.ExchangeAddress.String()),
+	)
 	var id int64
 	if err := row.Scan(&id); err != nil {
 		return 0, err

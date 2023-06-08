@@ -89,7 +89,7 @@ export interface BadgeProps {
   valueStyles?: ComponentProps<typeof Value>
 }
 
-export const Badge: FC<BadgeProps> = (props: BadgeProps) => {
+export const Badge: FC<BadgeProps> = (props) => {
   return (
     <Wrapper {...props.wrapperProps}>
       {props.image && (

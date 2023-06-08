@@ -332,12 +332,18 @@ func (s *service) GetTransferV2(ctx context.Context, address common.Address, tok
 	if err != nil {
 		return nil, internalError
 	}
+	rate, err := s.currencyConverter.GetExchangeRate(ctx, "FIL", "USD")
+	if err != nil {
+		log.Println("failed to get conversion rate: ", err)
+		return nil, internalError
+	}
 	var order *domain.Order
 	if res.OrderId != 0 {
 		order, err = s.repository.GetOrder(ctx, tx, res.OrderId)
 		if err != nil {
 			return nil, internalError
 		}
+		order.PriceUsd = currencyconversion.Convert(rate, order.Price)
 	}
 	return &models.TransferWithData{
 		Collection: domain.CollectionToModel(collection),

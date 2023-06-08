@@ -26,13 +26,13 @@ func main() {
 	if err != nil {
 		log.Panicln(err)
 	}
-	e, err := exchange.NewMark3dExchange(common.HexToAddress(address), c)
+	e, err := exchange.NewFilemarketExchangeV2(common.HexToAddress(address), c)
 	if err != nil {
 		log.Panicln(err)
 	}
 	_ = e
 	to := common.HexToAddress(address)
-	a, err := abi.JSON(strings.NewReader(exchange.Mark3dExchangeABI))
+	a, err := abi.JSON(strings.NewReader(exchange.FilemarketExchangeV2ABI))
 	if err != nil {
 		log.Panicln(err)
 	}

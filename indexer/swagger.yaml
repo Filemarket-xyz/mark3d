@@ -67,6 +67,37 @@ paths:
           default: 10000
           minimum: 0
           maximum: 10000
+  /collections/full/public:
+    get:
+      tags:
+        - collections
+      description: Получение публичной коллекции со всем ее токенами
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Коллекция
+          schema:
+            $ref: "#/definitions/CollectionData"
+        default:
+          description: Ошибка
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      parameters:
+        - name: lastTokenId
+          in: query
+          description: Id последнего токена на прошлой странице. Если пустая строка, то вернет первую страницу
+          type: string
+          default: ""
+          pattern: "^[0-9]*$"
+        - name: limit
+          in: query
+          description: Максимальное число токенов, которое вернется на этой странице.
+          type: integer
+          format: int
+          default: 10000
+          minimum: 0
+          maximum: 10000
   /tokens/{address}:
     get:
       tags:
@@ -582,6 +613,41 @@ paths:
           description: Ошибка
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /sequencer/acquire/{address}:
+    get:
+      description: Возвращает рандомный доступный tokenId
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Token Id
+          schema:
+            $ref: "#/definitions/SequencerAcquireResponse"
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+      - name: address
+        description: Адрес коллекции
+        in: path
+        required: true
+        type: string
+        pattern: "0x[0-9a-f-A-F]{40}"
+  /currency/conversion_rate:
+    get:
+      description: Возвращает conversion rate
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Conversion rate
+          schema:
+            $ref: '#/definitions/ConversionRateResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
 definitions:
   ErrorResponse:
     type: object
@@ -617,6 +683,7 @@ definitions:
           $ref: "#/definitions/Collection"
       collectionsTotal:
         type: number
+        x-omitempty: false
         format: uint64
       tokens:
         type: array
@@ -625,6 +692,7 @@ definitions:
           $ref: "#/definitions/Token"
       tokensTotal:
         type: number
+        x-omitempty: false
         format: uint64
   TokensByCollectionResponse:
     type: object
@@ -635,6 +703,7 @@ definitions:
           $ref: "#/definitions/Token"
       total:
         type: number
+        x-omitempty: false
         format: uint64
   TransfersResponse:
     type: object
@@ -647,6 +716,7 @@ definitions:
           $ref: "#/definitions/Transfer"
       incomingTotal:
         type: number
+        x-omitempty: false
         format: uint64
       outgoing:
         type: array
@@ -655,6 +725,7 @@ definitions:
           $ref: "#/definitions/Transfer"
       outgoingTotal:
         type: number
+        x-omitempty: false
         format: uint64
   TransfersResponseV2:
     type: object
@@ -667,6 +738,7 @@ definitions:
           $ref: "#/definitions/TransferWithData"
       incomingTotal:
         type: number
+        x-omitempty: false
         format: uint64
       outgoing:
         type: array
@@ -675,6 +747,7 @@ definitions:
           $ref: "#/definitions/TransferWithData"
       outgoingTotal:
         type: number
+        x-omitempty: false
         format: uint64
   OrdersResponse:
     type: object
@@ -687,6 +760,7 @@ definitions:
           $ref: "#/definitions/Order"
       incomingTotal:
         type: number
+        x-omitempty: false
         format: uint64
       outgoing:
         type: array
@@ -695,6 +769,7 @@ definitions:
           $ref: "#/definitions/Order"
       outgoingTotal:
         type: number
+        x-omitempty: false
         format: uint64
   OrdersAllActiveResponse:
     type: object
@@ -705,6 +780,7 @@ definitions:
           $ref: "#/definitions/OrderWithToken"
       total:
         type: number
+        x-omitempty: false
         format: uint64
   OrderWithToken:
     type: object
@@ -728,6 +804,7 @@ definitions:
           $ref: "#/definitions/Token"
       total:
         type: number
+        x-omitempty: false
         format: uint64
   Collection:
     type: object
@@ -761,6 +838,16 @@ definitions:
       image:
         type: string
         description: Ссылка на пикчу из метаданных
+      type:
+        type: string
+        description: Тип коллекции <br />
+          * `File Market Collection` - Обычные коллекции <br />
+          * `Public Collection` - Общая коллекция, куда может заминтить каждый <br />
+          * `File Bunnies Collection` - Крош. Наша коллекция
+        enum:
+          - "File Market Collection"
+          - "Public Collection"
+          - "File Bunnies Collection"
   Token:
     type: object
     description: Токен
@@ -806,6 +893,11 @@ definitions:
         type: string
       licenseUrl:
         type: string
+      royalty:
+        type: number
+        description: Роялти в формате, где 100% = 10000
+        x-omitempty: false
+        format: uint64
       mintTxHash:
         type: string
         description: Хэш транзакции минта
@@ -928,10 +1020,18 @@ definitions:
         type: string
         description: Цена
         pattern: "^[0-9]+$"
+      currency:
+        type: string
+        description: Адрес ERC20. Если нулевой адрес, то нативная валюта
+        pattern: "0x[0-9a-f-A-F]{40}"
       priceUsd:
         type: string
         description: Цена в долларах
         pattern: "^[0-9]+.[0-9]+$"
+      exchangeAddress:
+        type: string
+        description: Адрес коллекции
+        pattern: "0x[0-9a-f-A-F]{40}"
       statuses:
         type: array
         description: Статусы ордера
@@ -1013,6 +1113,13 @@ definitions:
     enum:
       - Healthy
       - Unhealthy
+  SequencerAcquireResponse:
+    type: object
+    properties:
+      tokenId:
+        type: string
+        description: Id токена
+        pattern: "^[0-9]+$"
   MetadataProperty:
     type: object
     description: Структура для свойств в метаданных
@@ -1035,6 +1142,7 @@ definitions:
         description: Количество таких же value в заданном trait_type
       traitTotal:
         type: integer
+        x-omitempty: false
         description: Общее количество записей с таким trait_type
   HiddenFileMetaData:
     type: object
@@ -1050,6 +1158,16 @@ definitions:
         type: number
         format: int64
         description: Размер данных
+  ConversionRateResponse:
+    type: object
+    description: Conversion rate
+    properties:
+      from:
+        type: string
+      to:
+        type: string
+      rate:
+        type: number
 tags:
   - name: tokens
   - name: transfers

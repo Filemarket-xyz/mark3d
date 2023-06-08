@@ -30,6 +30,7 @@ const convertTransferToTransferCards = (target: 'incoming' | 'outgoing') => {
     collectionName: transfer.collection?.name ?? '',
     imageURL: getHttpLinkFromIpfsString(transfer.token?.image ?? ''),
     title: transfer.token?.name ?? '',
+    hiddenFileMeta: transfer.token?.hiddenFileMeta,
     user: {
       address: reduceAddress(transfer.token?.owner ?? '—'),
       img: getProfileImageUrl(transfer.token?.owner ?? ''),
@@ -47,7 +48,11 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
   isLoading = false
   isActivated = false
 
-  data: TransfersResponseV2 = {}
+  data: TransfersResponseV2 = {
+    incomingTotal: 0,
+    outgoingTotal: 0,
+  }
+
   address = ''
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
@@ -116,6 +121,12 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
     const { incoming = [], incomingTotal = 0, outgoing = [], outgoingTotal = 0 } = this.data
 
     return incoming.length < incomingTotal || outgoing.length < outgoingTotal
+  }
+
+  get total() {
+    const { incomingTotal = 0, outgoingTotal = 0 } = this.data
+
+    return incomingTotal + outgoingTotal
   }
 
   get transferCards(): TransferCardProps[] {

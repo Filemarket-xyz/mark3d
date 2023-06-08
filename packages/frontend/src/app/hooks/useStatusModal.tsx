@@ -56,6 +56,7 @@ export function useStatusModal({
       setModalBody(
         <ErrorBody
           message={extractMessageFromError(error)}
+          onClose={handleClose}
         />,
       )
     }
@@ -66,6 +67,8 @@ export function useStatusModal({
       body: modalBody,
       open: modalOpen,
       handleClose,
+      isError: !!error,
+      isLoading,
     },
     setModalOpen,
     setModalBody,

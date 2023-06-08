@@ -1,28 +1,31 @@
-import { FC } from 'react'
+import { mnemonicToEntropy } from 'bip39'
+import { sha256 } from 'ethers/lib/utils'
+import React, { FC } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
 import { styled } from '../../../../../styles'
 import { useSeedProvider } from '../../../../processing'
-import { Button, Txt } from '../../../../UIkit'
-import { ErrorMessage } from '../../../../UIkit/Form/ErrorMessage'
-import { FormControl } from '../../../../UIkit/Form/FormControl'
-import { Input } from '../../../../UIkit/Form/Input'
+import { ButtonGlowing, Txt } from '../../../../UIkit'
+import { InputModalTitleText, ModalBanner } from '../../../../UIkit/Modal/Modal'
+import { PasswordInput } from '../../../Form/PasswordInput/PasswordInput'
 import { validateImportMnemonic, validatePassword } from '../../ConnectFileWalletDialog/utils/validate'
+import { FormControlStyle } from '../../CreateMnemonicDialog/CreatePasswordForm/CreatePasswordForm'
 
 const FormEnterSeedPhraseStyle = styled('form', {
-  paddingTop: '2rem',
-  width: '90%',
+  width: '100%',
   margin: '0 auto',
 })
 
 export interface EnterSeedPhraseValue {
   seedPhrase: string
   password: string
+  repeatPassword: string
 }
 
 export interface EnterSeedPhraseProps {
   onSubmit: (value: EnterSeedPhraseValue) => void
+  isReset?: boolean
 }
 
 const ButtonContainer = styled('div', {
@@ -30,39 +33,99 @@ const ButtonContainer = styled('div', {
   justifyContent: 'end',
 })
 
-export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<EnterSeedPhraseValue>()
+export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit, isReset }) => {
+  const { handleSubmit, formState: { errors }, watch, control } = useForm<EnterSeedPhraseValue>()
   const { address } = useAccount()
   const { seedProvider } = useSeedProvider(address)
 
+  const password = watch('password')
+  const passwordRepeat = watch('repeatPassword')
+
   return (
     <FormEnterSeedPhraseStyle onSubmit={handleSubmit(onSubmit)}>
-      <FormControl>
-        <Input
-          type="string"
-          placeholder={seedProvider?.mnemonic ? 'Enter a new seed-phrase' : 'Enter a seed-phrase'}
-          {...register('seedPhrase', { validate: validateImportMnemonic })}
-          isError={!!errors?.seedPhrase}
+      <FormControlStyle>
+        <InputModalTitleText>FileWallet seed phrase</InputModalTitleText>
+        <PasswordInput<EnterSeedPhraseValue>
+          inputProps={{
+            type: 'password',
+            isError: !!errors?.seedPhrase,
+            isDisabledFocusStyle: false,
+            errorMessage: errors?.seedPhrase?.message,
+          }}
+          controlledInputProps={{
+            name: 'seedPhrase',
+            control,
+            rules: {
+              required: true,
+              validate: (p) => {
+                if (!!validateImportMnemonic(p)) return validateImportMnemonic(p)
+                if (isReset && seedProvider?.hashSeed !== sha256(Buffer.from(mnemonicToEntropy((p)), 'hex'))) {
+                  return 'Seed phrase not matching'
+                }
+              },
+            },
+          }}
         />
-        {errors?.seedPhrase && <ErrorMessage><Txt h5>{errors.seedPhrase?.message}</Txt></ErrorMessage>}
-      </FormControl>
-      <FormControl>
-        <Input
-          type="password"
-          placeholder='Enter your password'
-          {...register('password', { validate: validatePassword })}
-          isError={!!errors?.password}
+      </FormControlStyle>
+      <FormControlStyle>
+        <InputModalTitleText>Create password</InputModalTitleText>
+        <PasswordInput<EnterSeedPhraseValue>
+          inputProps={{
+            type: 'password',
+            isError: !!errors?.password,
+            isDisabledFocusStyle: false,
+            errorMessage: errors?.password?.message,
+          }}
+          controlledInputProps={{
+            name: 'password',
+            control,
+            rules: {
+              required: true,
+              validate: validatePassword,
+            },
+          }}
         />
-        {errors?.password && <ErrorMessage><Txt h5>{errors.password?.message}</Txt></ErrorMessage>}
-      </FormControl>
+      </FormControlStyle>
+      <FormControlStyle style={{ marginBottom: '0' }}>
+        <InputModalTitleText>Repeat password</InputModalTitleText>
+        <PasswordInput<EnterSeedPhraseValue>
+          inputProps={{
+            type: 'password',
+            isError: !!errors?.repeatPassword,
+            isDisabledFocusStyle: false,
+            errorMessage: errors.repeatPassword?.message,
+          }}
+          controlledInputProps={{
+            name: 'repeatPassword',
+            control,
+            rules: {
+              required: true,
+              validate: () => password === passwordRepeat ? undefined : 'Password are not matching',
+            },
+          }}
+        />
+      </FormControlStyle>
+      <ModalBanner
+        style={{
+          marginBottom: '40px',
+        }}
+      >
+        <Txt primary1 style={{ fontSize: '20px', lineHeight: '24px' }}>Note about password</Txt>
+        <Txt primary1 style={{ fontWeight: '400', lineHeight: '24px' }}>
+          The password will be attached to your current browser/device.
+          You can use the same password as on other devices or create a new one.
+        </Txt>
+      </ModalBanner>
       <ButtonContainer>
-        <Button
-          primary
+        <ButtonGlowing
+          whiteWithBlue
+          modalButton
+          modalButtonFontSize
           type="submit"
-          isDisabled={!!(errors.seedPhrase || errors.password)}
+          isDisabled={!!(errors.password)}
         >
-          Sign in
-        </Button>
+          Connect
+        </ButtonGlowing>
       </ButtonContainer>
     </FormEnterSeedPhraseStyle>
   )

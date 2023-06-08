@@ -13,6 +13,7 @@ import { IHiddenFileProcessorFactory } from './IHiddenFileProcessorFactory'
 export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
   private readonly owners: Record<string, Record<string, HiddenFileOwner>> = Object.create(null)
   private readonly buyers: Record<string, Record<string, HiddenFileBuyer>> = Object.create(null)
+  private readonly filesCache = new WeakMap<[ArrayBuffer, number], File>()
 
   #globalSalt?: ArrayBuffer
 
@@ -76,6 +77,7 @@ export class HiddenFileProcessorFactory implements IHiddenFileProcessorFactory {
       this.#globalSalt,
       hexToBuffer(collectionAddress),
       tokenId,
+      this.filesCache,
     )
     this.owners[account] = {
       ...accountOwners,

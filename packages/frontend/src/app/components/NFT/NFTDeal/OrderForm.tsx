@@ -51,7 +51,7 @@ const ButtonContainer = styled('div', {
 })
 
 export const OrderForm: FC<OrderFormProps> = ({ defaultValues, onSubmit }) => {
-  const { register, handleSubmit } = useForm<OrderFormRawValue>({
+  const { handleSubmit, control } = useForm<OrderFormRawValue>({
     defaultValues: importFormValue(defaultValues),
   })
 
@@ -63,11 +63,15 @@ export const OrderForm: FC<OrderFormProps> = ({ defaultValues, onSubmit }) => {
       <FormControlStyle>
         <Label>Price</Label>
         <div className='inputDiv'>
-          <Input
+          <Input<OrderFormRawValue>
             type="number"
             step="any"
             placeholder='1.01'
-            {...register('price', { required: true })}
+            controlledInputProps={{
+              control,
+              name: 'price',
+              rules: { required: true },
+            }}
           />
         </div>
       </FormControlStyle>

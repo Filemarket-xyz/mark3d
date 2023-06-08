@@ -7,25 +7,25 @@ import { fileToExtension, fileToType } from '../helper/fileToType'
 import { StyledFileType } from './FileType.styles'
 
 interface FileTypeProps {
-  file?: HiddenFileMetaData
+  hiddenFileMeta?: HiddenFileMetaData
   className?: string
 }
 
-export const FileType: React.FC<FileTypeProps> = ({ file, className }) => {
+export const FileType: React.FC<FileTypeProps> = ({ hiddenFileMeta, className }) => {
   const { type, extension } = useMemo(() => {
-    if (!file) return {}
+    if (!hiddenFileMeta) return {}
 
     return {
-      type: fileToType(file),
-      extension: fileToExtension(file),
+      type: fileToType(hiddenFileMeta),
+      extension: fileToExtension(hiddenFileMeta),
     }
-  }, [file])
+  }, [hiddenFileMeta])
 
   const img = useMemo(() => {
     if (type) return typeImg[type]
   }, [type])
 
-  if (!file) return null
+  if (!hiddenFileMeta) return null
 
   return (
     <StyledFileType className={className}>

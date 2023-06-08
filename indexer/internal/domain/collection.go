@@ -16,6 +16,7 @@ type Collection struct {
 	Name        string
 	Description string
 	Image       string
+	Type        string
 }
 
 type CollectionTransfer struct {
@@ -35,5 +36,6 @@ func CollectionToModel(c *Collection) *models.Collection {
 		Name:        c.Name,
 		Description: c.Description,
 		Image:       c.Image,
+		Type:        c.Type,
 	}
 }

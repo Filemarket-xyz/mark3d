@@ -7,7 +7,6 @@ import { StyledMuiTabs } from './MuiTabs.styles'
 export const MuiTabs: React.FC<TabsProps> = (props) => {
   return (
     <StyledMuiTabs
-      scrollButtons
       allowScrollButtonsMobile
       variant='scrollable'
       {...props}

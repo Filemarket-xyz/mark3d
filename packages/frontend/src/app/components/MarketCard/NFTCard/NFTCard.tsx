@@ -20,14 +20,14 @@ export interface NFTCardProps {
   }
   priceUsd?: string
   price?: string
-  hiddenFile?: HiddenFileMetaData
+  hiddenFileMeta?: HiddenFileMetaData
 }
 
 export const NFTCard: React.FC<NFTCardProps> = ({
   collectionName,
   button,
   imageURL,
-  hiddenFile,
+  hiddenFileMeta,
   title,
   user,
   price,
@@ -38,7 +38,7 @@ export const NFTCard: React.FC<NFTCardProps> = ({
       to={button.link}
       title={title}
       collectionName={collectionName}
-      fileType={<FileType file={hiddenFile} />}
+      fileType={<FileType hiddenFileMeta={hiddenFileMeta} />}
       imgSrc={imageURL}
       button={{
         to: button.link,

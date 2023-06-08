@@ -3,7 +3,7 @@ import * as React from 'react'
 
 import { styled } from '../../../styles'
 import { textVariant } from '../Txt'
-import { glow, Input, inputStyles } from './Input'
+import { inputStyles } from './Input'
 
 const InputWithPrefix = styled('div', {
   ...inputStyles,
@@ -14,20 +14,6 @@ const InputWithPrefix = styled('div', {
   gap: '$2',
   alignItems: 'center',
   transition: 'outline-width 0.3s',
-  '&:hover': {
-    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    outline: '1px solid #38BCC9',
-  },
-  '&:focus': {
-    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    outline: '3px solid #38BCC9',
-    animation: `${glow} 800ms ease-out infinite alternate`,
-  },
-  '&:focus-within': {
-    boxShadow: '0px 2px 15px rgba(19, 19, 45, 0.2)',
-    outline: '3px solid #38BCC9',
-    animation: `${glow} 800ms ease-out infinite alternate`,
-  },
 })
 
 const InputPostfix = styled('div', {
@@ -38,38 +24,43 @@ const InputPostfix = styled('div', {
   alignItems: 'center',
 })
 
+const Input = styled('input', {
+  ...inputStyles,
+  paddingLR: 0,
+  borderRadius: 0,
+  border: 'none',
+  flexGrow: 1,
+  height: '100%',
+  boxShadow: 'none',
+  outline: 'none',
+  '&:focus': {
+    boxShadow: 'none',
+    outline: 'none',
+    animation: 'none',
+  },
+  '&:hover': {
+    outline: 'none',
+    boxShadow: 'none',
+  },
+  '&:focus-within': {
+    boxShadow: 'none',
+    outline: 'none',
+    animation: 'none',
+  },
+})
+
 interface PrefixedInputProps {
-  postfix: ReactNode
-  placeholder: string
+  postfix?: ReactNode
   inputProps?: ComponentProps<typeof Input>
   postfixProps?: ComponentProps<typeof InputPostfix>
 }
 
 export default function PostfixedInput(props: PrefixedInputProps) {
   return (
-    <InputWithPrefix>
+    <InputWithPrefix isDisabledFocusStyle withoutDefaultBorder>
       <Input
-        css={{
-          paddingLR: 0,
-          borderRadius: 0,
-          border: 'none',
-          flexGrow: 1,
-          height: '100%',
-          boxShadow: 'none',
-          outline: 'none',
-          '&:focus': {
-            boxShadow: 'none',
-            outline: 'none',
-            animation: 'none',
-          },
-          '&:hover': {
-            outline: 'none',
-            boxShadow: 'none',
-          },
-        }}
-        {...props.inputProps}
         isDisabledFocusStyle
-        placeholder={props.placeholder}
+        {...props.inputProps}
       />
       <InputPostfix {...props.postfixProps}>{props.postfix}</InputPostfix>
     </InputWithPrefix>
