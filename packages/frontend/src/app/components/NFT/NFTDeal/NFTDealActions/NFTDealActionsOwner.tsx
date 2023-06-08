@@ -1,12 +1,13 @@
 import { observer } from 'mobx-react-lite'
-import { FC } from 'react'
+import React, { FC } from 'react'
 
 import { Transfer } from '../../../../../swagger/Api'
+import { useStatusModal } from '../../../../hooks/useStatusModal'
 import { useIsApprovedExchange } from '../../../../processing'
 import { TokenFullId } from '../../../../processing/types'
-import { Button, Txt } from '../../../../UIkit'
-import { stringifyError } from '../../../../utils/error'
+import { Button } from '../../../../UIkit'
 import { transferPermissions } from '../../../../utils/transfer/status'
+import MintModal from '../../../Modal/Modal'
 import { ButtonApproveExchange } from './ActionButtons/ButtonApproveExchange'
 import { ButtonApproveTransfer } from './ActionButtons/ButtonApproveTransfer'
 import { ButtonCancelOrder } from './ActionButtons/ButtonCancelOrder'
@@ -15,6 +16,7 @@ import { ButtonFinalizeTransfer } from './ActionButtons/ButtonFinalizeTransfer'
 import { ButtonInitTransfer } from './ActionButtons/ButtonInitTransfer'
 import { ButtonPlaceOrder } from './ActionButtons/ButtonPlaceOrder'
 import { HideAction } from './HideAction'
+import { funcTimeout } from './NFTDealActions'
 
 export interface NFTDealActionsOwnerProps {
   tokenFullId: TokenFullId
@@ -33,17 +35,20 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
 }) => {
   const { isApprovedExchange, error: isApprovedExchangeError, refetch } = useIsApprovedExchange(tokenFullId)
   const error = isApprovedExchangeError
+
+  const { modalProps } = useStatusModal({
+    statuses: { result: undefined, isLoading: false, error: error as unknown as string },
+    okMsg: '',
+    loadingMsg: '',
+  })
+
   if (error) {
-    return (
-      <Txt color="red">
-        {stringifyError(error)}
-      </Txt>
-    )
+    return <MintModal {...modalProps} />
   }
 
   return (
     <>
-      <HideAction hide={!transfer || !permissions.canCancel(transfer)}>
+      <HideAction hide={!transfer || !permissions.canWaitBuyer(transfer)}>
         <Button
           primary
           fullWidth
@@ -63,7 +68,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
         <ButtonCancelOrder tokenFullId={tokenFullId} callback={reFetchOrder} />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canCancel(transfer)}>
-        <ButtonCancelTransfer tokenFullId={tokenFullId} />
+        <ButtonCancelTransfer tokenFullId={tokenFullId} callback={() => { funcTimeout(refetch); reFetchOrder?.() }} />
       </HideAction>
       <HideAction hide={!!transfer || !isApprovedExchange}>
         <ButtonPlaceOrder tokenFullId={tokenFullId} callback={reFetchOrder} />

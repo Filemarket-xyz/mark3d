@@ -39,7 +39,7 @@ import { useCreateNft } from './hooks/useCreateNft'
 import { useModalProperties } from './hooks/useModalProperties'
 import PlusIcon from './img/plus-icon.svg'
 
-const Description = styled('div', {
+export const Description = styled('div', {
   ...textVariant('secondary1').true,
   fontSize: '14px',
   lineHeight: '18px',
@@ -244,6 +244,9 @@ export const CreateNFTPage: React.FC = observer(() => {
         <SuccessNavBody
           buttonText='View EFT'
           link={`/collection/${nftResult.receipt.to}/${nftResult.tokenId}`}
+          onPress={() => {
+            setModalOpen(false)
+          }}
         />,
       )
     }

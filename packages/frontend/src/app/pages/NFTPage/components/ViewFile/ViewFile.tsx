@@ -29,7 +29,7 @@ const ViewFileStyle = styled('div', {
     height: '100%',
   },
   position: 'absolute',
-  bottom: '28px',
+  bottom: '90px',
   right: 'calc((100% - $breakpoints$xl) * 0.3 + $space$4)',
   '@xl': {
     right: 'calc((100% - $breakpoints$lg) * 0.554 + $space$4)',
@@ -42,6 +42,7 @@ const ViewFileStyle = styled('div', {
   },
   '@sm': {
     right: '$3',
+    bottom: '35px',
   },
 })
 
