@@ -36,6 +36,7 @@ export const Web3ModalConfigured: FC = () => (
     themeVariables={{
       '--w3m-font-family': theme.fonts.primary.value,
       '--w3m-accent-color': theme.colors.blue500.value,
+      '--w3m-z-index': '9999',
     }}
   />
 )

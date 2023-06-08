@@ -132,7 +132,7 @@ const getTxReceipt = async (tx: ContractTransaction) => {
     pingTx(tx.hash),
   ])
 
-  if (!receipt) {
+  if (!receipt || !receipt.status) {
     throw new JsonRpcError(503, `The transaction ${tx.hash} is failed`)
   }
 

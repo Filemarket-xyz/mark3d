@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers'
+
 export interface IBlockchainDataProvider {
 
   /**
@@ -11,15 +13,21 @@ export interface IBlockchainDataProvider {
   }>
 
   /**
-   * @returns The globalSalt.
+   * @param collectionAddress
+   * @param tokenId
+   * @returns Token creator address
+   */
+  getTokenCreator: (collectionAddress: ArrayBuffer, tokenId: number) => Promise<`0x${string}`>
+
+  /**
+   * @returns The globalSalt
    */
   getGlobalSalt: () => Promise<ArrayBuffer>
 
   /**
-   * @param address
-   * @returns The addres of the owner, and therefore the creator of the collection
+   * @returns The platform fee
    */
-  getCollectionCreator: (address: ArrayBuffer) => Promise<`0x${string}`>
+  getFee: () => Promise<BigNumber>
 
   /**
    * @param collectionAddress
@@ -27,4 +35,12 @@ export interface IBlockchainDataProvider {
    * @returns Transfer count of token with provided tokenId
    */
   getTransferCount: (collectionAddress: ArrayBuffer, tokenId: number) => Promise<number>
+
+  /**
+   * @param collectionAddress
+   * @param tokenId
+   * @param price Current token price
+   * @returns Calculated royalty amount
+   */
+  getRoyaltyAmount: (collectionAddress: ArrayBuffer, tokenId: number, price: BigNumber) => Promise<BigNumber>
 }

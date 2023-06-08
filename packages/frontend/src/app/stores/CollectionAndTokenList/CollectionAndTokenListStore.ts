@@ -24,7 +24,10 @@ export class CollectionAndTokenListStore implements IActivateDeactivate<[string]
 
   address = ''
 
-  data: TokensResponse = {}
+  data: TokensResponse = {
+    collectionsTotal: 0,
+    tokensTotal: 0,
+  }
 
   constructor({ errorStore }: { errorStore: ErrorStore }) {
     this.errorStore = errorStore

@@ -628,6 +628,7 @@ func (s *service) tryProcessCollectionTransferEvent(
 	if err := s.onCollectionTransferEvent(ctx, tx, t, block, transfer.TokenId, transfer.To); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -685,10 +686,10 @@ func (s *service) tryProcessPublicCollectionTransferEvent(
 	return nil
 }
 
-func (s *service) tryProcessTransferInit(
+func (s *service) tryProcessFileBunniesTransferInit(
 	ctx context.Context,
 	tx pgx.Tx,
-	instance *collection.FilemarketCollectionV2,
+	instance *filebunniesCollection.FileBunniesCollection,
 	t *types.Transaction,
 	l *types.Log,
 ) error {
@@ -702,10 +703,10 @@ func (s *service) tryProcessTransferInit(
 	return nil
 }
 
-func (s *service) tryProcessFileBunniesTransferInit(
+func (s *service) tryProcessTransferInit(
 	ctx context.Context,
 	tx pgx.Tx,
-	instance *filebunniesCollection.FileBunniesCollection,
+	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
 ) error {
@@ -1151,6 +1152,7 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 		return err
 	}
 
+
 	for _, l := range receipt.Logs {
 		switch l.Address {
 		case s.cfg.ExchangeAddress:
@@ -1188,6 +1190,7 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 		}
 	}
 	return nil
+
 }
 
 func (s *service) processExchangeEvents(ctx context.Context, tx pgx.Tx, t *types.Transaction, l *types.Log, instance *exchange.FilemarketExchangeV2) error {

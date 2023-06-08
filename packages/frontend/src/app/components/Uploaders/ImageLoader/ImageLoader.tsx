@@ -44,6 +44,22 @@ const P = styled('p', {
   },
 })
 
+const FileStyle = styled(File, {
+  variants: {
+    isImageUpload: {
+      true: {
+        height: '320px',
+        '&:hover': {
+          boxShadow: '0px 4px 20px rgba(35, 37, 40, 0.05)',
+          '& img, p': {
+            filter: 'brightness(100%)',
+          },
+        },
+      },
+    },
+  },
+})
+
 const ImageIcon = styled('img', {
   width: 60,
   height: 60,
@@ -147,7 +163,7 @@ export default function ImageLoader(props: ImageLoaderProps) {
   }
 
   return (
-    <File htmlFor='inputTag' isImageUpload={!!file}>
+    <FileStyle htmlFor='inputTag' isImageUpload={!!file}>
       {file && (
         <CloseButton
           onPress={() => {
@@ -183,6 +199,6 @@ export default function ImageLoader(props: ImageLoaderProps) {
           void props.registerProps?.onChange(e)
         }}
       />
-    </File>
+    </FileStyle>
   )
 }

@@ -133,7 +133,10 @@ export class TransfersHistoryStore implements IActivateDeactivate<[string]>, ISt
   isLoading = false
   isActivated = false
 
-  data: TransfersResponseV2 = {}
+  data: TransfersResponseV2 = {
+    incomingTotal: 0,
+    outgoingTotal: 0,
+  }
 
   collectionAddress = ''
 

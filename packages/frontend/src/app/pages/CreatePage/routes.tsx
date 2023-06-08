@@ -14,6 +14,6 @@ export const createRoutes: RouteObject[] = [
   },
   {
     path: '',
-    element: <Navigate to={'collection'} />,
+    element: <Navigate to={'eft'} />,
   },
 ]

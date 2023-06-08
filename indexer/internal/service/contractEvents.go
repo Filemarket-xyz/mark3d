@@ -76,6 +76,46 @@ func (s *service) onCollectionTransferEvent(
 	return nil
 }
 
+func processRoyalty(ctx context.Context, s *service, block *types.Block, token *domain.Token) (*big.Int, error) {
+	royaltyRetryOpts := retry.Options{
+		Fn: func(ctx context.Context, args ...any) (any, error) {
+			blockNumber, bOk := args[0].(*big.Int)
+			collectionAddress, caOk := args[1].(common.Address)
+			tokenId, tiOk := args[2].(*big.Int)
+
+			if !caOk || !tiOk || !bOk {
+				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
+			}
+			return s.getRoyalty(ctx, blockNumber, collectionAddress, tokenId)
+		},
+		FnArgs:          []any{block.Number(), token.CollectionAddress, token.TokenId},
+		RetryOnAnyError: true,
+		Backoff: &retry.ExponentialBackoff{
+			InitialInterval: 3,
+			RandFactor:      0.5,
+			Multiplier:      2,
+			MaxInterval:     10,
+		},
+		MaxElapsedTime: 30 * time.Second,
+	}
+
+	royaltyAny, err := retry.OnErrors(ctx, royaltyRetryOpts)
+	if err != nil {
+		var failedErr *retry.FailedErr
+		if errors.As(err, &failedErr) {
+			log.Printf("failed to load royalty: %v", failedErr)
+		} else {
+			return nil, fmt.Errorf("failed to getRoyalty: %w", err)
+		}
+	}
+
+	royalty, ok := royaltyAny.(*big.Int)
+	if !ok {
+		return nil, errors.New("failed to cast royalty to *big.Int")
+	}
+	return royalty, nil
+}
+
 func (s *service) processMetadata(ctx context.Context, token *domain.Token) (*domain.TokenMetadata, string, error) {
 	metaUriRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
@@ -155,46 +195,6 @@ func (s *service) processMetadata(ctx context.Context, token *domain.Token) (*do
 	}
 
 	return &meta, metaUri, nil
-}
-
-func processRoyalty(ctx context.Context, s *service, block *types.Block, token *domain.Token) (*big.Int, error) {
-	royaltyRetryOpts := retry.Options{
-		Fn: func(ctx context.Context, args ...any) (any, error) {
-			blockNumber, bOk := args[0].(*big.Int)
-			collectionAddress, caOk := args[1].(common.Address)
-			tokenId, tiOk := args[2].(*big.Int)
-
-			if !caOk || !tiOk || !bOk {
-				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
-			}
-			return s.getRoyalty(ctx, blockNumber, collectionAddress, tokenId)
-		},
-		FnArgs:          []any{block.Number(), token.CollectionAddress, token.TokenId},
-		RetryOnAnyError: true,
-		Backoff: &retry.ExponentialBackoff{
-			InitialInterval: 3,
-			RandFactor:      0.5,
-			Multiplier:      2,
-			MaxInterval:     10,
-		},
-		MaxElapsedTime: 30 * time.Second,
-	}
-
-	royaltyAny, err := retry.OnErrors(ctx, royaltyRetryOpts)
-	if err != nil {
-		var failedErr *retry.FailedErr
-		if errors.As(err, &failedErr) {
-			log.Printf("failed to load royalty: %v", failedErr)
-		} else {
-			return nil, fmt.Errorf("failed to getRoyalty: %w", err)
-		}
-	}
-
-	royalty, ok := royaltyAny.(*big.Int)
-	if !ok {
-		return nil, errors.New("failed to cast royalty to *big.Int")
-	}
-	return royalty, nil
 }
 
 func (s *service) onCollectionTransferInitEvent(

@@ -21,43 +21,51 @@ export class HiddenFileOwner implements IHiddenFileOwner {
     public readonly globalSalt: ArrayBuffer,
     public readonly collectionAddress: ArrayBuffer,
     public readonly tokenId: number,
+    public readonly filesCache: WeakMap<[ArrayBuffer, number], File>,
   ) {
     this.#tokenFullIdArgs = [this.collectionAddress, this.tokenId]
     this.#persistentArgs = [this.globalSalt, ...this.#tokenFullIdArgs]
     this.#isFirefox = navigator.userAgent.includes('Firefox')
   }
 
-  async decryptFile(encryptedFile: ArrayBuffer, meta: FileMeta | undefined): Promise<DecryptResult<File>> {
+  async #getFilePassword(): Promise<ArrayBuffer> {
     assertSeed(this.seedProvider.seed)
 
+    const creator = await this.blockchainDataProvider.getTokenCreator(...this.#tokenFullIdArgs)
+
+    if (this.address === utils.getAddress(creator)) {
+      const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...this.#persistentArgs)
+
+      return aesKeyAndIv.key
+    }
+
+    const {
+      encryptedPassword,
+      dealNumber,
+    } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullIdArgs)
+
+    const { priv } = await this.crypto.eftRsaDerivation(
+      this.seedProvider.seed,
+      ...this.#persistentArgs,
+      dealNumber,
+      { disableWorker: this.#isFirefox },
+    )
+
+    return this.crypto.rsaDecrypt(hexToBuffer(encryptedPassword), priv)
+  }
+
+  async decryptFile(encryptedFile: ArrayBuffer, meta: FileMeta | undefined): Promise<DecryptResult<File>> {
+    let result = this.filesCache.get(this.#tokenFullIdArgs)
+    if (result) return { ok: true, result }
+
     try {
-      const creator = await this.blockchainDataProvider.getCollectionCreator(this.collectionAddress)
-
-      let password: ArrayBuffer
-      if (this.address === utils.getAddress(creator)) {
-        const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...this.#persistentArgs)
-        password = aesKeyAndIv.key
-      } else {
-        const {
-          encryptedPassword,
-          dealNumber,
-        } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullIdArgs)
-
-        const { priv } = await this.crypto.eftRsaDerivation(
-          this.seedProvider.seed,
-          ...this.#persistentArgs,
-          dealNumber,
-          { disableWorker: this.#isFirefox },
-        )
-        password = await this.crypto.rsaDecrypt(hexToBuffer(encryptedPassword), priv)
-      }
-
+      const password = await this.#getFilePassword()
       const decryptedFile = await this.crypto.aesDecrypt(encryptedFile, password)
 
-      return {
-        ok: true,
-        result: new File([decryptedFile], meta?.name || 'hidden_file', { type: meta?.type }),
-      }
+      result = new File([decryptedFile], meta?.name || 'hidden_file', { type: meta?.type })
+      this.filesCache.set(this.#tokenFullIdArgs, result)
+
+      return { ok: true, result }
     } catch (error) {
       return {
         ok: false,
@@ -77,29 +85,7 @@ export class HiddenFileOwner implements IHiddenFileOwner {
   }
 
   async encryptFilePassword(publicKey: RsaPublicKey): Promise<ArrayBuffer> {
-    assertSeed(this.seedProvider.seed)
-
-    const creator = await this.blockchainDataProvider.getCollectionCreator(this.collectionAddress)
-
-    let password: ArrayBuffer
-    if (this.address === utils.getAddress(creator)) {
-      const aesKeyAndIv = await this.crypto.eftAesDerivation(this.seedProvider.seed, ...this.#persistentArgs)
-      password = aesKeyAndIv.key
-    } else {
-      const {
-        encryptedPassword: lastEncryptedPassword,
-        dealNumber,
-      } = await this.blockchainDataProvider.getLastTransferInfo(...this.#tokenFullIdArgs)
-
-      const { priv } = await this.crypto.eftRsaDerivation(
-        this.seedProvider.seed,
-        ...this.#persistentArgs,
-        dealNumber,
-        { disableWorker: this.#isFirefox },
-      )
-      password = await this.crypto.rsaDecrypt(hexToBuffer(lastEncryptedPassword), priv)
-    }
-
+    const password = await this.#getFilePassword()
     const encryptedPassword = await this.crypto.rsaEncrypt(password, publicKey)
 
     return encryptedPassword

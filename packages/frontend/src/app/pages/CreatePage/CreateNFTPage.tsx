@@ -17,6 +17,7 @@ import NftLoader from '../../components/Uploaders/NftLoader/NftLoader'
 import { useCollectionAndTokenListStore, useStores } from '../../hooks'
 import { useAfterDidMountEffect } from '../../hooks/useDidMountEffect'
 import { useMediaMui } from '../../hooks/useMediaMui'
+import { usePublicCollectionStore } from '../../hooks/usePublicCollectionStore'
 import { Button, Link, PageLayout, textVariant, Txt } from '../../UIkit'
 import { ComboBoxOption, ControlledComboBox } from '../../UIkit/Form/Combobox'
 import { FormControl } from '../../UIkit/Form/FormControl'
@@ -31,13 +32,14 @@ import {
   LetterCounter,
   TextBold,
   TextGray,
+  TitleGroup,
 } from './CreateCollectionPage'
 import { category, categoryOptions, license, licenseInfo, licenseOptions, subcategory, tags } from './helper/data/data'
 import { useCreateNft } from './hooks/useCreateNft'
 import { useModalProperties } from './hooks/useModalProperties'
 import PlusIcon from './img/plus-icon.svg'
 
-const Description = styled('div', {
+export const Description = styled('div', {
   ...textVariant('secondary1').true,
   fontSize: '14px',
   lineHeight: '18px',
@@ -98,10 +100,6 @@ const CollectionPickerContainer = styled('div', {
       width: 'calc(100% - 2 * $space$3)',
     },
   },
-})
-
-const TitleGroup = styled(FormControl, {
-  marginBottom: '$4',
 })
 
 const SubTitle = styled('div', {
@@ -172,6 +170,7 @@ const CreateNftPage = observer(() => {
     collectionMintOptions,
     isLoading: isCollectionLoading,
   } = useCollectionAndTokenListStore(address)
+  const publicCollectionStore = usePublicCollectionStore()
 
   const { collectionAndTokenList } = useStores()
 
@@ -212,7 +211,10 @@ const CreateNftPage = observer(() => {
   const description = watch('description')
 
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
-    createNft({ ...data, tagsValue: chosenTags, licenseUrl })
+    createNft(
+      { ...data, tagsValue: chosenTags, licenseUrl },
+      { isPublicCollection: data.collection.id === publicCollectionStore.data?.collection?.address },
+    )
   }
 
   useEffect(() => {
@@ -225,13 +227,23 @@ const CreateNftPage = observer(() => {
       setModalBody(<InProgressBody text='EFT is being minted' />)
     } else if (nftError) {
       setModalOpen(true)
-      setModalBody(<ErrorBody message={extractMessageFromError(nftError)} />)
+      setModalBody(
+        <ErrorBody
+          message={extractMessageFromError(nftError)}
+          onClose={() => {
+            void setModalOpen(false)
+          }}
+        />,
+      )
     } else if (nftResult) {
       setModalOpen(true)
       setModalBody(
         <SuccessNavBody
           buttonText='View EFT'
           link={`/collection/${nftResult.receipt.to}/${nftResult.tokenId}`}
+          onPress={() => {
+            setModalOpen(false)
+          }}
         />,
       )
     }
@@ -257,15 +269,12 @@ const CreateNftPage = observer(() => {
     }
   }
 
-  useEffect(() => {
-    console.log(description)
-  }, [description])
-
   return (
     <>
       <MintModal
         body={modalBody}
         open={modalOpen}
+        isError={!!nftError}
         handleClose={() => {
           setIsNftLoading(false)
           setNftError(undefined)
@@ -336,9 +345,16 @@ const CreateNftPage = observer(() => {
 
           <FormControl>
             <Label>Name</Label>
-            <Input
+            <Input<CreateNFTForm>
+              withoutDefaultBorder
               placeholder='Item name'
-              {...register('name', { required: true })}
+              controlledInputProps={{
+                name: 'name',
+                control,
+                rules: {
+                  required: true,
+                },
+              }}
             />
           </FormControl>
 
@@ -350,7 +366,7 @@ const CreateNftPage = observer(() => {
                 control={control}
                 rules={{ required: true }}
                 comboboxProps={{
-                  options: collectionMintOptions,
+                  options: [...collectionMintOptions, ...publicCollectionStore.collectionMintOptions],
                   isLoading: isCollectionLoading,
                 }}
                 onFocus={() => {
@@ -382,6 +398,7 @@ const CreateNftPage = observer(() => {
             </LabelWithCounter>
 
             <TextArea
+              withoutDefaultBorder
               placeholder='Description of your item'
               {...register('description', { maxLength: { value: 1000, message: 'Aboba' } })}
             />

@@ -7,7 +7,7 @@ import { styled } from '../../../../styles'
 import { NFTCard } from '../../../components'
 import Plug from '../../../components/Plug/Plug'
 import { useCollectionAndTokenListStore } from '../../../hooks'
-import { Button, InfiniteScroll, NavButton, nftCardListCss, Txt } from '../../../UIkit'
+import { Button, InfiniteScroll, nftCardListCss, Txt } from '../../../UIkit'
 import { Params } from '../../../utils/router'
 
 const NoNftContainer = styled('div', {
@@ -36,33 +36,27 @@ export const OwnedSection: React.FC = observer(() => {
         render={({ index }) => <NFTCard {...collectionAndTokenListStore.nftCards[index]} key={index} />}
         listCss={nftCardListCss}
       />
-      {!collectionAndTokenListStore.nftCards.length && !collectionAndTokenListStore.isLoading && (
-        <NoNftContainer>
-          <Plug
-            header={'You don`t have any EFTs '}
-            mainText={'Create your own EFT or go to the market to find something amazing'}
-            buttonsBlock={(
-              <>
-                <Button primary onClick={() => navigate('/market')}>
-                  <Txt primary1>3D Market</Txt>
-                </Button>
-                <Button onClick={() => navigate('/create')}>
-                  <Txt primary1>Create</Txt>
-                </Button>
-              </>
-            )}
-          />
-          {profileAddress === currentAddress && (
-            <NavButton
-              primary
-              to={'/create/eft'}
-              css={{ textDecoration: 'none', marginBottom: '$3' }}
-            >
-              Create EFT
-            </NavButton>
-          )}
-        </NoNftContainer>
-      )}
+      {
+        !collectionAndTokenListStore.nftCards.length &&
+        !collectionAndTokenListStore.isLoading &&
+        profileAddress === currentAddress && (
+          <NoNftContainer>
+            <Plug
+              header={'You don`t have any EFTs '}
+              mainText={'Create your own EFT or go to the market to find something amazing'}
+              buttonsBlock={(
+                <>
+                  <Button primary onClick={() => navigate('/market')}>
+                    <Txt primary1>Explore</Txt>
+                  </Button>
+                  <Button primary onClick={() => navigate('/create')}>
+                    <Txt primary1>Create</Txt>
+                  </Button>
+                </>
+              )}
+            />
+          </NoNftContainer>
+        )}
     </>
   )
 })

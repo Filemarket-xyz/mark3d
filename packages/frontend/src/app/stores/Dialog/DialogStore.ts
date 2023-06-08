@@ -80,6 +80,10 @@ export class DialogStore {
     }
   }
 
+  isDialogOpenByName(name: string): boolean {
+    return this.instances.findIndex((instance) => instance.props.name === name) !== -1
+  }
+
   showError(error: ReactNode): DialogRef {
     return this.openDialog({
       component: AlertSnackbar,

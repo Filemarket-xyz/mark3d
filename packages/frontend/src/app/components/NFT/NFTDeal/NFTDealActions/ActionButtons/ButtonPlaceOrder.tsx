@@ -7,7 +7,8 @@ import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { usePlaceOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
-import MintModal, { ModalTitle } from '../../../../Modal/Modal'
+import { ModalTitle } from '../../../../../UIkit/Modal/Modal'
+import MintModal from '../../../../Modal/Modal'
 import { OrderForm } from '../../OrderForm'
 
 export interface ButtonPlaceOrderProps {
