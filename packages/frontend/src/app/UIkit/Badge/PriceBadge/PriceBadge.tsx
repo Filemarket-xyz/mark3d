@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react'
 
+import { Loading } from '../../Loading'
 import { StyledFlex, StyledRight, StyledTitle, StyledWrapper } from './PriceBadge.styles'
 
 interface PriceBadgeProps {
@@ -8,9 +9,17 @@ interface PriceBadgeProps {
   left: ReactNode
   right?: ReactNode
   background?: 'primary' | 'secondary'
+  isLoading?: boolean
 }
 
-export const PriceBadge: React.FC<PriceBadgeProps> = ({ title, left, right, size = 'sm', background = 'primary' }) => {
+export const PriceBadge: React.FC<PriceBadgeProps> = ({
+  title,
+  left,
+  right,
+  size = 'sm',
+  background = 'primary',
+  isLoading = false,
+}) => {
   return (
     <StyledWrapper size={size} background={background}>
       {title && (
@@ -18,14 +27,16 @@ export const PriceBadge: React.FC<PriceBadgeProps> = ({ title, left, right, size
           {title}
         </StyledTitle>
       )}
-      <StyledFlex w100 justifyContent='space-between' size={size}>
-        {left}
-        {right && (
-          <StyledRight>
-            {right}
-          </StyledRight>
-        )}
-      </StyledFlex>
+      <Loading isLoading={isLoading}>
+        <StyledFlex w100 justifyContent='space-between' size={size}>
+          {left}
+          {right && (
+            <StyledRight>
+              {right}
+            </StyledRight>
+          )}
+        </StyledFlex>
+      </Loading>
     </StyledWrapper>
   )
 }
