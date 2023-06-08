@@ -8,7 +8,7 @@ export const StyledWrapper = styled('div', {
   variants: {
     size: {
       lg: { padding: '8px $3', borderRadius: '$3' },
-      md: { padding: '10px $3' },
+      md: { padding: '10px $3', borderRadius: '$3' },
       sm: { padding: '6px 8px' },
     },
     background: {
