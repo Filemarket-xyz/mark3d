@@ -243,7 +243,7 @@ func (s *service) collectionTokenURI(ctx context.Context,
 	return "", err
 }
 
-func (s *service) getRoyalty(ctx context.Context, blockNumber *big.Int, address common.Address, tokenId *big.Int) (*big.Int, error) {
+func (s *service) getRoyalty(ctx context.Context, address common.Address, tokenId *big.Int) (*big.Int, error) {
 	var err error
 	if address == s.cfg.PublicCollectionAddress {
 		for _, cli := range s.ethClient.Clients() {
@@ -255,8 +255,7 @@ func (s *service) getRoyalty(ctx context.Context, blockNumber *big.Int, address 
 			}
 			var royalty *big.Int
 			royalty, err = instance.Royalties(&bind.CallOpts{
-				BlockNumber: blockNumber,
-				Context:     ctx,
+				Context: ctx,
 			}, tokenId)
 			if err != nil {
 				log.Println("token uri access token failed", tokenId, err)
@@ -274,8 +273,7 @@ func (s *service) getRoyalty(ctx context.Context, blockNumber *big.Int, address 
 			}
 			var royalty *big.Int
 			royalty, err = instance.Royalties(&bind.CallOpts{
-				BlockNumber: blockNumber,
-				Context:     ctx,
+				Context: ctx,
 			}, tokenId)
 			if err != nil {
 				log.Println("token uri access token failed", tokenId, err)
