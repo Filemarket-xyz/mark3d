@@ -56,7 +56,7 @@ const BaseInfoSection = () => {
             </Link>
           </NftLicence>
         )}
-        {token?.royalty !== undefined && (
+        {!!token?.royalty && (
           <PropertyTitle style={{ fontSize: '14px', lineHeight: '20px', marginBottom: 0 }}>
             Creator’s royalty:
             {' '}
