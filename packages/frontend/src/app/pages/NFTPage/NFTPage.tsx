@@ -1,6 +1,6 @@
 import { useMediaQuery } from '@mui/material'
 import { observer } from 'mobx-react-lite'
-import React, { useMemo } from 'react'
+import React, { Fragment, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { styled } from '../../../styles'
@@ -108,7 +108,7 @@ const ControlStickyBlock = styled('div', {
   },
 })
 
-const NFTPage = observer(() => {
+const NFTPage: React.FC = observer(() => {
   const { collectionAddress, tokenId } = useParams<Params>()
   const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
   const tokenStore = useTokenStore(collectionAddress, tokenId)
@@ -133,6 +133,7 @@ const NFTPage = observer(() => {
   }, [tokenStore.data?.categories, tokenStore.data?.subcategories])
 
   const md = useMediaQuery('(max-width:900px)')
+  const MainInfoSectionWrapper = md ? Fragment : GridBlockSection
 
   return (
     <>
@@ -155,28 +156,15 @@ const NFTPage = observer(() => {
       </NFTPreviewContainer>
       <MainInfo>
         <GridLayout>
-          {!md ? (
-            <GridBlockSection>
-              <BaseInfoSection />
-              <HomeLandSection />
-              <TagsSection
-                tags={tokenStore.data?.tags}
-                categories={categories}
-              />
-              <DescriptionSection />
-            </GridBlockSection>
-          )
-            : (
-              <>
-                <BaseInfoSection />
-                <HomeLandSection />
-                <TagsSection
-                  tags={tokenStore.data?.tags}
-                  categories={categories}
-                />
-                <DescriptionSection />
-              </>
-            )}
+          <MainInfoSectionWrapper>
+            <BaseInfoSection />
+            <HomeLandSection />
+            <TagsSection
+              tags={tokenStore.data?.tags}
+              categories={categories}
+            />
+            <DescriptionSection />
+          </MainInfoSectionWrapper>
           <ControlFileSection style={{ gridArea: 'Control' }}>
             <ControlStickyBlock>
               <ControlSection />

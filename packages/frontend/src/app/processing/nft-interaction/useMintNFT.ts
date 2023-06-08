@@ -1,4 +1,5 @@
-import { BigNumber, constants, ContractReceipt } from 'ethers'
+import { BigNumber, ContractReceipt } from 'ethers'
+import { parseUnits } from 'ethers/lib.esm/utils'
 import { useCallback } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -22,6 +23,7 @@ export interface MintNFTForm {
   categories?: string[] // required
   tags?: string[] // required
   subcategories?: string[]
+  royalty?: number
 }
 
 interface MintNFTResult {
@@ -41,8 +43,8 @@ export function useMintNFT(form: MintNFTForm = {}, options?: { isPublicCollectio
     assertSigner(signer)
     assertAccount(address)
 
-    const { name, description, image, hiddenFile, collectionAddress, license, tags, subcategories, categories } = form
-    if (!name || !collectionAddress || !image || !hiddenFile) {
+    const { name, description = '', image, hiddenFile, collectionAddress, license, tags, subcategories, categories, royalty } = form
+    if (!name || !collectionAddress || !image || !hiddenFile || royalty === undefined) {
       throw Error('CreateCollection form is not filled')
     }
 
@@ -63,7 +65,7 @@ export function useMintNFT(form: MintNFTForm = {}, options?: { isPublicCollectio
     }
     const metadata = await upload({
       name,
-      description: description ?? '',
+      description,
       image,
       external_link: mark3dConfig.externalLink,
       hidden_file: hiddenFileEncrypted,
@@ -79,7 +81,7 @@ export function useMintNFT(form: MintNFTForm = {}, options?: { isPublicCollectio
       address,
       tokenIdBN,
       metadata.url,
-      constants.Zero, // TODO: update
+      parseUnits(royalty.toString(), 2),
       '0x00',
     )
 
