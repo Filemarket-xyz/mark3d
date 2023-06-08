@@ -52,17 +52,19 @@ export const NftCardBase: React.FC<NftCardProps> = ({
           <StyledImgRoot>
             <StyledImgWrapper>
               <StyledImgContainer>
-                <StyledFileTypeContainer>
-                  <Tooltip
-                    rounded
-                    placement='top'
-                    trigger='hover'
-                    content='Internal hidden file type'
-                    color="primary"
-                  >
-                    {fileType}
-                  </Tooltip>
-                </StyledFileTypeContainer>
+                {fileType && (
+                  <StyledFileTypeContainer>
+                    <Tooltip
+                      rounded
+                      placement='top'
+                      trigger='hover'
+                      content='Internal hidden file type'
+                      color="primary"
+                    >
+                      {fileType}
+                    </Tooltip>
+                  </StyledFileTypeContainer>
+                )}
                 <StyledImg
                   src={imgSrc}
                   onError={({ currentTarget }) => {
