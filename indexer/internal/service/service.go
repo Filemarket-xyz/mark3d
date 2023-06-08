@@ -258,7 +258,7 @@ func (s *service) getRoyalty(ctx context.Context, address common.Address, tokenI
 				Context: ctx,
 			}, tokenId)
 			if err != nil {
-				log.Println("token uri access token failed", tokenId, err)
+				log.Println("get royalty failed", tokenId, err)
 			} else {
 				return royalty, nil
 			}
@@ -276,7 +276,7 @@ func (s *service) getRoyalty(ctx context.Context, address common.Address, tokenI
 				Context: ctx,
 			}, tokenId)
 			if err != nil {
-				log.Println("token uri access token failed", tokenId, err)
+				log.Println(" get royalty failed", tokenId, err)
 			} else {
 				return royalty, nil
 			}

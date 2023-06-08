@@ -134,7 +134,9 @@ func (s *service) onCollectionTransferEvent(
 			if !caOk || !tiOk {
 				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
 			}
-			return s.getRoyalty(ctx, collectionAddress, tokenId)
+			royalty, err := s.getRoyalty(ctx, collectionAddress, tokenId)
+			log.Println("----- DEBUG ", royalty, err, collectionAddress.String(), tokenId.String())
+			return royalty, err
 		},
 		FnArgs:          []any{token.CollectionAddress, token.TokenId},
 		RetryOnAnyError: true,
@@ -142,6 +144,7 @@ func (s *service) onCollectionTransferEvent(
 		MaxElapsedTime:  30 * time.Second,
 	}
 
+	log.Println("----- DEBUG ", token.CollectionAddress.String(), token.TokenId.String())
 	royaltyAny, err := retry.OnErrors(ctx, royaltyRetryOpts)
 	if err != nil {
 		var failedErr *retry.FailedErr
