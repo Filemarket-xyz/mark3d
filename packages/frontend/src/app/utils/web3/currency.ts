@@ -33,3 +33,7 @@ export const formatUsd = (value: string | number) => {
 export const formatRoyalty = (value: BigNumberish) => {
   return +formatUnits(value, 2)
 }
+
+export const formatFee = (value: BigNumberish) => {
+  return +formatUnits(value, 2)
+}
