@@ -196,6 +196,7 @@ export const CreateNFTPage: React.FC = observer(() => {
     watch,
   } = useForm<CreateNFTForm>({
     defaultValues: {
+      royalty: 0,
       collection: predefinedCollection
         ? { id: predefinedCollection.address, title: predefinedCollection.name }
         : undefined,
