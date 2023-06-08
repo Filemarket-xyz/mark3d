@@ -7,7 +7,6 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
-	"golang.org/x/exp/slices"
 	"log"
 	"net/http"
 )
@@ -20,13 +19,13 @@ func (s *service) AddressInWhitelist(ctx context.Context, address common.Address
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	rarities, err := s.repository.AddressInWhitelist(ctx, tx, address)
+	rarity, err := s.repository.AddressInWhitelist(ctx, tx, address)
 	if err != nil {
 		return nil, internalError
 	}
 
 	return &models.WhitelistResponse{
-		Whitelists: rarities,
+		Whitelist: rarity,
 	}, nil
 }
 
@@ -38,11 +37,11 @@ func (s *service) GetWhitelistSignature(ctx context.Context, rarity string, addr
 	}
 	defer s.repository.RollbackTransaction(ctx, tx)
 
-	rarities, err := s.repository.AddressInWhitelist(ctx, tx, address)
+	whitelist, err := s.repository.AddressInWhitelist(ctx, tx, address)
 	if err != nil {
 		return nil, internalError
 	}
-	if !slices.Contains(rarities, rarity) {
+	if whitelist == rarity {
 		return nil, &models.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "Address not whitelisted",

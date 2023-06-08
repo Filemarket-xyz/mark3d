@@ -39,3 +39,8 @@ func CollectionToModel(c *Collection) *models.Collection {
 		Type:        c.Type,
 	}
 }
+
+type CollectionStats struct {
+	Name  string
+	Value float64
+}

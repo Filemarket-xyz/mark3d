@@ -20,9 +20,9 @@ WORKDIR /usr/src/app
 
 COPY --from=build-deps /usr/src/mark3d-oracle/backend/target/release/backend main
 COPY --from=build-deps /usr/src/mark3d-oracle/backend/.env .env
-COPY --from=build-deps /usr/src/mark3d-oracle/contracts/artifacts/contracts/Mark3dCollection.sol/Mark3dCollection.json Mark3dCollection.json
-COPY --from=build-deps /usr/src/mark3d-oracle/contracts/artifacts/contracts/FraudDeciderWeb2.sol/FraudDeciderWeb2.json FraudDeciderWeb2.json
-COPY --from=build-deps /usr/src/mark3d-oracle/contracts/artifacts/contracts/Mark3dAccessToken.sol/Mark3dAccessToken.json Mark3dAccessToken.json
+COPY --from=build-deps /usr/src/mark3d-oracle/contracts/artifacts/contracts/FilemarketCollectionV2.sol/FilemarketCollectionV2.json FilemarketCollectionV2.json
+COPY --from=build-deps /usr/src/mark3d-oracle/contracts/artifacts/contracts/FraudDeciderWeb2V2.sol/FraudDeciderWeb2V2.json FraudDeciderWeb2V2.json
+COPY --from=build-deps /usr/src/mark3d-oracle/contracts/artifacts/contracts/Mark3dAccessTokenV2.sol/Mark3dAccessTokenV2.json Mark3dAccessTokenV2.json
 COPY --from=build-deps /usr/src/mark3d-oracle/backend/run.sh run.sh
 
 ENV LOG_PATH=/logs/mark3d-oracle.log

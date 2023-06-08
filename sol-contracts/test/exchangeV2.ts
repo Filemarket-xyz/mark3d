@@ -1574,6 +1574,16 @@ describe("File Bunnies collection", async () => {
       );
     });
 
+    it("add cids", async () => {
+      await collectionInstance
+          .connect(accounts[1])
+          .addCommonCids(BN.from(0), ["cm meta 1"]);
+
+      expect(await collectionInstance.connect(accounts[1]).commonCids(0)).to.eq(
+          "cm meta 1"
+      );
+    });
+
     it("fullfill whitelist success", async () => {
       await ethers.provider.send("evm_mine", [start + 26]);
 
@@ -1593,6 +1603,18 @@ describe("File Bunnies collection", async () => {
       await expect(tx)
           .to.emit(collectionInstance, "TransferDraftCompletion")
           .withArgs(BN.from(1), await accounts[2].getAddress());
+
+      let throwFlag = true;
+      try {
+        // should throw. CommonCid array is empty
+        await collectionInstance.connect(accounts[1]).commonCids(BN.from(0));
+        throwFlag = false;
+      } catch {}
+      expect(throwFlag).to.eq(true);
+
+      expect(await collectionInstance.connect(accounts[1]).tokenUris(1)).to.eq(
+          "cm meta 1"
+      );
     });
 
     it("set encrypted password", async () => {
@@ -1602,16 +1624,6 @@ describe("File Bunnies collection", async () => {
       await expect(tx)
           .to.emit(collectionInstance, "TransferPasswordSet")
           .withArgs(BN.from(1), "0x34");
-    });
-
-    it("add cids", async () => {
-      await collectionInstance
-          .connect(accounts[1])
-          .addCommonCids(BN.from(0), ["cm meta 1"]);
-
-      expect(await collectionInstance.connect(accounts[1]).commonCids(0)).to.eq(
-          "cm meta 1"
-      );
     });
 
     it("finalize transfer", async () => {
@@ -1628,18 +1640,6 @@ describe("File Bunnies collection", async () => {
               await accounts[2].getAddress(),
               BN.from(1)
           );
-
-      let throwFlag = true;
-      try {
-        // should throw. CommonCid array is empty
-        await collectionInstance.connect(accounts[1]).commonCids(BN.from(0));
-        throwFlag = false;
-      } catch {}
-      expect(throwFlag).to.eq(true);
-
-      expect(await collectionInstance.connect(accounts[1]).tokenUris(1)).to.eq(
-          "cm meta 1"
-      );
 
       const price = 10000;
       const fee = price / 10;

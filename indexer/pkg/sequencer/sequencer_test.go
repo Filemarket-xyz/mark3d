@@ -9,10 +9,14 @@ package sequencer
 //		TokenIdTTL:    30 * time.Second,
 //		CheckInterval: 30 * time.Second,
 //	}
-//	seq := New(cfg, client, map[string]int64{
-//		"1.common":   10,
-//		"1.uncommon": 5,
-//		"2":          8,
+//
+//	pubCollectionAddr := "1"
+//	fileBunniesAddr := "2"
+//	seq := New(cfg, client, map[string]Range{
+//		pubCollectionAddr:                           {0, 1_00},
+//		fmt.Sprintf("%s.common", fileBunniesAddr):   {0, 60},
+//		fmt.Sprintf("%s.uncommon", fileBunniesAddr): {60, 70},
+//		fmt.Sprintf("%s.payed", fileBunniesAddr):    {70, 100},
 //	})
 //
 //	// `curl "localhost/?address=1"`

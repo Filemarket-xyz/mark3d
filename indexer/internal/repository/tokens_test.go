@@ -273,22 +273,92 @@ package repository
 //	}
 //
 //	// Do
-//	count, overall, err := p.GetTraitCount(ctx, tx, "t1", "v1")
+//	count, overall, err := p.GetTraitCount(ctx, tx, token.CollectionAddress, "t1", "v1")
 //	if err != nil {
 //		t.Fatalf("failed to get trait count: %v", err)
 //	}
 //
-//	assert.Equal(t, 4, count)
-//	assert.Equal(t, 6, overall)
+//	assert.Equal(t, int64(4), count)
+//	assert.Equal(t, int64(6), overall)
 //
-//	if _, err := tx.Exec(ctx, "DELETE FROM token_metadata_properties WHERE trait_type = 't1' AND value = 'v1' AND display_type = '1'"); err != nil {
+//	if _, err := tx.Exec(
+//		ctx,
+//		"DELETE FROM token_metadata_properties WHERE collection_address=$1 AND trait_type = 't1' AND value = 'v1' AND display_type = '1'",
+//		strings.ToLower(token.CollectionAddress.String()),
+//	); err != nil {
 //		t.Error(err)
 //	}
 //
-//	count, overall, err = p.GetTraitCount(ctx, tx, "t1", "v1")
+//	count, overall, err = p.GetTraitCount(ctx, tx, token.CollectionAddress, "t1", "v1")
 //	if err != nil {
 //		t.Fatalf("failed to get trait count: %v", err)
 //	}
-//	assert.Equal(t, 3, count)
-//	assert.Equal(t, 5, overall)
+//	assert.Equal(t, int64(3), count)
+//	assert.Equal(t, int64(5), overall)
+//
+//	// Collection 2
+//	collection2 := domain.Collection{
+//		Address: common.BigToAddress(big.NewInt(1)),
+//		Creator: common.BigToAddress(big.NewInt(0)),
+//		Owner:   common.BigToAddress(big.NewInt(0)),
+//		TokenId: big.NewInt(0),
+//	}
+//
+//	metadata2 := domain.TokenMetadata{
+//		HiddenFileMeta: &domain.HiddenFileMetadata{},
+//		Properties: []*domain.MetadataProperty{
+//			// t1v1 - 4
+//			domain.NewMetadataProperty("t1", "1", "v1", "", ""),
+//			domain.NewMetadataProperty("t1", "", "v1", "", ""),
+//			domain.NewMetadataProperty("t1", "", "v1", "", ""),
+//			domain.NewMetadataProperty("t1", "", "v1", "", ""),
+//			// t1v2 - 2
+//			domain.NewMetadataProperty("t1", "", "v2", "", ""),
+//			domain.NewMetadataProperty("t1", "", "v2", "", ""),
+//			// t2v1 - 2
+//			domain.NewMetadataProperty("t2", "", "v1", "", ""),
+//			domain.NewMetadataProperty("t2", "", "v1", "", ""),
+//			// t3v1 - 1
+//			domain.NewMetadataProperty("t3", "", "v1", "", ""),
+//		},
+//		Rankings: []*domain.MetadataProperty{
+//			domain.NewMetadataProperty("t1", "", "v2", "", ""),
+//			domain.NewMetadataProperty("t1", "", "v2", "", ""),
+//		},
+//		Stats: []*domain.MetadataProperty{
+//			domain.NewMetadataProperty("t1", "", "v2", "", ""),
+//			domain.NewMetadataProperty("t1", "", "v2", "", ""),
+//		},
+//		Categories:    []string{},
+//		Subcategories: []string{},
+//		Tags:          []string{},
+//	}
+//
+//	token2 := domain.Token{
+//		CollectionAddress: collection2.Address,
+//		TokenId:           big.NewInt(0),
+//		Owner:             common.Address{},
+//		Creator:           common.Address{},
+//		MintTxHash:        common.Hash{},
+//		Metadata:          &metadata2,
+//	}
+//
+//	err = p.InsertCollection(ctx, tx, &collection2)
+//	if err != nil {
+//		t.Fatalf("failed to insert collection: %v", err)
+//	}
+//
+//	err = p.InsertToken(ctx, tx, &token2)
+//	if err != nil {
+//		t.Fatalf("failed to insert token: %v", err)
+//	}
+//
+//	// should not change
+//	count, overall, err = p.GetTraitCount(ctx, tx, token.CollectionAddress, "t1", "v1")
+//	if err != nil {
+//		t.Fatalf("failed to get trait count: %v", err)
+//	}
+//
+//	assert.Equal(t, int64(3), count)
+//	assert.Equal(t, int64(5), overall)
 //}

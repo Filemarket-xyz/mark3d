@@ -70,7 +70,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // TransferFraudReported listening
     loop {
-        thread::sleep(Duration::from_millis(200));
+        thread::sleep(Duration::from_millis(2500));
         // get latest block
         let new_block_num: u64 = match get_latest_block_num_no_extra(&transport2).await {
             Ok(n) => {
@@ -176,7 +176,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
                 let are_keys_equal = report.public_key == public_key;
 
-                if are_keys_equal {
+                if !are_keys_equal {
                     println!("not approved, because of unmatching keys");
                     match call_late_decision(
                         &transport2,
@@ -203,7 +203,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 let decrypted_password = match decrypt_password(&private_key, &report) {
                     Ok(p) => p,
                     Err(_) => {
-                        println!("approved, because passwor decryption failed");
+                        println!("approved, because password decryption failed");
                         match call_late_decision(
                             &transport2,
                             &upgraded_fraud_decider_web2_contract,

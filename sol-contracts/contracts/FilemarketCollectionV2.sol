@@ -38,12 +38,12 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeableV2, ERC721Enume
     uint256 public constant ROYALTY_CEILING = 5000;            // 50%
     
     uint256 public accessTokenId;                              // access token id
-    IAccessToken public accessToken;                      // Access token contract address
+    IAccessToken public accessToken;                           // Access token contract address
     bytes public collectionData;                               // collection additional data
     string private contractMetaUri;                            // contract-level metadata
     mapping(uint256 => string) public tokenUris;               // mapping of token metadata uri
     mapping(uint256 => bytes) public tokenData;                // mapping of token additional data
-    mapping(uint256 => uint256) public royalties;             // mapping of token to royalty
+    mapping(uint256 => uint256) public royalties;              // mapping of token to royalty
     address public royaltyReceiver;
     uint256 public tokensCount;                                // count of minted tokens
     uint256 public tokensLimit;                                // mint limit
@@ -321,7 +321,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeableV2, ERC721Enume
             if (address(info.callbackReceiver) != address(0)) {
                 info.callbackReceiver.transferFraudDetected(tokenId, approve);
             }
-            if (approve) {
+            if (!approve) {
                 _safeTransfer(ownerOf(tokenId), info.to, tokenId, info.data);
             }
             delete transfers[tokenId];
@@ -412,7 +412,6 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeableV2, ERC721Enume
     /// @param data - additional token data
     /// @param royalty - royalty
     function _mint(address to, uint256 id, string memory metaUri, bytes memory data, uint256 royalty) internal {
-        require(id == tokensCount, "FilemarketCollectionV2: wrong id");
         require(royalty <= ROYALTY_CEILING, "FilemarketCollectionV2: royalty too high");
         tokensCount++;
         _safeMint(to, id);
@@ -422,8 +421,7 @@ contract FilemarketCollectionV2 is IEncryptedFileTokenUpgradeableV2, ERC721Enume
     }
     
     function royaltyInfo(uint256 tokenId, uint256 salePrice) public view override returns (address receiver, uint256 royaltyAmount) {
-        require(tokenId < tokensCount, "ERC2981Royalties: Token does not exist");
-
+        require(_exists(tokenId), "ERC2981Royalties: Token does not exist");
         royaltyAmount = (salePrice * royalties[tokenId]) / PERCENT_MULTIPLIER;
         return (royaltyReceiver, royaltyAmount);
     }

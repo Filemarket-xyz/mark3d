@@ -34,6 +34,7 @@ type Collections interface {
 	UpdateCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
 	InsertCollectionTransfer(ctx context.Context, tx pgx.Tx, collectionAddress common.Address, transfer *domain.CollectionTransfer) error
 	CollectionTransferExists(ctx context.Context, tx pgx.Tx, txId string) (bool, error)
+	GetFileBunniesStats(ctx context.Context, tx pgx.Tx) ([]*domain.CollectionStats, error)
 }
 
 type Tokens interface {
@@ -80,7 +81,7 @@ type Orders interface {
 }
 
 type Whitelist interface {
-	AddressInWhitelist(ctx context.Context, tx pgx.Tx, address common.Address) ([]string, error)
+	AddressInWhitelist(ctx context.Context, tx pgx.Tx, address common.Address) (string, error)
 }
 
 type postgresConfig struct {

@@ -755,6 +755,7 @@ definitions:
           $ref: "#/definitions/Collection"
       collectionsTotal:
         type: number
+        x-omitempty: false
         format: uint64
       tokens:
         type: array
@@ -763,6 +764,7 @@ definitions:
           $ref: "#/definitions/Token"
       tokensTotal:
         type: number
+        x-omitempty: false
         format: uint64
   TokensByCollectionResponse:
     type: object
@@ -773,6 +775,7 @@ definitions:
           $ref: "#/definitions/Token"
       total:
         type: number
+        x-omitempty: false
         format: uint64
   TransfersResponse:
     type: object
@@ -785,6 +788,7 @@ definitions:
           $ref: "#/definitions/Transfer"
       incomingTotal:
         type: number
+        x-omitempty: false
         format: uint64
       outgoing:
         type: array
@@ -793,6 +797,7 @@ definitions:
           $ref: "#/definitions/Transfer"
       outgoingTotal:
         type: number
+        x-omitempty: false
         format: uint64
   TransfersResponseV2:
     type: object
@@ -805,6 +810,7 @@ definitions:
           $ref: "#/definitions/TransferWithData"
       incomingTotal:
         type: number
+        x-omitempty: false
         format: uint64
       outgoing:
         type: array
@@ -813,6 +819,7 @@ definitions:
           $ref: "#/definitions/TransferWithData"
       outgoingTotal:
         type: number
+        x-omitempty: false
         format: uint64
   OrdersResponse:
     type: object
@@ -825,6 +832,7 @@ definitions:
           $ref: "#/definitions/Order"
       incomingTotal:
         type: number
+        x-omitempty: false
         format: uint64
       outgoing:
         type: array
@@ -833,6 +841,7 @@ definitions:
           $ref: "#/definitions/Order"
       outgoingTotal:
         type: number
+        x-omitempty: false
         format: uint64
   OrdersAllActiveResponse:
     type: object
@@ -843,6 +852,7 @@ definitions:
           $ref: "#/definitions/OrderWithToken"
       total:
         type: number
+        x-omitempty: false
         format: uint64
   OrderWithToken:
     type: object
@@ -863,11 +873,9 @@ definitions:
   WhitelistResponse:
     type: object
     properties:
-      whitelists:
-        type: array
-        description: Массив названий вайтлистов, в которых присутствует адрес
-        items:
-          type: string
+      whitelist:
+        type: string
+        description: Название вайтлиста, в котором есть адрес. Вернет пустую строку, если нет нигде
   CollectionData:
     type: object
     description: Коллекция со всеми токенами
@@ -880,6 +888,7 @@ definitions:
           $ref: "#/definitions/Token"
       total:
         type: number
+        x-omitempty: false
         format: uint64
   Collection:
     type: object
@@ -923,6 +932,18 @@ definitions:
           - "File Market Collection"
           - "Public Collection"
           - "File Bunnies Collection"
+      stats:
+        type: array
+        description: Статы коллекции, присутствует только у зайцев
+        items:
+          $ref: "#/definitions/CollectionStat"
+  CollectionStat:
+    type: object
+    properties:
+      name:
+        type: string
+      value:
+        type: number
   Token:
     type: object
     description: Токен
@@ -1216,6 +1237,7 @@ definitions:
         description: Количество таких же value в заданном trait_type
       traitTotal:
         type: integer
+        x-omitempty: false
         description: Общее количество записей с таким trait_type
   HiddenFileMetaData:
     type: object

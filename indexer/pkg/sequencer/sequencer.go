@@ -11,6 +11,11 @@ import (
 	"time"
 )
 
+type Range struct {
+	From int64
+	To   int64
+}
+
 type Config struct {
 	KeyPrefix     string
 	TokenIdTTL    time.Duration
@@ -25,15 +30,15 @@ type Sequencer struct {
 	checkMu   sync.Mutex
 }
 
-func New(cfg *Config, client *redis.Client, initialAddresses map[string]int64) *Sequencer {
+func New(cfg *Config, client *redis.Client, initialAddresses map[string]Range) *Sequencer {
 	// Populating sets
-	for addr, idRange := range initialAddresses {
+	for addr, rng := range initialAddresses {
 		key := fmt.Sprint(cfg.KeyPrefix, addr)
 		if client.Exists(context.TODO(), key).Val() != 0 {
 			log.Printf("set with this key already exists: %s", key)
 			continue
 		}
-		for i := int64(0); i < idRange; i++ {
+		for i := rng.From; i < rng.To; i++ {
 			err := client.SAdd(context.TODO(), key, i).Err()
 			if err != nil {
 				log.Fatalf("failed to append to Redis: %v", err)

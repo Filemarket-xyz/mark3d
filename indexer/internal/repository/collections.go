@@ -223,3 +223,43 @@ func (p *postgres) CollectionTransferExists(ctx context.Context, tx pgx.Tx, txId
 	}
 	return res > 0, nil
 }
+
+func (p *postgres) GetFileBunniesStats(
+	ctx context.Context,
+	tx pgx.Tx,
+) ([]*domain.CollectionStats, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT
+			SUM(CASE WHEN token_id::bigint BETWEEN 0 AND 5999 THEN 1 ELSE 0 END) AS common_minted_amount,
+			SUM(CASE WHEN token_id::bigint BETWEEN 0 AND 5999 AND meta_uri != '' THEN 1 ELSE 0 END) AS common_bought_amount,
+			SUM(CASE WHEN token_id::bigint BETWEEN 6000 AND 6999 THEN 1 ELSE 0 END) AS uncommon_minted_amount,
+			SUM(CASE WHEN token_id::bigint BETWEEN 6000 AND 6999 AND meta_uri != '' THEN 1 ELSE 0 END) AS uncommon_bought_amount,
+			SUM(CASE WHEN token_id::bigint BETWEEN 7000 AND 9999 THEN 1 ELSE 0 END) AS payed_minted_amount,
+			SUM(CASE WHEN token_id::bigint BETWEEN 7000 AND 9999 AND meta_uri != '' THEN 1 ELSE 0 END) AS payed_bought_amount
+		FROM public.tokens
+		WHERE collection_address=$1
+	`
+	stats := []*domain.CollectionStats{
+		{Name: "common.minted_amount"},
+		{Name: "common.bought_amount"},
+		{Name: "uncommon.minted_amount"},
+		{Name: "uncommon.bought_amount"},
+		{Name: "payed.minted_amount"},
+		{Name: "payed.bought_amount"},
+	}
+	if err := tx.QueryRow(ctx, query,
+		strings.ToLower(p.cfg.fileBunniesCollectionAddress.String()),
+	).Scan(
+		&stats[0].Value,
+		&stats[1].Value,
+		&stats[2].Value,
+		&stats[3].Value,
+		&stats[4].Value,
+		&stats[5].Value,
+	); err != nil {
+		return nil, err
+	}
+
+	return stats, nil
+}

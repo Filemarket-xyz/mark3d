@@ -68,10 +68,13 @@ func main() {
 		TokenIdTTL:    cfg.Sequencer.TokenIdTTL,
 		CheckInterval: cfg.Sequencer.CheckInterval,
 	}
-
-	seq := sequencer.New(sequencerCfg, rdb, map[string]int64{
-		strings.ToLower(cfg.Service.PublicCollectionAddress.String()):      1_000_000,
-		strings.ToLower(cfg.Service.FileBunniesCollectionAddress.String()): 10_000,
+	pubCollectionAddr := strings.ToLower(cfg.Service.PublicCollectionAddress.String())
+	fileBunniesAddr := strings.ToLower(cfg.Service.FileBunniesCollectionAddress.String())
+	seq := sequencer.New(sequencerCfg, rdb, map[string]sequencer.Range{
+		pubCollectionAddr:                           {0, 1_000_000},
+		fmt.Sprintf("%s.common", fileBunniesAddr):   {0, 6000},
+		fmt.Sprintf("%s.uncommon", fileBunniesAddr): {6000, 7000},
+		fmt.Sprintf("%s.payed", fileBunniesAddr):    {7000, 10000},
 	})
 
 	repositoryCfg := &repository.Config{

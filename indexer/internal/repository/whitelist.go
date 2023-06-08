@@ -2,12 +2,13 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/jackc/pgx/v4"
 	"strings"
 )
 
-func (p *postgres) AddressInWhitelist(ctx context.Context, tx pgx.Tx, address common.Address) ([]string, error) {
+func (p *postgres) AddressInWhitelist(ctx context.Context, tx pgx.Tx, address common.Address) (string, error) {
 	// language=PostgreSQL
 	rows, err := tx.Query(
 		ctx,
@@ -15,7 +16,7 @@ func (p *postgres) AddressInWhitelist(ctx context.Context, tx pgx.Tx, address co
 		strings.ToLower(address.String()),
 	)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	defer rows.Close()
 
@@ -23,9 +24,19 @@ func (p *postgres) AddressInWhitelist(ctx context.Context, tx pgx.Tx, address co
 	for rows.Next() {
 		var rarity string
 		if err := rows.Scan(&rarity); err != nil {
-			return nil, err
+			return "", err
 		}
 		res = append(res, rarity)
 	}
-	return res, nil
+
+	switch len(res) {
+	case 0:
+		return "", nil
+	case 1:
+		return res[0], nil
+	default:
+		err := fmt.Errorf("address in multiple whitelist rarities. Address: %s", address)
+		logger.Error("DB error", err, nil)
+		return "", err
+	}
 }

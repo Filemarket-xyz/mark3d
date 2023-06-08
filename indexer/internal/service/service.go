@@ -39,8 +39,8 @@ import (
 )
 
 var (
-	logger       = log2.GetLogger()
 	ErrSubFailed = errors.New("sub failed")
+	logger       = log2.GetLogger()
 )
 
 const (
@@ -256,6 +256,67 @@ func (s *service) collectionTokenURI(ctx context.Context,
 		return "", fmt.Errorf("empty metadata")
 	}
 	return "", err
+}
+
+func (s *service) getRoyalty(ctx context.Context, blockNumber *big.Int, address common.Address, tokenId *big.Int) (*big.Int, error) {
+	var err error
+	if address == s.cfg.PublicCollectionAddress {
+		for _, cli := range s.ethClient.Clients() {
+			var instance *publicCollection.PublicCollection
+
+			instance, err = publicCollection.NewPublicCollection(address, cli)
+			if err != nil {
+				return nil, err
+			}
+			var royalty *big.Int
+			royalty, err = instance.Royalties(&bind.CallOpts{
+				Context: ctx,
+			}, tokenId)
+			if err != nil {
+				log.Println("token uri access token failed", tokenId, err)
+			} else {
+				return royalty, nil
+			}
+		}
+	} else if address == s.cfg.FileBunniesCollectionAddress {
+		for _, cli := range s.ethClient.Clients() {
+			var instance *filebunniesCollection.FileBunniesCollection
+
+			instance, err = filebunniesCollection.NewFileBunniesCollection(address, cli)
+			if err != nil {
+				return nil, err
+			}
+			var royalty *big.Int
+			royalty, err = instance.Royalties(&bind.CallOpts{
+				Context: ctx,
+			}, tokenId)
+			if err != nil {
+				log.Println("token uri access token failed", tokenId, err)
+			} else {
+				return royalty, nil
+			}
+		}
+	} else {
+		for _, cli := range s.ethClient.Clients() {
+			var instance *collection.FilemarketCollectionV2
+
+			instance, err = collection.NewFilemarketCollectionV2(address, cli)
+			if err != nil {
+				return nil, err
+			}
+			var royalty *big.Int
+			royalty, err = instance.Royalties(&bind.CallOpts{
+				Context: ctx,
+			}, tokenId)
+			if err != nil {
+				log.Println("token uri access token failed", tokenId, err)
+			} else {
+				return royalty, nil
+			}
+		}
+	}
+
+	return nil, err
 }
 
 func (s *service) getExchangeOrder(
@@ -564,15 +625,7 @@ func (s *service) tryProcessCollectionTransferEvent(
 		return nil
 	}
 
-	royalty, err := instance.Royalties(&bind.CallOpts{
-		BlockNumber: blockNumber,
-		Context:     ctx,
-	}, transfer.TokenId)
-	if err != nil {
-		return nil
-	}
-
-	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To, royalty); err != nil {
+	if err := s.onCollectionTransferEvent(ctx, tx, t, block, transfer.TokenId, transfer.To); err != nil {
 		return err
 	}
 	return nil
@@ -598,15 +651,7 @@ func (s *service) tryProcessFileBunniesTransferEvent(
 		return nil
 	}
 
-	royalty, err := instance.Royalties(&bind.CallOpts{
-		BlockNumber: blockNumber,
-		Context:     ctx,
-	}, transfer.TokenId)
-	if err != nil {
-		return nil
-	}
-
-	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To, royalty); err != nil {
+	if err := s.onCollectionTransferEvent(ctx, tx, t, block, transfer.TokenId, transfer.To); err != nil {
 		return err
 	}
 
@@ -633,15 +678,7 @@ func (s *service) tryProcessPublicCollectionTransferEvent(
 		return nil
 	}
 
-	royalty, err := instance.Royalties(&bind.CallOpts{
-		BlockNumber: blockNumber,
-		Context:     ctx,
-	}, transfer.TokenId)
-	if err != nil {
-		return nil
-	}
-
-	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To, royalty); err != nil {
+	if err := s.onCollectionTransferEvent(ctx, tx, t, block, transfer.TokenId, transfer.To); err != nil {
 		return err
 	}
 
@@ -663,7 +700,6 @@ func (s *service) tryProcessTransferInit(
 		return err
 	}
 	return nil
-
 }
 
 func (s *service) tryProcessFileBunniesTransferInit(
@@ -1117,6 +1153,14 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 
 	for _, l := range receipt.Logs {
 		switch l.Address {
+		case s.cfg.ExchangeAddress:
+			instance, err := exchange.NewFilemarketExchangeV2(l.Address, nil)
+			if err == nil {
+				err := s.processExchangeEvents(ctx, tx, t, l, instance)
+				if err != nil {
+					return err
+				}
+			}
 		case s.cfg.PublicCollectionAddress:
 			instance, err := publicCollection.NewPublicCollection(l.Address, nil)
 			if err == nil {
@@ -1143,6 +1187,17 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 			}
 		}
 	}
+	return nil
+}
+
+func (s *service) processExchangeEvents(ctx context.Context, tx pgx.Tx, t *types.Transaction, l *types.Log, instance *exchange.FilemarketExchangeV2) error {
+	fee, err := instance.ParseFeeChanged(*l)
+	if err != nil {
+		return nil
+	}
+
+	// TODO: save somewhere
+	fmt.Printf("New fee: %s", fee.NewFee.String())
 	return nil
 }
 
@@ -1264,6 +1319,7 @@ func (s *service) processBlock(block *types.Block) error {
 		if err != nil {
 			return err
 		}
+
 		if *t.To() == s.cfg.AccessTokenAddress {
 			err = s.processAccessTokenTx(ctx, tx, t)
 		} else if *t.To() == s.cfg.ExchangeAddress {
@@ -1300,7 +1356,7 @@ func (s *service) ListenBlockchain() error {
 	lastNotificationTime := time.Now().Add(-1 * time.Hour)
 	for {
 		select {
-		case <-time.After(time.Second):
+		case <-time.After(2500 * time.Millisecond):
 			current, err := s.checkBlock(lastBlock)
 			if err != nil {
 				err = fmt.Errorf("process block failed: %w", err)

@@ -190,3 +190,17 @@ func NewPlaceholderMetadata() *TokenMetadata {
 		},
 	}
 }
+func NewFileBunniesPlaceholder() *TokenMetadata {
+	return &TokenMetadata{
+		Name:         "Unknown File Bunnie",
+		Description:  "Transfer is not finished",
+		Image:        "",
+		ExternalLink: "",
+		HiddenFile:   "",
+		HiddenFileMeta: &HiddenFileMetadata{
+			Name: "Undefined",
+			Type: "Undefined",
+			Size: 0,
+		},
+	}
+}
