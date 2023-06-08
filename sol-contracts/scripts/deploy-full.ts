@@ -44,6 +44,8 @@ async function callRpc(method: string, params: string) {
 async function main() {
   let accounts = await ethers.getSigners();
 
+  console.log(accounts);
+
   const accessTokenFactory = new Mark3dAccessTokenV2__factory(accounts[0]);
   const fraudDeciderFactory = new FraudDeciderWeb2V2__factory(accounts[0]);
   const collectionFactory = new FilemarketCollectionV2__factory(accounts[0]);
@@ -51,8 +53,8 @@ async function main() {
   const exchangeFactory = new FilemarketExchangeV2__factory(accounts[0]);
 
   const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "")
-
   console.log(priorityFee);
+
   const collectionToClone = await collectionFactory.deploy({
     maxPriorityFeePerGas: priorityFee,
   });
@@ -69,9 +71,9 @@ async function main() {
       });
   console.log("access token address: ", accessToken.address);
   let publicCollection = await publicCollectionFactory.deploy(
-      "FileMarket Public Collection",
-      "FileMarketPublic",
-      "",
+      "FileMarket",
+      "FMRT",
+      "ipfs://QmZm4oLQoyXZLJzioYCjGtGXGHqsscKvWJmWXMVhTXZtc9",
       accounts[0].getAddress(),
       accounts[0].getAddress(),
       "0x",
