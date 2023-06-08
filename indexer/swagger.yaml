@@ -634,6 +634,20 @@ paths:
         required: true
         type: string
         pattern: "0x[0-9a-f-A-F]{40}"
+  /currency/conversion_rate:
+    get:
+      description: Возвращает conversion rate
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Conversion rate
+          schema:
+            $ref: '#/definitions/ConversionRateResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
 definitions:
   ErrorResponse:
     type: object
@@ -1144,6 +1158,16 @@ definitions:
         type: number
         format: int64
         description: Размер данных
+  ConversionRateResponse:
+    type: object
+    description: Conversion rate
+    properties:
+      from:
+        type: string
+      to:
+        type: string
+      rate:
+        type: number
 tags:
   - name: tokens
   - name: transfers

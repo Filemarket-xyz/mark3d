@@ -51,6 +51,7 @@ type Service interface {
 	Transfers
 	Orders
 	Sequencer
+	Currency
 	ListenBlockchain() error
 	Shutdown()
 
@@ -94,6 +95,10 @@ type Orders interface {
 
 type Sequencer interface {
 	SequencerAcquire(ctx context.Context, address common.Address) (*models.SequencerAcquireResponse, *models.ErrorResponse)
+}
+
+type Currency interface {
+	GetCurrencyConversionRate(ctx context.Context, from, to string) (*models.ConversionRateResponse, *models.ErrorResponse)
 }
 
 type service struct {
