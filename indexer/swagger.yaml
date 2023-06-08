@@ -882,6 +882,7 @@ definitions:
       royalty:
         type: number
         description: Роялти в формате, где 100% = 10000
+        x-omitempty: false
         format: uint64
       mintTxHash:
         type: string
