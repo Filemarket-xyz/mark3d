@@ -720,6 +720,20 @@ paths:
         description: Дополнительная информация, о коллекции. Пример - при запросе tokenId у `common` вайтлиста в суффиксе нужно указать `common`
         in: query
         type: string
+  /currency/conversion_rate:
+    get:
+      description: Возвращает conversion rate
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Conversion rate
+          schema:
+            $ref: '#/definitions/ConversionRateResponse'
+        default:
+          description: Ошибка
+          schema:
+            $ref: '#/definitions/ErrorResponse'
 definitions:
   ErrorResponse:
     type: object
@@ -992,6 +1006,7 @@ definitions:
       royalty:
         type: number
         description: Роялти в формате, где 100% = 10000
+        x-omitempty: false
         format: uint64
       mintTxHash:
         type: string
@@ -1253,6 +1268,16 @@ definitions:
         type: number
         format: int64
         description: Размер данных
+  ConversionRateResponse:
+    type: object
+    description: Conversion rate
+    properties:
+      from:
+        type: string
+      to:
+        type: string
+      rate:
+        type: number
 tags:
   - name: tokens
   - name: transfers

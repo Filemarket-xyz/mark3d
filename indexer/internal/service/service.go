@@ -54,6 +54,7 @@ type Service interface {
 	Orders
 	Sequencer
 	Whitelist
+	Currency
 	ListenBlockchain() error
 	Shutdown()
 
@@ -103,6 +104,10 @@ type Sequencer interface {
 type Whitelist interface {
 	AddressInWhitelist(ctx context.Context, address common.Address) (*models.WhitelistResponse, *models.ErrorResponse)
 	GetWhitelistSignature(ctx context.Context, rarity string, address common.Address) (*models.WhitelistSignatureResponse, *models.ErrorResponse)
+}
+
+type Currency interface {
+	GetCurrencyConversionRate(ctx context.Context, from, to string) (*models.ConversionRateResponse, *models.ErrorResponse)
 }
 
 type service struct {
@@ -258,8 +263,11 @@ func (s *service) collectionTokenURI(ctx context.Context,
 	return "", err
 }
 
-func (s *service) getRoyalty(ctx context.Context, blockNumber *big.Int, address common.Address, tokenId *big.Int) (*big.Int, error) {
+func (s *service) getRoyalty(ctx context.Context, address common.Address, tokenId *big.Int, blockNumber *big.Int) (*big.Int, error) {
 	var err error
+	var royalty *big.Int
+	var isFirstCall = true
+
 	if address == s.cfg.PublicCollectionAddress {
 		for _, cli := range s.ethClient.Clients() {
 			var instance *publicCollection.PublicCollection
@@ -268,30 +276,17 @@ func (s *service) getRoyalty(ctx context.Context, blockNumber *big.Int, address 
 			if err != nil {
 				return nil, err
 			}
-			var royalty *big.Int
 			royalty, err = instance.Royalties(&bind.CallOpts{
-				Context: ctx,
+				Context:     ctx,
+				BlockNumber: blockNumber,
 			}, tokenId)
-			if err != nil {
-				log.Println("token uri access token failed", tokenId, err)
-			} else {
-				return royalty, nil
-			}
-		}
-	} else if address == s.cfg.FileBunniesCollectionAddress {
-		for _, cli := range s.ethClient.Clients() {
-			var instance *filebunniesCollection.FileBunniesCollection
-
-			instance, err = filebunniesCollection.NewFileBunniesCollection(address, cli)
 			if err != nil {
 				return nil, err
-			}
-			var royalty *big.Int
-			royalty, err = instance.Royalties(&bind.CallOpts{
-				Context: ctx,
-			}, tokenId)
-			if err != nil {
-				log.Println("token uri access token failed", tokenId, err)
+			} else if royalty.Cmp(big.NewInt(0)) == 0 {
+				// For some reason 1 req always returns zero value
+				isFirstCall = false
+				err = fmt.Errorf("empty royalty")
+				continue
 			} else {
 				return royalty, nil
 			}
@@ -304,16 +299,25 @@ func (s *service) getRoyalty(ctx context.Context, blockNumber *big.Int, address 
 			if err != nil {
 				return nil, err
 			}
-			var royalty *big.Int
 			royalty, err = instance.Royalties(&bind.CallOpts{
-				Context: ctx,
+				Context:     ctx,
+				BlockNumber: blockNumber,
 			}, tokenId)
 			if err != nil {
-				log.Println("token uri access token failed", tokenId, err)
+				return nil, err
+			} else if royalty.Cmp(big.NewInt(0)) == 0 {
+				// For some reason 1 req always returns zero value
+				isFirstCall = false
+				err = fmt.Errorf("empty royalty")
+				continue
 			} else {
 				return royalty, nil
 			}
 		}
+	}
+
+	if royalty.Uint64() == 0 && !isFirstCall {
+		return royalty, nil
 	}
 
 	return nil, err
@@ -1151,7 +1155,6 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 	if err != nil {
 		return err
 	}
-
 
 	for _, l := range receipt.Logs {
 		switch l.Address {

@@ -1613,7 +1613,7 @@ describe("File Bunnies collection", async () => {
       expect(throwFlag).to.eq(true);
 
       expect(await collectionInstance.connect(accounts[1]).tokenUris(1)).to.eq(
-          "cm meta 1"
+          "ipfs://cm meta 1"
       );
     });
 

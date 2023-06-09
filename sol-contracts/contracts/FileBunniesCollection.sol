@@ -45,10 +45,10 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
     bytes32 public constant UNCOMMON_WHITELIST_APPROVER_ROLE = keccak256("UNCOMMON_WHITELIST_APPROVER");
     uint256 public constant ROYALTY_CEILING = PERCENT_MULTIPLIER / 2;  // 50%
     uint256 public constant TOKENS_LIMIT           = 10000;        // mint limit
-    uint256 public constant FREE_MINT_LIMIT = COMMON_TOKENS_LIMIT + UNCOMMON_TOKENS_LIMIT;
     uint256 public constant COMMON_TOKENS_LIMIT   = 6000;         // free mint common tokens limit
     uint256 public constant UNCOMMON_TOKENS_LIMIT = 1000;         // free mint uncommon tokens limit
     uint256 public constant PAYED_TOKENS_LIMIT    = 3000;         // payed mint limit
+    uint256 public constant FREE_MINT_LIMIT = COMMON_TOKENS_LIMIT + UNCOMMON_TOKENS_LIMIT;
     address public commonWhitelistApprover;
     address public uncommonWhitelistApprover;
     string[] public commonCids;
@@ -236,9 +236,9 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
         info.publicKeySetAt = block.timestamp;
         info.blockHash = blockhash(block.number-1);
 
-        if (tokenId < FREE_MINT_LIMIT) {
-            // free mint and it's initial purchase
-            if (bytes(tokenUris[tokenId]).length == 0) {
+        // initial purchase
+        if (bytes(tokenUris[tokenId]).length == 0) {
+            if (tokenId < FREE_MINT_LIMIT) {
                 require(data.length != 0, "Signiture wasn't provided");
                 address signer = uncommonWhitelistApprover;
                 if (tokenId < COMMON_TOKENS_LIMIT) {
@@ -246,8 +246,8 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
                 }
                 bytes32 address_bytes = bytes32(uint256(uint160(to)));
                 require(address_bytes.toEthSignedMessageHash().recover(data) == signer, "FileBunniesCollection: whitelist invalid signature");
-                attachRandomCid(tokenId, info);
             }
+            attachRandomCid(tokenId, info);
         }
 
         emit TransferDraftCompletion(tokenId, to);
@@ -523,7 +523,7 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
         );
         nonce++;
 
-        tokenUris[tokenId] = cidArray[cidId];
+        tokenUris[tokenId] = string.concat("ipfs://", cidArray[cidId]);
         cidArray[cidId] = cidArray[cidArray.length-1];
         cidArray.pop();
     }

@@ -55,22 +55,10 @@ func (s *service) onCollectionTransferEvent(
 		token.MetaUri, token.Metadata)
 
 	// Deleting token from sequencer
+	// NOTE: file bunnies tokens got deleted from sequencer only after TransferDraftCompletion
 	if token.CollectionAddress == s.cfg.PublicCollectionAddress {
 		if err := s.sequencer.DeleteTokenID(ctx, strings.ToLower(token.CollectionAddress.String()), token.TokenId.Int64()); err != nil {
 			log.Printf("failed deleting token from sequencer. Address: %s. TokendId: %s. Error: %v", token.CollectionAddress.String(), token.TokenId.String(), err)
-		}
-	} else if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
-		var suffix string
-		if token.TokenId.Cmp(big.NewInt(6000)) == -1 {
-			suffix = "common"
-		} else if token.TokenId.Cmp(big.NewInt(7000)) == -1 {
-			suffix = "uncommon"
-		} else {
-			suffix = "payed"
-		}
-		key := fmt.Sprintf("%s.%s", strings.ToLower(token.CollectionAddress.String()), suffix)
-		if err := s.sequencer.DeleteTokenID(ctx, key, token.TokenId.Int64()); err != nil {
-			log.Printf("failed deleting token from sequencer. Address: %s. Suffix:%s. TokendId: %s. Error: %v", token.CollectionAddress.String(), suffix, token.TokenId.String(), err)
 		}
 	}
 	return nil
@@ -86,9 +74,9 @@ func processRoyalty(ctx context.Context, s *service, block *types.Block, token *
 			if !caOk || !tiOk || !bOk {
 				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)
 			}
-			return s.getRoyalty(ctx, blockNumber, collectionAddress, tokenId)
+			return s.getRoyalty(ctx, collectionAddress, tokenId, blockNumber)
 		},
-		FnArgs:          []any{block.Number(), token.CollectionAddress, token.TokenId},
+		FnArgs:          []any{token.CollectionAddress, token.TokenId, block.Number()},
 		RetryOnAnyError: true,
 		Backoff: &retry.ExponentialBackoff{
 			InitialInterval: 3,
@@ -409,6 +397,20 @@ func (s *service) onTransferDraftCompletionEvent(
 			return fmt.Errorf("failed to insert metadata: %w", err)
 		}
 		token.MetaUri = metaUri
+
+		var suffix string
+		if token.TokenId.Cmp(big.NewInt(6000)) == -1 {
+			suffix = "common"
+		} else if token.TokenId.Cmp(big.NewInt(7000)) == -1 {
+			suffix = "uncommon"
+		} else {
+			suffix = "payed"
+		}
+		key := fmt.Sprintf("%s.%s", strings.ToLower(token.CollectionAddress.String()), suffix)
+		if err := s.sequencer.DeleteTokenID(ctx, key, token.TokenId.Int64()); err != nil {
+			log.Printf("failed deleting token from sequencer. Address: %s. Suffix:%s. TokendId: %s. Error: %v", token.CollectionAddress.String(), suffix, token.TokenId.String(), err)
+		}
+
 	}
 	if err := s.repository.UpdateToken(ctx, tx, token); err != nil {
 		return err
@@ -673,16 +675,6 @@ func (s *service) onTransferFraudDecidedEvent(
 		token, err := s.repository.GetToken(ctx, tx, l.Address, tokenId)
 		if err != nil {
 			return err
-		}
-		if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
-			metadata, metaUri, err := s.processMetadata(ctx, token)
-			if err != nil {
-				return fmt.Errorf("failed to process metadata for FileBunnies in TransferFinish: %w", err)
-			}
-			if err := s.repository.InsertMetadata(ctx, tx, metadata, token.CollectionAddress, token.TokenId); err != nil {
-				return fmt.Errorf("failed to insert metadata: %w", err)
-			}
-			token.MetaUri = metaUri
 		}
 		token.Owner = transfer.ToAddress
 		if err := s.repository.UpdateToken(ctx, tx, token); err != nil {
