@@ -5,9 +5,9 @@ import { styled } from '../../../../styles'
 import { Order, Transfer } from '../../../../swagger/Api'
 import { useIsOwner } from '../../../processing'
 import { TokenFullId } from '../../../processing/types'
-import { Txt } from '../../../UIkit'
+import { PriceBadge, Txt } from '../../../UIkit'
+import { formatCurrency, formatUsd } from '../../../utils/web3'
 import { NFTDealActions } from './NFTDealActions/NFTDealActions'
-import { NFTDealPrice } from './NFTDealPrice'
 
 export type NFTDealProps = PropsWithChildren<{
   tokenFullId: TokenFullId
@@ -91,9 +91,12 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
         <DealContainerInfo>
           {children}
           {order && (
-            <NFTDealPrice
-              price={order.price ?? '0'}
-              priceUsd={order.priceUsd ?? '0'}
+            <PriceBadge
+              title="Price"
+              left={formatCurrency(order.price ?? 0)}
+              right={`~${formatUsd(order.priceUsd ?? 0)}`}
+              size='lg'
+              background='secondary'
             />
           )}
         </DealContainerInfo>

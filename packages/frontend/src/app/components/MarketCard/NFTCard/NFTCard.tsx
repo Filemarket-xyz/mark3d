@@ -1,10 +1,9 @@
 import React from 'react'
 
 import { HiddenFileMetaData } from '../../../../swagger/Api'
-import { NftCardBase, NftCardInfoRow, NftCardUserInfo } from '../../../UIkit'
+import { NftCardBase, NftCardUserInfo, PriceBadge } from '../../../UIkit'
 import { formatCurrency, formatUsd } from '../../../utils/web3'
 import { FileType } from '../FileType/FileType'
-import { StyledPriceETH, StyledPriceUsd } from './NFTCard.styles'
 
 export interface NFTCardProps {
   imageURL: string
@@ -47,17 +46,10 @@ export const NFTCard: React.FC<NFTCardProps> = ({
     >
       <NftCardUserInfo img={user.img} address={user.address} />
       {price && (
-        <NftCardInfoRow>
-          <StyledPriceETH>
-            {formatCurrency(price ?? 0)}
-          </StyledPriceETH>
-          {priceUsd && (
-            <StyledPriceUsd>
-              ~
-              {formatUsd(priceUsd ?? 0)}
-            </StyledPriceUsd>
-          )}
-        </NftCardInfoRow>
+        <PriceBadge
+          left={formatCurrency(price ?? 0)}
+          right={priceUsd && `~${formatUsd(priceUsd ?? 0)}`}
+        />
       )}
     </NftCardBase>
   )

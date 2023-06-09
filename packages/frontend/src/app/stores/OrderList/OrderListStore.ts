@@ -97,7 +97,6 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
       .filter(({ order }) => order?.statuses?.[0]?.status === OrderStatus.Created)
       .map(({ token, order }) => ({
         collectionName: token?.collectionName ?? '',
-        hiddenFile: token?.hiddenFileMeta,
         hiddenFileMeta: token?.hiddenFileMeta,
         imageURL: token?.image ? getHttpLinkFromIpfsString(token.image) : gradientPlaceholderImg,
         title: token?.name ?? '—',

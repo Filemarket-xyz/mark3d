@@ -211,6 +211,7 @@ export const CreateNFTPage: React.FC = observer(() => {
   const license = watch('license')
   const category = watch('category')
   const description = watch('description')
+  const royalty = watch('royalty')
 
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
     createNft(
@@ -521,8 +522,18 @@ export const CreateNFTPage: React.FC = observer(() => {
                     max: 50,
                   },
                 }}
+                css= {{
+                  color: royalty > 50 ? '$red500' : undefined,
+                }}
               />
-              <Description secondary style={{ marginBottom: 0, padding: '0 8px' }}>
+              <Description
+                secondary
+                css={{
+                  marginBottom: 0,
+                  padding: '0 8px',
+                  color: royalty > 50 ? '$red500' : undefined,
+                }}
+              >
                 The allowable limit for specifying your royalty is no more than 50% of the transaction amount
               </Description>
             </ContentField>
