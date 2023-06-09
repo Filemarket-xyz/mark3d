@@ -1,5 +1,5 @@
-import { styled } from '../../../../styles'
-import { Txt } from '../../Txt'
+import { styled } from '../../../../../styles'
+import { Txt } from '../../../Txt'
 
 export const StyledUserImg = styled('img', {
   width: '20px',
