@@ -67,9 +67,9 @@ func (s *service) onCollectionTransferEvent(
 func processRoyalty(ctx context.Context, s *service, block *types.Block, token *domain.Token) (*big.Int, error) {
 	royaltyRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
-			blockNumber, bOk := args[0].(*big.Int)
-			collectionAddress, caOk := args[1].(common.Address)
-			tokenId, tiOk := args[2].(*big.Int)
+			collectionAddress, caOk := args[0].(common.Address)
+			tokenId, tiOk := args[1].(*big.Int)
+			blockNumber, bOk := args[2].(*big.Int)
 
 			if !caOk || !tiOk || !bOk {
 				return "", fmt.Errorf("wrong Fn arguments: %w", retry.UnretryableErr)

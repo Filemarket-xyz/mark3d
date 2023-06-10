@@ -1212,34 +1212,34 @@ func (s *service) processExchangeEvents(ctx context.Context, tx pgx.Tx, t *types
 
 func (s *service) processFileBunniesCollectionEvents(ctx context.Context, tx pgx.Tx, t *types.Transaction, l *types.Log, instance *filebunniesCollection.FileBunniesCollection, blockNumber *big.Int) error {
 	if err := s.tryProcessFileBunniesTransferEvent(ctx, tx, instance, t, l, blockNumber); err != nil {
-		return fmt.Errorf("process public collection transfer: %w", err)
+		return fmt.Errorf("process file bunnies collection transfer: %w", err)
 	}
 	if err := s.tryProcessFileBunniesTransferInit(ctx, tx, instance, t, l); err != nil {
-		return fmt.Errorf("process public collection transfer init: %w", err)
+		return fmt.Errorf("process file bunnies collection transfer init: %w", err)
 	}
 	if err := s.tryProcessFileBunniesTransferDraft(ctx, tx, instance, t, l); err != nil {
-		return fmt.Errorf("process public collection transfer draft: %w", err)
+		return fmt.Errorf("process file bunnies collection transfer draft: %w", err)
 	}
 	if err := s.tryProcessFileBunniesTransferDraftCompletion(ctx, tx, instance, t, l); err != nil {
-		return fmt.Errorf("process public collection draft completion: %w", err)
+		return fmt.Errorf("process file bunnies collection draft completion: %w", err)
 	}
 	if err := s.tryProcessFileBunniesPublicKeySet(ctx, tx, instance, t, l); err != nil {
-		return fmt.Errorf("process public collection public key set: %w", err)
+		return fmt.Errorf("process file bunnies collection public key set: %w", err)
 	}
 	if err := s.tryProcessFileBunniesPasswordSet(ctx, tx, instance, t, l); err != nil {
-		return fmt.Errorf("process public collection password set: %w", err)
+		return fmt.Errorf("process file bunnies collection password set: %w", err)
 	}
 	if err := s.tryProcessFileBunniesTransferFinish(ctx, tx, instance, t, l); err != nil {
-		return fmt.Errorf("process public collection transfer finish: %w", err)
+		return fmt.Errorf("process file bunnies collection transfer finish: %w", err)
 	}
 	if err := s.tryProcessFileBunniesTransferFraudReported(ctx, tx, instance, t, l); err != nil {
-		return fmt.Errorf("process public collection fraud reported: %w", err)
+		return fmt.Errorf("process file bunnies collection fraud reported: %w", err)
 	}
 	if err := s.tryProcessFileBunniesTransferFraudDecided(ctx, tx, instance, t, l); err != nil {
-		return fmt.Errorf("process public collection fraud decided: %w", err)
+		return fmt.Errorf("process file bunnies collection fraud decided: %w", err)
 	}
 	if err := s.tryProcessFileBunniesTransferCancel(ctx, tx, instance, t, l); err != nil {
-		return fmt.Errorf("process transfer cancel: %w", err)
+		return fmt.Errorf("process file bunnies transfer cancel: %w", err)
 	}
 	return nil
 }
