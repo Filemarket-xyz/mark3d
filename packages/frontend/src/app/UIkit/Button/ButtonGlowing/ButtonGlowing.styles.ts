@@ -18,6 +18,13 @@ export const StyledWrapper = styled('div', {
   '&:hover > div': {
     animationDuration: '1.5s',
   },
+  variants: {
+    fullWidth: {
+      true: {
+        width: '100%',
+      },
+    },
+  },
 })
 
 export const StyledGlow = styled('div', {

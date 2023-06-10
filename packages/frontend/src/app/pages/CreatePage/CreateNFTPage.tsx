@@ -154,9 +154,10 @@ export interface CreateNFTForm {
   license: ComboBoxOption
   licenseUrl: string
   tagsValue: string[]
+  royalty: number
 }
 
-const CreateNftPage = observer(() => {
+export const CreateNFTPage: React.FC = observer(() => {
   const { address } = useAccount()
   const location = useLocation()
   const predefinedCollection: {
@@ -195,6 +196,7 @@ const CreateNftPage = observer(() => {
     watch,
   } = useForm<CreateNFTForm>({
     defaultValues: {
+      royalty: 0,
       collection: predefinedCollection
         ? { id: predefinedCollection.address, title: predefinedCollection.name }
         : undefined,
@@ -209,6 +211,7 @@ const CreateNftPage = observer(() => {
   const license = watch('license')
   const category = watch('category')
   const description = watch('description')
+  const royalty = watch('royalty')
 
   const onSubmit: SubmitHandler<CreateNFTForm> = (data) => {
     createNft(
@@ -504,6 +507,39 @@ const CreateNftPage = observer(() => {
           </FormControl>
 
           <FormControl size={'lg'}>
+            <Label paddingL>Royalty</Label>
+            <ContentField>
+              <Input<CreateNFTForm>
+                withoutDefaultBorder
+                after="%"
+                type='number'
+                placeholder='Amount of creator’s royalty'
+                controlledInputProps={{
+                  name: 'royalty',
+                  control,
+                  rules: {
+                    required: true,
+                    max: 50,
+                  },
+                }}
+                css= {{
+                  color: royalty > 50 ? '$red500' : undefined,
+                }}
+              />
+              <Description
+                secondary
+                css={{
+                  marginBottom: 0,
+                  padding: '0 8px',
+                  color: royalty > 50 ? '$red500' : undefined,
+                }}
+              >
+                The allowable limit for specifying your royalty is no more than 50% of the transaction amount
+              </Description>
+            </ContentField>
+          </FormControl>
+
+          <FormControl size={'lg'}>
             <Label paddingL>License</Label>
             <ContentField>
               <ControlledComboBox<CreateNFTForm>
@@ -551,5 +587,3 @@ const CreateNftPage = observer(() => {
     </>
   )
 })
-
-export default CreateNftPage

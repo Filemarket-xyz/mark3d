@@ -1,5 +1,4 @@
-import { Modal } from '@nextui-org/react'
-import { FC } from 'react'
+import React from 'react'
 
 import { useHookToCallback } from '../../../../../hooks/useHookToCallback'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
@@ -7,16 +6,16 @@ import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { usePlaceOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
-import { ModalTitle } from '../../../../../UIkit/Modal/Modal'
+import { Modal, ModalBody, ModalTitle } from '../../../../../UIkit/Modal/Modal'
 import MintModal from '../../../../Modal/Modal'
-import { OrderForm } from '../../OrderForm'
+import { OrderForm, OrderFormValue } from '../../OrderForm'
 
 export interface ButtonPlaceOrderProps {
   tokenFullId: TokenFullId
   callback?: () => void
 }
 
-export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callback }) => {
+export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId, callback }) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
   const { placeOrder, ...statuses } = useHookToCallback(usePlaceOrder, 'placeOrder', { callbackOk: callback })
   const { isLoading } = statuses
@@ -26,22 +25,26 @@ export const ButtonPlaceOrder: FC<ButtonPlaceOrderProps> = ({ tokenFullId, callb
     loadingMsg: 'Placing order',
   })
 
+  const onSubmit = ({ price }: OrderFormValue) => {
+    closeModal()
+    placeOrder(tokenFullId, price)
+  }
+
   return (
     <>
       <Modal
         closeButton
         open={modalOpen}
+        width='465px'
         onClose={closeModal}
       >
         <ModalTitle>Put on sale</ModalTitle>
-        <Modal.Body>
+        <ModalBody css={{ padding: 0 }}>
           <OrderForm
-            onSubmit={form => {
-              closeModal()
-              placeOrder(tokenFullId, form.price)
-            }}
+            tokenFullId={tokenFullId}
+            onSubmit={onSubmit}
           />
-        </Modal.Body>
+        </ModalBody>
       </Modal>
       <MintModal {...modalProps} />
       <Button

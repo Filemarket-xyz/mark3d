@@ -142,7 +142,7 @@ func (s *service) processMetadata(ctx context.Context, token *domain.Token) (*do
 		return nil, "", errors.New("failed to cast metaUri to string")
 	}
 
-	// we do not have metaUri til TransferFinish
+	// we do not have metaUri til TransferDraftCompleted
 	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress && metaUri == "" {
 		return nil, "", nil
 	}

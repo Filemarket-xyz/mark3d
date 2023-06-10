@@ -1,4 +1,5 @@
 import { BigNumber, BigNumberish, utils } from 'ethers'
+import { formatUnits } from 'ethers/lib.esm/utils'
 
 import { mark3dConfig } from '../../config/mark3d'
 import { formatNumber } from '../number'
@@ -27,4 +28,12 @@ export const fromCurrency = (value: number): BigNumber => {
 
 export const formatUsd = (value: string | number) => {
   return `${formatNumber(value, 2)}$`
+}
+
+export const formatRoyalty = (value: BigNumberish) => {
+  return +formatUnits(value, 2)
+}
+
+export const formatFee = (value: BigNumberish) => {
+  return +formatUnits(value, 2)
 }

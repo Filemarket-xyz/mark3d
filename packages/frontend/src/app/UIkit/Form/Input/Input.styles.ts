@@ -1,13 +1,5 @@
-import { ComponentProps } from '@stitches/react'
-import React from 'react'
-import {
-  Control,
-  Controller, FieldValues, Path,
-} from 'react-hook-form'
-import { RegisterOptions } from 'react-hook-form/dist/types/validator'
-
-import { keyframes, styled } from '../../../styles'
-import { textVariant, Txt } from '../Txt'
+import { keyframes, styled } from '../../../../styles'
+import { textVariant } from '../../Txt'
 
 export const glow = keyframes({
   '0%': {
@@ -34,6 +26,7 @@ export const inputStyles = {
   color: '$blue900',
   border: '2px solid transparent',
   transition: 'outline-width 0.5s',
+  width: '100%',
 
   '&:placeholder': {
     color: '#656668',
@@ -57,7 +50,6 @@ export const inputStyles = {
   '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button,': {
     appearance: 'none',
   },
-  width: '100%',
   variants: {
     isError: {
       true: {
@@ -79,15 +71,16 @@ export const inputStyles = {
   },
 }
 
-const InputStyled = styled('input', {
+export const StyledInput = styled('input', {
   ...inputStyles,
 })
 
-const InputStyleContainer = styled('div', {
+export const StyledInputContainer = styled('div', {
+  position: 'relative',
   width: '100%',
 })
 
-const ErrorMessage = styled('div', {
+export const StyledErrorMessage = styled('div', {
   textAlign: 'left',
   padding: '24px 16px 12px',
   background: 'rgba(197, 75, 92, 0.05)',
@@ -97,46 +90,11 @@ const ErrorMessage = styled('div', {
   color: '$red500',
 })
 
-export interface IInputControlled<T extends FieldValues> {
-  control: Control<T, any>
-  name: Path<T>
-  placeholder?: string
-  rules?: RegisterOptions
-}
-
-export type IInput = ComponentProps<typeof InputStyleContainer> & ComponentProps<typeof InputStyled> & {
-  errorMessage?: string
-}
-
-export type IInputControl<T extends FieldValues> = IInput & {
-  errorMessage?: string
-  controlledInputProps: IInputControlled<T>
-}
-
-export const Input = <T extends FieldValues>(
-  props: IInputControl<T>,
-) => {
-  const { errorMessage, controlledInputProps, ...inputProps } = props
-
-  return (
-    <Controller
-      control={controlledInputProps?.control}
-      name={controlledInputProps?.name}
-      rules={controlledInputProps?.rules}
-      render={({ field }) => (
-        <InputStyleContainer>
-          <InputStyled
-            {...inputProps}
-            {...field}
-          />
-          {(props.errorMessage && props.isError) &&
-              (
-                <ErrorMessage>
-                  <Txt primary1>{props.errorMessage}</Txt>
-                </ErrorMessage>
-              )}
-        </InputStyleContainer>
-      )}
-    />
-  )
-}
+export const StyledAfterContainer = styled('div', {
+  position: 'absolute',
+  right: 16,
+  top: '50%',
+  transform: 'translateY(-50%)',
+  fontWeight: 600,
+  color: '$gray600',
+})
