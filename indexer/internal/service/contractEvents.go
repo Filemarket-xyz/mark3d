@@ -132,9 +132,6 @@ func (s *service) processMetadata(ctx context.Context, token *domain.Token) (*do
 		if errors.As(err, &failedErr) {
 			log.Printf("failed to get metadataUri: %v", failedErr)
 			return domain.NewPlaceholderMetadata(), "", nil
-		} else if errors.Is(err, fmt.Errorf("empty metadata")) && token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
-			// file bunnies do not have metaUri til TransferDraftCompleted
-			return nil, "", nil
 		} else {
 			return nil, "", err
 		}
@@ -143,6 +140,11 @@ func (s *service) processMetadata(ctx context.Context, token *domain.Token) (*do
 	metaUri, ok := metaUriAny.(string)
 	if !ok {
 		return nil, "", errors.New("failed to cast metaUri to string")
+	}
+
+	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress && metaUri == "" {
+		// file bunnies do not have metaUri til TransferDraftCompleted
+		return nil, "", nil
 	}
 
 	loadMetaRetryOpts := retry.Options{

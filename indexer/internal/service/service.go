@@ -258,6 +258,9 @@ func (s *service) collectionTokenURI(ctx context.Context,
 		}
 	}
 	if err == nil {
+		if address == s.cfg.FileBunniesCollectionAddress {
+			return "", nil
+		}
 		return "", fmt.Errorf("empty metadata")
 	}
 	return "", err
