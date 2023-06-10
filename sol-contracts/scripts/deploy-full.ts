@@ -103,8 +103,7 @@ async function main() {
       accounts[0].getAddress(),
       accounts[0].getAddress(),
       "0x",
-      "0x09bdE52a5251C02B1Be69b40dd6fBdA536Af5164",
-      // fraudDecider.address,
+      fraudDecider.address,
       true,
       {
         maxPriorityFeePerGas: priorityFee,
