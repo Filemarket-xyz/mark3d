@@ -64,12 +64,12 @@ paths:
     get:
       tags:
         - collections
-      description: Вернет массив из названий вайтлистов, в которых находится адрес. (e.g. ["common", "uncommon"])
+      description: Вернет название вайтлиста, в котором находится адрес. (e.g. "common")
       produces:
         - application/json
       responses:
         "200":
-          description: Названия вайтлистов
+          description: Названия вайтлиста
           schema:
             $ref: "#/definitions/WhitelistResponse"
         default:
@@ -78,6 +78,7 @@ paths:
             $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: address
+          description: Адрес пользователя
           in: path
           required: true
           type: string
@@ -889,6 +890,7 @@ definitions:
     properties:
       whitelist:
         type: string
+        x-omitempty: false
         description: Название вайтлиста, в котором есть адрес. Вернет пустую строку, если нет нигде
   CollectionData:
     type: object
