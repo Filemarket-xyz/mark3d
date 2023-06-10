@@ -79,10 +79,10 @@ func processRoyalty(ctx context.Context, s *service, block *types.Block, token *
 		FnArgs:          []any{token.CollectionAddress, token.TokenId, block.Number()},
 		RetryOnAnyError: true,
 		Backoff: &retry.ExponentialBackoff{
-			InitialInterval: 3,
+			InitialInterval: 3 * time.Second,
 			RandFactor:      0.5,
 			Multiplier:      2,
-			MaxInterval:     10,
+			MaxInterval:     10 * time.Second,
 		},
 		MaxElapsedTime: 30 * time.Second,
 	}
@@ -118,10 +118,10 @@ func (s *service) processMetadata(ctx context.Context, token *domain.Token) (*do
 		FnArgs:          []any{token.CollectionAddress, token.TokenId},
 		RetryOnAnyError: true,
 		Backoff: &retry.ExponentialBackoff{
-			InitialInterval: 3,
+			InitialInterval: 3 * time.Second,
 			RandFactor:      0.5,
 			Multiplier:      2,
-			MaxInterval:     10,
+			MaxInterval:     10 * time.Second,
 		},
 		MaxElapsedTime: 30 * time.Second,
 	}
@@ -158,10 +158,10 @@ func (s *service) processMetadata(ctx context.Context, token *domain.Token) (*do
 		FnArgs:          []any{metaUri},
 		RetryOnAnyError: true,
 		Backoff: &retry.ExponentialBackoff{
-			InitialInterval: 3,
+			InitialInterval: 3 * time.Second,
 			RandFactor:      0.5,
 			Multiplier:      2,
-			MaxInterval:     10,
+			MaxInterval:     10 * time.Second,
 		},
 		MaxElapsedTime: 30 * time.Second,
 	}
@@ -261,6 +261,7 @@ func (s *service) onTransferDraftEvent(
 		Multiplier:      2,
 		MaxInterval:     10,
 	}
+
 	getOrderRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
 			blockNum, bnOk := args[0].(*big.Int)

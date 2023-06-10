@@ -1195,6 +1195,7 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 			}
 		}
 	}
+
 	return nil
 
 }
