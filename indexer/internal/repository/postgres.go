@@ -16,6 +16,7 @@ type Postgres interface {
 	Tokens
 	Transfers
 	Orders
+	Whitelist
 }
 
 type Transactions interface {
@@ -33,6 +34,7 @@ type Collections interface {
 	UpdateCollection(ctx context.Context, tx pgx.Tx, collection *domain.Collection) error
 	InsertCollectionTransfer(ctx context.Context, tx pgx.Tx, collectionAddress common.Address, transfer *domain.CollectionTransfer) error
 	CollectionTransferExists(ctx context.Context, tx pgx.Tx, txId string) (bool, error)
+	GetFileBunniesStats(ctx context.Context, tx pgx.Tx) ([]*domain.CollectionStats, error)
 }
 
 type Tokens interface {
@@ -78,8 +80,13 @@ type Orders interface {
 	InsertOrderStatus(ctx context.Context, tx pgx.Tx, orderId int64, status *domain.OrderStatus) error
 }
 
+type Whitelist interface {
+	AddressInWhitelist(ctx context.Context, tx pgx.Tx, address common.Address) (string, error)
+}
+
 type postgresConfig struct {
-	publicCollectionAddress common.Address
+	publicCollectionAddress      common.Address
+	fileBunniesCollectionAddress common.Address
 }
 
 type postgres struct {

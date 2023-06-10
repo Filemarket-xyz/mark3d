@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/mark3d-xyz/mark3d/indexer/contracts/filebunniesCollection"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/publicCollection"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
-	log2 "github.com/mark3d-xyz/mark3d/indexer/pkg/log"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/sequencer"
 	"io"
@@ -33,6 +34,7 @@ import (
 	"github.com/mark3d-xyz/mark3d/indexer/models"
 	ethclient2 "github.com/mark3d-xyz/mark3d/indexer/pkg/ethclient"
 	healthnotifier "github.com/mark3d-xyz/mark3d/indexer/pkg/health_notifier"
+	log2 "github.com/mark3d-xyz/mark3d/indexer/pkg/log"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/now"
 )
 
@@ -51,6 +53,7 @@ type Service interface {
 	Transfers
 	Orders
 	Sequencer
+	Whitelist
 	Currency
 	ListenBlockchain() error
 	Shutdown()
@@ -68,6 +71,7 @@ type Collections interface {
 	GetCollection(ctx context.Context, address common.Address) (*models.Collection, *models.ErrorResponse)
 	GetCollectionWithTokens(ctx context.Context, address common.Address, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
 	GetPublicCollectionWithTokens(ctx context.Context, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
+	GetFileBunniesCollectionWithTokens(ctx context.Context, lastTokenId *big.Int, limit int) (*models.CollectionData, *models.ErrorResponse)
 }
 
 type Tokens interface {
@@ -94,7 +98,12 @@ type Orders interface {
 }
 
 type Sequencer interface {
-	SequencerAcquire(ctx context.Context, address common.Address) (*models.SequencerAcquireResponse, *models.ErrorResponse)
+	SequencerAcquire(ctx context.Context, address common.Address, suffix string) (*models.SequencerAcquireResponse, *models.ErrorResponse)
+}
+
+type Whitelist interface {
+	AddressInWhitelist(ctx context.Context, address common.Address) (*models.WhitelistResponse, *models.ErrorResponse)
+	GetWhitelistSignature(ctx context.Context, rarity string, address common.Address) (*models.WhitelistSignatureResponse, *models.ErrorResponse)
 }
 
 type Currency interface {
@@ -112,6 +121,8 @@ type service struct {
 	exchangeAddress     common.Address
 	exchangeInstance    *exchange.FilemarketExchangeV2
 	currencyConverter   currencyconversion.CurrencyConversionProvider
+	commonSigner        *ethsigner.EthSigner
+	uncommonSigner      *ethsigner.EthSigner
 	closeCh             chan struct{}
 }
 
@@ -121,6 +132,8 @@ func NewService(
 	sequencer *sequencer.Sequencer,
 	healthNotifier healthnotifier.HealthNotifyer,
 	currencyConverter currencyconversion.CurrencyConversionProvider,
+	commonSigner *ethsigner.EthSigner,
+	uncommonSigner *ethsigner.EthSigner,
 	cfg *config.ServiceConfig,
 ) (Service, error) {
 	accessTokenInstance, err := access_token.NewMark3dAccessTokenV2(cfg.AccessTokenAddress, nil)
@@ -144,6 +157,8 @@ func NewService(
 		exchangeAddress:     cfg.ExchangeAddress,
 		exchangeInstance:    exchangeInstance,
 		currencyConverter:   currencyConverter,
+		commonSigner:        commonSigner,
+		uncommonSigner:      uncommonSigner,
 		closeCh:             make(chan struct{}),
 	}, nil
 }
@@ -266,6 +281,7 @@ func (s *service) getRoyalty(ctx context.Context, address common.Address, tokenI
 				BlockNumber: blockNumber,
 			}, tokenId)
 			if err != nil {
+				return nil, err
 			} else if royalty.Cmp(big.NewInt(0)) == 0 {
 				// For some reason 1 req always returns zero value
 				isFirstCall = false
@@ -288,6 +304,7 @@ func (s *service) getRoyalty(ctx context.Context, address common.Address, tokenI
 				BlockNumber: blockNumber,
 			}, tokenId)
 			if err != nil {
+				return nil, err
 			} else if royalty.Cmp(big.NewInt(0)) == 0 {
 				// For some reason 1 req always returns zero value
 				isFirstCall = false
@@ -373,7 +390,7 @@ func (s *service) getExchangeOrder(
 }
 
 func (s *service) isCollection(ctx context.Context, tx pgx.Tx, address common.Address) (bool, error) {
-	if address == s.cfg.PublicCollectionAddress {
+	if address == s.cfg.PublicCollectionAddress || address == s.cfg.FileBunniesCollectionAddress {
 		return true, nil
 	}
 	_, err := s.repository.GetCollection(ctx, tx, address)
@@ -612,9 +629,37 @@ func (s *service) tryProcessCollectionTransferEvent(
 		return nil
 	}
 
-	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To); err != nil {
+	if err := s.onCollectionTransferEvent(ctx, tx, t, block, transfer.TokenId, transfer.To); err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func (s *service) tryProcessFileBunniesTransferEvent(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *filebunniesCollection.FileBunniesCollection,
+	t *types.Transaction,
+	l *types.Log,
+	blockNumber *big.Int,
+) error {
+	transfer, err := instance.ParseTransfer(*l)
+	if err != nil {
+		return nil
+	}
+	if transfer.From != common.HexToAddress(zeroAddress) {
+		return nil
+	}
+	block, err := s.ethClient.BlockByNumber(ctx, blockNumber)
+	if err != nil {
+		return nil
+	}
+
+	if err := s.onCollectionTransferEvent(ctx, tx, t, block, transfer.TokenId, transfer.To); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -638,10 +683,27 @@ func (s *service) tryProcessPublicCollectionTransferEvent(
 		return nil
 	}
 
-	if err := s.onCollectionTransferEvent(ctx, tx, t, l, block, transfer.TokenId, transfer.To); err != nil {
+	if err := s.onCollectionTransferEvent(ctx, tx, t, block, transfer.TokenId, transfer.To); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+func (s *service) tryProcessFileBunniesTransferInit(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *filebunniesCollection.FileBunniesCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	initEv, err := instance.ParseTransferInit(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onCollectionTransferInitEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.To, initEv.TransferNumber); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -674,6 +736,23 @@ func (s *service) tryProcessPublicCollectionTransferInit(
 		return nil
 	}
 	if err := s.onCollectionTransferInitEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.To, initEv.TransferNumber); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *service) tryProcessFileBunniesTransferDraft(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *filebunniesCollection.FileBunniesCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	initEv, err := instance.ParseTransferDraft(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onTransferDraftEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.TransferNumber); err != nil {
 		return err
 	}
 	return nil
@@ -713,6 +792,23 @@ func (s *service) tryProcessTransferDraft(
 	return nil
 }
 
+func (s *service) tryProcessFileBunniesTransferDraftCompletion(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *filebunniesCollection.FileBunniesCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferDraftCompletion(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onTransferDraftCompletionEvent(ctx, tx, t, l, ev.TokenId, ev.To); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *service) tryProcessPublicCollectionTransferDraftCompletion(
 	ctx context.Context,
 	tx pgx.Tx,
@@ -742,6 +838,23 @@ func (s *service) tryProcessTransferDraftCompletion(
 		return nil
 	}
 	if err := s.onTransferDraftCompletionEvent(ctx, tx, t, l, ev.TokenId, ev.To); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *service) tryProcessFileBunniesPublicKeySet(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *filebunniesCollection.FileBunniesCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferPublicKeySet(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onPublicKeySetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.PublicKey)); err != nil {
 		return err
 	}
 	return nil
@@ -781,6 +894,23 @@ func (s *service) tryProcessPublicKeySet(
 	return nil
 }
 
+func (s *service) tryProcessFileBunniesPasswordSet(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *filebunniesCollection.FileBunniesCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferPasswordSet(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onPasswordSetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.EncryptedPassword)); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *service) tryProcessPublicCollectionPasswordSet(
 	ctx context.Context,
 	tx pgx.Tx,
@@ -810,6 +940,23 @@ func (s *service) tryProcessPasswordSet(
 		return nil
 	}
 	if err := s.onPasswordSetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.EncryptedPassword)); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *service) tryProcessFileBunniesTransferFinish(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *filebunniesCollection.FileBunniesCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferFinished(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onTransferFinishEvent(ctx, tx, t, l, ev.TokenId); err != nil {
 		return err
 	}
 	return nil
@@ -849,6 +996,23 @@ func (s *service) tryProcessTransferFinish(
 	return nil
 }
 
+func (s *service) tryProcessFileBunniesTransferFraudReported(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *filebunniesCollection.FileBunniesCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferFraudReported(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onTransferFraudReportedEvent(ctx, tx, t, l, ev.TokenId); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *service) tryProcessPublicCollectionTransferFraudReported(
 	ctx context.Context,
 	tx pgx.Tx,
@@ -883,6 +1047,23 @@ func (s *service) tryProcessTransferFraudReported(
 	return nil
 }
 
+func (s *service) tryProcessFileBunniesTransferFraudDecided(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *filebunniesCollection.FileBunniesCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferFraudDecided(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onTransferFraudDecidedEvent(ctx, tx, t, l, ev.TokenId, ev.Approved); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *service) tryProcessPublicCollectionTransferFraudDecided(
 	ctx context.Context,
 	tx pgx.Tx,
@@ -912,6 +1093,23 @@ func (s *service) tryProcessTransferFraudDecided(
 		return nil
 	}
 	if err := s.onTransferFraudDecidedEvent(ctx, tx, t, l, ev.TokenId, ev.Approved); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *service) tryProcessFileBunniesTransferCancel(
+	ctx context.Context,
+	tx pgx.Tx,
+	instance *filebunniesCollection.FileBunniesCollection,
+	t *types.Transaction,
+	l *types.Log,
+) error {
+	ev, err := instance.ParseTransferCancellation(*l)
+	if err != nil {
+		return nil
+	}
+	if err := s.onTransferCancel(ctx, tx, t, l, ev.TokenId); err != nil {
 		return err
 	}
 	return nil
@@ -959,23 +1157,86 @@ func (s *service) processCollectionTx(ctx context.Context, tx pgx.Tx, t *types.T
 	}
 
 	for _, l := range receipt.Logs {
-		if l.Address == s.cfg.PublicCollectionAddress {
-			instance2, instance2Err := publicCollection.NewPublicCollection(l.Address, nil)
-			if instance2Err == nil {
-				err := s.processPublicCollectionEvents(ctx, tx, t, l, instance2, receipt.BlockNumber)
+		switch l.Address {
+		case s.cfg.ExchangeAddress:
+			instance, err := exchange.NewFilemarketExchangeV2(l.Address, nil)
+			if err == nil {
+				err := s.processExchangeEvents(ctx, tx, t, l, instance)
 				if err != nil {
 					return err
 				}
 			}
-		} else {
-			instance, instanceErr := collection.NewFilemarketCollectionV2(l.Address, nil)
-			if instanceErr == nil {
+		case s.cfg.PublicCollectionAddress:
+			instance, err := publicCollection.NewPublicCollection(l.Address, nil)
+			if err == nil {
+				err := s.processPublicCollectionEvents(ctx, tx, t, l, instance, receipt.BlockNumber)
+				if err != nil {
+					return err
+				}
+			}
+		case s.cfg.FileBunniesCollectionAddress:
+			instance, err := filebunniesCollection.NewFileBunniesCollection(l.Address, nil)
+			if err == nil {
+				err := s.processFileBunniesCollectionEvents(ctx, tx, t, l, instance, receipt.BlockNumber)
+				if err != nil {
+					return err
+				}
+			}
+		default:
+			instance, err := collection.NewFilemarketCollectionV2(l.Address, nil)
+			if err == nil {
 				err := s.processFileMarketCollectionEvents(ctx, tx, t, l, instance, receipt.BlockNumber)
 				if err != nil {
 					return err
 				}
 			}
 		}
+	}
+	return nil
+
+}
+
+func (s *service) processExchangeEvents(ctx context.Context, tx pgx.Tx, t *types.Transaction, l *types.Log, instance *exchange.FilemarketExchangeV2) error {
+	fee, err := instance.ParseFeeChanged(*l)
+	if err != nil {
+		return nil
+	}
+
+	// TODO: save somewhere
+	fmt.Printf("New fee: %s", fee.NewFee.String())
+	return nil
+}
+
+func (s *service) processFileBunniesCollectionEvents(ctx context.Context, tx pgx.Tx, t *types.Transaction, l *types.Log, instance *filebunniesCollection.FileBunniesCollection, blockNumber *big.Int) error {
+	if err := s.tryProcessFileBunniesTransferEvent(ctx, tx, instance, t, l, blockNumber); err != nil {
+		return fmt.Errorf("process public collection transfer: %w", err)
+	}
+	if err := s.tryProcessFileBunniesTransferInit(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection transfer init: %w", err)
+	}
+	if err := s.tryProcessFileBunniesTransferDraft(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection transfer draft: %w", err)
+	}
+	if err := s.tryProcessFileBunniesTransferDraftCompletion(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection draft completion: %w", err)
+	}
+	if err := s.tryProcessFileBunniesPublicKeySet(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection public key set: %w", err)
+	}
+	if err := s.tryProcessFileBunniesPasswordSet(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection password set: %w", err)
+	}
+	if err := s.tryProcessFileBunniesTransferFinish(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection transfer finish: %w", err)
+	}
+	if err := s.tryProcessFileBunniesTransferFraudReported(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection fraud reported: %w", err)
+	}
+	if err := s.tryProcessFileBunniesTransferFraudDecided(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process public collection fraud decided: %w", err)
+	}
+	if err := s.tryProcessFileBunniesTransferCancel(ctx, tx, instance, t, l); err != nil {
+		return fmt.Errorf("process transfer cancel: %w", err)
 	}
 	return nil
 }
@@ -1064,6 +1325,7 @@ func (s *service) processBlock(block *types.Block) error {
 		if err != nil {
 			return err
 		}
+
 		if *t.To() == s.cfg.AccessTokenAddress {
 			err = s.processAccessTokenTx(ctx, tx, t)
 		} else if *t.To() == s.cfg.ExchangeAddress {

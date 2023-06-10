@@ -1,5 +1,6 @@
 import {ethers} from "hardhat";
 import {
+  FileBunniesCollection__factory,
   FilemarketCollectionV2__factory,
   FilemarketExchangeV2__factory,
   FraudDeciderWeb2V2__factory,
@@ -43,13 +44,13 @@ async function callRpc(method: string, params: string) {
 
 async function main() {
   let accounts = await ethers.getSigners();
-
   console.log(accounts);
 
   const accessTokenFactory = new Mark3dAccessTokenV2__factory(accounts[0]);
   const fraudDeciderFactory = new FraudDeciderWeb2V2__factory(accounts[0]);
   const collectionFactory = new FilemarketCollectionV2__factory(accounts[0]);
   const publicCollectionFactory = new PublicCollection__factory(accounts[0]);
+  const fileBunniesCollectionFactory = new FileBunniesCollection__factory(accounts[0]);
   const exchangeFactory = new FilemarketExchangeV2__factory(accounts[0]);
 
   const priorityFee = await callRpc("eth_maxPriorityFeePerGas", "")
@@ -59,17 +60,21 @@ async function main() {
     maxPriorityFeePerGas: priorityFee,
   });
   console.log("collection address: ", collectionToClone.address);
+
   let fraudDecider = await fraudDeciderFactory.deploy({
     maxPriorityFeePerGas: priorityFee,
   });
   console.log("fraud decider address: ", fraudDecider.address);
+
   const globalSalt = genRanHex(128);
   console.log("global salt", globalSalt);
+
   let accessToken = await accessTokenFactory.deploy("FileMarket Access Token", "FileMarket", "",
     "0x" + globalSalt, collectionToClone.address, true, fraudDecider.address, {
         maxPriorityFeePerGas: priorityFee,
       });
   console.log("access token address: ", accessToken.address);
+
   let publicCollection = await publicCollectionFactory.deploy(
       "FileMarket",
       "FMRT",
@@ -81,12 +86,29 @@ async function main() {
       true,
       {
         maxPriorityFeePerGas: priorityFee,
-      });
+  });
   console.log("public collection address: ", publicCollection.address);
+
   let exchange = await exchangeFactory.deploy({
     maxPriorityFeePerGas: priorityFee,
   });
   console.log("exchange address: ", exchange.address);
+
+  let fileBunniesCollection = await fileBunniesCollectionFactory.deploy(
+      "FileBunnies",
+      "FBNS",
+      "ipfs://QmZm4oLQoyXZLJzioYCjGtGXGHqsscKvWJmWXMVhTXZtc9",
+      accounts[0].getAddress(),
+      accounts[0].getAddress(),
+      accounts[0].getAddress(),
+      accounts[0].getAddress(),
+      "0x",
+      fraudDecider.address,
+      true,
+      {
+        maxPriorityFeePerGas: priorityFee,
+      });
+  console.log("file bunnies collection address: ", fileBunniesCollection.address);
 }
 
 main().catch((error) => {

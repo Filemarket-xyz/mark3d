@@ -162,6 +162,10 @@ func (s *service) GetTransfersV2(
 		if err != nil {
 			return nil, internalError
 		}
+		if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress && token.MetaUri == "" {
+			token.Metadata = domain.NewFileBunniesPlaceholder()
+		}
+
 		collection, err := s.repository.GetCollection(ctx, tx, t.CollectionAddress)
 		if err != nil {
 			return nil, internalError
@@ -186,6 +190,10 @@ func (s *service) GetTransfersV2(
 		if err != nil {
 			return nil, internalError
 		}
+		if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress && token.MetaUri == "" {
+			token.Metadata = domain.NewFileBunniesPlaceholder()
+		}
+
 		collection, err := s.repository.GetCollection(ctx, tx, t.CollectionAddress)
 		if err != nil {
 			return nil, internalError
