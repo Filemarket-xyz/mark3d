@@ -64,6 +64,8 @@ export class SeedProvider implements ISeedProvider {
       throw new Error('Unable to encrypt seed')
     }
     await this.storage.set(seedStorageKey, seedEncrypted)
+    await this.storage.set(hashSeedStorageKey, sha256(Buffer.from(newSeed).toString('hex')))
+    this.hashSeed = sha256(Buffer.from(newSeed).toString('hex'))
     this.seedEncrypted = seedEncrypted
 
     this.setSeed(newSeed)
