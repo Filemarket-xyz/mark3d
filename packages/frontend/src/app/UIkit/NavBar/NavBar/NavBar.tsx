@@ -20,6 +20,8 @@ export interface NavBarProps {
   items?: NavBarItemData[]
   actions?: ReactNode
   mobileBp?: BreakpointsOptions
+  isTransparent?: boolean
+  noneBlurShadow?: boolean
 }
 
 const NavBarStyled = styled('nav', {
@@ -30,10 +32,24 @@ const NavBarStyled = styled('nav', {
   top: 0,
   left: 0,
   right: 0,
-  background: '$colors$blue500',
-  backdropFilter: 'blur(12.5px)',
   boxShadow: '$header',
   color: '$blue900',
+  background: 'rgba(249, 249, 249, 0.75)',
+  backgroundBlendMode: 'luminosity',
+  backdropFilter: 'blur(14px)',
+  variants: {
+    isTransparent: {
+      true: {
+        background: 'none',
+      },
+    },
+    noneBlurShadow: {
+      true: {
+        backdropFilter: 'none',
+        boxShadow: 'none',
+      },
+    },
+  },
 })
 
 const horizontalGap = 30
@@ -70,6 +86,8 @@ export const NavBar: FC<NavBarProps> = ({
   items,
   actions,
   mobileBp,
+  isTransparent,
+  noneBlurShadow,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { pathname } = useLocation()
@@ -79,7 +97,7 @@ export const NavBar: FC<NavBarProps> = ({
 
   return (
     <>
-      <NavBarStyled>
+      <NavBarStyled isTransparent={isTransparent} noneBlurShadow={noneBlurShadow}>
         <Container css={{ height: '100%' }}>
           <NavBarHorizontalSpacer>
             <NavBarToggle

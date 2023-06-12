@@ -64,6 +64,11 @@ const navBarItemStyles = {
         },
       },
     },
+    gray: {
+      true: {
+        color: '$gray600',
+      },
+    },
   },
 }
 

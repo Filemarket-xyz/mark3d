@@ -59,6 +59,7 @@
     "react-hook-form": "^7.39.4",
     "react-router-dom": "^6.4.2",
     "react-stately": "^3.18.0",
+    "react-use-scroll-indicator": "^1.1.1",
     "reseter.css": "^2.0.0",
     "screenfull": "^6.0.2",
     "swagger-typescript-api": "^12.0.2",
