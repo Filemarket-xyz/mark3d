@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
+import FileLogo from '../../../../../assets/FilemarketFileLogo.png'
 import { styled } from '../../../../../styles'
 import { useCollectionStore } from '../../../../hooks/useCollectionStore'
 import { useTokenStore } from '../../../../hooks/useTokenStore'
@@ -25,6 +26,22 @@ const HomeLandSection = () => {
   const { data: token } = useTokenStore(collectionAddress, tokenId)
   const { collection } = useCollectionStore(collectionAddress)
 
+  const { collectionImgUrl, collectionName } = useMemo(() => {
+    const result = {
+      collectionImgUrl: gradientPlaceholderImg,
+      collectionName: collection?.name ?? '',
+    }
+    if (collection?.image) {
+      result.collectionImgUrl = getHttpLinkFromIpfsString(collection.image)
+    }
+    if (collection?.type === 'Public Collection') {
+      result.collectionImgUrl = FileLogo
+      result.collectionName = 'FileMarket'
+    }
+
+    return result
+  }, [collection])
+
   return (
     <GridBlock style={{ gridArea: 'HomeLand' }}>
       <BadgesContainer>
@@ -37,11 +54,9 @@ const HomeLandSection = () => {
           }
         >
           <Badge
-            content={{ title: 'Collection', value: collection?.name ?? '' }}
+            content={{ title: 'Collection', value: collectionName }}
             image={{
-              url: collection?.image
-                ? getHttpLinkFromIpfsString(collection.image)
-                : gradientPlaceholderImg,
+              url: collectionImgUrl,
               borderRadius: 'roundedSquare',
             }}
             wrapperProps={{

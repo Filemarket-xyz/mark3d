@@ -1,6 +1,7 @@
 import { CollectionStore } from './Collection/CollectionStore'
 import { CollectionAndTokenListStore } from './CollectionAndTokenList/CollectionAndTokenListStore'
 import { CollectionTokenListStore } from './CollectionTokenList/CollectionTokenListStore'
+import { ConversionRateStore } from './Currency/ConversionRateStore'
 import { DialogStore } from './Dialog/DialogStore'
 import { ErrorStore } from './Error/ErrorStore'
 import { OrderStore } from './Order/OrderStore'
@@ -28,6 +29,7 @@ export class RootStore {
   transfersHistoryStore: TransfersHistoryStore
   userTransferStore: UserTransferStore
   publicCollectionStore: PublicCollectionStore
+  conversionRateStore: ConversionRateStore
 
   constructor() {
     this.dialogStore = new DialogStore()
@@ -44,6 +46,7 @@ export class RootStore {
     this.transfersHistoryStore = new TransfersHistoryStore(this)
     this.userTransferStore = new UserTransferStore(this)
     this.publicCollectionStore = new PublicCollectionStore(this)
+    this.conversionRateStore = new ConversionRateStore(this)
   }
 }
 

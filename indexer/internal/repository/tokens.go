@@ -92,8 +92,9 @@ func (p *postgres) GetCollectionTokens(
 			if errors.Is(err, pgx.ErrNoRows) {
 				logger.Warnf("couldn't get metadata for token with collection address: %s, tokenId: %s", r.CollectionAddress, r.TokenId.String())
 				metadata = domain.NewPlaceholderMetadata()
+			} else {
+				return nil, err
 			}
-			return nil, err
 		}
 		r.Metadata = metadata
 	}
@@ -211,8 +212,9 @@ func (p *postgres) GetTokensByAddress(
 			if errors.Is(err, pgx.ErrNoRows) {
 				logger.Warnf("couldn't get metadata for token with collection address: %s, tokenId: %s", r.CollectionAddress, r.TokenId.String())
 				metadata = domain.NewPlaceholderMetadata()
+			} else {
+				return nil, err
 			}
-			return nil, err
 		}
 		r.Metadata = metadata
 	}
@@ -285,7 +287,11 @@ func (p *postgres) GetToken(
 
 	metadata, err := p.GetMetadata(ctx, tx, t.CollectionAddress, t.TokenId)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, pgx.ErrNoRows) {
+			metadata = domain.NewPlaceholderMetadata()
+		} else {
+			return nil, err
+		}
 	}
 	t.Metadata = metadata
 
@@ -315,8 +321,10 @@ func (p *postgres) InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Tok
 		return err
 	}
 
-	if err := p.InsertMetadata(ctx, tx, token.Metadata, token.CollectionAddress, token.TokenId); err != nil {
-		return err
+	if token.Metadata != nil {
+		if err := p.InsertMetadata(ctx, tx, token.Metadata, token.CollectionAddress, token.TokenId); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -335,7 +343,7 @@ func (p *postgres) UpdateToken(ctx context.Context, tx pgx.Tx, token *domain.Tok
 func (p *postgres) GetMetadata(
 	ctx context.Context,
 	tx pgx.Tx,
-	contractAddress common.Address,
+	collectionAddress common.Address,
 	tokenId *big.Int,
 ) (*domain.TokenMetadata, error) {
 	metadataQuery := `
@@ -350,7 +358,7 @@ func (p *postgres) GetMetadata(
 	var md domain.TokenMetadata
 	var hf domain.HiddenFileMetadata
 	err := tx.QueryRow(ctx, metadataQuery,
-		strings.ToLower(contractAddress.String()),
+		strings.ToLower(collectionAddress.String()),
 		tokenId.String(),
 	).Scan(
 		&md.Id,
@@ -415,7 +423,7 @@ func (p *postgres) GetMetadata(
 
 	// Getting Trait counts
 	for _, prop := range md.Properties {
-		traitCountByValue, traitTotal, err := p.GetTraitCount(ctx, tx, prop.TraitType, prop.Value)
+		traitCountByValue, traitTotal, err := p.GetTraitCount(ctx, tx, collectionAddress, prop.TraitType, prop.Value)
 		if err != nil {
 			return nil, err
 		}
@@ -512,7 +520,6 @@ func (p *postgres) InsertMetadata(
 	if metadata == nil {
 		return errors.New("metadata is nil")
 	}
-
 	if metadata.HiddenFileMeta == nil {
 		return errors.New("hiddenFileMeta is nil")
 	}
@@ -563,13 +570,14 @@ func (p *postgres) InsertMetadata(
 
 	propertiesQuery := `
 		INSERT INTO token_metadata_properties (
-		    metadata_id, trait_type, display_type, value, max_value, min_value, property_type
+		    metadata_id, collection_address, trait_type, display_type, value, max_value, min_value, property_type
 		)
-		VALUES ($1,$2,$3,$4,$5,$6,$7)  
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8)  
 	`
 	for _, attr := range metadata.Properties {
 		_, err := tx.Exec(ctx, propertiesQuery,
 			metadataId,
+			strings.ToLower(collectionAddress.String()),
 			attr.TraitType,
 			attr.DisplayType,
 			attr.Value,
@@ -585,6 +593,7 @@ func (p *postgres) InsertMetadata(
 	for _, stat := range metadata.Stats {
 		_, err := tx.Exec(ctx, propertiesQuery,
 			metadataId,
+			strings.ToLower(collectionAddress.String()),
 			stat.TraitType,
 			stat.DisplayType,
 			stat.Value,
@@ -600,6 +609,7 @@ func (p *postgres) InsertMetadata(
 	for _, ranking := range metadata.Rankings {
 		_, err := tx.Exec(ctx, propertiesQuery,
 			metadataId,
+			strings.ToLower(collectionAddress.String()),
 			ranking.TraitType,
 			ranking.DisplayType,
 			ranking.Value,
@@ -653,6 +663,7 @@ func (p *postgres) InsertMetadata(
 func (p *postgres) GetTraitCount(
 	ctx context.Context,
 	tx pgx.Tx,
+	collectionAddress common.Address,
 	traitType string,
 	value string,
 ) (int64, int64, error) {
@@ -665,12 +676,12 @@ func (p *postgres) GetTraitCount(
 				 trait_type,
 				 SUM(count) AS total_count
 			 FROM public.metadata_trait_count
-			 WHERE trait_type = $1
+			 WHERE trait_type=$1 AND collection_address=$3
 			 GROUP BY trait_type
 			 ) t2 ON t1.trait_type = t2.trait_type
-		WHERE t1.trait_type=$1 AND t1.value=$2
+		WHERE t1.trait_type=$1 AND t1.value=$2 AND t1.collection_address=$3
 	`
-	row := tx.QueryRow(ctx, query, traitType, value)
+	row := tx.QueryRow(ctx, query, traitType, value, strings.ToLower(collectionAddress.String()))
 
 	var countByValue, total int64
 	if err := row.Scan(&countByValue, &total); err != nil {

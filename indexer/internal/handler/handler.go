@@ -28,11 +28,14 @@ func NewHandler(cfg *config.HandlerConfig, service service.Service) Handler {
 func (h *handler) Init() http.Handler {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/collections/{address:0x[0-9a-f-A-F]{40}}", h.handleGetCollection)
-	router.HandleFunc("/collections/full/{address:0x[0-9a-f-A-F]{40}}", h.handleGetFullCollection)
+	router.HandleFunc("/collections/file-bunnies/whitelist/{rarity}/sign/{address:0x[0-9a-f-A-F]{40}}", h.handleGetWhitelistSignature)
+	router.HandleFunc("/collections/file-bunnies/whitelist/{address:0x[0-9a-f-A-F]{40}}", h.handleGetAddressInWhitelist)
 	router.HandleFunc("/collections/full/public", h.handleGetFullPublicCollection)
-	router.HandleFunc("/tokens/{address:0x[0-9a-f-A-F]{40}}/{id:[0-9]+}", h.handleGetToken)
+	router.HandleFunc("/collections/full/file-bunnies", h.handleGetFullFileBunniesCollection)
+	router.HandleFunc("/collections/full/{address:0x[0-9a-f-A-F]{40}}", h.handleGetFullCollection)
+	router.HandleFunc("/collections/{address:0x[0-9a-f-A-F]{40}}", h.handleGetCollection)
 	router.HandleFunc("/tokens/{address:0x[0-9a-f-A-F]{40}}/{id:[0-9]+}/encrypted_password", h.handleGetTokenEncryptedPassword)
+	router.HandleFunc("/tokens/{address:0x[0-9a-f-A-F]{40}}/{id:[0-9]+}", h.handleGetToken)
 	router.HandleFunc("/tokens/by_collection/{address:0x[0-9a-f-A-F]{40}}", h.handleGetCollectionTokens)
 	router.HandleFunc("/tokens/{address:0x[0-9a-f-A-F]{40}}", h.handleGetTokens)
 	router.HandleFunc("/transfers/{address:0x[0-9a-f-A-F]{40}}", h.handleGetActiveTransfers)
@@ -46,6 +49,7 @@ func (h *handler) Init() http.Handler {
 	router.HandleFunc("/orders/{address:0x[0-9a-f-A-F]{40}}/{id:[0-9]+}", h.handleGetOrder)
 	router.HandleFunc("/orders/all_active", h.handleGetAllActiveOrders)
 	router.HandleFunc("/sequencer/acquire/{address:0x[0-9a-f-A-F]{40}}", h.handleSequencerAcquire)
+	router.HandleFunc("/currency/conversion_rate", h.handleGetCurrencyConversionRate)
 	router.HandleFunc("/healthcheck", h.handleHealthCheck)
 	router.Use(h.corsMiddleware)
 
@@ -71,4 +75,15 @@ func (h *handler) handleHealthCheck(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sendResponse(w, 200, *response)
+}
+
+func (h *handler) handleGetCurrencyConversionRate(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
+	defer cancel()
+	response, err := h.service.GetCurrencyConversionRate(ctx, "FIL", "USD")
+	if err != nil {
+		sendResponse(w, err.Code, err)
+		return
+	}
+	sendResponse(w, 200, response)
 }

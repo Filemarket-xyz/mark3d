@@ -28,6 +28,10 @@ func (s *service) GetToken(ctx context.Context, address common.Address,
 		log.Println("get token failed: ", err)
 		return nil, internalError
 	}
+
+	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress && token.MetaUri == "" {
+		token.Metadata = domain.NewFileBunniesPlaceholder()
+	}
 	return domain.TokenToModel(token), nil
 }
 
@@ -121,6 +125,13 @@ func (s *service) GetTokensByAddress(
 		log.Println("get tokens by address failed: ", err)
 		return nil, internalError
 	}
+
+	for _, t := range tokens {
+		if t.CollectionAddress == s.cfg.FileBunniesCollectionAddress && t.MetaUri == "" {
+			t.Metadata = domain.NewFileBunniesPlaceholder()
+		}
+	}
+
 	tokensRes := domain.MapSlice(tokens, domain.TokenToModel)
 	tokensTotal, err := s.repository.GetTokensByAddressTotal(ctx, tx, address)
 	if err != nil {
@@ -139,8 +150,24 @@ func (s *service) GetTokensByAddress(
 		}
 		tokensRes[i].PendingTransferID, tokensRes[i].PendingOrderID = transfer.Id, transfer.OrderId
 	}
+
+	collectionsRes := make([]*models.Collection, len(collections))
+	for i, c := range collections {
+		res := domain.CollectionToModel(c)
+		if c.Address == s.cfg.FileBunniesCollectionAddress {
+			stats, err := s.repository.GetFileBunniesStats(ctx, tx)
+			if err != nil {
+				logger.Errorf("failed to get stats", err, nil)
+				return nil, internalError
+			}
+			for _, s := range stats {
+				res.Stats = append(res.Stats, &models.CollectionStat{Name: s.Name, Value: s.Value})
+			}
+		}
+		collectionsRes[i] = res
+	}
 	return &models.TokensResponse{
-		Collections:      domain.MapSlice(collections, domain.CollectionToModel),
+		Collections:      collectionsRes,
 		CollectionsTotal: collectionsTotal,
 		Tokens:           tokensRes,
 		TokensTotal:      tokensTotal,

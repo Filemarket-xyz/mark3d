@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 
 import { CollectionData } from '../../../swagger/Api'
-import { NFTCardProps } from '../../components/MarketCard/NFTCard/NFTCard'
 import { api } from '../../config/api'
 import { gradientPlaceholderImg } from '../../UIkit'
 import { getHttpLinkFromIpfsString } from '../../utils/nfts/getHttpLinkFromIpfsString'
@@ -90,7 +89,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
     return tokens.length < total
   }
 
-  get nftCards(): NFTCardProps[] {
+  get nftCards() {
     if (!this.data.tokens) return []
 
     return this.data.tokens.map((token) => ({

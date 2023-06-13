@@ -144,14 +144,16 @@ export default function CreateCollectionPage() {
   useEffect(() => {
     if (!error) return
 
-    void setModalBody(<ErrorBody
-      message={extractMessageFromError(error)}
-      onClose={() => {
-        console.log('CLICCCCCKKK')
-        void setModalOpen(false)
-      }
-      }
-    />)
+    void setModalBody(
+      <ErrorBody
+        message={extractMessageFromError(error)}
+        onClose={() => {
+          console.log('CLICCCCCKKK')
+          void setModalOpen(false)
+        }
+        }
+      />,
+    )
   }, [error])
 
   const [textareaLength, setTextareaLength] = useState(

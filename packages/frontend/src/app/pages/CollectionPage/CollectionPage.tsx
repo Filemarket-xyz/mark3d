@@ -1,6 +1,8 @@
 import { observer } from 'mobx-react-lite'
+import { useMemo } from 'react'
 import { Outlet, useLocation, useParams } from 'react-router'
 
+import FileLogo from '../../../assets/FilemarketFileLogo.png'
 import { styled } from '../../../styles'
 import { mark3dConfig } from '../../config/mark3d'
 import { useCollectionTokenListStore } from '../../hooks/useCollectionTokenListStore'
@@ -94,10 +96,16 @@ const StyledContainer = styled(Container, {
 
 const CollectionPage = observer(() => {
   const { collectionAddress } = useParams<Params>()
-  const { data: collectionAndNfts } =
-    useCollectionTokenListStore(collectionAddress)
+  const { data: collectionAndNfts } = useCollectionTokenListStore(collectionAddress)
 
   const { pathname: currentPath } = useLocation()
+
+  const collectionImgUrl = useMemo(() => {
+    if (collectionAndNfts?.collection?.type === 'Public Collection') return FileLogo
+    if (collectionAndNfts?.collection?.image) { return getHttpLinkFromIpfsString(collectionAndNfts.collection.image) }
+
+    return gradientPlaceholderImg
+  }, [collectionAndNfts?.collection])
 
   return (
     <GrayOverlay>
@@ -106,13 +114,7 @@ const CollectionPage = observer(() => {
         <StyledContainer>
           <Profile>
             <ProfileHeader>
-              <ProfileImage
-                src={
-                  collectionAndNfts.collection?.image
-                    ? getHttpLinkFromIpfsString(collectionAndNfts.collection?.image ?? '')
-                    : gradientPlaceholderImg
-                }
-              />
+              <ProfileImage src={collectionImgUrl} />
               <ProfileName>{collectionAndNfts.collection?.name}</ProfileName>
             </ProfileHeader>
             <Badges>

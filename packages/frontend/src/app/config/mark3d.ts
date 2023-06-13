@@ -16,10 +16,10 @@ const filecoinCalibration: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ['https://filecoin-calibration.chainup.net/rpc/v1'],
+      http: ['https://api.calibration.node.glif.io/rpc/v1'],
     },
     public: {
-      http: ['https://api.calibration.node.glif.io/rpc/v1'],
+      http: ['https://filecoin-calibration.chainup.net/rpc/v1'],
     },
   },
   blockExplorers: {
@@ -56,13 +56,13 @@ const filecoinMainnet: Chain = {
   },
 }
 
+export const fee = +import.meta.env.VITE_MARKETPLACE_FEE
 const isMainnet = import.meta.env.VITE_IS_MAINNET
 
 const mark3dChain = isMainnet ? filecoinMainnet : filecoinCalibration
 
-const accessTokenAddress = isMainnet ? '0x2905A2Ad979ABfeb50C12F042Ab2b2A1359a47E4' : '0xC3F07F620715Fec92db305f718C7FA10C708Bf7A'
-
-const exchangeTokenAddress = isMainnet ? '0xFDD2eF676C5c5dE3476FFCf6EECa86E4cb8499d4' : '0x2301D80E8A7e4Cf59a349ffC20A51367cb27A4fc'
+const accessTokenAddress = isMainnet ? '0xdcbF452fEA133e28759F050C9BDD827C805B3030' : '0xC3F07F620715Fec92db305f718C7FA10C708Bf7A'
+const exchangeTokenAddress = isMainnet ? '0x2f255f048c1510485bd3F7D65520EDFB9EbC9362' : '0x2301D80E8A7e4Cf59a349ffC20A51367cb27A4fc'
 
 export const mark3dConfig = {
   chain: mark3dChain,

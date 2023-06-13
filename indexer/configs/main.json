@@ -10,10 +10,11 @@
     "swaggerHost": "https://indexer-swagger.mark3d.xyz"
   },
   "service": {
-    "accessTokenAddress": "0x2905A2Ad979ABfeb50C12F042Ab2b2A1359a47E4",
-    "exchangeAddress": "0xFDD2eF676C5c5dE3476FFCf6EECa86E4cb8499d4",
-    "publicCollectionAddress": "0x",
-    "fraudDeciderWeb2Address": "0xf3b3a65500b7753ADbeC9576cc2a346bdf35Fb64",
+    "accessTokenAddress": "0xdcbF452fEA133e28759F050C9BDD827C805B3030",
+    "exchangeAddress": "0x2f255f048c1510485bd3F7D65520EDFB9EbC9362",
+    "publicCollectionAddress": "0x2482b31b7E07E12E6Ca6ea351b2d5D546C4A44E9",
+    "fileBunniesCollectionAddress": "0x",
+    "fraudDeciderWeb2Address": "0x0C5C679dD1B4975547ccd2E16b02728a9ED0f463",
     "allowedBlockNumberDifference": 20,
     "healthCheckInterval": 60,
     "sequencer": {
