@@ -63,7 +63,7 @@ export const OrderForm: FC<OrderFormProps> = observer(({
           <Input<OrderFormRawValue>
             type="number"
             step="any"
-            placeholder='1.01'
+            placeholder='Enter value'
             after="FIL"
             controlledInputProps={{
               control,
