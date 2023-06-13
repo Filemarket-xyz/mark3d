@@ -3,6 +3,7 @@ import montserratBold from '../assets/fonts/Montserrat-Bold.ttf'
 import montserratSemiBold from '../assets/fonts/Montserrat-SemiBold.ttf'
 import montserratRegular400 from '../assets/fonts/Montserrat-VariableFont_wght.ttf'
 import montserratReg from '../assets/fonts/Montserrat-VariableFont_wght500.ttf'
+import museoModernoSemiBold from '../assets/fonts/MuseoModerno-SemiBold.ttf'
 import soraBold from '../assets/fonts/Sora-Bold.ttf'
 import SpaceGrotesk from '../assets/fonts/SpaceGrotesk-VariableFont_wght.ttf'
 import { globalCss } from './stitches.config'
@@ -50,6 +51,12 @@ export const globalStyles = globalCss({
       fontStyle: 'normal',
       fontWeight: 700,
       src: `local(''), url('${SpaceGrotesk}') format('truetype')`,
+    },
+    {
+      fontFamily: 'MuseoModerno',
+      fontStyle: 'normal',
+      fontWeight: 600,
+      src: `local(''), url('${museoModernoSemiBold}') format('truetype')`,
     },
   ],
   'html, body, #root, #root>div': {
