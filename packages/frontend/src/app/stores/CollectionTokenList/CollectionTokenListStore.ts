@@ -106,6 +106,7 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
         text: 'Go to page',
       },
       hiddenFile: token.hiddenFileMeta,
+      hiddenFileMeta: token.hiddenFileMeta,
     }))
   }
 }
