@@ -11,6 +11,7 @@ interface FlexProps extends PropsWithChildren {
   justifyContent?: CSS['justifyContent']
   flexDirection?: CSS['flexDirection']
   flexWrap?: CSS['flexWrap']
+  flexGrow?: CSS['flexGrow']
   w100?: boolean
   h100?: boolean
   className?: string
