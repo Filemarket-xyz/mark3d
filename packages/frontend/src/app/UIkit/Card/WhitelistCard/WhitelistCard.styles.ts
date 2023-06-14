@@ -30,7 +30,7 @@ export const StyledCardBackground = styled('div', {
   margin: '0 auto',
   transform: 'scale(0.8)',
   filter: 'blur(60px)',
-  backgroundImage: 'linear-gradient(var(--rotate), #5ddcff, #3c67e3 43%, #4e00c2)',
+  backgroundImage: 'linear-gradient(var(--rotate), #8efdb5, #028fff, #01e3f8)',
   opacity: 1,
   transition: 'opacity 0.5s',
   animation: `${spin} 2.5s linear infinite`,
@@ -42,7 +42,7 @@ export const StyledCardInner = styled(Flex, {
   margin: 4,
   padding: 20,
   background: '#191c29',
-  borderRadius: 6,
+  borderRadius: 16,
   color: 'rgb(88 199 250 / 100%)',
   height: 'calc(100% - 8px)',
 })
@@ -79,8 +79,8 @@ export const StyledCard = styled('div', {
   minWidth: 275,
   position: 'relative',
   zIndex: 1,
-  borderRadius: 8,
-  backgroundImage: 'linear-gradient(var(--rotate), #5ddcff, #3c67e3 43%, #4e00c2)',
+  borderRadius: 16,
+  backgroundImage: 'linear-gradient(var(--rotate), #8efdb5, #028fff, #01e3f8)',
   animation: `${spin} 2.5s linear infinite`,
   '&:hover': {
     animation: 'none',
@@ -97,7 +97,7 @@ export const StyledCard = styled('div', {
 })
 
 export const StyledRarity = styled('span', {
-  ...textVariant('body4').true,
+  ...textVariant('body3').true,
   fontWeight: 600,
   textTransform: 'capitalize',
   variants: {

@@ -17,11 +17,12 @@ export const WhitelistCardButton = React.forwardRef<HTMLButtonElement, Whitelist
   const { buttonRef, buttonProps } = useButton(props, ref)
 
   const text = useMemo(() => {
-    if (variant === 'free') return 'free mint'
-    if (variant === 'check') return 'check wl'
+    if (props.isDisabled) return 'You’re not in WL'
+    if (variant === 'free') return 'FREE MINT'
+    if (variant === 'check') return 'CHECK WL'
 
-    return variant
-  }, [variant])
+    return variant.toUpperCase()
+  }, [variant, props.isDisabled])
 
   return (
     <StyledButton ref={buttonRef} {...buttonProps} variant={variant}>
