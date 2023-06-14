@@ -4,7 +4,7 @@ import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useCancelOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
-import MintModal from '../../../../Modal/Modal'
+import BaseModal from '../../../../Modal/Modal'
 
 export interface ButtonCancelOrderProps {
   tokenFullId: TokenFullId
@@ -22,7 +22,7 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, cal
 
   return (
     <>
-      <MintModal {...modalProps} />
+      <BaseModal {...modalProps} />
       <Button
         primary
         fullWidth

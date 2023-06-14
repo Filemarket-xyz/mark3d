@@ -5,7 +5,7 @@ import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useApproveTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
-import MintModal from '../../../../Modal/Modal'
+import BaseModal from '../../../../Modal/Modal'
 
 export interface ButtonApproveTransferProps {
   tokenFullId: TokenFullId
@@ -24,7 +24,7 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
 
   return (
     <>
-      <MintModal {...modalProps} />
+      <BaseModal {...modalProps} />
       <Button
         primary
         fullWidth

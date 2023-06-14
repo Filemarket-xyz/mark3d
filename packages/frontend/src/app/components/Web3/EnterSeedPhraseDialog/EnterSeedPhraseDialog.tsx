@@ -8,9 +8,9 @@ import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useStatusModal } from '../../../hooks/useStatusModal'
 import { useSeedProvider } from '../../../processing'
-import { FWIcon, Modal, ModalTitle } from '../../../UIkit/Modal/Modal'
+import { Modal, ModalIcon, ModalTitle } from '../../../UIkit/Modal/Modal'
 import { AppDialogProps } from '../../../utils/dialog'
-import MintModal from '../../Modal/Modal'
+import BaseModal from '../../Modal/Modal'
 import { EnterSeedPhraseForm } from './EnterSeedPhraseForm/EnterSeedPhraseForm'
 
 const InputWindowStyle = styled('div', {
@@ -51,7 +51,7 @@ export function EnterSeedPhraseDialog({ open, onClose, isReset }: AppDialogProps
           }}
         >
           <ModalTitle style={{ marginBottom: '40px' }}>
-            <FWIcon />
+            <ModalIcon />
             {' '}
             {isReset ? 'Reset password' : 'Connect FileWallet'}
           </ModalTitle>
@@ -69,7 +69,7 @@ export function EnterSeedPhraseDialog({ open, onClose, isReset }: AppDialogProps
           </InputWindowStyle>
         </Modal>
       )
-        : <MintModal {...modalProps} />
+        : <BaseModal {...modalProps} />
       }
     </>
   )

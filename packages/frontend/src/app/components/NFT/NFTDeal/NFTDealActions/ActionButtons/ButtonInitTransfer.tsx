@@ -8,7 +8,7 @@ import { useInitTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import { ModalTitle } from '../../../../../UIkit/Modal/Modal'
-import MintModal from '../../../../Modal/Modal'
+import BaseModal from '../../../../Modal/Modal'
 import { TransferForm } from '../../TransferForm'
 
 export interface ButtonInitTransferProps {
@@ -43,7 +43,7 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, c
           />
         </Modal.Body>
       </Modal>
-      <MintModal {...modalProps} />
+      <BaseModal {...modalProps} />
       <Button
         primary
         fullWidth

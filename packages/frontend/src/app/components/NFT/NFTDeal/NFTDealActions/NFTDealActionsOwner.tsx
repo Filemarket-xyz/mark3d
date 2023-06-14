@@ -7,7 +7,7 @@ import { useIsApprovedExchange } from '../../../../processing'
 import { TokenFullId } from '../../../../processing/types'
 import { Button } from '../../../../UIkit'
 import { transferPermissions } from '../../../../utils/transfer/status'
-import MintModal from '../../../Modal/Modal'
+import BaseModal from '../../../Modal/Modal'
 import { ButtonApproveExchange } from './ActionButtons/ButtonApproveExchange'
 import { ButtonApproveTransfer } from './ActionButtons/ButtonApproveTransfer'
 import { ButtonCancelOrder } from './ActionButtons/ButtonCancelOrder'
@@ -43,7 +43,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   })
 
   if (error) {
-    return <MintModal {...modalProps} />
+    return <BaseModal {...modalProps} />
   }
 
   return (

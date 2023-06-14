@@ -7,7 +7,7 @@ import { usePlaceOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import { Modal, ModalBody, ModalTitle } from '../../../../../UIkit/Modal/Modal'
-import MintModal from '../../../../Modal/Modal'
+import BaseModal from '../../../../Modal/Modal'
 import { OrderForm, OrderFormValue } from '../../OrderForm'
 
 export interface ButtonPlaceOrderProps {
@@ -46,7 +46,7 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId,
           />
         </ModalBody>
       </Modal>
-      <MintModal {...modalProps} />
+      <BaseModal {...modalProps} />
       <Button
         primary
         fullWidth

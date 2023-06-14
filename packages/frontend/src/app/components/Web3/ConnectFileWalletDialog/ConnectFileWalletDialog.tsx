@@ -6,7 +6,7 @@ import { useAccount, useDisconnect } from 'wagmi'
 import { styled } from '../../../../styles'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useCanUnlock } from '../../../processing/SeedProvider/useCanUnlock'
-import { FWIcon, Modal, ModalBody, ModalTitle } from '../../../UIkit/Modal/Modal'
+import { Modal, ModalBody, ModalIcon, ModalTitle } from '../../../UIkit/Modal/Modal'
 import { AppDialogProps } from '../../../utils/dialog'
 import { CreateOrImportSection } from './sections/CreateOrImportSection'
 
@@ -50,7 +50,7 @@ export const ConnectFileWalletDialog = observer(({ open, onClose, openWeb3Modal 
         }}
       >
         <ModalTitle style={{ fontSize: smValue ? '24px' : '32px', lineHeight: smValue ? '32px' : '40px', marginBottom: '32px' }}>
-          <FWIcon />
+          <ModalIcon />
           Log in / Sign up
         </ModalTitle>
         <ModalBody style={{ paddingBottom: '0', paddingTop: '0' }}>

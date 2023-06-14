@@ -6,7 +6,7 @@ import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useFulfillOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
-import MintModal from '../../../../Modal/Modal'
+import BaseModal from '../../../../Modal/Modal'
 
 export interface ButtonFulfillOrderProps {
   tokenFullId: TokenFullId
@@ -35,7 +35,7 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
 
   return (
     <>
-      <MintModal {...modalProps} />
+      <BaseModal {...modalProps} />
       <Button
         primary
         fullWidth

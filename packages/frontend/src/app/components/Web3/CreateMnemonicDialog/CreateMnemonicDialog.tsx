@@ -7,7 +7,7 @@ import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeedProviderFactory } from '../../../processing'
 import { ButtonGlowing } from '../../../UIkit'
-import { FWIcon, Modal, ModalButtonContainer, modalStyle, ModalTitle } from '../../../UIkit/Modal/Modal'
+import { Modal, ModalButtonContainer, ModalIcon, modalStyle, ModalTitle } from '../../../UIkit/Modal/Modal'
 import { AppDialogProps } from '../../../utils/dialog'
 import { createMnemonic } from '../ConnectFileWalletDialog/utils/createMnemonic'
 import ShowMnemonic from '../ShowMnemonic/ShowMnemonic'
@@ -51,7 +51,7 @@ export const CreateMnemonicDialog: React.FC<AppDialogProps<CreateMnemonicDialogP
     >
       <ModalTitle>
         {' '}
-        <FWIcon />
+        <ModalIcon />
         {' '}
         {mnemonic ? 'FileWallet seed phrase' : 'Setup FileWallet password'}
       </ModalTitle>
