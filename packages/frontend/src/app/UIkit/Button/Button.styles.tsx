@@ -88,6 +88,7 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           minWidth: 240,
           border: '2px solid $blue500',
           background: '$white',
+          borderRadius: '$2',
           '&[data-hovered=true]': {
             opacity: 1,
             color: '$blue300',

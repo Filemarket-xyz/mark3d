@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Flex } from '../../Flex'
+import { Flex } from '../../../Flex'
 import { StyledUserAddress, StyledUserImg } from './NftCardUserInfo.styles'
 
 interface NftCardUserInfoProps {
