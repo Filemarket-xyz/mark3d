@@ -4,13 +4,13 @@ import { buttonStyled } from '../../../Button/Button.styles'
 export const Button = buttonStyled('button')
 
 export const StyledButton = styled(Button, {
-  textTransform: 'uppercase',
   borderColor: '$$color',
   color: '#191c29',
   boxShadow: '0 0 40px 40px $$color inset, 0 0 0 0 $$color',
   transition: 'all 150ms ease-in-out',
   background: '#191c29',
   fontSize: '$body2',
+  borderRadius: 12,
   '&[data-hovered=true]': {
     boxShadow: '0 0 10px 0 $$color inset, 0 0 10px 4px $$color',
     color: '$white',
