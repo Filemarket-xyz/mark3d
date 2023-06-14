@@ -11,6 +11,7 @@ export const StyledButton = styled(Button, {
   transition: 'all 150ms ease-in-out',
   background: '#191c29',
   fontSize: '$body2',
+  borderRadius: 12,
   '&[data-hovered=true]': {
     boxShadow: '0 0 10px 0 $$color inset, 0 0 10px 4px $$color',
     color: '$white',

@@ -72,6 +72,8 @@ export const WhitelistCard: React.FC<WhitelistCardProps> = ({
         >
           <CardImg src={img} variant='secondary' />
           <StyledCardInfo
+            w100
+            alignItems='start'
             flexDirection='column'
             justifyContent='space-between'
             flexGrow={1}
