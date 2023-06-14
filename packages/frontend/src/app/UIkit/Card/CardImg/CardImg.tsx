@@ -10,7 +10,7 @@ interface CardImgProps extends PropsWithChildren {
 
 export const CardImg: React.FC<CardImgProps> = ({ children, src, variant = 'primary' }) => {
   return (
-    <StyledImgRoot>
+    <StyledImgRoot variant={variant}>
       <StyledImgWrapper variant={variant}>
         <StyledImgContainer variant={variant}>
           {children}

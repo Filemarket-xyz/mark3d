@@ -2,7 +2,13 @@ import { styled } from '../../../../styles'
 
 export const StyledImgRoot = styled('div', {
   position: 'relative',
-  paddingBottom: '100%',
+  width: '100%',
+  variants: {
+    variant: {
+      primary: { paddingBottom: '100%' },
+      secondary: { paddingBottom: '85%' },
+    },
+  },
 })
 
 export const StyledImgWrapper = styled('div', {
@@ -14,7 +20,7 @@ export const StyledImgWrapper = styled('div', {
   variants: {
     variant: {
       primary: { padding: 12 },
-      secondary: { padding: 20 },
+      secondary: { padding: 0 },
     },
   },
 })
@@ -31,6 +37,7 @@ export const StyledImgContainer = styled('div', {
       },
       secondary: {
         borderRadius: '$1',
+        border: '1px solid $whiteOp25',
         '&::after': { borderRadius: '$1' },
       },
     },
