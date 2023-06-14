@@ -4,7 +4,6 @@ import { buttonStyled } from '../../../Button/Button.styles'
 export const Button = buttonStyled('button')
 
 export const StyledButton = styled(Button, {
-  textTransform: 'uppercase',
   borderColor: '$$color',
   color: '#191c29',
   boxShadow: '0 0 40px 40px $$color inset, 0 0 0 0 $$color',
