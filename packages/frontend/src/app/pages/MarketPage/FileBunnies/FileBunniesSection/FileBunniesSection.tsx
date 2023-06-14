@@ -1,4 +1,5 @@
 import { Tooltip } from '@nextui-org/react'
+import { observer } from 'mobx-react-lite'
 import React from 'react'
 
 import { styled } from '../../../../../styles'
@@ -9,6 +10,7 @@ import FileBunniesLogo from '../../img/FileBunniesLogo.svg'
 import LeftBottomPl from '../../img/LeftBottomPlanet.png'
 import LeftTopPl from '../../img/LeftTopPlanet.png'
 import RightPl from '../../img/RigthPlanet.png'
+import { FileBunniesMintButton } from '../FileBunniesMintButton/FileBunniesMintButton'
 
 const FileBunniesSectionStyle = styled('div', {
   background: `url(${FileBunniesBg})`,
@@ -121,7 +123,7 @@ const BottomBanner = styled('div', {
   height: '64px',
 })
 
-const FileBunniesSection = () => {
+const FileBunniesSection = observer(() => {
   return (
     <FileBunniesSectionStyle>
       <FileBunniesLayout>
@@ -163,8 +165,9 @@ const FileBunniesSection = () => {
       <img className={'leftBottomPl'} src={LeftBottomPl} />
       <img className={'rightPl'} src={RightPl} />
       <BottomBanner />
+      <FileBunniesMintButton />
     </FileBunniesSectionStyle>
   )
-}
+})
 
 export default FileBunniesSection
