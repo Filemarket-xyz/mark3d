@@ -10,8 +10,8 @@ import { CardImg } from '../CardImg'
 import { WhitelistCardButton, WhitelistCardButtonProps } from './Button'
 import { StyledCard, StyledCardBackground, StyledCardInfo, StyledCardInner, StyledDescription, StyledRarity, StyledRarityButton, StyledText, StyledValueList } from './WhitelistCard.styles'
 
-const allRarities = ['common', 'uncommon', 'rare', 'legendary', 'mythical'] as const
-const descriptionRows = [
+const rarityList = ['common', 'uncommon', 'rare', 'legendary', 'mythical'] as const
+const valueList = [
   'Printable 3d model of FIL coin',
   'Filecoin Wallpapers',
   'Filecoin Soundtrack',
@@ -40,7 +40,7 @@ export const WhitelistCard: React.FC<WhitelistCardProps> = ({
       return {
         img: BunnyPurple,
         text: 'Only for WL owners',
-        rarities: allRarities.slice(0, 2),
+        rarities: rarityList.slice(0, 2),
         total: 7000,
         _buttonProps: buttonProps,
       }
@@ -49,7 +49,7 @@ export const WhitelistCard: React.FC<WhitelistCardProps> = ({
     return {
       img: BunnyGreen,
       text: `${price} FIL`,
-      rarities: allRarities.slice(1),
+      rarities: rarityList.slice(1),
       total: 3000,
       _buttonProps: {
         ...buttonProps,
@@ -116,7 +116,7 @@ export const WhitelistCard: React.FC<WhitelistCardProps> = ({
               alignItems='start'
               gap={8}
             >
-              {descriptionRows.map((row) => <span key={row}>{row}</span>)}
+              {valueList.map((value) => <span key={value}>{value}</span>)}
             </StyledValueList>
             <Flex w100 justifyContent='center'>
               <StyledRarityButton {...rarityButtonProps}>
