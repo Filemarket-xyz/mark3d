@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 declare namespace CSS {
-  function registerProperty (propertyDefinition: {
+  function registerProperty (definition: {
     name: string
     syntax?: string
     inherits: boolean
