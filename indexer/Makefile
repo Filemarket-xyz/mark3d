@@ -7,10 +7,12 @@ build-contracts:
 	mkdir -p contracts/access_token
 	mkdir -p contracts/collection
 	mkdir -p contracts/publicCollection
+	mkdir -p contracts/filebunniesCollection
 	mkdir -p contracts/exchange
 	jq ".abi" contracts/build/Mark3dAccessTokenV2.sol/Mark3dAccessTokenV2.json > contracts/build/Mark3dAccessTokenV2.sol/Mark3dAccessTokenV2.abi
 	jq ".abi" contracts/build/FilemarketCollectionV2.sol/FilemarketCollectionV2.json > contracts/build/FilemarketCollectionV2.sol/FilemarketCollectionV2.abi
 	jq ".abi" contracts/build/PublicCollection.sol/PublicCollection.json > contracts/build/PublicCollection.sol/PublicCollection.abi
+	jq ".abi" contracts/build/FileBunniesCollection.sol/FileBunniesCollection.json > contracts/build/FileBunniesCollection.sol/FileBunniesCollection.abi
 	jq ".abi" contracts/build/FilemarketExchangeV2.sol/FilemarketExchangeV2.json > contracts/build/FilemarketExchangeV2.sol/FilemarketExchangeV2.abi
 	abigen --abi contracts/build/Mark3dAccessTokenV2.sol/Mark3dAccessTokenV2.abi \
 		--pkg access_token \
@@ -24,6 +26,10 @@ build-contracts:
         --pkg publicCollection \
         --type PublicCollection \
         --out contracts/publicCollection/publicCollection.go
+	abigen --abi contracts/build/FileBunniesCollection.sol/FileBunniesCollection.abi \
+        --pkg filebunniesCollection \
+        --type FileBunniesCollection \
+        --out contracts/filebunniesCollection/filebunniesCollection.go
 	abigen --abi contracts/build/FilemarketExchangeV2.sol/FilemarketExchangeV2.abi \
         --pkg exchange \
         --type FilemarketExchangeV2 \
