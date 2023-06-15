@@ -2,9 +2,9 @@
 import { Tooltip } from '@nextui-org/react'
 import React, { MouseEventHandler, PropsWithChildren, ReactNode } from 'react'
 
-import { Flex } from '../../Flex'
-import { gradientPlaceholderImg } from '../../Placeholder'
-import { Txt } from '../../Txt'
+import { Flex } from '../../../Flex'
+import { Txt } from '../../../Txt'
+import { CardImg } from '../../CardImg'
 import {
   StyledButton,
   StyledButtonWrapper,
@@ -13,10 +13,6 @@ import {
   StyledCardInner,
   StyledCollectionName,
   StyledFileTypeContainer,
-  StyledImg,
-  StyledImgContainer,
-  StyledImgRoot,
-  StyledImgWrapper,
   StyledInfoWrapper,
   StyledTitle,
 } from './NftCardBase.styles'
@@ -49,32 +45,21 @@ export const NftCardBase: React.FC<NftCardProps> = ({
     <StyledCard to={to} className={className}>
       <StyledCardBorder>
         <StyledCardInner>
-          <StyledImgRoot>
-            <StyledImgWrapper>
-              <StyledImgContainer>
-                {fileType && (
-                  <StyledFileTypeContainer>
-                    <Tooltip
-                      rounded
-                      placement='top'
-                      trigger='hover'
-                      content='Internal hidden file type'
-                      color="primary"
-                    >
-                      {fileType}
-                    </Tooltip>
-                  </StyledFileTypeContainer>
-                )}
-                <StyledImg
-                  src={imgSrc}
-                  onError={({ currentTarget }) => {
-                    currentTarget.onerror = null
-                    currentTarget.src = gradientPlaceholderImg
-                  }}
-                />
-              </StyledImgContainer>
-            </StyledImgWrapper>
-          </StyledImgRoot>
+          <CardImg src={imgSrc}>
+            {fileType && (
+              <StyledFileTypeContainer>
+                <Tooltip
+                  rounded
+                  placement='top'
+                  trigger='hover'
+                  content='Internal hidden file type'
+                  color="primary"
+                >
+                  {fileType}
+                </Tooltip>
+              </StyledFileTypeContainer>
+            )}
+          </CardImg>
           <StyledInfoWrapper>
             <Flex flexDirection='column' gap="$2" alignItems='start'>
               <Flex flexDirection='column' gap="$1" alignItems='start'>

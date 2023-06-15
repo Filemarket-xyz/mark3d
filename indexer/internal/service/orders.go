@@ -166,11 +166,6 @@ func (s *service) GetAllActiveOrders(
 			return nil, internalError
 		}
 
-		if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress && token.MetaUri == "" {
-			total--
-			continue
-		}
-
 		ordersWithToken = append(ordersWithToken, &models.OrderWithToken{
 			Order:    domain.OrderToModel(o),
 			Token:    domain.TokenToModel(token),

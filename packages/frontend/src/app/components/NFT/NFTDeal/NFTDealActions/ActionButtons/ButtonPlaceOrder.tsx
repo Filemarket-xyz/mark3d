@@ -38,7 +38,7 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId,
         width='465px'
         onClose={closeModal}
       >
-        <ModalTitle>Put on sale</ModalTitle>
+        <ModalTitle>Put EFT on sale</ModalTitle>
         <ModalBody css={{ padding: 0 }}>
           <OrderForm
             tokenFullId={tokenFullId}

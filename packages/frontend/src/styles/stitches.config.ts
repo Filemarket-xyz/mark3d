@@ -24,6 +24,7 @@ export const {
 
       black: '#000000', // Color: Eerie Black
       white: '#ffffff',
+      whiteOp25: 'rgba(255, 255, 255, 0.25)',
       whiteOp50: 'rgba(255, 255, 255, 0.5)',
       whiteOp75: 'rgba(255, 255, 255, 0.75)',
       blue500Op75: 'rgba(0, 144, 255, 0.75)',

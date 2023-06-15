@@ -1,53 +1,16 @@
 
 import { NavLink } from 'react-router-dom'
 
-import { styled } from '../../../../styles'
-import { NavButton } from '../../Button'
-import { Txt } from '../../Txt'
+import { styled } from '../../../../../styles'
+import { NavButton } from '../../../Button'
+import { Txt } from '../../../Txt'
+import { StyledImgContainer } from '../../CardImg'
 
 export const StyledFileTypeContainer = styled('div', {
   position: 'absolute',
   left: 4,
   top: 4,
   zIndex: 1,
-})
-
-export const StyledImgRoot = styled('div', {
-  position: 'relative',
-  paddingBottom: '100%',
-})
-
-export const StyledImgWrapper = styled('div', {
-  padding: 12,
-  position: 'absolute',
-  left: 0,
-  top: 0,
-  width: '100%',
-  height: '100%',
-})
-
-export const StyledImgContainer = styled('div', {
-  borderRadius: '$2',
-  width: '100%',
-  height: '100%',
-  position: 'relative',
-  '&::after': {
-    pointerEvents: 'none',
-    content: '""',
-    position: 'absolute',
-    inset: 0,
-    opacity: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.25)',
-    transition: 'all 0.25s ease-in-out',
-    borderRadius: '$2',
-  },
-})
-
-export const StyledImg = styled('img', {
-  objectFit: 'cover',
-  borderRadius: 'inherit',
-  width: '100%',
-  height: '100%',
 })
 
 export const StyledInfoWrapper = styled('div', {
