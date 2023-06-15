@@ -82,7 +82,7 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
         address _admin,
         address _commonWhitelistApprover,
         address _uncommonWhitelistApprover,
-        address _royaltyReciever,
+        address _royaltyReceiver,
         bytes memory _data,
         IFraudDecider _fraudDecider,
         bool _fraudLateDecisionEnabled
@@ -92,7 +92,7 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
         uncommonTokensCount = 0;
         payedTokensCount = 0;
 
-        royaltyReceiver = _royaltyReciever;
+        royaltyReceiver = _royaltyReceiver;
 
         contractMetaUri = _contractMetaUri;
         collectionData = _data;
@@ -239,7 +239,7 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
         // initial purchase
         if (bytes(tokenUris[tokenId]).length == 0) {
             if (tokenId < FREE_MINT_LIMIT) {
-                require(data.length != 0, "Signiture wasn't provided");
+                require(data.length != 0, "Signature wasn't provided");
                 address signer = uncommonWhitelistApprover;
                 if (tokenId < COMMON_TOKENS_LIMIT) {
                     signer = commonWhitelistApprover;
@@ -512,7 +512,7 @@ contract FileBunniesCollection is IEncryptedFileToken, ERC721Enumerable, AccessC
             cidArray = payedCids;
             signature = bytes32("0LvQvtCx0LDQvdC+0LI=");
         }
-        require(cidArray.length > 0, "FileBunniedCollection: cid array is empty");
+        require(cidArray.length > 0, "FileBunniesCollection: cid array is empty");
         uint256 cidId = prng(cidArray.length,
                                 info.publicKeySetAt,
                                 info.blockHash,
