@@ -8,6 +8,7 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
+	. "github.com/mark3d-xyz/mark3d/indexer/pkg/types"
 )
 
 type Postgres interface {
@@ -47,6 +48,7 @@ type Tokens interface {
 	UpdateToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error
 	GetMetadata(ctx context.Context, tx pgx.Tx, address common.Address, tokenId *big.Int) (*domain.TokenMetadata, error)
 	InsertMetadata(ctx context.Context, tx pgx.Tx, metadata *domain.TokenMetadata, contractAddress common.Address, tokenId *big.Int) error
+	GetTokensForAutosell(ctx context.Context, tx pgx.Tx, collectionAddress common.Address, owner common.Address) ([]AutosellTokenInfo, error)
 }
 
 type Transfers interface {

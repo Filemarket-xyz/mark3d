@@ -41,8 +41,9 @@ type (
 	}
 
 	HandlerConfig struct {
-		RequestTimeout time.Duration
-		SwaggerHost    string
+		RequestTimeout   time.Duration
+		SwaggerHost      string
+		AutosellerApiKey string
 	}
 
 	ServiceConfig struct {
@@ -51,6 +52,7 @@ type (
 		ExchangeAddress              common.Address
 		PublicCollectionAddress      common.Address
 		FileBunniesCollectionAddress common.Address
+		FileBunniesCreatorAddress    common.Address
 		FraudDeciderWeb2Address      common.Address
 		AllowedBlockNumberDifference int64
 		TelegramHealthNotifierAddr   string
@@ -99,8 +101,9 @@ func Init(configPath string) (*Config, error) {
 			MaxHeaderBytes: jsonCfg.GetInt("server.maxHeaderBytes"),
 		},
 		Handler: &HandlerConfig{
-			RequestTimeout: jsonCfg.GetDuration("handler.requestTimeout"),
-			SwaggerHost:    jsonCfg.GetString("handler.swaggerHost"),
+			RequestTimeout:   jsonCfg.GetDuration("handler.requestTimeout"),
+			SwaggerHost:      jsonCfg.GetString("handler.swaggerHost"),
+			AutosellerApiKey: envCfg.GetString("AUTOSELLER_API_KEY"),
 		},
 		Service: &ServiceConfig{
 			RpcUrls:                      envCfg.GetStringSlice("RPC_URLS"),
@@ -109,6 +112,7 @@ func Init(configPath string) (*Config, error) {
 			ExchangeAddress:              common.HexToAddress(jsonCfg.GetString("service.exchangeAddress")),
 			PublicCollectionAddress:      common.HexToAddress(jsonCfg.GetString("service.publicCollectionAddress")),
 			FileBunniesCollectionAddress: common.HexToAddress(jsonCfg.GetString("service.fileBunniesCollectionAddress")),
+			FileBunniesCreatorAddress:    common.HexToAddress(jsonCfg.GetString("service.fileBunniesCreatorAddress")),
 			AllowedBlockNumberDifference: jsonCfg.GetInt64("service.allowedBlockNumberDifference"),
 			TelegramHealthNotifierAddr:   envCfg.GetString("TELEGRAM_HEALTH_NOTIFIER_ADDRESS"),
 			HealthCheckInterval:          jsonCfg.GetInt("service.healthCheckInterval"),

@@ -51,6 +51,7 @@ func (h *handler) Init() http.Handler {
 	router.HandleFunc("/sequencer/acquire/{address:0x[0-9a-f-A-F]{40}}", h.handleSequencerAcquire)
 	router.HandleFunc("/currency/conversion_rate", h.handleGetCurrencyConversionRate)
 	router.HandleFunc("/healthcheck", h.handleHealthCheck)
+	router.HandleFunc("/tokens/file-bunnies/to_autosell", h.handleGetFileBunniesTokensForAutosell)
 	router.Use(h.corsMiddleware)
 
 	return router
