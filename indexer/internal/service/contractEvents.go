@@ -401,16 +401,16 @@ func (s *service) onTransferDraftCompletionEvent(
 	}
 
 	if err := s.repository.UpdateToken(ctx, tx, token); err != nil {
-		return err
+		return fmt.Errorf("failed to update token: %w", err)
 	}
 
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, tokenId)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get active transfer: %w", err)
 	}
 	order, err := s.repository.GetOrder(ctx, tx, transfer.OrderId)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to order: %w", err)
 	}
 	timestamp := now.Now().UnixMilli()
 	transfer.ToAddress = to
