@@ -66,7 +66,7 @@ type Transfers interface {
 	InsertTransfer(ctx context.Context, tx pgx.Tx, transfer *domain.Transfer) (int64, error)
 	UpdateTransfer(ctx context.Context, tx pgx.Tx, transfer *domain.Transfer) error
 	InsertTransferStatus(ctx context.Context, tx pgx.Tx, transferId int64, status *domain.TransferStatus) error
-	TransferTxExists(ctx context.Context, tx pgx.Tx, txId common.Hash, status string) (bool, error)
+	TransferTxExists(ctx context.Context, tx pgx.Tx, tokenId *big.Int, txId common.Hash, status string) (bool, error)
 }
 
 type Orders interface {

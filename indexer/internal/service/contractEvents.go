@@ -195,7 +195,7 @@ func (s *service) onCollectionTransferInitEvent(
 	to common.Address,
 	transferNumber *big.Int,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusCreated))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusCreated))
 	if err != nil {
 		return err
 	}
@@ -240,7 +240,7 @@ func (s *service) onTransferDraftEvent(
 	from common.Address,
 	transferNumber *big.Int,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusDrafted))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusDrafted))
 	if err != nil {
 		return err
 	}
@@ -375,7 +375,7 @@ func (s *service) onTransferDraftCompletionEvent(
 	tokenId *big.Int,
 	to common.Address,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusCreated))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusCreated))
 	if err != nil {
 		return err
 	}
@@ -456,7 +456,7 @@ func (s *service) onPublicKeySetEvent(
 	tokenId *big.Int,
 	publicKey string,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusPublicKeySet))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusPublicKeySet))
 	if err != nil {
 		return err
 	}
@@ -496,7 +496,7 @@ func (s *service) onPasswordSetEvent(
 	tokenId *big.Int,
 	encryptedPassword string,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusPasswordSet))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusPasswordSet))
 	if err != nil {
 		return err
 	}
@@ -535,7 +535,7 @@ func (s *service) onTransferFinishEvent(
 	l *types.Log,
 	tokenId *big.Int,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusFinished))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusFinished))
 	if err != nil {
 		return err
 	}
@@ -589,7 +589,7 @@ func (s *service) onTransferFraudReportedEvent(
 	l *types.Log,
 	tokenId *big.Int,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusFraudReported))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusFraudReported))
 	if err != nil {
 		return err
 	}
@@ -626,7 +626,7 @@ func (s *service) onTransferFraudDecidedEvent(
 	tokenId *big.Int,
 	approved bool,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusFinished))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusFinished))
 	if err != nil {
 		return err
 	}
@@ -692,7 +692,7 @@ func (s *service) onTransferCancel(
 	l *types.Log,
 	tokenId *big.Int,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusCancelled))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusCancelled))
 	if err != nil {
 		return err
 	}
