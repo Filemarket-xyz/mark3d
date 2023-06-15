@@ -90,14 +90,14 @@ func New() *Autoseller {
 	}
 }
 
-func (a *Autoseller) Process() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+func (a *Autoseller) Process() (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 150*time.Second)
 	defer cancel()
 
 	addr := fmt.Sprintf("%s?api-key=%s", a.Cfg.IndexerAddr, a.Cfg.ApiKey)
 	res, err := http.DefaultClient.Get(addr)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	statusCode := res.StatusCode
@@ -106,17 +106,18 @@ func (a *Autoseller) Process() error {
 		res.Body.Close()
 	}
 	if err != nil {
-		return fmt.Errorf("failed to read body: %w", err)
+		return 0, fmt.Errorf("failed to read body: %w", err)
 	}
 	if statusCode != 200 {
-		return fmt.Errorf("got status code: %d", statusCode)
+		return 0, fmt.Errorf("got status code: %d", statusCode)
 	}
 
 	var resp []AutosellTokenInfo
 	if err := json.Unmarshal(body, &resp); err != nil {
-		return fmt.Errorf("failed to unmarshal body: %w", err)
+		return 0, fmt.Errorf("failed to unmarshal body: %w", err)
 	}
 
+	processed := 0
 	for _, r := range resp {
 		if err := a.approveSingleResponse(ctx, r); err != nil {
 			log.Printf("failed to process single response: %#v. Error: %v\n", r, err)
@@ -126,9 +127,12 @@ func (a *Autoseller) Process() error {
 			log.Printf("failed to add timer for token_id: %s. Error: %v", r.TokenId, err)
 			continue
 		}
+
+		log.Println("TokenId was processed: ", r.TokenId)
+		processed++
 	}
 
-	return nil
+	return processed, nil
 }
 
 func (a *Autoseller) addTimer(ctx context.Context, tokenId string) error {
@@ -141,7 +145,7 @@ func (a *Autoseller) addTimer(ctx context.Context, tokenId string) error {
 }
 
 func (a *Autoseller) ProcessTimers(ctx context.Context) error {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
 	keyStr := fmt.Sprintf("autoseller.timer.*")
@@ -185,11 +189,14 @@ func (a *Autoseller) ProcessTimers(ctx context.Context) error {
 		return err
 	}
 
+	if len(keys) > 0 {
+		log.Println("Timers was processed. Keys: ", keys)
+	}
 	return nil
 }
 
 func (a *Autoseller) approveSingleResponse(ctx context.Context, r AutosellTokenInfo) error {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 120*time.Second)
 	defer cancel()
 
 	tokenId, ok := big.NewInt(0).SetString(r.TokenId, 10)
@@ -282,12 +289,16 @@ func (a *Autoseller) approve(ctx context.Context, tokenId *big.Int, password []b
 }
 
 func (a *Autoseller) getMaxPriorityFeePerGas(ctx context.Context) (*big.Int, error) {
-	var maxPriorityFeePerGas *big.Int
-	err := a.ethClient.Client().CallContext(ctx, &maxPriorityFeePerGas, "eth_maxPriorityFeePerGas")
+	var feeStr string
+	err := a.ethClient.Client().CallContext(ctx, &feeStr, "eth_maxPriorityFeePerGas")
 	if err != nil {
 		return nil, err
 	}
 
+	maxPriorityFeePerGas, ok := big.NewInt(0).SetString(feeStr[2:], 16)
+	if !ok {
+		return nil, errors.New("failed to parse bigint")
+	}
 	return maxPriorityFeePerGas, nil
 }
 

@@ -11,6 +11,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 type Metadata struct {
@@ -28,7 +29,7 @@ type Metadata struct {
 type HiddenFileMeta struct {
 	Name string `json:"name"`
 	Type string `json:"type"`
-	Size string `json:"size"`
+	Size int64  `json:"size"`
 }
 
 func main() {
@@ -85,6 +86,10 @@ func main() {
 
 		fmt.Printf("Archive: %#v\n", *fileInfo)
 
+		fileSize, err := strconv.ParseInt(fileInfo.Size, 10, 64)
+		if err != nil {
+			log.Fatal("failed to parse fileSize")
+		}
 		meta := Metadata{
 			Name:         img.Name(),
 			Description:  imgFileInfo.Name,
@@ -94,7 +99,7 @@ func main() {
 			HiddenFileMeta: HiddenFileMeta{
 				Name: fileInfo.Name,
 				Type: "rar",
-				Size: fileInfo.Size,
+				Size: fileSize,
 			},
 			Categories:    nil,
 			Subcategories: nil,
