@@ -9,6 +9,7 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/mark3d-xyz/mark3d/indexer/internal/domain"
 	"github.com/mark3d-xyz/mark3d/indexer/models"
+	. "github.com/mark3d-xyz/mark3d/indexer/pkg/types"
 )
 
 func (s *service) GetToken(ctx context.Context, address common.Address,
@@ -172,4 +173,20 @@ func (s *service) GetTokensByAddress(
 		Tokens:           tokensRes,
 		TokensTotal:      tokensTotal,
 	}, nil
+}
+
+func (s *service) GetFileBunniesTokensForAutosell(ctx context.Context) ([]AutosellTokenInfo, *models.ErrorResponse) {
+	tx, err := s.repository.BeginTransaction(ctx, pgx.TxOptions{})
+	if err != nil {
+		log.Println("begin tx failed: ", err)
+		return nil, internalError
+	}
+	defer s.repository.RollbackTransaction(ctx, tx)
+
+	tokensInfo, err := s.repository.GetTokensForAutosell(ctx, tx, s.cfg.FileBunniesCollectionAddress, s.cfg.FileBunniesCreatorAddress)
+	if err != nil {
+		return nil, internalError
+	}
+
+	return tokensInfo, nil
 }

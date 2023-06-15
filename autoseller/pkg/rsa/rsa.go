@@ -5,7 +5,13 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha512"
+	"crypto/x509"
+	"encoding/base64"
+	"encoding/hex"
+	"encoding/pem"
 	"errors"
+	"fmt"
+	"log"
 )
 
 const ModulusLen = 4096
@@ -54,4 +60,24 @@ func Decrypt(data []byte, privateKey *rsa.PrivateKey, label []byte) ([]byte, err
 	}
 
 	return decrypted, nil
+}
+func GetPublicKeyFromHex(hexKey string) (*rsa.PublicKey, error) {
+	var err error
+	bytes, err := hex.DecodeString(hexKey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode hex string to bytes: %w", err)
+	}
+	base64Key := base64.StdEncoding.EncodeToString(bytes)
+	publicKeyBlock, _ := pem.Decode([]byte("-----BEGIN PUBLIC KEY-----\n" + base64Key + "\n-----END PUBLIC KEY-----"))
+	var parsedKey any
+	if parsedKey, err = x509.ParsePKIXPublicKey(publicKeyBlock.Bytes); err != nil {
+		return nil, fmt.Errorf("unable to parse RSA public key: %w", err.Error())
+	}
+	publicKey, ok := parsedKey.(*rsa.PublicKey)
+	if !ok {
+		log.Println("Unable to parse RSA public key")
+		return nil, fmt.Errorf("unable to cast to public key")
+	}
+
+	return publicKey, nil
 }

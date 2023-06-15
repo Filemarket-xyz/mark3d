@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/mark3d-xyz/mark3d/indexer/pkg/types"
 	"math/big"
 	"strings"
 
@@ -689,4 +690,58 @@ func (p *postgres) GetTraitCount(
 	}
 
 	return countByValue, total, nil
+}
+
+func (p *postgres) GetTokensForAutosell(
+	ctx context.Context,
+	tx pgx.Tx,
+	collectionAddress common.Address,
+	owner common.Address,
+) ([]types.AutosellTokenInfo, error) {
+	// language=PostgreSQL
+	query := `
+		WITH latest_transfers AS (
+		 SELECT id, token_id, collection_address, from_address, encrypted_password, public_key, RANK() OVER(PARTITION BY (collection_address, token_id) ORDER BY number DESC) as rank
+		 FROM transfers
+		),
+		latest_order_statuses AS (
+		 SELECT order_id, status, timestamp, tx_id, RANK() OVER(PARTITION BY order_id ORDER BY timestamp DESC) as rank
+		 FROM order_statuses
+		)
+		SELECT lt.token_id, t.meta_uri, lt.public_key
+		FROM orders o
+		RIGHT JOIN latest_transfers lt ON lt.id=o.transfer_id
+		RIGHT JOIN latest_order_statuses los ON los.order_id=o.id
+		LEFT JOIN tokens t ON lt.token_id=t.token_id
+		WHERE lt.rank = 1 AND
+			  lt.collection_address=$1 AND
+			  lt.from_address=$2 AND 
+			  t.owner=$2 AND
+			  lt.encrypted_password='' AND -- means that we haven't already start autoselling
+			  los.rank = 1 AND
+			  los.status = 'Fulfilled'
+	`
+	rows, err := tx.Query(ctx, query,
+		strings.ToLower(collectionAddress.String()),
+		strings.ToLower(owner.String()),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	res := make([]types.AutosellTokenInfo, 0)
+	for rows.Next() {
+		var tokenIdStr, metaUri, publicKey string
+		if err := rows.Scan(&tokenIdStr, &metaUri, &publicKey); err != nil {
+			return nil, err
+		}
+
+		res = append(res, types.AutosellTokenInfo{
+			TokenId:   tokenIdStr,
+			MetaUri:   metaUri,
+			PublicKey: publicKey,
+		})
+	}
+
+	return res, nil
 }

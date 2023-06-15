@@ -36,6 +36,7 @@ import (
 	healthnotifier "github.com/mark3d-xyz/mark3d/indexer/pkg/health_notifier"
 	log2 "github.com/mark3d-xyz/mark3d/indexer/pkg/log"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/now"
+	. "github.com/mark3d-xyz/mark3d/indexer/pkg/types"
 )
 
 var (
@@ -79,6 +80,7 @@ type Tokens interface {
 	GetTokenEncryptedPassword(ctx context.Context, address common.Address, tokenId *big.Int) (*models.EncryptedPasswordResponse, *models.ErrorResponse)
 	GetCollectionTokens(ctx context.Context, address common.Address, lastTokenId *big.Int, limit int) (*models.TokensByCollectionResponse, *models.ErrorResponse)
 	GetTokensByAddress(ctx context.Context, address common.Address, lastCollectionAddress *common.Address, collectionLimit int, lastTokenCollectionAddress *common.Address, lastTokenId *big.Int, tokenLimit int) (*models.TokensResponse, *models.ErrorResponse)
+	GetFileBunniesTokensForAutosell(ctx context.Context) ([]AutosellTokenInfo, *models.ErrorResponse)
 }
 
 type Transfers interface {
