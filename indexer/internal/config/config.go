@@ -43,7 +43,7 @@ type (
 	HandlerConfig struct {
 		RequestTimeout   time.Duration
 		SwaggerHost      string
-		AutosellerApiKey string
+		AutosellerApiKey string // bcrypt'ed api key
 	}
 
 	ServiceConfig struct {
