@@ -1,0 +1,16 @@
+<svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <linearGradient id="lg" x1="0.5" y1="0" x2="0.5" y2="1">
+    <stop offset="100%" stop-color="#0090FF">
+		<animate attributeName="offset" values="0;0.2;1" repeatCount="indefinite" dur="0.5s" begin="0s" id="greenFill"/>
+		<animate attributeName="stop-color" values="#04E762" repeatCount="indefinite"  id="greenChange1" begin="greenFill.repeat(1);blueChange1.begin+0.5s"/>
+		<animate attributeName="stop-color" values="#0090FF" repeatCount="indefinite"  id="blueChange1" begin="greenFill.repeat(2);greenChange1.begin+0.5s"/>
+	</stop>
+    <stop offset="0%" stop-color="#04E762">
+      <animate attributeName="offset" values="0;0.8;1" repeatCount="indefinite" dur="0.5s" begin="0s" id="blueFill"/>
+      <animate attributeName="stop-color" values="#0090FF" repeatCount="indefinite" id="greenChange2" begin="blueFill.repeat(1);blueChange2.begin+0.5s" />
+      <animate attributeName="stop-color" values="#04E762" repeatCount="indefinite" id="blueChange2" begin="blueFill.repeat(2);greenChange2.begin+0.5s" />
+    </stop>
+  </linearGradient>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M330 100C352.091 100 370 117.909 370 140V280L250 400H170C147.909 400 130 382.091 130 360V140C130 117.909 147.909 100 170 100H330ZM250 360L250 280L330 280V140L170 140V360H250Z" fill="url(#lg)"/>
+</svg>
+ 
