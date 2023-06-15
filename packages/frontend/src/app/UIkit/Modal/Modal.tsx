@@ -83,7 +83,6 @@ export const Modal = (props: ComponentProps<typeof ModalBase> & { isError?: bool
           sm: '20px',
           defaultValue: '32px',
         }),
-        width: '800px',
       }}
     >
       {modalProps.children}

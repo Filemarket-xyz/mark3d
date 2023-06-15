@@ -25,9 +25,9 @@ export function useFulfillOrder(
   const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
   const factory = useHiddenFileProcessorFactory()
 
-  console.log(tokenId)
-
   const fulfillOrder = useCallback(wrapPromise(async () => {
+    console.log(tokenId)
+    console.log(price)
     assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
     assertCollection(collectionAddress)

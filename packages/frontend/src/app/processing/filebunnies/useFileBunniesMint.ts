@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useAccount, useSigner } from 'wagmi'
 
 import { useStores } from '../../hooks'
@@ -11,32 +11,45 @@ import { useCheckWhitelist } from './useCheckWhitelist'
 
 export const useFileBunniesMint = () => {
   const [price, setPrice] = useState<BigNumber>(BigNumber.from(0))
+  const [isFreeMint, setIsFreeMint] = useState<boolean | undefined>()
   const { address } = useAccount()
   const { data: signer } = useSigner()
   const { whiteList } = useCheckWhitelist({ address })
   const { fileBunniesTokenStore } = useStores()
-
+  const collectionAddress = '0xf4e64807a98AE794dD6d0F52829F25e6D8B329Ff'
   const { fulfillOrder, ...statuses } = useFulfillOrder({
-    collectionAddress: '0xf4e64807a98AE794dD6d0F52829F25e6D8B329Ff',
+    collectionAddress,
     tokenId: fileBunniesTokenStore.data?.tokenId,
   }, price)
 
+  useEffect(() => {
+    if (fileBunniesTokenStore.data?.tokenId !== undefined && isFreeMint !== undefined) {
+      fulfillOrder()
+      setIsFreeMint(undefined)
+      fileBunniesTokenStore.resetData()
+    }
+  }, [fileBunniesTokenStore.data?.tokenId, isFreeMint])
+
   const prepare = useCallback(async ({ rarityWl }: { rarityWl?: IRarityWl }) => {
-    if (!fileBunniesTokenStore.isActivated) await fileBunniesTokenStore.activate('0xf4e64807a98AE794dD6d0F52829F25e6D8B329Ff'.toLowerCase() as `0x${string}`, rarityWl)
-    else await fileBunniesTokenStore.reload()
-  }, [signer, fileBunniesTokenStore.data?.tokenId])
+    if (!fileBunniesTokenStore.isActivated) {
+      await fileBunniesTokenStore.activate(
+        collectionAddress.toLowerCase() as `0x${string}`,
+        rarityWl,
+      )
+    } else await fileBunniesTokenStore.reload()
+  }, [signer])
 
   const freeMint = useCallback(async () => {
     setPrice(BigNumber.from(1))
+    setIsFreeMint(true)
     await prepare({ rarityWl: whiteList })
-    await fulfillOrder()
-  }, [signer, fileBunniesTokenStore.data?.tokenId])
+  }, [signer])
 
   const mint = useCallback(async () => {
     setPrice(fromCurrency(10))
+    setIsFreeMint(false)
     await prepare({ rarityWl: 'payed' })
-    await fulfillOrder()
-  }, [signer, fileBunniesTokenStore.data?.tokenId])
+  }, [signer])
 
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({

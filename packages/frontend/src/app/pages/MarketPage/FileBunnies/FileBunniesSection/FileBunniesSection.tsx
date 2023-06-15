@@ -227,74 +227,76 @@ const FileBunniesSection = observer(() => {
   }
 
   return (
-    <FileBunniesSectionStyle>
-      <img className={'leftTopPl'} src={LeftTopPl} />
-      <img className={'leftBottomPl'} src={LeftBottomPl} />
-      <img className={'rightPl'} src={RightPl} />
-      <FileBunniesLayout>
-        <Title>
-          <img src={FileBunniesLogo} />
-          <span>
-            <span style={{ textDecoration: 'underline' }}>FileBunnies</span>
+    <>
+      <FileBunniesSectionStyle>
+        <img className={'leftTopPl'} src={LeftTopPl} />
+        <img className={'leftBottomPl'} src={LeftBottomPl} />
+        <img className={'rightPl'} src={RightPl} />
+        <FileBunniesLayout>
+          <Title>
+            <img src={FileBunniesLogo} />
             <span>
-              {' '}
-              Minting
+              <span style={{ textDecoration: 'underline' }}>FileBunnies</span>
+              <span>
+                {' '}
+                Minting
+              </span>
             </span>
-          </span>
-        </Title>
-        <MainContent>
-          <LeftBlock>
-            <LeftTextBlock>
-              <LeftBlockTitle>
-                The FileBunnies EFTs grants holders access to all ecosystem mints!
-              </LeftBlockTitle>
-              <LeftBlockText>
-                FileBunnies holders will be granted exclusive
-                access to all future NFT mints that occur
-                on the FileMarket platform. This unique
-                utility will allow the holder a White
-                List spot for all content built on FileMarket.
-              </LeftBlockText>
-            </LeftTextBlock>
-            <ToolTipBlock>
-              <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { rarityModalOpen() }}>FileBunnies Rarities</Txt>
-            </ToolTipBlock>
-            <ToolTipBlock>
-              <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToWorkModalOpen() }}>How NFT with EFT works?</Txt>
-            </ToolTipBlock>
-            <ToolTipBlock>
-              <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToMintModalOpen() }}>How to MINT FileBunnies?</Txt>
-            </ToolTipBlock>
-          </LeftBlock>
-          <CardsBlock>
-            <WhitelistCard
-              variant={'whitelist'}
-              rarityButtonProps={{
-                onClick: () => { rarityModalOpen() },
-              }}
-              buttonProps={{
-                isDisabled: isLoading || whiteList === '',
-                onClick: () => { freeMint() },
-                variant: 'free',
-              }}
-            />
-            <WhitelistCard
-              variant={'mint'}
-              rarityButtonProps={{
-                onClick: () => { rarityModalOpen() },
-              }}
-              buttonProps={{
-                disabled: isLoading,
-                onClick: () => { mint() },
-                variant: 'mint',
-              }}
-            />
-          </CardsBlock>
-        </MainContent>
-      </FileBunniesLayout>
-      <BottomBanner />
+          </Title>
+          <MainContent>
+            <LeftBlock>
+              <LeftTextBlock>
+                <LeftBlockTitle>
+                  The FileBunnies EFTs grants holders access to all ecosystem mints!
+                </LeftBlockTitle>
+                <LeftBlockText>
+                  FileBunnies holders will be granted exclusive
+                  access to all future NFT mints that occur
+                  on the FileMarket platform. This unique
+                  utility will allow the holder a White
+                  List spot for all content built on FileMarket.
+                </LeftBlockText>
+              </LeftTextBlock>
+              <ToolTipBlock>
+                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { rarityModalOpen() }}>FileBunnies Rarities</Txt>
+              </ToolTipBlock>
+              <ToolTipBlock>
+                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToWorkModalOpen() }}>How NFT with EFT works?</Txt>
+              </ToolTipBlock>
+              <ToolTipBlock>
+                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToMintModalOpen() }}>How to MINT FileBunnies?</Txt>
+              </ToolTipBlock>
+            </LeftBlock>
+            <CardsBlock>
+              <WhitelistCard
+                variant={'whitelist'}
+                rarityButtonProps={{
+                  onClick: () => { rarityModalOpen() },
+                }}
+                buttonProps={{
+                  isDisabled: isLoading || whiteList === '',
+                  onClick: () => { freeMint() },
+                  variant: 'free',
+                }}
+              />
+              <WhitelistCard
+                variant={'mint'}
+                rarityButtonProps={{
+                  onClick: () => { rarityModalOpen() },
+                }}
+                buttonProps={{
+                  disabled: isLoading,
+                  onClick: () => { mint() },
+                  variant: 'mint',
+                }}
+              />
+            </CardsBlock>
+          </MainContent>
+        </FileBunniesLayout>
+        <BottomBanner />
+      </FileBunniesSectionStyle>
       <BaseModal {...modalProps} />
-    </FileBunniesSectionStyle>
+    </>
   )
 })
 

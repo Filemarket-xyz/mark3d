@@ -59,6 +59,10 @@ export class FileBunniesTokenStore implements IStoreRequester,
     storeReset(this)
   }
 
+  resetData(): void {
+    this.data = undefined
+  }
+
   async reload(): Promise<void> {
     if (this.address) {
       await this.request(this.address)
