@@ -122,6 +122,11 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           width: '100%',
         },
       },
+      header: {
+        true: {
+          background: '$blue500',
+        },
+      },
       icon: {
         true: {
           color: '$white',

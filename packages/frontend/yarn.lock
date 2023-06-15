@@ -13584,7 +13584,6 @@ __metadata:
     react-hook-form: ^7.39.4
     react-router-dom: ^6.4.2
     react-stately: ^3.18.0
-    react-use-scroll-indicator: ^1.1.1
     reseter.css: ^2.0.0
     screenfull: ^6.0.2
     swagger-typescript-api: ^12.0.2
@@ -20277,15 +20276,6 @@ __metadata:
     react: ">=16.6.0"
     react-dom: ">=16.6.0"
   checksum: 75602840106aa9c6545149d6d7ae1502fb7b7abadcce70a6954c4b64a438ff1cd16fc77a0a1e5197cdd72da398f39eb929ea06f9005c45b132ed34e056ebdeb1
-  languageName: node
-  linkType: hard
-
-"react-use-scroll-indicator@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "react-use-scroll-indicator@npm:1.1.1"
-  peerDependencies:
-    react: ">=16.8.0"
-  checksum: e7c3a9f4b009878ea3678cc43d546584619db0d9dfb89b484408bdd09b0187960c47642e622a1f971c190a29241c30022de868d92dd59f9d11d2748fec023904
   languageName: node
   linkType: hard
 

@@ -24,7 +24,7 @@ interface WhitelistCardProps {
   price?: number
   variant: 'whitelist' | 'mint'
   buttonProps: Omit<WhitelistCardButtonProps, 'variant'> & {
-    variant: 'free' | 'check'
+    variant: 'free' | 'check' | 'mint'
   }
   rarityButtonProps: ButtonProps
 }

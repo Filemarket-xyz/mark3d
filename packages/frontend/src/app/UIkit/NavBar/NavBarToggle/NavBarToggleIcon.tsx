@@ -10,7 +10,7 @@ export const StyledNavBarToggleIconContainer = styled('div', {
   '& .line': {
     height: '2px',
     width: '100%',
-    backgroundColor: '$white',
+    backgroundColor: '$blue500',
     transition: 'transform 0.3s ease',
     '&.top': {
       transform: 'translateY(-4px) rotate(0deg)',

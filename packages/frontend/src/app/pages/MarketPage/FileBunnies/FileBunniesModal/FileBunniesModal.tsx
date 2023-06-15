@@ -86,7 +86,7 @@ export const FileBunniesModal = ({ open, onClose, body, title }: AppDialogProps<
     >
       {title}
       {body}
-      <ModalButtonContainer>
+      <ModalButtonContainer style={{ marginTop: 0 }}>
         <ButtonGlowing
           whiteWithBlue
           modalButton

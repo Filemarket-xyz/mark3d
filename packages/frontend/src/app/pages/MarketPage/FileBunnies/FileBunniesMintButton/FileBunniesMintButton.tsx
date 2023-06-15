@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 
-import { MintModal } from '../../../../components'
+import BaseModal from '../../../../components/Modal/Modal'
 import { useFileBunniesMint } from '../../../../processing/filebunnies/useFileBunniesMint'
 import { Button } from '../../../../UIkit'
 
@@ -14,7 +14,7 @@ export const FileBunniesMintButton: FC = observer(() => {
 
   return (
     <>
-      <MintModal {...modalProps} />
+      <BaseModal {...modalProps} />
       <Button
         primary
         fullWidth

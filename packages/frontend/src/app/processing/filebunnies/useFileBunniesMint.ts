@@ -51,5 +51,6 @@ export const useFileBunniesMint = () => {
     modalProps,
     mint,
     freeMint,
+    whiteList,
   }
 }

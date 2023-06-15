@@ -33,7 +33,7 @@ const NavBarStyled = styled('nav', {
   left: 0,
   right: 0,
   boxShadow: '$header',
-  color: '$blue900',
+  color: '$gray600',
   background: 'rgba(249, 249, 249, 0.75)',
   backgroundBlendMode: 'luminosity',
   backdropFilter: 'blur(14px)',
@@ -41,6 +41,7 @@ const NavBarStyled = styled('nav', {
     isTransparent: {
       true: {
         background: 'none',
+        color: '$gray300',
       },
     },
     noneBlurShadow: {
@@ -140,6 +141,7 @@ export const NavBar: FC<NavBarProps> = ({
       {items && items.length > 0 && (
         <NavBarCollapse
           isOpen={isExpanded}
+          isTransparent={isTransparent}
         >
           <NavBarVerticalSpacer>
             {items.map((item, index) => (

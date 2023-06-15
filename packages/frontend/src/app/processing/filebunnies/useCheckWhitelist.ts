@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import { useWhiteListStore } from '../../hooks/useWhiteListStore'
 import { IRarityWl } from '../../stores/FileBunnies/FileBunniesTokenStore'
@@ -16,6 +16,10 @@ export const useCheckWhitelist = ({ address }: ICheckWhiteList): ICheckWhiteList
   const whiteListStore = useWhiteListStore(address)
 
   const checkWhiteList = useCallback(() => {
+    address && whiteListStore.reload()
+  }, [address])
+
+  useEffect(() => {
     address && whiteListStore.reload()
   }, [address])
 

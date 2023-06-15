@@ -8,7 +8,7 @@ import { Txt } from '../../Txt'
 const itemHeight = 30
 
 const navBarItemStyles = {
-  color: '$gray100',
+  color: '$gray300',
   outline: 'none',
   textDecoration: 'none',
   cursor: 'pointer',
