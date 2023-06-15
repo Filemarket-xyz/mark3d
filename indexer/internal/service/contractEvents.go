@@ -398,21 +398,8 @@ func (s *service) onTransferDraftCompletionEvent(
 			return fmt.Errorf("failed to insert metadata: %w", err)
 		}
 		token.MetaUri = metaUri
-
-		var suffix string
-		if token.TokenId.Cmp(big.NewInt(6000)) == -1 {
-			suffix = "common"
-		} else if token.TokenId.Cmp(big.NewInt(7000)) == -1 {
-			suffix = "uncommon"
-		} else {
-			suffix = "payed"
-		}
-		key := fmt.Sprintf("%s.%s", strings.ToLower(token.CollectionAddress.String()), suffix)
-		if err := s.sequencer.DeleteTokenID(ctx, key, token.TokenId.Int64()); err != nil {
-			log.Printf("failed deleting token from sequencer. Address: %s. Suffix:%s. TokendId: %s. Error: %v", token.CollectionAddress.String(), suffix, token.TokenId.String(), err)
-		}
-
 	}
+
 	if err := s.repository.UpdateToken(ctx, tx, token); err != nil {
 		return err
 	}
@@ -443,6 +430,21 @@ func (s *service) onTransferDraftCompletionEvent(
 		TxId:      t.Hash(),
 	}); err != nil {
 		return err
+	}
+
+	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
+		var suffix string
+		if token.TokenId.Cmp(big.NewInt(6000)) == -1 {
+			suffix = "common"
+		} else if token.TokenId.Cmp(big.NewInt(7000)) == -1 {
+			suffix = "uncommon"
+		} else {
+			suffix = "payed"
+		}
+		key := fmt.Sprintf("%s.%s", strings.ToLower(token.CollectionAddress.String()), suffix)
+		if err := s.sequencer.DeleteTokenID(ctx, key, token.TokenId.Int64()); err != nil {
+			log.Printf("failed deleting token from sequencer. Address: %s. Suffix:%s. TokendId: %s. Error: %v", token.CollectionAddress.String(), suffix, token.TokenId.String(), err)
+		}
 	}
 
 	return nil

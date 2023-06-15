@@ -1,5 +1,5 @@
 run:
-	env ${cat .env} go run cmd/app/main.go
+	go run cmd/app/main.go
 
 build-contracts:
 	mkdir -p contracts/build
