@@ -123,7 +123,8 @@ func (h *handler) handleGetFileBunniesTokensForAutosell(w http.ResponseWriter, r
 
 	apiKey := r.URL.Query().Get("api-key")
 	if bcrypt.CompareHashAndPassword([]byte(h.cfg.AutosellerApiKey), []byte(apiKey)) != nil {
-		sendResponse(w, http.StatusBadRequest, "wrong api-key")
+		sendResponse(w, http.StatusBadRequest, map[string]string{"msg": "wrong api-key"})
+		return
 	}
 
 	resp, e := h.service.GetFileBunniesTokensForAutosell(ctx)
