@@ -2,11 +2,7 @@ import { HiddenFileMetaData } from '../../../../swagger/Api'
 import { typeFiles, typeOptions } from './data'
 
 export const fileToExtension = (file: HiddenFileMetaData): string | undefined => {
-  if (file.type) {
-    return file.type.split('/')[file.type.split('/').length - 1]
-  } else {
-    return file.name?.split('.')[file.name?.split('.').length - 1]
-  }
+  return file.name?.split('.')[file.name?.split('.').length - 1]
 }
 
 export const filenameToExtension = (filename: string): string | undefined => {
