@@ -1,8 +1,8 @@
 import * as passworder from '@metamask/browser-passworder'
 import { entropyToMnemonic } from 'bip39'
 import { utils } from 'ethers'
-import { sha512 } from 'file-market-crypto'
 
+import { fileMarketCrypto } from '../FileMarketCrypto'
 import { IStorageProvider } from '../StorageProvider'
 import { ISeedProvider } from './ISeedProvider'
 
@@ -49,7 +49,8 @@ export class SeedProvider implements ISeedProvider {
       throw new Error('Unable to unlock seed: cannot decrypt seed')
     }
     const seedBuf = Buffer.from(seed, 'hex')
-    await this.storage.set(hashSeedStorageKey, sha256(seedBuf))
+    const seedBufHash = await fileMarketCrypto.sha512(seedBuf)
+    await this.storage.set(hashSeedStorageKey, Buffer.from(seedBufHash).toString('hex'))
     // if (seedBuf.byteLength !== seedByteLength) {
     //   throw new Error(
     //     `Unable to unlock seed: expected seed to be ${seedByteLength} bytes, but got ${seedBuf.byteLength}`
@@ -64,8 +65,9 @@ export class SeedProvider implements ISeedProvider {
       throw new Error('Unable to encrypt seed')
     }
     await this.storage.set(seedStorageKey, seedEncrypted)
-    await this.storage.set(hashSeedStorageKey, sha512(Buffer.from(newSeed).toString('hex')))
-    this.hashSeed = sha256(Buffer.from(newSeed).toString('hex'))
+    const newSeedHash = await fileMarketCrypto.sha512(Buffer.from(newSeed))
+    await this.storage.set(hashSeedStorageKey, Buffer.from(newSeedHash).toString('hex'))
+    this.hashSeed = Buffer.from(newSeedHash).toString('hex')
     this.seedEncrypted = seedEncrypted
 
     this.setSeed(newSeed)

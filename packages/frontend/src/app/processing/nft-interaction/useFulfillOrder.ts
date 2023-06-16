@@ -27,6 +27,7 @@ interface IUseFulFillOrder {
   price?: BigNumberish
   collectionAddress?: `0x${string}`
   tokenId?: string
+  signature?: string
 }
 
 export function useFulfillOrder() {
@@ -35,7 +36,7 @@ export function useFulfillOrder() {
   const { wrapPromise, statuses } = useStatusState<ContractReceipt, IUseFulFillOrder>()
   const factory = useHiddenFileProcessorFactory()
 
-  const fulfillOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId, price }) => {
+  const fulfillOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId, price, signature }) => {
     assertCollection(collectionAddress)
     assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
@@ -52,7 +53,7 @@ export function useFulfillOrder() {
       utils.getAddress(collectionAddress),
       bufferToEtherHex(publicKey),
       BigNumber.from(tokenId),
-      '0x00',
+      signature ? `0x${signature}` : '0x00',
       {
         value: BigNumber.from(price),
         gasPrice: mark3dConfig.gasPrice,
