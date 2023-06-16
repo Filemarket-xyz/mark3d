@@ -240,26 +240,26 @@ func (p *postgres) GetFileBunniesStats(
 		FROM public.tokens
 		WHERE collection_address=$1
 	`
-	stats := []*domain.CollectionStats{
-		{Name: "common.minted_amount"},
-		{Name: "common.bought_amount"},
-		{Name: "uncommon.minted_amount"},
-		{Name: "uncommon.bought_amount"},
-		{Name: "payed.minted_amount"},
-		{Name: "payed.bought_amount"},
-	}
+	stats := make([]int, 6)
 	if err := tx.QueryRow(ctx, query,
 		strings.ToLower(p.cfg.fileBunniesCollectionAddress.String()),
 	).Scan(
-		&stats[0].Value,
-		&stats[1].Value,
-		&stats[2].Value,
-		&stats[3].Value,
-		&stats[4].Value,
-		&stats[5].Value,
+		&stats[0],
+		&stats[1],
+		&stats[2],
+		&stats[3],
+		&stats[4],
+		&stats[5],
 	); err != nil {
 		return nil, err
 	}
 
-	return stats, nil
+	return []*domain.CollectionStats{
+		{Name: "common.minted_amount", Value: float64(stats[0])},
+		{Name: "common.bought_amount", Value: float64(stats[1])},
+		{Name: "uncommon.minted_amount", Value: float64(stats[2])},
+		{Name: "uncommon.bought_amount", Value: float64(stats[3])},
+		{Name: "payed.minted_amount", Value: float64(stats[4])},
+		{Name: "payed.bought_amount", Value: float64(stats[5])},
+	}, nil
 }

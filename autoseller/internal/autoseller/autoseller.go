@@ -22,6 +22,9 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -91,7 +94,7 @@ func New() *Autoseller {
 }
 
 func (a *Autoseller) Process() (int, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 150*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 180*time.Second)
 	defer cancel()
 
 	addr := fmt.Sprintf("%s?api-key=%s", a.Cfg.IndexerAddr, a.Cfg.ApiKey)
@@ -117,22 +120,28 @@ func (a *Autoseller) Process() (int, error) {
 		return 0, fmt.Errorf("failed to unmarshal body: %w", err)
 	}
 
-	processed := 0
+	var wg sync.WaitGroup
+	var processed atomic.Int32
 	for _, r := range resp {
-		if err := a.approveSingleResponse(ctx, r); err != nil {
-			log.Printf("failed to process single response: %#v. Error: %v\n", r, err)
-			continue
-		}
-		if err := a.addTimer(ctx, r.TokenId); err != nil {
-			log.Printf("failed to add timer for token_id: %s. Error: %v", r.TokenId, err)
-			continue
-		}
+		wg.Add(1)
+		go func(tokenInfo AutosellTokenInfo) {
+			defer wg.Done()
+			if err := a.approveSingleResponse(ctx, tokenInfo); err != nil {
+				log.Printf("failed to process single response: %#v. Error: %v\n", tokenInfo, err)
+				return
+			}
+			if err := a.addTimer(ctx, tokenInfo.TokenId); err != nil {
+				log.Printf("failed to add timer for token_id: %s. Error: %v", tokenInfo.TokenId, err)
+				return
+			}
 
-		log.Println("TokenId was processed: ", r.TokenId)
-		processed++
+			log.Println("TokenId was processed: ", tokenInfo.TokenId)
+			processed.Add(1)
+		}(r)
 	}
+	wg.Wait()
 
-	return processed, nil
+	return int(processed.Load()), nil
 }
 
 func (a *Autoseller) addTimer(ctx context.Context, tokenId string) error {
@@ -145,7 +154,7 @@ func (a *Autoseller) addTimer(ctx context.Context, tokenId string) error {
 }
 
 func (a *Autoseller) ProcessTimers(ctx context.Context) error {
-	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 180*time.Second)
 	defer cancel()
 
 	keyStr := fmt.Sprintf("autoseller.timer.*")
@@ -155,35 +164,50 @@ func (a *Autoseller) ProcessTimers(ctx context.Context) error {
 	}
 
 	var globalErr error
+	var errMu sync.Mutex
+
 	now := time.Now()
 	nowUnix := now.Unix()
+	var wg sync.WaitGroup
 	for _, key := range keys {
 		tokenIdStr, err := a.redisClient.Get(ctx, key).Result()
 		if err != nil {
+			globalErr = errors.Join(globalErr, fmt.Errorf("failed to get key: %s", key))
 			continue
 		}
 
-		timestamp, _ := strconv.ParseInt(tokenIdStr, 10, 64)
+		wg.Add(1)
+		go func(key string, tokenIdStr string) {
+			defer wg.Done()
+			timestamp, _ := strconv.ParseInt(tokenIdStr, 10, 64)
 
-		if timestamp < nowUnix {
-			padding := len(keyStr) - 1
-			tokenIdStr := key[padding:]
-			tokenId, ok := big.NewInt(0).SetString(tokenIdStr, 10)
-			if !ok {
-				globalErr = errors.Join(globalErr, fmt.Errorf("failed to parse tokenId: %s", tokenIdStr))
-			}
+			if timestamp < nowUnix {
+				padding := len(keyStr) - 1
+				tokenIdStr := key[padding:]
+				tokenId, ok := big.NewInt(0).SetString(tokenIdStr, 10)
+				if !ok {
+					errMu.Lock()
+					globalErr = errors.Join(globalErr, fmt.Errorf("failed to parse tokenId: %s", tokenIdStr))
+					errMu.Unlock()
+				}
 
-			if err := a.finalize(ctx, tokenId); err != nil {
-				globalErr = errors.Join(globalErr, fmt.Errorf("failed to finalize tokenId: %s. Error: %v", tokenId.String(), err))
-				continue
-			}
+				if err := a.finalize(ctx, tokenId); err != nil {
+					errMu.Lock()
+					globalErr = errors.Join(globalErr, fmt.Errorf("failed to finalize tokenId: %s. Error: %v", tokenId.String(), err))
+					errMu.Unlock()
+					return
+				}
 
-			if err := a.redisClient.Del(ctx, key).Err(); err != nil {
-				globalErr = errors.Join(globalErr, fmt.Errorf("failed to delete key: %s. Error: %v", key, err))
-				continue
+				if err := a.redisClient.Del(ctx, key).Err(); err != nil {
+					errMu.Lock()
+					globalErr = errors.Join(globalErr, fmt.Errorf("failed to delete key: %s. Error: %v", key, err))
+					errMu.Unlock()
+					return
+				}
 			}
-		}
+		}(key, tokenIdStr)
 	}
+	wg.Wait()
 
 	if globalErr != nil {
 		return err
@@ -196,7 +220,7 @@ func (a *Autoseller) ProcessTimers(ctx context.Context) error {
 }
 
 func (a *Autoseller) approveSingleResponse(ctx context.Context, r AutosellTokenInfo) error {
-	ctx, cancel := context.WithTimeout(ctx, 120*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 180*time.Second)
 	defer cancel()
 
 	tokenId, ok := big.NewInt(0).SetString(r.TokenId, 10)
@@ -238,9 +262,12 @@ func (a *Autoseller) finalize(ctx context.Context, tokenId *big.Int) error {
 		},
 	}
 
-	// TODO: if was already finalized return nil
 	tx, err := session.FinalizeTransfer(tokenId)
 	if err != nil {
+		if strings.Contains(err.Error(), "failed to estimate gas") {
+			log.Println("failed to call FanalizeTransfer: ", err)
+			return nil
+		}
 		return fmt.Errorf("failed to call FanalizeTransfer: %w", err)
 	}
 
@@ -270,9 +297,12 @@ func (a *Autoseller) approve(ctx context.Context, tokenId *big.Int, password []b
 		},
 	}
 
-	// TODO: if was already approved return nil
 	tx, err := session.ApproveTransfer(tokenId, password)
 	if err != nil {
+		if strings.Contains(err.Error(), "failed to estimate gas") {
+			log.Println("failed to call ApproveTransfer: ", err)
+			return nil
+		}
 		return fmt.Errorf("failed to call ApproveTransfer: %w", err)
 	}
 
