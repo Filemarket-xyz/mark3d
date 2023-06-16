@@ -960,6 +960,7 @@ definitions:
         type: string
       value:
         type: number
+        x-omitempty: false
   Token:
     type: object
     description: Токен

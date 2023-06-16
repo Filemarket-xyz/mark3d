@@ -16,8 +16,6 @@ import (
 
 const ModulusLen = 4096
 
-var sha512Hash = sha512.New() // Reuse hash
-
 // Generate rsa.PrivateKey based on ModulusLen const
 func GenKey() (*rsa.PrivateKey, error) {
 	privateKey, err := rsa.GenerateKey(rand.Reader, ModulusLen)
@@ -36,6 +34,7 @@ func Encrypt(data []byte, publicKey *rsa.PublicKey, label []byte) ([]byte, error
 		return nil, errors.New("Data is empty or nil")
 	}
 
+	var sha512Hash = sha512.New()
 	encrypted, err := rsa.EncryptOAEP(sha512Hash, rand.Reader, publicKey, data, label)
 	if err != nil {
 		return nil, err

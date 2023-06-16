@@ -57,6 +57,9 @@ type Autoseller struct {
 	ethClient   *ethclient.Client
 	auth        *bind.TransactOpts
 	instance    *filebunniesCollection.FileBunniesCollection
+
+	nonce   uint64
+	nonceMu sync.Mutex
 }
 
 func New() *Autoseller {
@@ -93,11 +96,8 @@ func New() *Autoseller {
 	}
 }
 
-func (a *Autoseller) Process() (int, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 180*time.Second)
-	defer cancel()
-
-	addr := fmt.Sprintf("%s?api-key=%s", a.Cfg.IndexerAddr, a.Cfg.ApiKey)
+func (a *Autoseller) Process(ctx context.Context) (int, error) {
+	addr := fmt.Sprintf("%s/tokens/file-bunnies/to_autosell?api-key=%s", a.Cfg.IndexerAddr, a.Cfg.ApiKey)
 	res, err := http.DefaultClient.Get(addr)
 	if err != nil {
 		return 0, err
@@ -119,6 +119,16 @@ func (a *Autoseller) Process() (int, error) {
 	if err := json.Unmarshal(body, &resp); err != nil {
 		return 0, fmt.Errorf("failed to unmarshal body: %w", err)
 	}
+
+	if len(resp) <= 0 {
+		return 0, nil
+	}
+
+	nonce, err := a.ethClient.PendingNonceAt(ctx, a.auth.From)
+	if err != nil {
+		return 0, errors.New("failed to get nonce")
+	}
+	a.nonce = nonce
 
 	var wg sync.WaitGroup
 	var processed atomic.Int32
@@ -154,20 +164,51 @@ func (a *Autoseller) addTimer(ctx context.Context, tokenId string) error {
 }
 
 func (a *Autoseller) ProcessTimers(ctx context.Context) error {
-	ctx, cancel := context.WithTimeout(ctx, 180*time.Second)
-	defer cancel()
-
+	// TODO:
+	//// loading tokens that wait for finalization. In case Autoseller was interrupted between approving and saving timer
+	//addr := fmt.Sprintf("%s/tokens/file-bunnies/to_autosell?api-key=%s", a.Cfg.IndexerAddr, a.Cfg.ApiKey)
+	//res, err := http.DefaultClient.Get(addr)
+	//if err != nil {
+	//	return 0, err
+	//}
+	//
+	//statusCode := res.StatusCode
+	//body, err := io.ReadAll(res.Body)
+	//if body != nil {
+	//	res.Body.Close()
+	//}
+	//if err != nil {
+	//	return 0, fmt.Errorf("failed to read body: %w", err)
+	//}
+	//if statusCode != 200 {
+	//	return 0, fmt.Errorf("got status code: %d", statusCode)
+	//}
+	//
+	//var resp []AutosellTokenInfo
+	//if err := json.Unmarshal(body, &resp); err != nil {
+	//	return 0, fmt.Errorf("failed to unmarshal body: %w", err)
+	//}
+	//
 	keyStr := fmt.Sprintf("autoseller.timer.*")
 	keys, err := a.redisClient.Keys(ctx, keyStr).Result()
 	if err != nil {
 		return err
 	}
 
-	var globalErr error
-	var errMu sync.Mutex
-
 	now := time.Now()
 	nowUnix := now.Unix()
+
+	if len(keys) <= 0 {
+		return nil
+	}
+	nonce, err := a.ethClient.PendingNonceAt(context.Background(), a.auth.From)
+	if err != nil {
+		return errors.New("failed to get nonce")
+	}
+	a.nonce = nonce
+
+	var globalErr error
+	var errMu sync.Mutex
 	var wg sync.WaitGroup
 	for _, key := range keys {
 		tokenIdStr, err := a.redisClient.Get(ctx, key).Result()
@@ -191,6 +232,8 @@ func (a *Autoseller) ProcessTimers(ctx context.Context) error {
 					errMu.Unlock()
 				}
 
+				log.Println("Start finalizing token: ", tokenIdStr)
+
 				if err := a.finalize(ctx, tokenId); err != nil {
 					errMu.Lock()
 					globalErr = errors.Join(globalErr, fmt.Errorf("failed to finalize tokenId: %s. Error: %v", tokenId.String(), err))
@@ -204,25 +247,21 @@ func (a *Autoseller) ProcessTimers(ctx context.Context) error {
 					errMu.Unlock()
 					return
 				}
+
+				log.Println("Processed timer: ", tokenId)
 			}
 		}(key, tokenIdStr)
 	}
 	wg.Wait()
 
 	if globalErr != nil {
-		return err
+		log.Println(globalErr)
 	}
 
-	if len(keys) > 0 {
-		log.Println("Timers was processed. Keys: ", keys)
-	}
 	return nil
 }
 
 func (a *Autoseller) approveSingleResponse(ctx context.Context, r AutosellTokenInfo) error {
-	ctx, cancel := context.WithTimeout(ctx, 180*time.Second)
-	defer cancel()
-
 	tokenId, ok := big.NewInt(0).SetString(r.TokenId, 10)
 	if !ok {
 		return errors.New("failed to parse tokenId")
@@ -243,29 +282,46 @@ func (a *Autoseller) approveSingleResponse(ctx context.Context, r AutosellTokenI
 
 	err = a.approve(ctx, tokenId, encryptedPwd)
 	if err != nil {
+		if errors.Is(err, context.DeadlineExceeded) {
+			log.Println("failed to call approve", err)
+			return nil
+		}
 		return fmt.Errorf("failed to call approve: %w", err)
 	}
 
 	return nil
 }
+
 func (a *Autoseller) finalize(ctx context.Context, tokenId *big.Int) error {
+	header, err := a.ethClient.HeaderByNumber(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to get header: %w", err)
+	}
 	priorityFee, err := a.getMaxPriorityFeePerGas(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to get maxPriorityFee: %w", err)
 	}
+
+	a.nonceMu.Lock()
+	nonce := a.nonce
+	a.nonce++
+	a.nonceMu.Unlock()
+
 	session := &filebunniesCollection.FileBunniesCollectionSession{
 		Contract: a.instance,
 		TransactOpts: bind.TransactOpts{
 			From:      a.auth.From,
 			Signer:    a.auth.Signer,
-			GasFeeCap: priorityFee,
+			GasFeeCap: new(big.Int).Add(header.BaseFee, priorityFee),
+			GasTipCap: priorityFee,
+			Nonce:     new(big.Int).SetUint64(nonce),
 		},
 	}
 
 	tx, err := session.FinalizeTransfer(tokenId)
 	if err != nil {
-		if strings.Contains(err.Error(), "failed to estimate gas") {
-			log.Println("failed to call FanalizeTransfer: ", err)
+		if strings.Contains(err.Error(), "encrypted password was already set") {
+			log.Println("failed to call FinalizeTransfer: ", err)
 			return nil
 		}
 		return fmt.Errorf("failed to call FanalizeTransfer: %w", err)
@@ -284,23 +340,38 @@ func (a *Autoseller) finalize(ctx context.Context, tokenId *big.Int) error {
 }
 
 func (a *Autoseller) approve(ctx context.Context, tokenId *big.Int, password []byte) error {
+	ctx, cancel := context.WithTimeout(ctx, 180*time.Second)
+	defer cancel()
+
+	header, err := a.ethClient.HeaderByNumber(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to get header: %w", err)
+	}
 	priorityFee, err := a.getMaxPriorityFeePerGas(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to get maxPriorityFee: %w", err)
 	}
+
+	a.nonceMu.Lock()
+	nonce := a.nonce
+	a.nonce++
+	a.nonceMu.Unlock()
+
 	session := &filebunniesCollection.FileBunniesCollectionSession{
 		Contract: a.instance,
 		TransactOpts: bind.TransactOpts{
 			From:      a.auth.From,
 			Signer:    a.auth.Signer,
-			GasFeeCap: priorityFee,
+			GasFeeCap: new(big.Int).Add(header.BaseFee, priorityFee),
+			GasTipCap: priorityFee,
+			Nonce:     new(big.Int).SetUint64(nonce),
 		},
 	}
 
 	tx, err := session.ApproveTransfer(tokenId, password)
 	if err != nil {
 		if strings.Contains(err.Error(), "failed to estimate gas") {
-			log.Println("failed to call ApproveTransfer: ", err)
+			log.Printf("failed to call ApproveTransfer (id: %s): %v\n", tokenId.String(), err)
 			return nil
 		}
 		return fmt.Errorf("failed to call ApproveTransfer: %w", err)
