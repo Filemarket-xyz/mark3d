@@ -441,11 +441,11 @@ func loadConfig() *Config {
 	}
 }
 
-func getPassword(ctx context.Context, rdb *redis.Client, cid string) (string, error) {
-	pwd, err := rdb.Get(ctx, fmt.Sprintf("autoseller.keys.%s", cid)).Result()
+func getPassword(ctx context.Context, rdb *redis.Client, metaUri string) (string, error) {
+	pwd, err := rdb.Get(ctx, fmt.Sprintf("autoseller.keys.%s", metaUri)).Result()
 	if err != nil {
 		if err == redis.Nil {
-			return "", errors.New("cid not exists")
+			return "", errors.New("metaUri not exists")
 		}
 		return "", err
 	}
