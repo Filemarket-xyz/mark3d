@@ -1,10 +1,11 @@
 import { BigNumber } from 'ethers'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { api } from '../../config/api'
 import { useAuth } from '../../hooks/useAuth'
 import { useCheckWhiteListStore } from '../../hooks/useCheckWhiteListStore'
+import { useComputedMemo } from '../../hooks/useComputedMemo'
 import { useStatusModal } from '../../hooks/useStatusModal'
 import { fromCurrency } from '../../utils/web3'
 import { useFulfillOrder } from '../nft-interaction'
@@ -53,6 +54,7 @@ export const useFileBunniesMint = () => {
       return
     }
     setIsLoadingReq(true)
+    console.log('SET TRUE')
     const collectionAddress = await collectionAddressReq() as `0x${string}`
     const tokenId = await sequencerReq({ suffix: 'payed', collectionAddress })
     await fulfillOrder({
@@ -60,6 +62,7 @@ export const useFileBunniesMint = () => {
       tokenId,
       price: fromCurrency(0.01),
     })
+    console.log('SET FALSE')
     setIsLoadingReq(false)
   }
 
@@ -70,6 +73,7 @@ export const useFileBunniesMint = () => {
       return
     }
     setIsLoadingReq(true)
+    console.log('SET TRUE')
     const collectionAddress = await collectionAddressReq() as `0x${string}`
     const tokenId = await sequencerReq({ suffix: whiteListStore.data?.whitelist, collectionAddress })
     const sign = await getSignWhiteList({ whiteList: whiteListStore.data?.whitelist, address })
@@ -80,11 +84,17 @@ export const useFileBunniesMint = () => {
       signature: sign,
     })
     setIsLoadingReq(false)
+    console.log('SET FALSE')
   }
 
   const { isLoading: isLoadingFulFill } = statuses
 
-  const isLoading = useMemo(() => {
+  const isLoading = useComputedMemo(() => {
+    console.log(whiteListStore.isLoading)
+    console.log(isLoadingFulFill)
+    console.log(isLoadingReq)
+    console.log('-------------------------')
+
     return isLoadingFulFill || whiteListStore.isLoading || isLoadingReq
   }, [whiteListStore.isLoading, whiteListStore.isLoading, isLoadingReq])
 
