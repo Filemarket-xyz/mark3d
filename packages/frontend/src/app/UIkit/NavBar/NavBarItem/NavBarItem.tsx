@@ -8,16 +8,15 @@ import { Txt } from '../../Txt'
 const itemHeight = 30
 
 const navBarItemStyles = {
-  color: '$gray100',
+  color: '$gray600',
   outline: 'none',
   textDecoration: 'none',
   cursor: 'pointer',
   position: 'relative',
   height: itemHeight,
   transition: 'color 0.25s ease 0s, transform 0.25s ease 0s',
-
   '&[data-hovered=true]': {
-    color: '$white',
+    color: '$gray400',
     transform: 'scale(1.03)',
   },
   '&[data-focus=true]': {
@@ -41,7 +40,7 @@ const navBarItemStyles = {
     left: 0,
     right: 0,
     height: '2px',
-    background: '$gray100',
+    background: '$gray400',
     filter: 'blur(0.5px)',
   },
   '&.active::after': {
@@ -64,15 +63,20 @@ const navBarItemStyles = {
         },
       },
     },
+    grayLight: {
+      true: {
+        color: '$gray300',
+        '&::after': {
+          background: '$gray300',
+        },
+      },
+    },
   },
 }
 
 export const NavLinkStyled = styled(RouterNavLink, cssShowHideIn, navBarItemStyles)
-
 export const LinkStyled = styled('a', cssShowHideIn, navBarItemStyles)
-
 export type NavBarItemProps = PropsWithChildren<NavLinkProps & ComponentProps<typeof NavLinkStyled>>
-
 export const NavBarItem = forwardRef<HTMLAnchorElement, NavBarItemProps>(
   ({ children, ...navLinkProps }, ref) => {
     const { linkRef, linkProps } = useLink(navLinkProps, ref)
@@ -88,9 +92,7 @@ export const NavBarItem = forwardRef<HTMLAnchorElement, NavBarItemProps>(
       </NavLinkStyled>
     )
   })
-
 export type NavBarItemLinkProps = PropsWithChildren<LinkProps & ComponentProps<typeof LinkStyled>>
-
 export const NavBarItemLink = forwardRef<HTMLAnchorElement, NavBarItemLinkProps>(
   ({ children, ...navLinkProps }, ref) => {
     const { linkRef, linkProps } = useLink(navLinkProps, ref)

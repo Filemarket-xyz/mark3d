@@ -2,7 +2,7 @@ import { ComponentProps, forwardRef } from 'react'
 import { AriaButtonProps } from 'react-aria'
 import { Link } from 'react-router-dom'
 
-import LogoIcon from '../../../../assets/FileMarket.svg'
+import LogoIcon from '../../../../assets/FileMarketHedderLogo.png'
 import { BreakpointsOptions, styled } from '../../../../styles'
 import { Drip, useButton } from '../../../UIkit'
 
