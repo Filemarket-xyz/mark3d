@@ -189,7 +189,7 @@ export const {
     smUp: '(min-width: 600px)',
     mdxUp: '(min-width: 700px)',
     mdUp: '(min-width: 900px)',
-    lgUp: '(min-width: 1200px)',
+    lgUp: '(min-width: 1201px)',
     xlUp: '(min-width: 1536px)',
   },
 

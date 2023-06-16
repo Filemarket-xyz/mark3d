@@ -14,6 +14,8 @@ const navBarItemStyles = {
   cursor: 'pointer',
   position: 'relative',
   height: itemHeight,
+  display: 'flex',
+  alignItems: 'flex-end',
   transition: 'color 0.25s ease 0s, transform 0.25s ease 0s',
   '&[data-hovered=true]': {
     color: '$gray400',
