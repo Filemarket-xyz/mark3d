@@ -29,7 +29,7 @@ const SupportedContainerBlocks = styled('div', {
 const SupportedBy = () => {
   return (
     <SupportedByStyle>
-      <Txt ternary3 style={{ paddingLeft: '16px', marginBottom: '24px' }}>Supported By</Txt>
+      <Txt h4 style={{ paddingLeft: '16px', marginBottom: '24px', fontSize: '24px' }}>Supported By</Txt>
       <SupportedContainerBlocks>
         {supportedByData.map((item, index) => {
           return (
