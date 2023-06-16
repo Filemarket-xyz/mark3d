@@ -164,31 +164,6 @@ func (a *Autoseller) addTimer(ctx context.Context, tokenId string) error {
 }
 
 func (a *Autoseller) ProcessTimers(ctx context.Context) error {
-	// TODO:
-	//// loading tokens that wait for finalization. In case Autoseller was interrupted between approving and saving timer
-	//addr := fmt.Sprintf("%s/tokens/file-bunnies/to_autosell?api-key=%s", a.Cfg.IndexerAddr, a.Cfg.ApiKey)
-	//res, err := http.DefaultClient.Get(addr)
-	//if err != nil {
-	//	return 0, err
-	//}
-	//
-	//statusCode := res.StatusCode
-	//body, err := io.ReadAll(res.Body)
-	//if body != nil {
-	//	res.Body.Close()
-	//}
-	//if err != nil {
-	//	return 0, fmt.Errorf("failed to read body: %w", err)
-	//}
-	//if statusCode != 200 {
-	//	return 0, fmt.Errorf("got status code: %d", statusCode)
-	//}
-	//
-	//var resp []AutosellTokenInfo
-	//if err := json.Unmarshal(body, &resp); err != nil {
-	//	return 0, fmt.Errorf("failed to unmarshal body: %w", err)
-	//}
-	//
 	keyStr := fmt.Sprintf("autoseller.timer.*")
 	keys, err := a.redisClient.Keys(ctx, keyStr).Result()
 	if err != nil {
