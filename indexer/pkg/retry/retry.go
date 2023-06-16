@@ -29,7 +29,7 @@ type Options struct {
 	Fn              RetryableFunc
 	FnArgs          []any
 	RetryOnAnyError bool
-	RetryMap        map[error]int
+	RetryMap        map[string]int // error msg - retry number
 	RetryCondition  ConditionFunc
 	Backoff         BackoffStrategy
 	MaxElapsedTime  time.Duration
@@ -58,7 +58,7 @@ func OnErrors(ctx context.Context, opts Options) (any, error) {
 		}
 
 		shouldRetry := false
-		maxRetries, ok := opts.RetryMap[err]
+		maxRetries, ok := opts.RetryMap[err.Error()]
 		if (ok && retries < maxRetries) ||
 			(opts.RetryCondition != nil && opts.RetryCondition(err, retries)) ||
 			opts.RetryOnAnyError {

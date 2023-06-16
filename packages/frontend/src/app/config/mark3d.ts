@@ -16,10 +16,10 @@ const filecoinCalibration: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ['https://filecoin-calibration.chainup.net/rpc/v1'],
+      http: ['https://api.calibration.node.glif.io/rpc/v1'],
     },
     public: {
-      http: ['https://api.calibration.node.glif.io/rpc/v1'],
+      http: ['https://filecoin-calibration.chainup.net/rpc/v1'],
     },
   },
   blockExplorers: {
@@ -56,6 +56,7 @@ const filecoinMainnet: Chain = {
   },
 }
 
+export const fee = +import.meta.env.VITE_MARKETPLACE_FEE
 const isMainnet = import.meta.env.VITE_IS_MAINNET
 
 const mark3dChain = isMainnet ? filecoinMainnet : filecoinCalibration

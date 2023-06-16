@@ -15,7 +15,8 @@ type Repository interface {
 }
 
 type Config struct {
-	PublicCollectionAddress common.Address
+	PublicCollectionAddress      common.Address
+	FileBunniesCollectionAddress common.Address
 }
 
 type repository struct {
@@ -30,7 +31,8 @@ func NewRepository(pg *pgxpool.Pool, rdb *redis.Client, cfg *Config) Repository 
 		postgres: &postgres{
 			pg: pg,
 			cfg: &postgresConfig{
-				publicCollectionAddress: cfg.PublicCollectionAddress,
+				publicCollectionAddress:      cfg.PublicCollectionAddress,
+				fileBunniesCollectionAddress: cfg.FileBunniesCollectionAddress,
 			},
 		},
 		blockCounter: &blockCounter{

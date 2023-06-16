@@ -71,6 +71,8 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 		switch c.Address {
 		case p.cfg.publicCollectionAddress:
 			c.Type = models.CollectionTypePublicCollection
+		case p.cfg.fileBunniesCollectionAddress:
+			c.Type = models.CollectionTypeFileBunniesCollection
 		default:
 			c.Type = models.CollectionTypeFileMarketCollection
 		}
@@ -125,6 +127,8 @@ func (p *postgres) GetCollection(ctx context.Context,
 	switch c.Address {
 	case p.cfg.publicCollectionAddress:
 		c.Type = models.CollectionTypePublicCollection
+	case p.cfg.fileBunniesCollectionAddress:
+		c.Type = models.CollectionTypeFileBunniesCollection
 	default:
 		c.Type = models.CollectionTypeFileMarketCollection
 	}
@@ -167,6 +171,8 @@ func (p *postgres) GetCollectionByTokenId(
 	switch c.Address {
 	case p.cfg.publicCollectionAddress:
 		c.Type = models.CollectionTypePublicCollection
+	case p.cfg.fileBunniesCollectionAddress:
+		c.Type = models.CollectionTypeFileBunniesCollection
 	default:
 		c.Type = models.CollectionTypeFileMarketCollection
 	}
@@ -216,4 +222,44 @@ func (p *postgres) CollectionTransferExists(ctx context.Context, tx pgx.Tx, txId
 		return false, err
 	}
 	return res > 0, nil
+}
+
+func (p *postgres) GetFileBunniesStats(
+	ctx context.Context,
+	tx pgx.Tx,
+) ([]*domain.CollectionStats, error) {
+	// language=PostgreSQL
+	query := `
+		SELECT
+			SUM(CASE WHEN token_id::bigint BETWEEN 0 AND 5999 THEN 1 ELSE 0 END) AS common_minted_amount,
+			SUM(CASE WHEN token_id::bigint BETWEEN 0 AND 5999 AND meta_uri != '' THEN 1 ELSE 0 END) AS common_bought_amount,
+			SUM(CASE WHEN token_id::bigint BETWEEN 6000 AND 6999 THEN 1 ELSE 0 END) AS uncommon_minted_amount,
+			SUM(CASE WHEN token_id::bigint BETWEEN 6000 AND 6999 AND meta_uri != '' THEN 1 ELSE 0 END) AS uncommon_bought_amount,
+			SUM(CASE WHEN token_id::bigint BETWEEN 7000 AND 9999 THEN 1 ELSE 0 END) AS payed_minted_amount,
+			SUM(CASE WHEN token_id::bigint BETWEEN 7000 AND 9999 AND meta_uri != '' THEN 1 ELSE 0 END) AS payed_bought_amount
+		FROM public.tokens
+		WHERE collection_address=$1
+	`
+	stats := make([]int, 6)
+	if err := tx.QueryRow(ctx, query,
+		strings.ToLower(p.cfg.fileBunniesCollectionAddress.String()),
+	).Scan(
+		&stats[0],
+		&stats[1],
+		&stats[2],
+		&stats[3],
+		&stats[4],
+		&stats[5],
+	); err != nil {
+		return nil, err
+	}
+
+	return []*domain.CollectionStats{
+		{Name: "common.minted_amount", Value: float64(stats[0])},
+		{Name: "common.bought_amount", Value: float64(stats[1])},
+		{Name: "uncommon.minted_amount", Value: float64(stats[2])},
+		{Name: "uncommon.bought_amount", Value: float64(stats[3])},
+		{Name: "payed.minted_amount", Value: float64(stats[4])},
+		{Name: "payed.bought_amount", Value: float64(stats[5])},
+	}, nil
 }

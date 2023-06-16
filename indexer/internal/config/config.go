@@ -41,8 +41,9 @@ type (
 	}
 
 	HandlerConfig struct {
-		RequestTimeout time.Duration
-		SwaggerHost    string
+		RequestTimeout   time.Duration
+		SwaggerHost      string
+		AutosellerApiKey string // bcrypt'ed api key
 	}
 
 	ServiceConfig struct {
@@ -50,12 +51,16 @@ type (
 		AccessTokenAddress           common.Address
 		ExchangeAddress              common.Address
 		PublicCollectionAddress      common.Address
+		FileBunniesCollectionAddress common.Address
+		FileBunniesCreatorAddress    common.Address
 		FraudDeciderWeb2Address      common.Address
 		AllowedBlockNumberDifference int64
 		TelegramHealthNotifierAddr   string
 		HealthCheckInterval          int
 		CoinMarketCapApiKey          string
 		CurrencyConversionCacheTTL   string
+		CommonSignerKey              string
+		UncommonSignerKey            string
 		Mode                         string
 	}
 
@@ -96,8 +101,9 @@ func Init(configPath string) (*Config, error) {
 			MaxHeaderBytes: jsonCfg.GetInt("server.maxHeaderBytes"),
 		},
 		Handler: &HandlerConfig{
-			RequestTimeout: jsonCfg.GetDuration("handler.requestTimeout"),
-			SwaggerHost:    jsonCfg.GetString("handler.swaggerHost"),
+			RequestTimeout:   jsonCfg.GetDuration("handler.requestTimeout"),
+			SwaggerHost:      jsonCfg.GetString("handler.swaggerHost"),
+			AutosellerApiKey: envCfg.GetString("AUTOSELLER_API_KEY"),
 		},
 		Service: &ServiceConfig{
 			RpcUrls:                      envCfg.GetStringSlice("RPC_URLS"),
@@ -105,11 +111,15 @@ func Init(configPath string) (*Config, error) {
 			FraudDeciderWeb2Address:      common.HexToAddress(jsonCfg.GetString("service.fraudDeciderWeb2Address")),
 			ExchangeAddress:              common.HexToAddress(jsonCfg.GetString("service.exchangeAddress")),
 			PublicCollectionAddress:      common.HexToAddress(jsonCfg.GetString("service.publicCollectionAddress")),
+			FileBunniesCollectionAddress: common.HexToAddress(jsonCfg.GetString("service.fileBunniesCollectionAddress")),
+			FileBunniesCreatorAddress:    common.HexToAddress(jsonCfg.GetString("service.fileBunniesCreatorAddress")),
 			AllowedBlockNumberDifference: jsonCfg.GetInt64("service.allowedBlockNumberDifference"),
 			TelegramHealthNotifierAddr:   envCfg.GetString("TELEGRAM_HEALTH_NOTIFIER_ADDRESS"),
 			HealthCheckInterval:          jsonCfg.GetInt("service.healthCheckInterval"),
 			CoinMarketCapApiKey:          envCfg.GetString("COINMARKETCAP_API_KEY"),
 			CurrencyConversionCacheTTL:   jsonCfg.GetString("service.currencyConversionCacheTTL"),
+			CommonSignerKey:              envCfg.GetString("COMMON_SIGNER_KEY"),
+			UncommonSignerKey:            envCfg.GetString("UNCOMMON_SIGNER_KEY"),
 			Mode:                         jsonCfg.GetString("service.mode"),
 		},
 		Redis: &RedisConfig{

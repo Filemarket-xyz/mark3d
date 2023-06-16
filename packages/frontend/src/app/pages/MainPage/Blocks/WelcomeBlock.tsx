@@ -29,7 +29,7 @@ const WelcomeScreenWrapper = styled('section', {
   },
 })
 const Title = styled('h1', {
-  ...textVariant('ternary1').true,
+  ...textVariant('fourfold1').true,
   color: '$gray800',
   '@lg': {
     fontSize: 'calc(1.5vw + 30px)',
@@ -125,9 +125,9 @@ const NavigateBlock = styled(MainBlock, {
 })
 
 const NavigateTitle = styled('h4', {
-  ...textVariant('ternary2').true,
+  ...textVariant('fourfold2').true,
   '@md': {
-    ...textVariant('ternary3').true,
+    ...textVariant('fourfold3').true,
   },
 })
 

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { HiddenFileMetaData } from '../../../../swagger/Api'
-import { NftCardBase, NftCardInfoRow, NftCardUserInfo } from '../../../UIkit'
+import { NftCardBase, NftCardUserInfo, PriceBadge } from '../../../UIkit'
 import { FileType } from '../FileType'
 import { StyledTxtName, StyledTxtValue } from './TransferCard.styles'
 
@@ -42,10 +42,10 @@ export const TransferCard: React.FC<TransferCardProps> = ({
       button={{ to: button.link, text: button.text }}
     >
       <NftCardUserInfo img={user.img} address={user.address} />
-      <NftCardInfoRow>
-        <StyledTxtName primary2>{status}</StyledTxtName>
-        {price && <StyledTxtValue primary2>{price}</StyledTxtValue>}
-      </NftCardInfoRow>
+      <PriceBadge
+        left={<StyledTxtName primary2>{status}</StyledTxtName>}
+        right={price && <StyledTxtValue primary2>{price}</StyledTxtValue>}
+      />
     </NftCardBase>
   )
 }

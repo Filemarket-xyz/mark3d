@@ -9,7 +9,8 @@ const StyledNavBarCollapse = styled('div', {
   left: 0,
   right: 0,
   backdropFilter: 'blur(12.5px)',
-  background: '$blue500Op75',
+  background: 'rgba(249, 249, 249, 0.75)',
+  backgroundBlendMode: 'luminosity',
   width: '100%',
   height: '0px',
   zIndex: 9,
@@ -21,29 +22,33 @@ const StyledNavBarCollapse = styled('div', {
         height: '100%',
       },
     },
+    isTransparent: {
+      true: {
+        background: 'none',
+      },
+    },
   },
 })
 
 export type NavBarCollapseProps = ComponentProps<typeof StyledNavBarCollapse> & {
   isOpen?: boolean
 }
-
 const StyledScrollContainer = styled('div', {
   overflowY: 'hidden', // make scroll if nav overflows
   height: '100%',
   maxHeight: '100%',
 })
-
 const StyledContent = styled('div', {
   paddingLeft: '$3',
   paddingTop: '$4',
   paddingBottom: '$layout$navBarHeight',
 })
 
-export const NavBarCollapse: FC<NavBarCollapseProps> = ({ children, isOpen }) => {
+export const NavBarCollapse: FC<NavBarCollapseProps> = ({ children, isOpen, isTransparent }) => {
   return (
     <StyledNavBarCollapse
       isOpen={isOpen}
+      isTransparent={isTransparent}
     >
       <StyledScrollContainer>
         <Container>

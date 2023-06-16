@@ -26,7 +26,20 @@ func (s *service) GetCollection(ctx context.Context,
 		log.Println("get collection failed: ", err)
 		return nil, internalError
 	}
-	return domain.CollectionToModel(collection), nil
+
+	c := domain.CollectionToModel(collection)
+	if collection.Address == s.cfg.FileBunniesCollectionAddress {
+		stats, err := s.repository.GetFileBunniesStats(ctx, tx)
+		if err != nil {
+			logger.Errorf("failed to get stats", err, nil)
+			return nil, internalError
+		}
+		for _, s := range stats {
+			c.Stats = append(c.Stats, &models.CollectionStat{Name: s.Name, Value: s.Value})
+		}
+	}
+
+	return c, nil
 }
 
 func (s *service) GetCollectionWithTokens(
@@ -59,8 +72,20 @@ func (s *service) GetCollectionWithTokens(
 		log.Println("get collection tokens total failed: ", err)
 		return nil, internalError
 	}
+
+	c := domain.CollectionToModel(collection)
+	if collection.Address == s.cfg.FileBunniesCollectionAddress {
+		stats, err := s.repository.GetFileBunniesStats(ctx, tx)
+		if err != nil {
+			logger.Errorf("failed to get stats", err, nil)
+			return nil, internalError
+		}
+		for _, s := range stats {
+			c.Stats = append(c.Stats, &models.CollectionStat{Name: s.Name, Value: s.Value})
+		}
+	}
 	return &models.CollectionData{
-		Collection: domain.CollectionToModel(collection),
+		Collection: c,
 		Tokens:     domain.MapSlice(tokens, domain.TokenToModel),
 		Total:      total,
 	}, nil
@@ -72,4 +97,12 @@ func (s *service) GetPublicCollectionWithTokens(
 	limit int,
 ) (*models.CollectionData, *models.ErrorResponse) {
 	return s.GetCollectionWithTokens(ctx, s.cfg.PublicCollectionAddress, lastTokenId, limit)
+}
+
+func (s *service) GetFileBunniesCollectionWithTokens(
+	ctx context.Context,
+	lastTokenId *big.Int,
+	limit int,
+) (*models.CollectionData, *models.ErrorResponse) {
+	return s.GetCollectionWithTokens(ctx, s.cfg.FileBunniesCollectionAddress, lastTokenId, limit)
 }

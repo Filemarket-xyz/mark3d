@@ -8,12 +8,12 @@ const fallbackError = { code: 500, message: 'unknown' }
 
 enum ProviderErrorMessages {
   InternalError = 'Internal JSON-RPC error.',
-  InsufficientBalance = 'Actor balance less than needed',
+  InsufficientBalance = 'Actor balance less than needed.',
 }
 
 enum ErrorMessages {
-  InsufficientBalance = 'Balance too low for transaction',
-  RejectedByUser = 'Transaction rejected by user',
+  InsufficientBalance = 'Balance too low for transaction.',
+  RejectedByUser = 'Transaction rejected by user.',
 }
 
 const stringifyContractError = (error: any) => {
@@ -44,7 +44,7 @@ const stringifyContractError = (error: any) => {
     message = `Transaction failed. Reason: ${serializedError.message}`
   }
 
-  return message
+  return `${message} Please try again.`
 }
 
 export const callContractGetter = async <R = any>({

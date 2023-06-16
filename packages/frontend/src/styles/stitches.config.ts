@@ -24,6 +24,7 @@ export const {
 
       black: '#000000', // Color: Eerie Black
       white: '#ffffff',
+      whiteOp25: 'rgba(255, 255, 255, 0.25)',
       whiteOp50: 'rgba(255, 255, 255, 0.5)',
       whiteOp75: 'rgba(255, 255, 255, 0.75)',
       blue500Op75: 'rgba(0, 144, 255, 0.75)',
@@ -61,6 +62,7 @@ export const {
       primary: 'Montserrat, sans-serif',
       secondary: 'Inter, sans-serif',
       ternary: 'Space Grotesk, sans-serif',
+      fourfold: 'MuseoModerno, sans-serif',
     },
 
     // 1rem = 16px
@@ -91,6 +93,10 @@ export const {
       ternary1: '2.5rem', // 40px
       ternary2: '2rem', // 32px
       ternary3: '1.5rem', // 24px
+
+      fourfold1: '2.5rem', // 40px
+      fourfold2: '2rem', // 32px
+      fourfold3: '1.5rem', // 24px
     },
 
     fontWeights: {
@@ -100,6 +106,7 @@ export const {
       primary: 600,
       secondary: 400,
       ternary: 700,
+      fourfold: 700,
     },
 
     lineHeights: {
@@ -127,6 +134,10 @@ export const {
       ternary1: '48px',
       ternary2: '48px',
       ternary3: '30px',
+
+      fourfold1: '48px',
+      fourfold2: '48px',
+      fourfold3: '30px',
     },
 
     radii: {
@@ -178,7 +189,7 @@ export const {
     smUp: '(min-width: 600px)',
     mdxUp: '(min-width: 700px)',
     mdUp: '(min-width: 900px)',
-    lgUp: '(min-width: 1200px)',
+    lgUp: '(min-width: 1201px)',
     xlUp: '(min-width: 1536px)',
   },
 

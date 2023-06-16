@@ -77,7 +77,7 @@ const ImageStyle = styled('img', {
   '@sm': {
     maxWidth: 358,
     maxHeight: 358,
-    marginTop: '13px',
+    marginBottom: '40px',
   },
 })
 

@@ -153,8 +153,8 @@ func (s *service) GetAllActiveOrders(
 		o.PriceUsd = currencyconversion.Convert(rate, o.Price)
 	}
 
-	ordersWithToken := make([]*models.OrderWithToken, len(orders))
-	for i, o := range orders {
+	ordersWithToken := make([]*models.OrderWithToken, 0, len(orders))
+	for _, o := range orders {
 		transfer, err := s.repository.GetTransfer(ctx, tx, o.TransferId)
 		if err != nil {
 			log.Println("get transfer for order failed", err)
@@ -166,11 +166,11 @@ func (s *service) GetAllActiveOrders(
 			return nil, internalError
 		}
 
-		ordersWithToken[i] = &models.OrderWithToken{
+		ordersWithToken = append(ordersWithToken, &models.OrderWithToken{
 			Order:    domain.OrderToModel(o),
 			Token:    domain.TokenToModel(token),
 			Transfer: domain.TransferToModel(transfer),
-		}
+		})
 	}
 	return &models.OrdersAllActiveResponse{
 		Items: ordersWithToken,

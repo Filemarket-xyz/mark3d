@@ -781,13 +781,20 @@ func (p *postgres) InsertTransferStatus(ctx context.Context, tx pgx.Tx, transfer
 	return nil
 }
 
-func (p *postgres) TransferTxExists(ctx context.Context, tx pgx.Tx, txId common.Hash, status string) (bool, error) {
+func (p *postgres) TransferTxExists(ctx context.Context, tx pgx.Tx, tokenId *big.Int, txId common.Hash, status string) (bool, error) {
 	// language=PostgreSQL
 	row := tx.QueryRow(
 		ctx,
-		`SELECT COUNT(*) FROM transfer_statuses WHERE lower(tx_id)=$1 AND status=$2`,
+		`SELECT COUNT(*) 
+			FROM transfer_statuses ts
+			JOIN transfers t on ts.transfer_id = t.id
+			WHERE lower(ts.tx_id)=$1 AND 
+			      ts.status=$2 AND
+			      t.token_id=$3
+		`,
 		strings.ToLower(txId.Hex()),
 		status,
+		tokenId.String(),
 	)
 
 	var count int64

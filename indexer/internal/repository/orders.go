@@ -36,9 +36,10 @@ func (p *postgres) GetAllActiveOrders(
 			FROM orders AS o
 			JOIN transfers t on o.transfer_id = t.id
 			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
-			WHERE lts.rank = 1 
-			  AND lts.status NOT IN ('Finished', 'Cancelled') 
-			  AND o.id < $1
+			WHERE lts.rank = 1 AND 
+			      lts.status NOT IN ('Finished', 'Cancelled') AND 
+			      NOT (t.collection_address=$3 AND t.number=1) AND 
+			      o.id < $1
 		)
 		SELECT fo.id, fo.transfer_id, fo.price, fo.currency, fo.exchange_address, los.timestamp, los.status, los.tx_id
 		FROM filtered_orders fo
@@ -57,7 +58,7 @@ func (p *postgres) GetAllActiveOrders(
 		limit = 10000
 	}
 
-	rows, err := tx.Query(ctx, query, lastOrderIdParam, limit)
+	rows, err := tx.Query(ctx, query, lastOrderIdParam, limit, strings.ToLower(p.cfg.fileBunniesCollectionAddress.String()))
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +122,10 @@ func (p *postgres) GetAllActiveOrdersTotal(
 			FROM orders AS o
 			JOIN transfers t on o.transfer_id = t.id
 			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
-			WHERE lts.rank = 1 AND lts.status NOT IN ('Finished', 'Cancelled')
+			WHERE lts.rank = 1 AND 
+			      lts.status NOT IN ('Finished', 'Cancelled') AND 
+			      NOT (t.collection_address=$1 AND t.number=1)
+			
 		)
 		SELECT COUNT(*) as total
 		FROM filtered_orders fo
@@ -130,7 +134,7 @@ func (p *postgres) GetAllActiveOrdersTotal(
 	`
 
 	var total uint64
-	if err := tx.QueryRow(ctx, query).Scan(&total); err != nil {
+	if err := tx.QueryRow(ctx, query, strings.ToLower(p.cfg.fileBunniesCollectionAddress.String())).Scan(&total); err != nil {
 		return 0, err
 	}
 	return total, nil
