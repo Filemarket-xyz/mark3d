@@ -1,0 +1,11 @@
+<svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <linearGradient id="lg" x1="0.5" y1="0" x2="0.5" y2="1">
+    <stop offset="0%" stop-color="#04E762">
+		<animate attributeName="offset" values="1;0;1" repeatCount="indefinite" dur="2s" begin="0s"/>
+	</stop>
+    <stop offset="100%" stop-color="#0090FF">
+      <animate attributeName="offset" values="1;0;1" repeatCount="indefinite" dur="2s" begin="0s"/>
+    </stop>
+  </linearGradient>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M330 100C352.091 100 370 117.909 370 140V280L250 400H170C147.909 400 130 382.091 130 360V140C130 117.909 147.909 100 170 100H330ZM250 360L250 280L330 280V140L170 140V360H250Z" fill="url(#lg)"/>
+</svg>
