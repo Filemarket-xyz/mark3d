@@ -64,6 +64,23 @@ func (s *service) onCollectionTransferEvent(
 	return nil
 }
 
+func (s *service) onFileBunniesCollectionTransferEvent(
+	ctx context.Context,
+	tx pgx.Tx,
+	t *types.Transaction,
+	block *types.Block,
+	tokenId *big.Int,
+) error {
+	collectionAddress := *t.To()
+	if err := s.repository.UpdateTokenTxData(ctx, tx, tokenId, collectionAddress, block.Time(), t.Hash()); err != nil {
+		return err
+	}
+
+	log.Println("fb token updated")
+
+	return nil
+}
+
 func processRoyalty(ctx context.Context, s *service, block *types.Block, token *domain.Token) (*big.Int, error) {
 	royaltyRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {

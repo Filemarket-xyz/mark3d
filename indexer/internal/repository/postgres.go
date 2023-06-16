@@ -49,6 +49,7 @@ type Tokens interface {
 	GetMetadata(ctx context.Context, tx pgx.Tx, address common.Address, tokenId *big.Int) (*domain.TokenMetadata, error)
 	InsertMetadata(ctx context.Context, tx pgx.Tx, metadata *domain.TokenMetadata, contractAddress common.Address, tokenId *big.Int) error
 	GetTokensForAutosell(ctx context.Context, tx pgx.Tx, collectionAddress common.Address, owner common.Address) ([]AutosellTokenInfo, error)
+	UpdateTokenTxData(ctx context.Context, tx pgx.Tx, tokenId *big.Int, collectionAddress common.Address, txTimestamp uint64, hash common.Hash) error
 }
 
 type Transfers interface {

@@ -661,7 +661,7 @@ func (s *service) tryProcessFileBunniesTransferEvent(
 		return nil
 	}
 
-	if err := s.onCollectionTransferEvent(ctx, tx, t, block, transfer.TokenId, transfer.To); err != nil {
+	if err := s.onFileBunniesCollectionTransferEvent(ctx, tx, t, block, transfer.TokenId); err != nil {
 		return err
 	}
 

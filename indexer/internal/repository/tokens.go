@@ -745,3 +745,16 @@ func (p *postgres) GetTokensForAutosell(
 
 	return res, nil
 }
+
+func (p *postgres) UpdateTokenTxData(ctx context.Context, tx pgx.Tx, tokenId *big.Int, collectionAddress common.Address, txTimestamp uint64, hash common.Hash) error {
+	// language=PostgreSQL
+	if _, err := tx.Exec(ctx, `UPDATE tokens SET mint_transaction_timestamp=$1,mint_transaction_hash=$2 WHERE collection_address=$3 AND token_id=$4`,
+		txTimestamp,
+		strings.ToLower(hash.Hex()),
+		strings.ToLower(collectionAddress.String()),
+		tokenId.String(),
+	); err != nil {
+		return err
+	}
+	return nil
+}
