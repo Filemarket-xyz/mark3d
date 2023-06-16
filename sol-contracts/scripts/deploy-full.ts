@@ -97,7 +97,7 @@ async function main() {
   let fileBunniesCollection = await fileBunniesCollectionFactory.deploy(
       "FileBunnies",
       "FBNS",
-      "ipfs://QmZm4oLQoyXZLJzioYCjGtGXGHqsscKvWJmWXMVhTXZtc9",
+      "ipfs://QmQUr4ApevgdEKCbE7W4YHXCCF7JNAVzX2BgZTntaAGQzC",
       accounts[0].getAddress(),
       accounts[0].getAddress(),
       accounts[0].getAddress(),
