@@ -2,13 +2,13 @@ import React from 'react'
 
 import { BaseModal } from '../../../../components'
 import { useStores } from '../../../../hooks'
-import { useFileBunniesPayedMint } from '../../../../processing/filebunnies/useFileBunniesPayedMint'
+import { useFileBunniesMint } from '../../../../processing/filebunnies/useFileBunniesMint'
 import { WhitelistCard } from '../../../../UIkit'
 import { FileBunniesModal, RarityModalBody, RarityModalTitle } from '../FileBunniesModal/FileBunniesModal'
 
 const FileBunniesPayedMintCard = () => {
   const { dialogStore } = useStores()
-  const { payedMint, modalProps, isLoading } = useFileBunniesPayedMint()
+  const { payedMint, modalProps, isLoading } = useFileBunniesMint()
 
   const rarityModalOpen = () => {
     dialogStore.openDialog({

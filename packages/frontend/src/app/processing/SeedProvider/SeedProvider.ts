@@ -1,7 +1,7 @@
 import * as passworder from '@metamask/browser-passworder'
 import { entropyToMnemonic } from 'bip39'
 import { utils } from 'ethers'
-import { sha256 } from 'ethers/lib/utils'
+import { sha512 } from 'file-market-crypto'
 
 import { IStorageProvider } from '../StorageProvider'
 import { ISeedProvider } from './ISeedProvider'
@@ -64,7 +64,7 @@ export class SeedProvider implements ISeedProvider {
       throw new Error('Unable to encrypt seed')
     }
     await this.storage.set(seedStorageKey, seedEncrypted)
-    await this.storage.set(hashSeedStorageKey, sha256(Buffer.from(newSeed).toString('hex')))
+    await this.storage.set(hashSeedStorageKey, sha512(Buffer.from(newSeed).toString('hex')))
     this.hashSeed = sha256(Buffer.from(newSeed).toString('hex'))
     this.seedEncrypted = seedEncrypted
 
