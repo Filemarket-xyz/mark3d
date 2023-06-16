@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import FileMarketIcon from '../../../../../../assets/FileMarket.svg'
+import FileMarketIcon from '../../../../../../assets/FIleMarketLogoFooter.png'
 import DiscordBlackImg from '../../../../../../assets/img/DiscordBlack.svg'
 import DiscordImg from '../../../../../../assets/img/DiscordImg.svg'
 import LinkedinBlackImg from '../../../../../../assets/img/LinkedinBlack.svg'
