@@ -2,6 +2,8 @@ package handler
 
 import (
 	"context"
+	"encoding/hex"
+	"golang.org/x/crypto/bcrypt"
 	"math/big"
 	"net/http"
 
@@ -114,4 +116,27 @@ func (h *handler) handleGetTokens(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sendResponse(w, 200, tokens)
+}
+
+func (h *handler) handleGetFileBunniesTokensForAutosell(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), h.cfg.RequestTimeout)
+	defer cancel()
+
+	apiKey := r.URL.Query().Get("api-key")
+	hashApi, err := hex.DecodeString(h.cfg.AutosellerApiKey)
+	if err != nil {
+		sendResponse(w, 500, map[string]string{"msg": "internal error"})
+		return
+	}
+	if bcrypt.CompareHashAndPassword(hashApi, []byte(apiKey)) != nil {
+		sendResponse(w, http.StatusBadRequest, map[string]string{"msg": "wrong api-key"})
+		return
+	}
+
+	resp, e := h.service.GetFileBunniesTokensForAutosell(ctx)
+	if e != nil {
+		sendResponse(w, e.Code, e)
+		return
+	}
+	sendResponse(w, 200, resp)
 }

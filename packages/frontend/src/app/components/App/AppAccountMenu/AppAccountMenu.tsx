@@ -39,6 +39,7 @@ export const AppAccountMenu: FC<AppAccountMenuProps> = ({ address }) => {
           secondary
           small
           iconCover
+          blueBorder
         >
           <IconWrapper>
             {needToSwitchNetwork ? (

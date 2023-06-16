@@ -72,9 +72,9 @@ func main() {
 	fileBunniesAddr := strings.ToLower(cfg.Service.FileBunniesCollectionAddress.String())
 	seq := sequencer.New(sequencerCfg, rdb, map[string]sequencer.Range{
 		pubCollectionAddr:                           {0, 1_000_000},
-		fmt.Sprintf("%s.common", fileBunniesAddr):   {0, 6000},
+		fmt.Sprintf("%s.common", fileBunniesAddr):   {0, 1000},
 		fmt.Sprintf("%s.uncommon", fileBunniesAddr): {6000, 7000},
-		fmt.Sprintf("%s.payed", fileBunniesAddr):    {7000, 10000},
+		fmt.Sprintf("%s.payed", fileBunniesAddr):    {7000, 8000},
 	})
 
 	repositoryCfg := &repository.Config{

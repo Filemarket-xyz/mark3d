@@ -62,6 +62,7 @@ export const {
       primary: 'Montserrat, sans-serif',
       secondary: 'Inter, sans-serif',
       ternary: 'Space Grotesk, sans-serif',
+      fourfold: 'MuseoModerno, sans-serif',
     },
 
     // 1rem = 16px
@@ -92,6 +93,10 @@ export const {
       ternary1: '2.5rem', // 40px
       ternary2: '2rem', // 32px
       ternary3: '1.5rem', // 24px
+
+      fourfold1: '2.5rem', // 40px
+      fourfold2: '2rem', // 32px
+      fourfold3: '1.5rem', // 24px
     },
 
     fontWeights: {
@@ -101,6 +106,7 @@ export const {
       primary: 600,
       secondary: 400,
       ternary: 700,
+      fourfold: 700,
     },
 
     lineHeights: {
@@ -128,6 +134,10 @@ export const {
       ternary1: '48px',
       ternary2: '48px',
       ternary3: '30px',
+
+      fourfold1: '48px',
+      fourfold2: '48px',
+      fourfold3: '30px',
     },
 
     radii: {

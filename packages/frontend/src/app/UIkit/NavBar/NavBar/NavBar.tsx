@@ -14,7 +14,6 @@ export interface NavBarItemData {
   isLink?: boolean
   isMock?: boolean
 }
-
 export interface NavBarProps {
   brand?: ReactNode
   items?: NavBarItemData[]
@@ -53,7 +52,6 @@ const NavBarStyled = styled('nav', {
 })
 
 const horizontalGap = 30
-
 const NavBarHorizontalSpacer = styled('div', {
   height: '100%',
   display: 'flex',
@@ -63,24 +61,20 @@ const NavBarHorizontalSpacer = styled('div', {
   flexWrap: 'nowrap',
   gap: horizontalGap,
 }, cssShowHideIn)
-
 const ActionsContainer = styled('div', {
   display: 'flex',
   justifyContent: 'end',
   gap: horizontalGap,
   flexGrow: 1,
 })
-
 const NavBarVerticalSpacer = styled('div', {
   dflex: 'start',
   flexDirection: 'column',
   flexWrap: 'nowrap',
   gap: '$3',
 })
-
 const itemTo = (item: NavBarItemData) =>
   item.isMock ? '/abracadabra1337' : item.to
-
 export const NavBar: FC<NavBarProps> = ({
   brand,
   items,

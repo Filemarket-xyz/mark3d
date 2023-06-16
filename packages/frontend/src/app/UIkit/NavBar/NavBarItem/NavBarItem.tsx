@@ -15,9 +15,8 @@ const navBarItemStyles = {
   position: 'relative',
   height: itemHeight,
   transition: 'color 0.25s ease 0s, transform 0.25s ease 0s',
-
   '&[data-hovered=true]': {
-    color: '$white',
+    color: '$gray400',
     transform: 'scale(1.03)',
   },
   '&[data-focus=true]': {
@@ -76,11 +75,8 @@ const navBarItemStyles = {
 }
 
 export const NavLinkStyled = styled(RouterNavLink, cssShowHideIn, navBarItemStyles)
-
 export const LinkStyled = styled('a', cssShowHideIn, navBarItemStyles)
-
 export type NavBarItemProps = PropsWithChildren<NavLinkProps & ComponentProps<typeof NavLinkStyled>>
-
 export const NavBarItem = forwardRef<HTMLAnchorElement, NavBarItemProps>(
   ({ children, ...navLinkProps }, ref) => {
     const { linkRef, linkProps } = useLink(navLinkProps, ref)
@@ -96,9 +92,7 @@ export const NavBarItem = forwardRef<HTMLAnchorElement, NavBarItemProps>(
       </NavLinkStyled>
     )
   })
-
 export type NavBarItemLinkProps = PropsWithChildren<LinkProps & ComponentProps<typeof LinkStyled>>
-
 export const NavBarItemLink = forwardRef<HTMLAnchorElement, NavBarItemLinkProps>(
   ({ children, ...navLinkProps }, ref) => {
     const { linkRef, linkProps } = useLink(navLinkProps, ref)

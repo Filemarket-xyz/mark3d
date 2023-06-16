@@ -150,7 +150,7 @@ paths:
           default: 10000
           minimum: 0
           maximum: 10000
-  /collections/full/file-binnies:
+  /collections/full/file-bunnies:
     get:
       tags:
         - collections
@@ -960,6 +960,7 @@ definitions:
         type: string
       value:
         type: number
+        x-omitempty: false
   Token:
     type: object
     description: Токен

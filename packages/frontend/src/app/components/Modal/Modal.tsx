@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react'
 
-import Capibebra from '../../../assets/img/Capibebra.gif'
+import LoadingIcon from '../../../assets/img/LoadingIconModal.svg'
 import SuccessfullImg from '../../../assets/img/SuccesfullIcon.svg'
 import { styled } from '../../../styles'
 import { ButtonGlowing, ButtonNavGlowing } from '../../UIkit'
@@ -19,7 +19,7 @@ const Loading = styled('img', {
 
 export const InProgressBody: React.FC<InProcessBodyProps> = ({ text, waitForSign = true }) => (
   <>
-    <Loading src={Capibebra} />
+    <Loading src={LoadingIcon} />
     <ModalTitle>{text}</ModalTitle>
     {waitForSign && <ModalP style={{ fontSize: '16px' }}>Please check your wallet and sign the transaction</ModalP>}
   </>

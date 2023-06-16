@@ -41,7 +41,7 @@ func (s *service) GetWhitelistSignature(ctx context.Context, rarity string, addr
 	if err != nil {
 		return nil, internalError
 	}
-	if whitelist == rarity {
+	if whitelist != rarity {
 		return nil, &models.ErrorResponse{
 			Code:    http.StatusBadRequest,
 			Message: "Address not whitelisted",

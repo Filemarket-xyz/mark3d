@@ -11,10 +11,11 @@
   },
   "service": {
     "accessTokenAddress": "0xC3F07F620715Fec92db305f718C7FA10C708Bf7A",
+    "fraudDeciderWeb2Address": "0x09bdE52a5251C02B1Be69b40dd6fBdA536Af5164",
     "exchangeAddress": "0x2301D80E8A7e4Cf59a349ffC20A51367cb27A4fc",
     "publicCollectionAddress": "0xc8c4d9daf70fb945a1a53ac1d977303836df425e",
-    "fileBunniesCollectionAddress": "0xf4e64807a98AE794dD6d0F52829F25e6D8B329Ff",
-    "fraudDeciderWeb2Address": "0x09bdE52a5251C02B1Be69b40dd6fBdA536Af5164",
+    "fileBunniesCollectionAddress": "0xdba60722700dbb8c0ec5339b6505a89f3bd4a17e",
+    "fileBunniesCreatorAddress": "0x29957549fcfdd278C72D92721A263C57F603663b",
     "allowedBlockNumberDifference": 20,
     "healthCheckInterval": 60,
     "sequencer": {

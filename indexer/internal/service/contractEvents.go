@@ -64,6 +64,23 @@ func (s *service) onCollectionTransferEvent(
 	return nil
 }
 
+func (s *service) onFileBunniesCollectionTransferEvent(
+	ctx context.Context,
+	tx pgx.Tx,
+	t *types.Transaction,
+	block *types.Block,
+	tokenId *big.Int,
+) error {
+	collectionAddress := *t.To()
+	if err := s.repository.UpdateTokenTxData(ctx, tx, tokenId, collectionAddress, block.Time(), t.Hash()); err != nil {
+		return err
+	}
+
+	log.Println("fb token updated")
+
+	return nil
+}
+
 func processRoyalty(ctx context.Context, s *service, block *types.Block, token *domain.Token) (*big.Int, error) {
 	royaltyRetryOpts := retry.Options{
 		Fn: func(ctx context.Context, args ...any) (any, error) {
@@ -195,7 +212,7 @@ func (s *service) onCollectionTransferInitEvent(
 	to common.Address,
 	transferNumber *big.Int,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusCreated))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusCreated))
 	if err != nil {
 		return err
 	}
@@ -240,7 +257,7 @@ func (s *service) onTransferDraftEvent(
 	from common.Address,
 	transferNumber *big.Int,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusDrafted))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusDrafted))
 	if err != nil {
 		return err
 	}
@@ -375,7 +392,7 @@ func (s *service) onTransferDraftCompletionEvent(
 	tokenId *big.Int,
 	to common.Address,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusCreated))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusCreated))
 	if err != nil {
 		return err
 	}
@@ -398,32 +415,19 @@ func (s *service) onTransferDraftCompletionEvent(
 			return fmt.Errorf("failed to insert metadata: %w", err)
 		}
 		token.MetaUri = metaUri
-
-		var suffix string
-		if token.TokenId.Cmp(big.NewInt(6000)) == -1 {
-			suffix = "common"
-		} else if token.TokenId.Cmp(big.NewInt(7000)) == -1 {
-			suffix = "uncommon"
-		} else {
-			suffix = "payed"
-		}
-		key := fmt.Sprintf("%s.%s", strings.ToLower(token.CollectionAddress.String()), suffix)
-		if err := s.sequencer.DeleteTokenID(ctx, key, token.TokenId.Int64()); err != nil {
-			log.Printf("failed deleting token from sequencer. Address: %s. Suffix:%s. TokendId: %s. Error: %v", token.CollectionAddress.String(), suffix, token.TokenId.String(), err)
-		}
-
 	}
+
 	if err := s.repository.UpdateToken(ctx, tx, token); err != nil {
-		return err
+		return fmt.Errorf("failed to update token: %w", err)
 	}
 
 	transfer, err := s.repository.GetActiveTransfer(ctx, tx, l.Address, tokenId)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get active transfer: %w", err)
 	}
 	order, err := s.repository.GetOrder(ctx, tx, transfer.OrderId)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to order: %w", err)
 	}
 	timestamp := now.Now().UnixMilli()
 	transfer.ToAddress = to
@@ -445,6 +449,21 @@ func (s *service) onTransferDraftCompletionEvent(
 		return err
 	}
 
+	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
+		var suffix string
+		if token.TokenId.Cmp(big.NewInt(6000)) == -1 {
+			suffix = "common"
+		} else if token.TokenId.Cmp(big.NewInt(7000)) == -1 {
+			suffix = "uncommon"
+		} else {
+			suffix = "payed"
+		}
+		key := fmt.Sprintf("%s.%s", strings.ToLower(token.CollectionAddress.String()), suffix)
+		if err := s.sequencer.DeleteTokenID(ctx, key, token.TokenId.Int64()); err != nil {
+			log.Printf("failed deleting token from sequencer. Address: %s. Suffix:%s. TokendId: %s. Error: %v", token.CollectionAddress.String(), suffix, token.TokenId.String(), err)
+		}
+	}
+
 	return nil
 }
 
@@ -456,7 +475,7 @@ func (s *service) onPublicKeySetEvent(
 	tokenId *big.Int,
 	publicKey string,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusPublicKeySet))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusPublicKeySet))
 	if err != nil {
 		return err
 	}
@@ -496,7 +515,7 @@ func (s *service) onPasswordSetEvent(
 	tokenId *big.Int,
 	encryptedPassword string,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusPasswordSet))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusPasswordSet))
 	if err != nil {
 		return err
 	}
@@ -535,7 +554,7 @@ func (s *service) onTransferFinishEvent(
 	l *types.Log,
 	tokenId *big.Int,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusFinished))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusFinished))
 	if err != nil {
 		return err
 	}
@@ -589,7 +608,7 @@ func (s *service) onTransferFraudReportedEvent(
 	l *types.Log,
 	tokenId *big.Int,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusFraudReported))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusFraudReported))
 	if err != nil {
 		return err
 	}
@@ -626,7 +645,7 @@ func (s *service) onTransferFraudDecidedEvent(
 	tokenId *big.Int,
 	approved bool,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusFinished))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusFinished))
 	if err != nil {
 		return err
 	}
@@ -692,7 +711,7 @@ func (s *service) onTransferCancel(
 	l *types.Log,
 	tokenId *big.Int,
 ) error {
-	exists, err := s.repository.TransferTxExists(ctx, tx, t.Hash(), string(models.TransferStatusCancelled))
+	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusCancelled))
 	if err != nil {
 		return err
 	}
