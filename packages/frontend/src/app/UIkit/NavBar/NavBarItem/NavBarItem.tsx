@@ -8,7 +8,7 @@ import { Txt } from '../../Txt'
 const itemHeight = 30
 
 const navBarItemStyles = {
-  color: '$gray300',
+  color: '$gray600',
   outline: 'none',
   textDecoration: 'none',
   cursor: 'pointer',
@@ -41,7 +41,7 @@ const navBarItemStyles = {
     left: 0,
     right: 0,
     height: '2px',
-    background: '$gray100',
+    background: '$gray400',
     filter: 'blur(0.5px)',
   },
   '&.active::after': {
@@ -64,9 +64,12 @@ const navBarItemStyles = {
         },
       },
     },
-    gray: {
+    grayLight: {
       true: {
-        color: '$gray600',
+        color: '$gray300',
+        '&::after': {
+          background: '$gray300',
+        },
       },
     },
   },

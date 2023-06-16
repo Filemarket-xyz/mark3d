@@ -33,15 +33,14 @@ const NavBarStyled = styled('nav', {
   left: 0,
   right: 0,
   boxShadow: '$header',
-  color: '$gray600',
+  color: '$gray600 !important',
   background: 'rgba(249, 249, 249, 0.75)',
-  backgroundBlendMode: 'luminosity',
   backdropFilter: 'blur(14px)',
   variants: {
     isTransparent: {
       true: {
         background: 'none',
-        color: '$gray300',
+        color: '$gray800 !important',
       },
     },
     noneBlurShadow: {
@@ -116,6 +115,7 @@ export const NavBar: FC<NavBarProps> = ({
                     target="_blank"
                     hideIn={mobileBp}
                     mock={item.isMock}
+                    grayLight={isTransparent}
                   >
                     {item.label}
                   </NavBarItemLink>
@@ -126,6 +126,7 @@ export const NavBar: FC<NavBarProps> = ({
                     to={itemTo(item)}
                     hideIn={mobileBp}
                     mock={item.isMock}
+                    grayLight={isTransparent}
                   >
                     {item.label}
                   </NavBarItem>

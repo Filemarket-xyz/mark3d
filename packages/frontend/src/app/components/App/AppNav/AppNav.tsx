@@ -41,7 +41,7 @@ export const AppNav: FC = () => {
 
   return (
     <NavBar
-      noneBlurShadow={noneBlurShadow}
+      noneBlurShadow={noneBlurShadow && isMarketPage}
       isTransparent={isTransparent && isMarketPage}
       mobileBp={mobileBp}
       brand={<AppLogoButton to='/' hideNameIn={mobileBp} />}

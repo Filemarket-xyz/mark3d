@@ -12,7 +12,7 @@ export type IRarityWl = 'common' | 'uncommon' | '' | 'unknown' | 'payed'
  * Does not listen for updates, need to reload manually.
  */
 
-export class FileBunniesTokenStore implements IStoreRequester,
+export class FileBunniesTokenIdStore implements IStoreRequester,
   IActivateDeactivate<[`0x${string}`, IRarityWl ]> {
   errorStore: ErrorStore
 

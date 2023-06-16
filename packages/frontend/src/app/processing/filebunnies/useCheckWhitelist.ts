@@ -1,7 +1,6 @@
-import { useCallback, useEffect } from 'react'
 
 import { useWhiteListStore } from '../../hooks/useWhiteListStore'
-import { IRarityWl } from '../../stores/FileBunnies/FileBunniesTokenStore'
+import { IRarityWl } from '../../stores/FileBunnies/FileBunniesTokenIdStore'
 
 interface ICheckWhiteList {
   address?: `0x${string}`
@@ -9,22 +8,20 @@ interface ICheckWhiteList {
 
 interface ICheckWhiteListReturn {
   whiteList?: IRarityWl
-  checkWhiteList: () => void
 }
 
 export const useCheckWhitelist = ({ address }: ICheckWhiteList): ICheckWhiteListReturn => {
   const whiteListStore = useWhiteListStore(address)
 
-  const checkWhiteList = useCallback(() => {
-    address && whiteListStore.reload()
-  }, [address])
-
-  useEffect(() => {
-    address && whiteListStore.reload()
-  }, [address])
+  // const checkWhiteList = useCallback(() => {
+  //   address && whiteListStore.reload()
+  // }, [address])
+  //
+  // useEffect(() => {
+  //   address && whiteListStore.reload()
+  // }, [address])
 
   return {
     whiteList: whiteListStore.data?.whitelist as IRarityWl,
-    checkWhiteList,
   }
 }

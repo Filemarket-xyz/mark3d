@@ -2,10 +2,8 @@ import { observer } from 'mobx-react-lite'
 import React from 'react'
 
 import { styled } from '../../../../../styles'
-import BaseModal from '../../../../components/Modal/Modal'
 import { useStores } from '../../../../hooks'
-import { useFileBunniesMint } from '../../../../processing/filebunnies/useFileBunniesMint'
-import { PageLayout, textVariant, Txt, WhitelistCard } from '../../../../UIkit'
+import { PageLayout, textVariant, Txt } from '../../../../UIkit'
 import BottomBannerImg from '../../img/BottomBanner.png'
 import FBBgLg from '../../img/FBBgLg.png'
 import FBBgMd from '../../img/FBBgMd.png'
@@ -15,6 +13,8 @@ import FileBunniesLogo from '../../img/FileBunniesLogo.svg'
 import LeftBottomPl from '../../img/LeftBottomPlanet.png'
 import LeftTopPl from '../../img/LeftTopPlanet.png'
 import RightPl from '../../img/RightTopPl.png'
+import FileBunniesFreeMintCard from '../FileBunniesCard/FileBunniesFreeMintCard'
+import FileBunniesPayedMintCard from '../FileBunniesCard/FileBunniesPayedMintCard'
 import {
   FileBunniesModal,
   HowMintModalBody,
@@ -104,7 +104,7 @@ const FileBunniesLayout = styled(PageLayout, {
   },
   '@sm': {
     paddingLR: '$3',
-    paddingTop: '84px',
+    paddingTop: '94px',
     paddingBottom: '27px',
   },
 })
@@ -131,11 +131,30 @@ const LeftBlock = styled('div', {
 
 const LeftTextBlock = styled('div', {
   ...textVariant('primary1').true,
-  background: 'rgba(255, 255, 255, 0.5)',
   borderRadius: '16px',
-  border: '1px solid $gray400',
   padding: '20px',
   backgroundBlendMode: 'overlay',
+  position: 'relative',
+  background: '#25254c',
+  border: '1px solid $gray400',
+  '&:before': {
+    content: '',
+    width: '100%',
+    height: '100%',
+    borderRadius: '16px',
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    zIndex: '1',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    mixBlendMode: 'overlay',
+  },
+  '@lg': {
+    background: '#515170',
+  },
+  '@sm': {
+    background: '#414163',
+  },
 })
 
 const LeftBlockTitle = styled('span', {
@@ -166,12 +185,53 @@ const LeftBlockText = styled('p', {
 })
 
 const ToolTipBlock = styled('div', {
-  background: 'rgba(255, 255, 255, 0.25)',
-  backgroundBlendMode: 'overlay',
   borderRadius: '12px',
   padding: '14px',
   display: 'flex',
   justifyContent: 'center',
+  position: 'relative',
+  background: '#353559',
+  '&:before': {
+    content: '',
+    width: '100%',
+    borderRadius: '12px',
+    height: '100%',
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    mixBlendMode: 'overlay',
+  },
+  '& *': {
+    zIndex: '2',
+  },
+  '@sm': {
+    background: '#414163 !important',
+  },
+  variants: {
+    last: {
+      true: {
+        background: 'linear-gradient(180deg, rgba(53,53,89,1) 0%, rgba(84,84,115,1) 100%)',
+        '@lg': {
+          background: 'linear-gradient(0deg, rgba(106,106,133,1) 0%, rgba(97,97,126,1) 100%)',
+        },
+      },
+    },
+    second: {
+      true: {
+        '@lg': {
+          background: '#5e5e7b',
+        },
+      },
+    },
+    first: {
+      true: {
+        '@lg': {
+          background: '#5b5b78',
+        },
+      },
+    },
+  },
 })
 
 const BottomBanner = styled('div', {
@@ -195,7 +255,6 @@ const CardsBlock = styled('div', {
 
 const FileBunniesSection = observer(() => {
   const { dialogStore } = useStores()
-  const { mint, modalProps, isLoading, freeMint, whiteList } = useFileBunniesMint()
 
   const rarityModalOpen = () => {
     dialogStore.openDialog({
@@ -227,76 +286,53 @@ const FileBunniesSection = observer(() => {
   }
 
   return (
-    <>
-      <FileBunniesSectionStyle>
-        <img className={'leftTopPl'} src={LeftTopPl} />
-        <img className={'leftBottomPl'} src={LeftBottomPl} />
-        <img className={'rightPl'} src={RightPl} />
-        <FileBunniesLayout>
-          <Title>
-            <img src={FileBunniesLogo} />
+    <FileBunniesSectionStyle>
+      <img className={'leftTopPl'} src={LeftTopPl} />
+      <img className={'leftBottomPl'} src={LeftBottomPl} />
+      <img className={'rightPl'} src={RightPl} />
+      <FileBunniesLayout>
+        <Title>
+          <img src={FileBunniesLogo} />
+          <span>
+            <span style={{ textDecoration: 'underline' }}>FileBunnies</span>
             <span>
-              <span style={{ textDecoration: 'underline' }}>FileBunnies</span>
-              <span>
-                {' '}
-                Minting
-              </span>
+              {' '}
+              Minting
             </span>
-          </Title>
-          <MainContent>
-            <LeftBlock>
-              <LeftTextBlock>
-                <LeftBlockTitle>
-                  The FileBunnies EFTs grants holders access to all ecosystem mints!
-                </LeftBlockTitle>
-                <LeftBlockText>
-                  FileBunnies holders will be granted exclusive
-                  access to all future NFT mints that occur
-                  on the FileMarket platform. This unique
-                  utility will allow the holder a White
-                  List spot for all content built on FileMarket.
-                </LeftBlockText>
-              </LeftTextBlock>
-              <ToolTipBlock>
-                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { rarityModalOpen() }}>FileBunnies Rarities</Txt>
-              </ToolTipBlock>
-              <ToolTipBlock>
-                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToWorkModalOpen() }}>How NFT with EFT works?</Txt>
-              </ToolTipBlock>
-              <ToolTipBlock>
-                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToMintModalOpen() }}>How to MINT FileBunnies?</Txt>
-              </ToolTipBlock>
-            </LeftBlock>
-            <CardsBlock>
-              <WhitelistCard
-                variant={'whitelist'}
-                rarityButtonProps={{
-                  onClick: () => { rarityModalOpen() },
-                }}
-                buttonProps={{
-                  isDisabled: isLoading || whiteList === '',
-                  onClick: () => { freeMint() },
-                  variant: 'free',
-                }}
-              />
-              <WhitelistCard
-                variant={'mint'}
-                rarityButtonProps={{
-                  onClick: () => { rarityModalOpen() },
-                }}
-                buttonProps={{
-                  disabled: isLoading,
-                  onClick: () => { mint() },
-                  variant: 'mint',
-                }}
-              />
-            </CardsBlock>
-          </MainContent>
-        </FileBunniesLayout>
-        <BottomBanner />
-      </FileBunniesSectionStyle>
-      <BaseModal {...modalProps} />
-    </>
+          </span>
+        </Title>
+        <MainContent>
+          <LeftBlock>
+            <LeftTextBlock>
+              <LeftBlockTitle>
+                The FileBunnies EFTs grants holders access to all ecosystem mints!
+              </LeftBlockTitle>
+              <LeftBlockText>
+                FileBunnies holders will be granted exclusive
+                access to all future NFT mints that occur
+                on the FileMarket platform. This unique
+                utility will allow the holder a White
+                List spot for all content built on FileMarket.
+              </LeftBlockText>
+            </LeftTextBlock>
+            <ToolTipBlock first>
+              <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { rarityModalOpen() }}>FileBunnies Rarities</Txt>
+            </ToolTipBlock>
+            <ToolTipBlock second>
+              <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToWorkModalOpen() }}>How NFT with EFT works?</Txt>
+            </ToolTipBlock>
+            <ToolTipBlock last>
+              <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToMintModalOpen() }}>How to MINT FileBunnies?</Txt>
+            </ToolTipBlock>
+          </LeftBlock>
+          <CardsBlock>
+            <FileBunniesFreeMintCard />
+            <FileBunniesPayedMintCard />
+          </CardsBlock>
+        </MainContent>
+      </FileBunniesLayout>
+      <BottomBanner />
+    </FileBunniesSectionStyle>
   )
 })
 

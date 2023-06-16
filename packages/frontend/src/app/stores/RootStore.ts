@@ -4,7 +4,7 @@ import { CollectionTokenListStore } from './CollectionTokenList/CollectionTokenL
 import { ConversionRateStore } from './Currency/ConversionRateStore'
 import { DialogStore } from './Dialog/DialogStore'
 import { ErrorStore } from './Error/ErrorStore'
-import { FileBunniesTokenStore } from './FileBunnies/FileBunniesTokenStore'
+import { FileBunniesTokenIdStore } from './FileBunnies/FileBunniesTokenIdStore'
 import { OrderStore } from './Order/OrderStore'
 import { OpenOrderListStore } from './OrderList/OrderListStore'
 import { PublicCollectionStore } from './PublicCollectionStore/PublicCollectionStore'
@@ -33,7 +33,7 @@ export class RootStore {
   publicCollectionStore: PublicCollectionStore
   conversionRateStore: ConversionRateStore
   whitelistStore: WhiteListStore
-  fileBunniesTokenStore: FileBunniesTokenStore
+  fileBunniesTokenStore: FileBunniesTokenIdStore
 
   constructor() {
     this.dialogStore = new DialogStore()
@@ -52,7 +52,7 @@ export class RootStore {
     this.publicCollectionStore = new PublicCollectionStore(this)
     this.conversionRateStore = new ConversionRateStore(this)
     this.whitelistStore = new WhiteListStore(this)
-    this.fileBunniesTokenStore = new FileBunniesTokenStore(this)
+    this.fileBunniesTokenStore = new FileBunniesTokenIdStore(this)
   }
 }
 
