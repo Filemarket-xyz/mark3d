@@ -125,6 +125,12 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
       header: {
         true: {
           background: '$blue500',
+          color: '$white',
+        },
+      },
+      blueBorder: {
+        true: {
+          border: '1px solid #0090FF',
         },
       },
       icon: {

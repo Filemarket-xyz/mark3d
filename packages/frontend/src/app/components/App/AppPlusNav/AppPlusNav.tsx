@@ -18,7 +18,12 @@ export const AppPlusNav: FC = () => {
   return (
     <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger>
-        <Button icon secondary small>
+        <Button
+          icon
+          secondary
+          small
+          blueBorder
+        >
           <img src={Logo} alt="plus" />
         </Button>
       </PopoverTrigger>
