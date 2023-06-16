@@ -14,12 +14,13 @@ export interface NavBarItemData {
   isLink?: boolean
   isMock?: boolean
 }
-
 export interface NavBarProps {
   brand?: ReactNode
   items?: NavBarItemData[]
   actions?: ReactNode
   mobileBp?: BreakpointsOptions
+  isTransparent?: boolean
+  noneBlurShadow?: boolean
 }
 
 const NavBarStyled = styled('nav', {
@@ -30,14 +31,27 @@ const NavBarStyled = styled('nav', {
   top: 0,
   left: 0,
   right: 0,
-  background: '$colors$blue500',
-  backdropFilter: 'blur(12.5px)',
   boxShadow: '$header',
-  color: '$blue900',
+  color: '$gray600 !important',
+  background: 'rgba(249, 249, 249, 0.75)',
+  backdropFilter: 'blur(14px)',
+  variants: {
+    isTransparent: {
+      true: {
+        background: 'none',
+        color: '$gray800 !important',
+      },
+    },
+    noneBlurShadow: {
+      true: {
+        backdropFilter: 'none',
+        boxShadow: 'none',
+      },
+    },
+  },
 })
 
 const horizontalGap = 30
-
 const NavBarHorizontalSpacer = styled('div', {
   height: '100%',
   display: 'flex',
@@ -47,29 +61,27 @@ const NavBarHorizontalSpacer = styled('div', {
   flexWrap: 'nowrap',
   gap: horizontalGap,
 }, cssShowHideIn)
-
 const ActionsContainer = styled('div', {
   display: 'flex',
   justifyContent: 'end',
   gap: horizontalGap,
   flexGrow: 1,
 })
-
 const NavBarVerticalSpacer = styled('div', {
   dflex: 'start',
   flexDirection: 'column',
   flexWrap: 'nowrap',
   gap: '$3',
 })
-
 const itemTo = (item: NavBarItemData) =>
   item.isMock ? '/abracadabra1337' : item.to
-
 export const NavBar: FC<NavBarProps> = ({
   brand,
   items,
   actions,
   mobileBp,
+  isTransparent,
+  noneBlurShadow,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { pathname } = useLocation()
@@ -79,7 +91,7 @@ export const NavBar: FC<NavBarProps> = ({
 
   return (
     <>
-      <NavBarStyled>
+      <NavBarStyled isTransparent={isTransparent} noneBlurShadow={noneBlurShadow}>
         <Container css={{ height: '100%' }}>
           <NavBarHorizontalSpacer>
             <NavBarToggle
@@ -97,6 +109,7 @@ export const NavBar: FC<NavBarProps> = ({
                     target="_blank"
                     hideIn={mobileBp}
                     mock={item.isMock}
+                    grayLight={isTransparent}
                   >
                     {item.label}
                   </NavBarItemLink>
@@ -107,6 +120,7 @@ export const NavBar: FC<NavBarProps> = ({
                     to={itemTo(item)}
                     hideIn={mobileBp}
                     mock={item.isMock}
+                    grayLight={isTransparent}
                   >
                     {item.label}
                   </NavBarItem>
@@ -122,6 +136,7 @@ export const NavBar: FC<NavBarProps> = ({
       {items && items.length > 0 && (
         <NavBarCollapse
           isOpen={isExpanded}
+          isTransparent={isTransparent}
         >
           <NavBarVerticalSpacer>
             {items.map((item, index) => (

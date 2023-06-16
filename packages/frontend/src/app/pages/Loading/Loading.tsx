@@ -9,6 +9,9 @@ const LoadingStyle = styled('div', {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  '& img': {
+    transform: 'scale(0.2)',
+  },
 })
 
 const Loading = () => {
