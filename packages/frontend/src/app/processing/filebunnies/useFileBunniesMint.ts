@@ -6,7 +6,6 @@ import { api } from '../../config/api'
 import { useAuth } from '../../hooks/useAuth'
 import { useCheckWhiteListStore } from '../../hooks/useCheckWhiteListStore'
 import { useStatusModal } from '../../hooks/useStatusModal'
-import { IRarityWl } from '../../stores/FileBunnies/FileBunniesTokenIdStore'
 import { fromCurrency } from '../../utils/web3'
 import { useFulfillOrder } from '../nft-interaction'
 
@@ -17,7 +16,7 @@ interface ISequencerReq {
 
 interface IGetSignWhiteList {
   address?: `0x${string}`
-  whiteList?: IRarityWl
+  whiteList?: string
 }
 
 export const useFileBunniesMint = () => {
@@ -91,8 +90,7 @@ export const useFileBunniesMint = () => {
 
   const { modalProps } = useStatusModal({
     statuses,
-    okMsg: 'Order fulfilled! Now wait until owner of the EFT transfers you hidden files. ' +
-      'After that, check the hidden files and finalize the transfer',
+    okMsg: 'Order is fulfilled! Now you need to wait 4 minutes until it appears in your profile and you can continue the actions',
     loadingMsg: 'Fulfilling order',
   })
 

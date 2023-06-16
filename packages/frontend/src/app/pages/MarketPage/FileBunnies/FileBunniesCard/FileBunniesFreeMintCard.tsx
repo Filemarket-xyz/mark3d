@@ -30,7 +30,7 @@ const FileBunniesFreeMintCard = () => {
         buttonProps={{
           isDisabled: isLoading || whiteList === '',
           onClick: () => { freeMint() },
-          variant: 'free',
+          variant: whiteList === '' ? 'notWl' : 'free',
         }}
       />
       <BaseModal {...modalProps} />

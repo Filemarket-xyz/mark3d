@@ -28,9 +28,9 @@ const FileBunniesPayedMintCard = () => {
           onClick: () => { rarityModalOpen() },
         }}
         buttonProps={{
-          disabled: isLoading,
           onClick: () => { payedMint() },
           variant: 'mint',
+          isDisabled: isLoading,
         }}
       />
       <BaseModal {...modalProps} />
