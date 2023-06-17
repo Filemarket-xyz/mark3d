@@ -7,7 +7,7 @@ import { useCanUnlock } from '../processing/SeedProvider/useCanUnlock'
 import { useStores } from './useStores'
 
 export const useAuth = () => {
-  const { isConnected, address } = useAccount()
+  const { address } = useAccount()
   const { dialogStore } = useStores()
   const { open: openWeb3Modal } = useWeb3Modal()
   const canUnlock = useCanUnlock(address)
