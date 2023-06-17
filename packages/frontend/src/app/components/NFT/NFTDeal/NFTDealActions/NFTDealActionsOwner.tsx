@@ -62,21 +62,21 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
         <ButtonApproveTransfer tokenFullId={tokenFullId} transfer={transfer} />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canFinalize(transfer)}>
-        <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={ownerStatusChanged} />
+        <ButtonFinalizeTransfer tokenFullId={tokenFullId} callBack={ownerStatusChanged} />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canCancelOrder(transfer)}>
-        <ButtonCancelOrder tokenFullId={tokenFullId} callback={reFetchOrder} />
+        <ButtonCancelOrder tokenFullId={tokenFullId} callBack={reFetchOrder} />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canCancel(transfer)}>
-        <ButtonCancelTransfer tokenFullId={tokenFullId} callback={() => { funcTimeout(refetch); reFetchOrder?.() }} />
+        <ButtonCancelTransfer tokenFullId={tokenFullId} callBack={() => { funcTimeout(refetch); reFetchOrder?.() }} />
       </HideAction>
       <HideAction hide={!!transfer || !isApprovedExchange}>
-        <ButtonPlaceOrder tokenFullId={tokenFullId} callback={reFetchOrder} />
+        <ButtonPlaceOrder tokenFullId={tokenFullId} callBack={reFetchOrder} />
       </HideAction>
       <HideAction hide={!!transfer || isApprovedExchange}>
         <ButtonApproveExchange
           tokenFullId={tokenFullId}
-          callback={refetch}
+          callBack={refetch}
         />
       </HideAction>
       <HideAction hide={!!transfer}>

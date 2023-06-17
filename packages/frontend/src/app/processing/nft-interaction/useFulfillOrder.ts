@@ -28,9 +28,10 @@ interface IUseFulFillOrder {
   collectionAddress?: `0x${string}`
   tokenId?: string
   signature?: string
+  callBack?: () => void
 }
 
-export function useFulfillOrder() {
+export function useFulfillOrder({ callBack }: IUseFulFillOrder = {}) {
   const { contract, signer } = useExchangeContract()
   const { address } = useAccount()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt, IUseFulFillOrder>()
@@ -59,7 +60,7 @@ export function useFulfillOrder() {
         gasPrice: mark3dConfig.gasPrice,
       },
     )
-  }), [contract, address, wrapPromise, signer])
+  }, callBack), [contract, address, wrapPromise, signer])
 
   return { ...statuses, fulfillOrder }
 }

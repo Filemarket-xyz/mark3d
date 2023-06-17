@@ -8,11 +8,11 @@ import BaseModal from '../../../../Modal/Modal'
 
 export interface ButtonFinalizeTransferProps {
   tokenFullId: TokenFullId
-  callback?: () => void
+  callBack?: () => void
 }
 
-export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenFullId, callback }) => {
-  const { finalizeTransfer, ...statuses } = useFinalizeTransfer(tokenFullId)
+export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenFullId, callBack }) => {
+  const { finalizeTransfer, ...statuses } = useFinalizeTransfer({ ...tokenFullId, callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -29,8 +29,7 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
         borderRadiusSecond
         isDisabled={isLoading}
         onPress={async () => {
-          await finalizeTransfer()
-          callback?.()
+          await finalizeTransfer(tokenFullId)
         }}
       >
         Send payment

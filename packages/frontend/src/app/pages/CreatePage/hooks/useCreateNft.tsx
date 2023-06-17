@@ -40,11 +40,14 @@ export const useCreateNft = () => {
     setIsLoading,
     setResult,
     statuses: { error, isLoading, result },
-  } = useMintNFT(formToTransfer, options)
+  } = useMintNFT({ ...formToTransfer })
 
   useAfterDidMountEffect(() => {
     console.log(formToTransfer.description)
-    mintNFT()
+    mintNFT({
+      ...formToTransfer,
+      ...options,
+    })
   }, [formToTransfer, options])
 
   return {

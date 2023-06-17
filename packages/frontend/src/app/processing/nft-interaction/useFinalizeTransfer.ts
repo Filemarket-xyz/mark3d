@@ -4,14 +4,19 @@ import { useCallback } from 'react'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
-import { TokenFullId } from '../types'
 import { assertCollection, assertContract, assertSigner, assertTokenId, callContract } from '../utils'
 
-export function useFinalizeTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
+interface IFinalizeTransfer {
+  collectionAddress?: string
+  tokenId?: string
+  callBack?: () => void
+}
 
-  const finalizeTransfer = useCallback(wrapPromise(async () => {
+export function useFinalizeTransfer({ collectionAddress, callBack }: IFinalizeTransfer = {}) {
+  const { contract, signer } = useCollectionContract(collectionAddress)
+  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IFinalizeTransfer>()
+
+  const finalizeTransfer = useCallback(wrapPromise(async ({ tokenId }: IFinalizeTransfer) => {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     assertCollection(collectionAddress)
@@ -22,7 +27,7 @@ export function useFinalizeTransfer({ collectionAddress, tokenId }: Partial<Toke
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }), [contract, signer, wrapPromise])
+  }, callBack), [contract, signer, wrapPromise])
 
   return {
     ...statuses,

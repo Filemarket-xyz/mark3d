@@ -63,7 +63,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
         <ButtonReportFraudTransfer tokenFullId={tokenFullId} />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canCancel(transfer)}>
-        <ButtonCancelTransfer tokenFullId={tokenFullId} callback={reFetchOrder} />
+        <ButtonCancelTransfer tokenFullId={tokenFullId} callBack={reFetchOrder} />
       </HideAction>
     </>
   )

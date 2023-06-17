@@ -8,14 +8,14 @@ import BaseModal from '../../../../Modal/Modal'
 
 export interface ButtonSetPublicKeyTransferProps {
   tokenFullId: TokenFullId
-  callback?: () => void
+  callBack?: () => void
 }
 
 export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = ({
   tokenFullId,
-  callback,
+  callBack,
 }) => {
-  const { setPublicKey, ...statuses } = useSetPublicKey(tokenFullId)
+  const { setPublicKey, ...statuses } = useSetPublicKey({ ...tokenFullId, callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -24,8 +24,7 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
   })
 
   const onPress = async () => {
-    await setPublicKey()
-    callback?.()
+    await setPublicKey(tokenFullId)
   }
 
   return (
