@@ -8,11 +8,11 @@ import BaseModal from '../../../../Modal/Modal'
 
 export interface ButtonApproveExchangeProps {
   tokenFullId: TokenFullId
-  callback?: () => void
+  callBack?: () => void
 }
 
-export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callback }) => {
-  const { approveExchange, ...statuses } = useApproveExchange(tokenFullId)
+export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callBack }) => {
+  const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId, callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -29,8 +29,7 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
         borderRadiusSecond
         isDisabled={isLoading}
         onPress={async () => {
-          await approveExchange()
-          callback?.()
+          await approveExchange(tokenFullId)
         }}
       >
         Prepare for sale
