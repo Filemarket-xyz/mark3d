@@ -5,7 +5,7 @@ import { useDisconnect } from 'wagmi'
 import { styled } from '../../../../styles'
 import { useCloseIfNotConnected } from '../../../hooks/useCloseIfNotConnected'
 import { useMediaMui } from '../../../hooks/useMediaMui'
-import { Modal, ModalBody, ModalIcon, ModalTitle } from '../../../UIkit/Modal/Modal'
+import { FWIcon, Modal, ModalBody, ModalTitle } from '../../../UIkit/Modal/Modal'
 import { AppDialogProps } from '../../../utils/dialog'
 import { UnlockSection } from '../ConnectFileWalletDialog/sections/UnlockSection'
 
@@ -38,7 +38,7 @@ export const UnlockFWDialog = observer(({ open, onClose }: AppDialogProps<{}>) =
       >
         <ModalTitle style={{ marginBottom: '0' }}>
           {' '}
-          <ModalIcon />
+          <FWIcon />
           {' '}
           Connect FileWallet
         </ModalTitle>

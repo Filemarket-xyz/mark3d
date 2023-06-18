@@ -114,7 +114,7 @@ interface MintModalProps {
   isLoading?: boolean
 }
 
-export default function BaseModal({
+export default function MintModal({
   handleClose,
   open,
   body,

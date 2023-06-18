@@ -1,22 +1,24 @@
 import { Modal } from '@nextui-org/react'
 import { FC } from 'react'
 
+import { useHookToCallback } from '../../../../../hooks/useHookToCallback'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useInitTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import { ModalTitle } from '../../../../../UIkit/Modal/Modal'
-import BaseModal from '../../../../Modal/Modal'
+import MintModal from '../../../../Modal/Modal'
 import { TransferForm } from '../../TransferForm'
 
 export interface ButtonInitTransferProps {
   tokenFullId: TokenFullId
+  callback?: () => void
 }
 
-export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId }) => {
+export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, callback }) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
-  const { initTransfer, ...statuses } = useInitTransfer(tokenFullId)
+  const { initTransfer, ...statuses } = useHookToCallback(useInitTransfer, 'initTransfer', { callbackOk: callback })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -36,15 +38,12 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId })
           <TransferForm
             onSubmit={form => {
               closeModal()
-              initTransfer({
-                tokenId: tokenFullId.tokenId,
-                to: form.address,
-              })
+              initTransfer(tokenFullId, form.address)
             }}
           />
         </Modal.Body>
       </Modal>
-      <BaseModal {...modalProps} />
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth

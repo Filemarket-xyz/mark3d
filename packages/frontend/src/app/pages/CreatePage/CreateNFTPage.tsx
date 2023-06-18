@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom'
 import { useAccount } from 'wagmi'
 
 import { styled } from '../../../styles'
-import BaseModal, {
+import MintModal, {
   ErrorBody,
   extractMessageFromError,
   InProgressBody,
@@ -274,7 +274,7 @@ export const CreateNFTPage: React.FC = observer(() => {
 
   return (
     <>
-      <BaseModal
+      <MintModal
         body={modalBody}
         open={modalOpen}
         isError={!!nftError}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
 import { styled } from '../../../styles'
-import BaseModal, {
+import MintModal, {
   ErrorBody,
   extractMessageFromError,
   InProgressBody,
@@ -162,7 +162,7 @@ export default function CreateCollectionPage() {
 
   return (
     <>
-      <BaseModal
+      <MintModal
         body={modalBody}
         open={modalOpen}
         isError={!!error}

@@ -17,7 +17,7 @@ export const AppNav: FC = () => {
   const scrollY = useScrollWindow()
 
   const isMarketPage: boolean = useMemo(() => {
-    return location.pathname.includes('/market')
+    return location.pathname.includes('/market25')
   }, [location.pathname])
 
   const isTransparent = useMemo(() => {
@@ -41,7 +41,7 @@ export const AppNav: FC = () => {
 
   return (
     <NavBar
-      noneBlurShadow={noneBlurShadow && isMarketPage}
+      noneBlurShadow
       isTransparent={isTransparent && isMarketPage}
       mobileBp={mobileBp}
       brand={<AppLogoButton to='/' hideNameIn={mobileBp} />}

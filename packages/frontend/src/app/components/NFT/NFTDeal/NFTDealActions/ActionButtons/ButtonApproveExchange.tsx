@@ -4,15 +4,15 @@ import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useApproveExchange } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
-import BaseModal from '../../../../Modal/Modal'
+import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonApproveExchangeProps {
   tokenFullId: TokenFullId
-  callBack?: () => void
+  callback?: () => void
 }
 
-export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callBack }) => {
-  const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId, callBack })
+export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callback }) => {
+  const { approveExchange, ...statuses } = useApproveExchange(tokenFullId)
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -22,14 +22,15 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
 
   return (
     <>
-      <BaseModal {...modalProps} />
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth
         borderRadiusSecond
         isDisabled={isLoading}
         onPress={async () => {
-          await approveExchange(tokenFullId)
+          await approveExchange()
+          callback?.()
         }}
       >
         Prepare for sale

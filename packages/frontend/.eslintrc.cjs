@@ -55,13 +55,13 @@ module.exports = {
       }
     }],
     'react/jsx-first-prop-new-line': ['warn', 'multiline-multiprop'],
-    // 'react/jsx-sort-props': ['warn', {
-    //   callbacksLast: true,
-    //   shorthandFirst: true,
-    //   multiline: 'last',
-    //   reservedFirst: true,
-    //   noSortAlphabetically: true
-    // }],
+    'react/jsx-sort-props': ['warn', {
+      callbacksLast: true,
+      shorthandFirst: true,
+      multiline: 'last',
+      reservedFirst: true,
+      noSortAlphabetically: true
+    }],
     'react/jsx-indent': ['warn', 2, {
       indentLogicalExpressions: true
     }],
