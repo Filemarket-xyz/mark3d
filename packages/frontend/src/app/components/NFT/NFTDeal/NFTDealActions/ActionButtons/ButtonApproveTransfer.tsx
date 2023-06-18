@@ -10,11 +10,11 @@ import BaseModal from '../../../../Modal/Modal'
 export interface ButtonApproveTransferProps {
   tokenFullId: TokenFullId
   transfer?: Transfer
-  callback?: () => void
+  callBack?: () => void
 }
 
-export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFullId, transfer, callback }) => {
-  const { approveTransfer, ...statuses } = useApproveTransfer(tokenFullId, transfer?.publicKey)
+export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFullId, transfer, callBack }) => {
+  const { approveTransfer, ...statuses } = useApproveTransfer({ ...tokenFullId, callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -31,8 +31,10 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
         borderRadiusSecond
         isDisabled={isLoading}
         onPress={async () => {
-          await approveTransfer()
-          callback?.()
+          await approveTransfer({
+            tokenId: tokenFullId.tokenId,
+            publicKey: transfer?.publicKey,
+          })
         }}
       >
         Transfer hidden file

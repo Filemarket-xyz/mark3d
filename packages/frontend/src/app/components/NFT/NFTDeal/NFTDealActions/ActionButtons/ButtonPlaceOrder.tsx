@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { useHookToCallback } from '../../../../../hooks/useHookToCallback'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { usePlaceOrder } from '../../../../../processing'
@@ -12,12 +11,12 @@ import { OrderForm, OrderFormValue } from '../../OrderForm'
 
 export interface ButtonPlaceOrderProps {
   tokenFullId: TokenFullId
-  callback?: () => void
+  callBack?: () => void
 }
 
-export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId, callback }) => {
+export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId, callBack }) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
-  const { placeOrder, ...statuses } = useHookToCallback(usePlaceOrder, 'placeOrder', { callbackOk: callback })
+  const { placeOrder, ...statuses } = usePlaceOrder({ ...tokenFullId, callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -27,7 +26,10 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId,
 
   const onSubmit = ({ price }: OrderFormValue) => {
     closeModal()
-    placeOrder(tokenFullId, price)
+    placeOrder({
+      ...tokenFullId,
+      price,
+    })
   }
 
   return (

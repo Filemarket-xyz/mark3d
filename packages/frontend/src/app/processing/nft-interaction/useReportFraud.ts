@@ -6,17 +6,22 @@ import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { TokenFullId } from '../types'
 import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, callContract } from '../utils'
 
-export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
+interface IUseReportFraud {
+  collectionAddress?: string
+  tokenId?: string
+  callBack?: () => void
+}
+
+export function useReportFraud({ collectionAddress, callBack }: IUseReportFraud = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
+  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IUseReportFraud>()
 
   const factory = useHiddenFileProcessorFactory()
 
-  const reportFraud = useCallback(wrapPromise(async () => {
+  const reportFraud = useCallback(wrapPromise(async ({ collectionAddress, tokenId }) => {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     assertAccount(address)
@@ -32,7 +37,7 @@ export function useReportFraud({ collectionAddress, tokenId }: Partial<TokenFull
       bufferToEtherHex(privateKey),
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }), [contract, signer, address, wrapPromise])
+  }, callBack), [contract, signer, address, wrapPromise])
 
   return {
     ...statuses,
