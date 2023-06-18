@@ -30,7 +30,6 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
         isDisabled={isLoading}
         onPress={async () => {
           await approveExchange(tokenFullId)
-          callback?.()
         }}
       >
         Prepare for sale

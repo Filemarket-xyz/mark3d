@@ -3,12 +3,12 @@ import { useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { api } from '../../config/api'
-import { useStores } from '../../hooks'
+import { useStatusState } from '../../hooks'
 import { useAuth } from '../../hooks/useAuth'
 import { useCheckWhiteListStore } from '../../hooks/useCheckWhiteListStore'
 import { useComputedMemo } from '../../hooks/useComputedMemo'
 import { useStatusModal } from '../../hooks/useStatusModal'
-import { errorResponseToMessage } from '../../utils/error'
+import { wrapRequest } from '../../utils/error/wrapRequest'
 import { fromCurrency } from '../../utils/web3'
 import { useFulfillOrder } from '../nft-interaction'
 
@@ -24,39 +24,34 @@ interface IGetSignWhiteList {
 
 export const useFileBunniesMint = () => {
   const { address, isConnected } = useAccount()
-  const { errorStore } = useStores()
   const whiteListStore = useCheckWhiteListStore(address)
   const { connect } = useAuth()
   const [isLoadingReq, setIsLoadingReq] = useState<boolean>(false)
   const { fulfillOrder, ...statuses } = useFulfillOrder()
 
+  const { wrapPromise, statuses: statusesReq } = useStatusState()
+
   const collectionAddressReq = async () => {
-    const response = await api.collections.fullFileBinniesList().catch((e) => {
-      errorStore.showError(errorResponseToMessage(e.error))
-    })
+    const response = await wrapRequest(async () => api.collections.fullFileBunniesList())
 
     return response?.data.collection?.address
   }
 
   const sequencerReq = async ({ suffix, collectionAddress }: ISequencerReq) => {
     if (!(collectionAddress && suffix)) return
-    const tokenResp = await api.sequencer.acquireDetail(collectionAddress, { suffix }).catch((e) => {
-      errorStore.showError(errorResponseToMessage(e.error))
-    })
+    const tokenResp = await wrapRequest(async () => api.sequencer.acquireDetail(collectionAddress, { suffix }))
 
     return tokenResp?.data.tokenId
   }
 
   const getSignWhiteList = async({ whiteList, address }: IGetSignWhiteList) => {
     if (!(whiteList && address)) return
-    const sign = await api.collections.fileBunniesWhitelistSignDetail(whiteList, address).catch((e) => {
-      errorStore.showError(errorResponseToMessage(e.error))
-    })
+    const sign = await wrapRequest(async () => api.collections.fileBunniesWhitelistSignDetail(whiteList, address))
 
     return sign?.data.signature
   }
 
-  const payedMint = async () => {
+  const payedMint = wrapPromise(async () => {
     if (!isConnected) {
       connect()
 
@@ -71,9 +66,9 @@ export const useFileBunniesMint = () => {
       price: fromCurrency(0.01),
     })
     setIsLoadingReq(false)
-  }
+  })
 
-  const freeMint = async () => {
+  const freeMint = wrapPromise(async () => {
     if (!isConnected) {
       connect()
 
@@ -90,7 +85,7 @@ export const useFileBunniesMint = () => {
       signature: sign,
     })
     setIsLoadingReq(false)
-  }
+  })
 
   const { isLoading: isLoadingFulFill } = statuses
 
@@ -101,7 +96,10 @@ export const useFileBunniesMint = () => {
   }, [whiteListStore.isLoading, isLoadingReq, isLoadingFulFill])
 
   const { modalProps } = useStatusModal({
-    statuses,
+    statuses: {
+      ...statuses,
+      error: statuses.error ?? statusesReq.error,
+    },
     okMsg: 'Order is fulfilled! Now you need to wait 4 minutes until it appears in your profile and you can continue the actions',
     loadingMsg: 'Fulfilling order',
   })
