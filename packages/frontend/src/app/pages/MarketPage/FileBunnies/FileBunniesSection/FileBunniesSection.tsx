@@ -113,7 +113,7 @@ const FileBunniesSection = observer(() => {
                 }}
                 buttonProps={{
                   isDisabled: isLoading || whiteList === '',
-                  onClick: () => { freeMint() },
+                  onClick: () => { freeMint([]) },
                   variant: whiteList === '' ? 'notWl' : 'free',
                 }}
               />
@@ -123,7 +123,7 @@ const FileBunniesSection = observer(() => {
                   onClick: () => { rarityModalOpen() },
                 }}
                 buttonProps={{
-                  onClick: () => { payedMint() },
+                  onClick: () => { payedMint([]) },
                   variant: 'mint',
                   isDisabled: isLoading,
                 }}

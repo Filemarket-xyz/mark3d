@@ -32,7 +32,7 @@ export const useFileBunniesMint = () => {
   const { wrapPromise, statuses: statusesReq } = useStatusState()
 
   const collectionAddressReq = async () => {
-    const response = await wrapRequest(async () => api.collections.fullFileBinniesList())
+    const response = await wrapRequest(async () => api.collections.fullFileBunniesList())
 
     return response?.data.collection?.address
   }
