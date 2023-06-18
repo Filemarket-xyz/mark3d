@@ -6,20 +6,20 @@ import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useFulfillOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
-import BaseModal from '../../../../Modal/Modal'
+import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonFulfillOrderProps {
   tokenFullId: TokenFullId
   order?: Order
-  callBack?: () => void
+  callback?: () => void
 }
 
 export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
   tokenFullId,
   order,
-  callBack,
+  callback,
 }) => {
-  const { fulfillOrder, ...statuses } = useFulfillOrder({ callBack })
+  const { fulfillOrder, ...statuses } = useFulfillOrder(tokenFullId, order?.price)
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -29,15 +29,13 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
   })
 
   const onPress = async () => {
-    await fulfillOrder({
-      ...tokenFullId,
-      price: order?.price,
-    })
+    await fulfillOrder()
+    callback?.()
   }
 
   return (
     <>
-      <BaseModal {...modalProps} />
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth

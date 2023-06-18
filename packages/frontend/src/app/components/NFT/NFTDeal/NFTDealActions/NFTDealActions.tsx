@@ -5,7 +5,7 @@ import { Order, Transfer } from '../../../../../swagger/Api'
 import { useStatusModal } from '../../../../hooks/useStatusModal'
 import { useIsOwner } from '../../../../processing'
 import { TokenFullId } from '../../../../processing/types'
-import BaseModal from '../../../Modal/Modal'
+import MintModal from '../../../Modal/Modal'
 import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
 import { NFTDealActionOwner } from './NFTDealActionsOwner'
 
@@ -48,7 +48,7 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   })
 
   if (error) {
-    return <BaseModal {...modalProps} />
+    return <MintModal {...modalProps} />
   }
 
   if (isOwner) {

@@ -2,27 +2,26 @@ import { useCallback, useState } from 'react'
 
 import { stringifyError } from '../utils/error'
 
-export function useStatusState<ResultType, Arguments extends any = void>() {
+export function useStatusState<ResultType>() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string>()
   const [result, setResult] = useState<ResultType>()
 
-  const wrapPromise = useCallback((call: (args: Arguments) => Promise<ResultType>, callBack?: () => void) => {
-    return async (args: Arguments) => {
-      setIsLoading(true)
-      setError(undefined)
+  const wrapPromise = useCallback((call: () => Promise<ResultType>) => {
+    return async () => {
       setResult(undefined)
+      setError(undefined)
+      setIsLoading(true)
       try {
-        const result = await call(args)
+        const result = await call()
         setIsLoading(false)
         setResult(result)
-        callBack?.()
       } catch (err) {
-        setIsLoading(false)
         setError(stringifyError(err))
+        setIsLoading(false)
       }
     }
-  }, [])
+  }, [setIsLoading, setError, setResult])
 
   return {
     statuses: {

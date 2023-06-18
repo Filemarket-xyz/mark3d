@@ -1,9 +1,8 @@
-import { PressEvent } from '@react-types/shared/src/events'
 import React, { FC, useEffect } from 'react'
 
 import { styled } from '../../../../../styles'
 import { HiddenFileMetaData } from '../../../../../swagger/Api'
-import { BaseModal, FileButton, ProtectedStamp } from '../../../../components'
+import { FileButton, MintModal, ProtectedStamp } from '../../../../components'
 import { filenameToExtension } from '../../../../components/MarketCard/helper/fileToType'
 import { useStatusState } from '../../../../hooks'
 import { HiddenFileDownload } from '../../../../hooks/useHiddenFilesDownload'
@@ -53,7 +52,7 @@ interface FileInfoSectionProps {
 }
 
 const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHiddenFiles, filesMeta }) => {
-  const { statuses, wrapPromise } = useStatusState<boolean | void, PressEvent>()
+  const { statuses, wrapPromise } = useStatusState()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'File decrypted and download started',
@@ -77,7 +76,7 @@ const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHidd
 
   return (
     <>
-      <BaseModal {...modalProps} />
+      <MintModal {...modalProps} />
       <GridBlock>
         <FileInfoSectionStyle>
           <FileInfoSectionTitle>Hidden file</FileInfoSectionTitle>

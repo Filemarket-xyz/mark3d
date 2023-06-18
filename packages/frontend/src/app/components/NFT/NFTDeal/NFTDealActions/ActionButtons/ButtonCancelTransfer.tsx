@@ -4,15 +4,15 @@ import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useCancelTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
-import BaseModal from '../../../../Modal/Modal'
+import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonCancelTransferProps {
   tokenFullId: TokenFullId
-  callBack?: () => void
+  callback?: () => void
 }
 
-export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullId, callBack }) => {
-  const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId, callBack })
+export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullId, callback }) => {
+  const { cancelTransfer, ...statuses } = useCancelTransfer(tokenFullId)
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -22,14 +22,15 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullI
 
   return (
     <>
-      <BaseModal {...modalProps} />
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth
         borderRadiusSecond
         isDisabled={isLoading}
         onPress={async () => {
-          await cancelTransfer(tokenFullId)
+          await cancelTransfer()
+          callback?.()
         }}
       >
         Cancel deal

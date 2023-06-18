@@ -1,7 +1,6 @@
 
 import { Tooltip } from '@nextui-org/react'
 import React, { MouseEventHandler, PropsWithChildren, ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 import { Flex } from '../../../Flex'
 import { Txt } from '../../../Txt'
@@ -42,10 +41,8 @@ export const NftCardBase: React.FC<NftCardProps> = ({
   children,
   button,
 }) => {
-  const navigate = useNavigate()
-
   return (
-    <StyledCard onClick={() => { navigate(to) }} className={className}>
+    <StyledCard to={to} className={className}>
       <StyledCardBorder>
         <StyledCardInner>
           <CardImg src={imgSrc}>

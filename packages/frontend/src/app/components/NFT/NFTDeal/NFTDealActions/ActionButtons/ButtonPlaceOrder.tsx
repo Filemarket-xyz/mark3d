@@ -1,22 +1,23 @@
 import React from 'react'
 
+import { useHookToCallback } from '../../../../../hooks/useHookToCallback'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { usePlaceOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import { Modal, ModalBody, ModalTitle } from '../../../../../UIkit/Modal/Modal'
-import BaseModal from '../../../../Modal/Modal'
+import MintModal from '../../../../Modal/Modal'
 import { OrderForm, OrderFormValue } from '../../OrderForm'
 
 export interface ButtonPlaceOrderProps {
   tokenFullId: TokenFullId
-  callBack?: () => void
+  callback?: () => void
 }
 
-export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId, callBack }) => {
+export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId, callback }) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
-  const { placeOrder, ...statuses } = usePlaceOrder({ ...tokenFullId, callBack })
+  const { placeOrder, ...statuses } = useHookToCallback(usePlaceOrder, 'placeOrder', { callbackOk: callback })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -26,10 +27,7 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId,
 
   const onSubmit = ({ price }: OrderFormValue) => {
     closeModal()
-    placeOrder({
-      ...tokenFullId,
-      price,
-    })
+    placeOrder(tokenFullId, price)
   }
 
   return (
@@ -48,7 +46,7 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId,
           />
         </ModalBody>
       </Modal>
-      <BaseModal {...modalProps} />
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth

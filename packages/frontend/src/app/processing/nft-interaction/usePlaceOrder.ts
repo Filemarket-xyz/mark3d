@@ -5,15 +5,9 @@ import { useCallback } from 'react'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useExchangeContract } from '../contracts'
+import { TokenFullId } from '../types'
 import { assertCollection, assertContract, assertSigner, assertTokenId } from '../utils'
 import { callContract } from '../utils/error'
-
-interface IPlaceOrder {
-  collectionAddress?: string
-  tokenId?: string
-  price?: BigNumberish
-  callBack?: () => void
-}
 
 /**
  * Calls Mark3dExchange contract to place an order
@@ -21,12 +15,10 @@ interface IPlaceOrder {
  * @param tokenId assigned to a token by the mint function
  * @param price must be in wei (without floating point)
  */
-
-export function usePlaceOrder({ callBack }: IPlaceOrder = {}) {
+export function usePlaceOrder({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, price?: BigNumberish) {
   const { contract, signer } = useExchangeContract()
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt | undefined, IPlaceOrder>()
-
-  const placeOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId, price }: IPlaceOrder) => {
+  const { wrapPromise, statuses } = useStatusState<ContractReceipt | undefined>()
+  const placeOrder = useCallback(wrapPromise(async () => {
     assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
     assertCollection(collectionAddress)
@@ -41,7 +33,7 @@ export function usePlaceOrder({ callBack }: IPlaceOrder = {}) {
       constants.AddressZero,
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }, callBack), [contract, signer, wrapPromise])
+  }), [contract, signer, wrapPromise, collectionAddress, tokenId, price])
 
   return {
     ...statuses,

@@ -76,7 +76,7 @@ export const StyledCard = styled('div', {
   cursor: 'pointer',
   height: '100%',
   minHeight: 475,
-  width: 275,
+  minWidth: 275,
   position: 'relative',
   zIndex: 1,
   borderRadius: 16,
@@ -93,10 +93,6 @@ export const StyledCard = styled('div', {
   [`&:hover ${StyledDescription.selector}`]: {
     transition: 'opacity 0.5s',
     opacity: 1,
-  },
-  '@sm': {
-    width: '100%',
-    maxWidth: '400px',
   },
 })
 

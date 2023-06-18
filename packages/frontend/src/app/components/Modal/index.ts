@@ -1,2 +1,2 @@
 export * from './InfoModal'
-export { default as BaseModal } from './Modal'
+export { default as MintModal } from './Modal'

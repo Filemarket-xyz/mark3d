@@ -4,15 +4,15 @@ import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useCancelOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
-import BaseModal from '../../../../Modal/Modal'
+import MintModal from '../../../../Modal/Modal'
 
 export interface ButtonCancelOrderProps {
   tokenFullId: TokenFullId
-  callBack?: () => void
+  callback?: () => void
 }
 
-export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, callBack }) => {
-  const { cancelOrder, ...statuses } = useCancelOrder({ callBack })
+export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, callback }) => {
+  const { cancelOrder, ...statuses } = useCancelOrder(tokenFullId)
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -22,14 +22,15 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, cal
 
   return (
     <>
-      <BaseModal {...modalProps} />
+      <MintModal {...modalProps} />
       <Button
         primary
         fullWidth
         borderRadiusSecond
         isDisabled={isLoading}
         onPress={async () => {
-          await cancelOrder(tokenFullId)
+          await cancelOrder()
+          callback?.()
         }}
       >
         Cancel order
