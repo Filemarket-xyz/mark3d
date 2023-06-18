@@ -31,10 +31,10 @@ export const useCreateCollection = () => {
     setError,
     setIsLoading,
     mintCollection,
-  } = useMintCollection(formToTransfer)
+  } = useMintCollection()
 
   useAfterDidMountEffect(() => {
-    mintCollection()
+    mintCollection(formToTransfer)
   }, [formToTransfer])
 
   return {

@@ -6,6 +6,7 @@ export function useCanUnlock(account: string | undefined): boolean {
   const [canUnlock, setCanUnlock] = useState(false)
   const { seedProvider } = useSeedProvider(account)
   const updateCanUnlock = useCallback(() => {
+    console.log(seedProvider?.canUnlock() || false)
     setCanUnlock(seedProvider?.canUnlock() || false)
   }, [setCanUnlock, seedProvider])
   useEffect(() => {

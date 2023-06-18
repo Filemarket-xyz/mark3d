@@ -4,14 +4,19 @@ import { useCallback } from 'react'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
-import { TokenFullId } from '../types'
 import { assertCollection, assertContract, assertSigner, assertTokenId, callContract } from '../utils'
 
-export function useCancelTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
+interface IUseCancelTransfer {
+  collectionAddress?: string
+  tokenId?: string
+  callBack?: () => void
+}
 
-  const cancelTransfer = useCallback(wrapPromise(async () => {
+export function useCancelTransfer({ collectionAddress, callBack }: IUseCancelTransfer = {}) {
+  const { contract, signer } = useCollectionContract(collectionAddress)
+  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IUseCancelTransfer>()
+
+  const cancelTransfer = useCallback(wrapPromise(async ({ collectionAddress, tokenId }) => {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     assertCollection(collectionAddress)
@@ -22,7 +27,7 @@ export function useCancelTransfer({ collectionAddress, tokenId }: Partial<TokenF
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }), [contract, signer, wrapPromise])
+  }, callBack), [contract, signer, wrapPromise])
 
   return {
     ...statuses,

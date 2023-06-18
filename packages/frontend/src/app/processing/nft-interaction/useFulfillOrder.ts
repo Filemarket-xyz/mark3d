@@ -7,8 +7,14 @@ import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useExchangeContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { TokenFullId } from '../types'
-import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, callContract } from '../utils'
+import {
+  assertAccount, assertCollection,
+  assertContract,
+  assertSigner,
+  assertTokenId,
+  bufferToEtherHex,
+  callContract,
+} from '../utils'
 
 /**
  * Fulfills an existing order.
@@ -16,19 +22,25 @@ import { assertAccount, assertCollection, assertContract, assertSigner, assertTo
  * @param tokenId assigned to a token by the mint function
  * @param price an integer price
  */
-export function useFulfillOrder(
-  { collectionAddress, tokenId }: Partial<TokenFullId> = {},
-  price?: BigNumberish,
-) {
+
+interface IUseFulFillOrder {
+  price?: BigNumberish
+  collectionAddress?: string
+  tokenId?: string
+  signature?: string
+  callBack?: () => void
+}
+
+export function useFulfillOrder({ callBack }: IUseFulFillOrder = {}) {
   const { contract, signer } = useExchangeContract()
   const { address } = useAccount()
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
+  const { wrapPromise, statuses } = useStatusState<ContractReceipt, IUseFulFillOrder>()
   const factory = useHiddenFileProcessorFactory()
 
-  const fulfillOrder = useCallback(wrapPromise(async () => {
+  const fulfillOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId, price, signature }) => {
+    assertCollection(collectionAddress)
     assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
-    assertCollection(collectionAddress)
     assertTokenId(tokenId)
     assertAccount(address)
     assert(price, 'price is not provided')
@@ -42,13 +54,13 @@ export function useFulfillOrder(
       utils.getAddress(collectionAddress),
       bufferToEtherHex(publicKey),
       BigNumber.from(tokenId),
-      '0x00',
+      signature ? `0x${signature}` : '0x00',
       {
         value: BigNumber.from(price),
         gasPrice: mark3dConfig.gasPrice,
       },
     )
-  }), [contract, address, wrapPromise, signer, collectionAddress, tokenId, price])
+  }, callBack), [contract, address, wrapPromise, signer])
 
   return { ...statuses, fulfillOrder }
 }

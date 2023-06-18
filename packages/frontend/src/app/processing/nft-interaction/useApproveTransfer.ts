@@ -7,17 +7,23 @@ import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { useHiddenFileProcessorFactory } from '../HiddenFileProcessorFactory'
-import { TokenFullId } from '../types'
 import { assertAccount, assertCollection, assertContract, assertSigner, assertTokenId, bufferToEtherHex, hexToBuffer } from '../utils'
 import { callContract } from '../utils/error'
 
-export function useApproveTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, publicKey?: string) {
+interface IUseApproveTransfer {
+  collectionAddress?: string
+  tokenId?: string
+  publicKey?: string
+  callBack?: () => void
+}
+
+export function useApproveTransfer({ collectionAddress, callBack }: IUseApproveTransfer = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
+  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IUseApproveTransfer>()
   const factory = useHiddenFileProcessorFactory()
 
-  const approveTransfer = useCallback(wrapPromise(async () => {
+  const approveTransfer = useCallback(wrapPromise(async ({ tokenId, publicKey }) => {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     assertAccount(address)
@@ -37,7 +43,7 @@ export function useApproveTransfer({ collectionAddress, tokenId }: Partial<Token
       bufferToEtherHex(encryptedFilePassword),
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }), [contract, signer, address, wrapPromise, publicKey])
+  }, callBack), [contract, signer, address, wrapPromise])
 
   return {
     ...statuses,

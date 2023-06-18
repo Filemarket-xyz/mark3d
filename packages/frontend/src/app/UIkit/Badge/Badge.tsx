@@ -25,6 +25,11 @@ const Wrapper = styled('div', {
         },
       },
     },
+    fullWidth: {
+      true: {
+        width: '100%',
+      },
+    },
   },
 })
 
@@ -49,7 +54,7 @@ const Content = styled('div', {
   justifyContent: 'center',
   gap: '$1',
   minHeight: 48,
-  width: '140px',
+  width: '140',
 })
 
 const Image = styled('img', {
