@@ -29,15 +29,15 @@ export const AppNav: FC = () => {
     return scrollY < 808
   }, [scrollY])
 
-  // const noneBlurShadow = useMemo(() => {
-  //   console.log(scrollY)
-  //   if (smValue) return scrollY < 42
-  //   if (mdValue) return scrollY < 58
-  //   if (lgValue) return scrollY < 76
-  //   if (xlValue) return scrollY < 76
-  //
-  //   return scrollY < 76
-  // }, [scrollY])
+  const noneBlurShadow = useMemo(() => {
+    console.log(scrollY)
+    if (smValue) return scrollY < 42
+    if (mdValue) return scrollY < 58
+    if (lgValue) return scrollY < 76
+    if (xlValue) return scrollY < 76
+
+    return scrollY < 76
+  }, [scrollY])
 
   return (
     <NavBar
