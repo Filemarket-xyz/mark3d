@@ -4,19 +4,24 @@ import { useCallback } from 'react'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useExchangeContract } from '../contracts'
-import { TokenFullId } from '../types'
 import { assertCollection, assertContract, assertSigner, assertTokenId, callContract } from '../utils'
 
 /**
  * Calls Mark3dExchange contract to cancel an order
  * @param collectionAddress
  * @param tokenId assigned to a token by the mint function
- * @param price must be in wei (without floating point)
  */
-export function useCancelOrder({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
+
+interface IUseCancelOrder {
+  collectionAddress?: string
+  tokenId?: string
+  callBack?: () => void
+}
+
+export function useCancelOrder({ callBack }: IUseCancelOrder = {}) {
   const { contract, signer } = useExchangeContract()
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
-  const cancelOrder = useCallback(wrapPromise(async () => {
+  const { wrapPromise, statuses } = useStatusState<ContractReceipt, IUseCancelOrder>()
+  const cancelOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId }) => {
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
     assertContract(contract, mark3dConfig.exchangeToken.name)
@@ -28,7 +33,7 @@ export function useCancelOrder({ collectionAddress, tokenId }: Partial<TokenFull
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }), [contract, signer, wrapPromise, collectionAddress, tokenId])
+  }, callBack), [contract, signer, wrapPromise])
 
   return {
     ...statuses,

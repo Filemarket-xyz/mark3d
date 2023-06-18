@@ -38,7 +38,7 @@ const ProfileHeader = styled('div', {
 const ProfileImage = styled('img', {
   width: 160,
   height: 160,
-  borderRadius: '50%',
+  borderRadius: '25%',
   border: '8px solid $white',
   objectFit: 'cover',
   background: '$gradients$main',
@@ -70,7 +70,7 @@ const ProfileDescription = styled('p', {
 })
 
 const Inventory = styled(Container, {
-  paddingTop: '$4',
+  paddingTB: '$4',
   backgroundColor: '$white',
   borderRadius: '$6 $6 0 0',
   '@md': {
@@ -119,6 +119,7 @@ const CollectionPage = observer(() => {
             </ProfileHeader>
             <Badges>
               <NavLink
+                style={{ width: '400px' }}
                 to={
                   collectionAndNfts.collection?.owner
                     ? `/profile/${collectionAndNfts.collection.owner}`
@@ -126,6 +127,9 @@ const CollectionPage = observer(() => {
                 }
               >
                 <Badge
+                  wrapperProps={{
+                    fullWidth: true,
+                  }}
                   content={{
                     title: 'Creator',
                     value: reduceAddress(collectionAndNfts.collection?.owner ?? ''),

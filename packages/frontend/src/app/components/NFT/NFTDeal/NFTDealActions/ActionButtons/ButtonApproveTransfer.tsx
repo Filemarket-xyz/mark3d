@@ -5,16 +5,16 @@ import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useApproveTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
-import MintModal from '../../../../Modal/Modal'
+import BaseModal from '../../../../Modal/Modal'
 
 export interface ButtonApproveTransferProps {
   tokenFullId: TokenFullId
   transfer?: Transfer
-  callback?: () => void
+  callBack?: () => void
 }
 
-export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFullId, transfer, callback }) => {
-  const { approveTransfer, ...statuses } = useApproveTransfer(tokenFullId, transfer?.publicKey)
+export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFullId, transfer, callBack }) => {
+  const { approveTransfer, ...statuses } = useApproveTransfer({ ...tokenFullId, callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -24,15 +24,17 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
 
   return (
     <>
-      <MintModal {...modalProps} />
+      <BaseModal {...modalProps} />
       <Button
         primary
         fullWidth
         borderRadiusSecond
         isDisabled={isLoading}
         onPress={async () => {
-          await approveTransfer()
-          callback?.()
+          await approveTransfer({
+            tokenId: tokenFullId.tokenId,
+            publicKey: transfer?.publicKey,
+          })
         }}
       >
         Transfer hidden file

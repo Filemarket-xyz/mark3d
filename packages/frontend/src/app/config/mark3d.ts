@@ -85,4 +85,7 @@ export const mark3dConfig = {
   },
   externalLink: 'https://filemarket.xyz/',
   transferTimeout: 24 * 60 * 60 * 1000,
+  fileBunniesCollection: {
+    address: '0xf4e64807a98AE794dD6d0F52829F25e6D8B329Ff',
+  },
 } as const

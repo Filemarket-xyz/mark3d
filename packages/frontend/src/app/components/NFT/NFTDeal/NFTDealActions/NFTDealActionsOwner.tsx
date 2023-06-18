@@ -7,7 +7,7 @@ import { useIsApprovedExchange } from '../../../../processing'
 import { TokenFullId } from '../../../../processing/types'
 import { Button } from '../../../../UIkit'
 import { transferPermissions } from '../../../../utils/transfer/status'
-import MintModal from '../../../Modal/Modal'
+import BaseModal from '../../../Modal/Modal'
 import { ButtonApproveExchange } from './ActionButtons/ButtonApproveExchange'
 import { ButtonApproveTransfer } from './ActionButtons/ButtonApproveTransfer'
 import { ButtonCancelOrder } from './ActionButtons/ButtonCancelOrder'
@@ -43,7 +43,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   })
 
   if (error) {
-    return <MintModal {...modalProps} />
+    return <BaseModal {...modalProps} />
   }
 
   return (
@@ -62,21 +62,21 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
         <ButtonApproveTransfer tokenFullId={tokenFullId} transfer={transfer} />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canFinalize(transfer)}>
-        <ButtonFinalizeTransfer tokenFullId={tokenFullId} callback={ownerStatusChanged} />
+        <ButtonFinalizeTransfer tokenFullId={tokenFullId} callBack={ownerStatusChanged} />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canCancelOrder(transfer)}>
-        <ButtonCancelOrder tokenFullId={tokenFullId} callback={reFetchOrder} />
+        <ButtonCancelOrder tokenFullId={tokenFullId} callBack={reFetchOrder} />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canCancel(transfer)}>
-        <ButtonCancelTransfer tokenFullId={tokenFullId} callback={() => { funcTimeout(refetch); reFetchOrder?.() }} />
+        <ButtonCancelTransfer tokenFullId={tokenFullId} callBack={() => { funcTimeout(refetch); reFetchOrder?.() }} />
       </HideAction>
       <HideAction hide={!!transfer || !isApprovedExchange}>
-        <ButtonPlaceOrder tokenFullId={tokenFullId} callback={reFetchOrder} />
+        <ButtonPlaceOrder tokenFullId={tokenFullId} callBack={reFetchOrder} />
       </HideAction>
       <HideAction hide={!!transfer || isApprovedExchange}>
         <ButtonApproveExchange
           tokenFullId={tokenFullId}
-          callback={refetch}
+          callBack={refetch}
         />
       </HideAction>
       <HideAction hide={!!transfer}>

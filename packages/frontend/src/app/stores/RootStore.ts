@@ -13,6 +13,7 @@ import { TransferListStore } from './Transfer/TransferListStore'
 import { TransferStore } from './Transfer/TransferStore'
 import { TransfersHistoryStore } from './TransfersHistory/TransfersHistoryStore'
 import { UserTransferStore } from './UserTransfers/UserTransfersStore'
+import { WhiteListStore } from './WhiteList/WhiteListStore'
 
 export class RootStore {
   dialogStore: DialogStore
@@ -30,6 +31,7 @@ export class RootStore {
   userTransferStore: UserTransferStore
   publicCollectionStore: PublicCollectionStore
   conversionRateStore: ConversionRateStore
+  whitelistStore: WhiteListStore
 
   constructor() {
     this.dialogStore = new DialogStore()
@@ -47,6 +49,7 @@ export class RootStore {
     this.userTransferStore = new UserTransferStore(this)
     this.publicCollectionStore = new PublicCollectionStore(this)
     this.conversionRateStore = new ConversionRateStore(this)
+    this.whitelistStore = new WhiteListStore(this)
   }
 }
 

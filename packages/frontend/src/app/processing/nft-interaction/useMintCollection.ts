@@ -19,17 +19,21 @@ export interface CreateCollectionForm {
   image?: File // required
 }
 
+type IUseMintCollection = CreateCollectionForm & {
+  callBack?: () => void
+}
+
 interface CreateCollectionResult {
   collectionAddress: string
 }
 
-export function useMintCollection(form: CreateCollectionForm = {}) {
+export function useMintCollection({ callBack }: IUseMintCollection = {}) {
   const { address } = useAccount()
   const { contract, signer } = useAccessTokenContract()
-  const { wrapPromise, ...statuses } = useStatusState<CreateCollectionResult>()
+  const { wrapPromise, ...statuses } = useStatusState<CreateCollectionResult, IUseMintCollection>()
   const upload = useUploadLighthouse()
-  const { name, symbol, image, description } = form
-  const mintCollection = useCallback(wrapPromise(async () => {
+  const mintCollection = useCallback(wrapPromise(async (form: IUseMintCollection) => {
+    const { name, symbol, image, description } = form
     assertContract(contract, mark3dConfig.accessToken.name)
     assertSigner(signer)
     assertAccount(address)
@@ -70,7 +74,7 @@ export function useMintCollection(form: CreateCollectionForm = {}) {
     }
 
     return { collectionAddress: getArg(collectionAddressArgIndex) }
-  }), [contract, signer, name, symbol, image, description, wrapPromise, upload])
+  }, callBack), [contract, signer, wrapPromise, upload])
 
   return { ...statuses, mintCollection }
 }
