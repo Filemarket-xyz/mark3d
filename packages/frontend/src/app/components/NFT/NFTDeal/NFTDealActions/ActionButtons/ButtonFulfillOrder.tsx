@@ -11,15 +11,15 @@ import BaseModal from '../../../../Modal/Modal'
 export interface ButtonFulfillOrderProps {
   tokenFullId: TokenFullId
   order?: Order
-  callback?: () => void
+  callBack?: () => void
 }
 
 export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
   tokenFullId,
   order,
-  callback,
+  callBack,
 }) => {
-  const { fulfillOrder, ...statuses } = useFulfillOrder(tokenFullId, order?.price)
+  const { fulfillOrder, ...statuses } = useFulfillOrder({ callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -29,8 +29,10 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
   })
 
   const onPress = async () => {
-    await fulfillOrder()
-    callback?.()
+    await fulfillOrder({
+      ...tokenFullId,
+      price: order?.price,
+    })
   }
 
   return (

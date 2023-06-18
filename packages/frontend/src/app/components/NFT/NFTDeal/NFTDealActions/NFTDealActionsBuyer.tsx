@@ -53,7 +53,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
       <HideAction hide={!isBuyer || !transfer || !permissions.canFinalize(transfer)}>
         <ButtonFinalizeTransfer
           tokenFullId={tokenFullId}
-          callback={() => {
+          callBack={() => {
             ownerStatusChanged?.()
             reFetchOrder?.()
           }}

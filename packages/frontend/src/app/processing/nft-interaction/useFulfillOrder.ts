@@ -25,7 +25,7 @@ import {
 
 interface IUseFulFillOrder {
   price?: BigNumberish
-  collectionAddress?: `0x${string}`
+  collectionAddress?: string
   tokenId?: string
   signature?: string
   callBack?: () => void

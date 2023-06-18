@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 
 import { stringifyError } from '../utils/error'
 
-export function useStatusState<ResultType, Arguments = void>() {
+export function useStatusState<ResultType, Arguments extends any = void>() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string>()
   const [result, setResult] = useState<ResultType>()

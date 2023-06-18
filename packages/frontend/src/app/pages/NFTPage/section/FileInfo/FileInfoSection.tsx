@@ -1,3 +1,4 @@
+import { PressEvent } from '@react-types/shared/src/events'
 import React, { FC, useEffect } from 'react'
 
 import { styled } from '../../../../../styles'
@@ -52,7 +53,7 @@ interface FileInfoSectionProps {
 }
 
 const FileInfoSection: FC<FileInfoSectionProps> = ({ isOwner, files, canViewHiddenFiles, filesMeta }) => {
-  const { statuses, wrapPromise } = useStatusState()
+  const { statuses, wrapPromise } = useStatusState<boolean | void, PressEvent>()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'File decrypted and download started',
