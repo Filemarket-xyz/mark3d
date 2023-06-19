@@ -12,15 +12,17 @@ import { callContract } from '../utils/error'
 
 interface IUseApproveTransfer {
   collectionAddress?: string
-  tokenId?: string
-  publicKey?: string
-  callBack?: () => void
 }
 
-export function useApproveTransfer({ collectionAddress, callBack }: IUseApproveTransfer = {}) {
+interface IApproveTransfer {
+  tokenId?: string
+  publicKey?: string
+}
+
+export function useApproveTransfer({ collectionAddress }: IUseApproveTransfer = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IUseApproveTransfer>()
+  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IApproveTransfer>()
   const factory = useHiddenFileProcessorFactory()
 
   const approveTransfer = useCallback(wrapPromise(async ({ tokenId, publicKey }) => {
@@ -43,7 +45,7 @@ export function useApproveTransfer({ collectionAddress, callBack }: IUseApproveT
       bufferToEtherHex(encryptedFilePassword),
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }, callBack), [contract, signer, address, wrapPromise])
+  }), [contract, signer, address, wrapPromise])
 
   return {
     ...statuses,

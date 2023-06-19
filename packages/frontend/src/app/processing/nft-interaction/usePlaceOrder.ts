@@ -22,7 +22,7 @@ interface IPlaceOrder {
  * @param price must be in wei (without floating point)
  */
 
-export function usePlaceOrder({ callBack }: IPlaceOrder = {}) {
+export function usePlaceOrder() {
   const { contract, signer } = useExchangeContract()
   const { wrapPromise, statuses } = useStatusState<ContractReceipt | undefined, IPlaceOrder>()
 
@@ -41,7 +41,7 @@ export function usePlaceOrder({ callBack }: IPlaceOrder = {}) {
       constants.AddressZero,
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }, callBack), [contract, signer, wrapPromise])
+  }), [contract, signer, wrapPromise])
 
   return {
     ...statuses,

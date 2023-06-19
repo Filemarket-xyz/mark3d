@@ -44,7 +44,7 @@ const NavBarStyled = styled('nav', {
     },
     noneBlurShadow: {
       true: {
-        // backdropFilter: 'none',
+        backdropFilter: 'none',
         boxShadow: 'none',
       },
     },

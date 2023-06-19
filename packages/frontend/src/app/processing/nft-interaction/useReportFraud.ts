@@ -10,18 +10,20 @@ import { assertAccount, assertCollection, assertContract, assertSigner, assertTo
 
 interface IUseReportFraud {
   collectionAddress?: string
-  tokenId?: string
-  callBack?: () => void
 }
 
-export function useReportFraud({ collectionAddress, callBack }: IUseReportFraud = {}) {
+interface IReportFraud {
+  tokenId?: string
+}
+
+export function useReportFraud({ collectionAddress }: IUseReportFraud = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IUseReportFraud>()
+  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IReportFraud>()
 
   const factory = useHiddenFileProcessorFactory()
 
-  const reportFraud = useCallback(wrapPromise(async ({ collectionAddress, tokenId }) => {
+  const reportFraud = useCallback(wrapPromise(async ({ tokenId }) => {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     assertAccount(address)
@@ -37,7 +39,7 @@ export function useReportFraud({ collectionAddress, callBack }: IUseReportFraud 
       bufferToEtherHex(privateKey),
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }, callBack), [contract, signer, address, wrapPromise])
+  }), [contract, signer, address, wrapPromise])
 
   return {
     ...statuses,

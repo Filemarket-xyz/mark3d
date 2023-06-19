@@ -6,13 +6,15 @@ import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
 import { assertCollection, assertContract, assertSigner, assertTokenId, callContract } from '../utils'
 
-interface IFinalizeTransfer {
+interface IUseFinalizeTransfer {
   collectionAddress?: string
-  tokenId?: string
-  callBack?: () => void
 }
 
-export function useFinalizeTransfer({ collectionAddress, callBack }: IFinalizeTransfer = {}) {
+interface IFinalizeTransfer {
+  tokenId?: string
+}
+
+export function useFinalizeTransfer({ collectionAddress }: IUseFinalizeTransfer = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { statuses, wrapPromise } = useStatusState<ContractReceipt, IFinalizeTransfer>()
 
@@ -27,7 +29,7 @@ export function useFinalizeTransfer({ collectionAddress, callBack }: IFinalizeTr
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }, callBack), [contract, signer, wrapPromise])
+  }), [contract, signer, wrapPromise])
 
   return {
     ...statuses,
