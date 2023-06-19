@@ -122,7 +122,7 @@ export const WhitelistCard: React.FC<WhitelistCardProps> = ({
             </StyledValueList>
             <Flex w100 justifyContent='center'>
               <StyledRarityButton {...rarityButtonProps}>
-                FileBunnies Rarities
+                Rarity info
               </StyledRarityButton>
             </Flex>
           </StyledDescription>

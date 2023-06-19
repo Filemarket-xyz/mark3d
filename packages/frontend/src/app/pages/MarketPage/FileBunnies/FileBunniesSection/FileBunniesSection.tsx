@@ -74,7 +74,14 @@ const FileBunniesSection = observer(() => {
           <Title>
             <img src={FileBunniesLogo} />
             <span>
-              <span style={{ textDecoration: 'underline' }}>FileBunnies</span>
+              <a
+                style={{ color: 'white', textDecoration: 'underline' }}
+                href={'https://filebunnies.xyz/'}
+                target={'_blank'}
+                rel="noreferrer"
+              >
+                FileBunnies
+              </a>
               <span>
                 {' '}
                 Minting
@@ -99,7 +106,7 @@ const FileBunniesSection = observer(() => {
                 <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { rarityModalOpen() }}>FileBunnies Rarities</Txt>
               </ToolTipBlock>
               <ToolTipBlock second>
-                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToWorkModalOpen() }}>How NFT with EFT works?</Txt>
+                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToWorkModalOpen() }}>How EFT (Encrypted FileToken) works?</Txt>
               </ToolTipBlock>
               <ToolTipBlock last>
                 <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToMintModalOpen() }}>How to MINT FileBunnies?</Txt>

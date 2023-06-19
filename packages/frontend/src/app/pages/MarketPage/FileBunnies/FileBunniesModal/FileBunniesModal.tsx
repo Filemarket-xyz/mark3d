@@ -14,6 +14,7 @@ const FileBunniesModalBody = styled('div', {
   fontSize: '20px',
   fontWeight: '400',
   lineHeight: '28px',
+  textAlign: 'left',
 })
 
 const FileBunniesModalTitle = styled(ModalTitle, {})
@@ -29,7 +30,24 @@ export const RarityModalBody = () => {
 export const HowMintModalBody = () => {
   return (
     <FileBunniesModalBody>
-      Клубника бомба честно говоря
+      1. Connect your crypto wallet via Wallet Connect.
+      {' '}
+      <br />
+      2. Create or connect your FileWallet.
+      {' '}
+      <br />
+      3. if you&apos;re on the list, the Free Mint button will be active.
+      {' '}
+      <br />
+      4. Click Free Mint or Mint if you want to swap your FIL for EFT with higher rarity (the chances of getting any rarity are random).
+      {' '}
+      <br />
+      5. Wait for the transaction to appear and then sign it.
+      {' '}
+      <br />
+      6. After a successful transaction, you will be able to see your eft on profile page after 4 minutes.
+      {' '}
+      <br />
     </FileBunniesModalBody>
   )
 }
@@ -37,7 +55,10 @@ export const HowMintModalBody = () => {
 export const HowWorkModalBody = () => {
   return (
     <FileBunniesModalBody>
-      Клубника бомба честно говоря
+      FileBunnies holders will be granted exclusive
+      access to all future NFT mints that occur on the FileMarket platform.
+      This unique utility will allow the holder a White List spot for
+      all content built on FileMarket.
     </FileBunniesModalBody>
   )
 }
@@ -46,7 +67,7 @@ export const RarityModalTitle = () => {
   return (
     <FileBunniesModalTitle>
       <ModalIcon fileBunnies />
-      How NFT with EFT works?
+      Rarity details
     </FileBunniesModalTitle>
   )
 }
@@ -64,7 +85,7 @@ export const HowWorkModalTitle = () => {
   return (
     <FileBunniesModalTitle>
       <ModalIcon fileBunnies />
-      Rarity details
+      How EFT (Encrypted FileToken) works?
     </FileBunniesModalTitle>
   )
 }
