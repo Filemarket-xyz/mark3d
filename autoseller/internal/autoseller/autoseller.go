@@ -3,6 +3,7 @@ package autoseller
 import (
 	"context"
 	"crypto/ecdsa"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -126,16 +127,23 @@ func (a *Autoseller) Process(ctx context.Context) (int, error) {
 
 	nonce, err := a.ethClient.PendingNonceAt(ctx, a.auth.From)
 	if err != nil {
-		return 0, errors.New("failed to get nonce")
+		return 0, fmt.Errorf("failed to get nonce: %w", err)
 	}
 	a.nonce = nonce
 
 	var wg sync.WaitGroup
+	// Rate limiting
+	var ticker = time.NewTicker(time.Second)
+	var limit = make(chan struct{}, 4)
 	var processed atomic.Int32
 	for _, r := range resp {
+		<-ticker.C
+		limit <- struct{}{}
 		wg.Add(1)
 		go func(tokenInfo AutosellTokenInfo) {
+			defer func() { <-limit }()
 			defer wg.Done()
+
 			if err := a.approveSingleResponse(ctx, tokenInfo); err != nil {
 				log.Printf("failed to process single response: %#v. Error: %v\n", tokenInfo, err)
 				return
@@ -150,6 +158,8 @@ func (a *Autoseller) Process(ctx context.Context) (int, error) {
 		}(r)
 	}
 	wg.Wait()
+	ticker.Stop()
+	close(limit)
 
 	return int(processed.Load()), nil
 }
@@ -178,12 +188,15 @@ func (a *Autoseller) ProcessTimers(ctx context.Context) error {
 	}
 	nonce, err := a.ethClient.PendingNonceAt(context.Background(), a.auth.From)
 	if err != nil {
-		return errors.New("failed to get nonce")
+		return fmt.Errorf("failed to get nonce: %w", err)
 	}
 	a.nonce = nonce
 
 	var globalErr error
 	var errMu sync.Mutex
+	// Rate limiting
+	var ticker = time.NewTicker(time.Second)
+	var limit = make(chan struct{}, 4)
 	var wg sync.WaitGroup
 	for _, key := range keys {
 		tokenIdStr, err := a.redisClient.Get(ctx, key).Result()
@@ -191,9 +204,11 @@ func (a *Autoseller) ProcessTimers(ctx context.Context) error {
 			globalErr = errors.Join(globalErr, fmt.Errorf("failed to get key: %s", key))
 			continue
 		}
-
+		<-ticker.C
+		limit <- struct{}{}
 		wg.Add(1)
 		go func(key string, tokenIdStr string) {
+			<-ticker.C
 			defer wg.Done()
 			timestamp, _ := strconv.ParseInt(tokenIdStr, 10, 64)
 
@@ -210,10 +225,14 @@ func (a *Autoseller) ProcessTimers(ctx context.Context) error {
 				log.Println("Start finalizing token: ", tokenIdStr)
 
 				if err := a.finalize(ctx, tokenId); err != nil {
-					errMu.Lock()
-					globalErr = errors.Join(globalErr, fmt.Errorf("failed to finalize tokenId: %s. Error: %v", tokenId.String(), err))
-					errMu.Unlock()
-					return
+					if strings.Contains(err.Error(), "transfer for this token wasn't created") {
+						// token was already finalized
+					} else {
+						errMu.Lock()
+						globalErr = errors.Join(globalErr, fmt.Errorf("failed to finalize tokenId: %s. Error: %v", tokenId.String(), err))
+						errMu.Unlock()
+						return
+					}
 				}
 
 				if err := a.redisClient.Del(ctx, key).Err(); err != nil {
@@ -228,6 +247,8 @@ func (a *Autoseller) ProcessTimers(ctx context.Context) error {
 		}(key, tokenIdStr)
 	}
 	wg.Wait()
+	ticker.Stop()
+	close(limit)
 
 	if globalErr != nil {
 		log.Println(globalErr)
@@ -249,8 +270,12 @@ func (a *Autoseller) approveSingleResponse(ctx context.Context, r AutosellTokenI
 	if err != nil {
 		return fmt.Errorf("failed to get public key: %w", err)
 	}
+	pwdBytes, err := base64.StdEncoding.DecodeString(pwd)
+	if err != nil {
+		return fmt.Errorf("failed to decrypt password: %w", err)
+	}
 
-	encryptedPwd, err := rsa.Encrypt([]byte(pwd), publicKey, nil)
+	encryptedPwd, err := rsa.Encrypt(pwdBytes, publicKey, nil)
 	if err != nil {
 		return fmt.Errorf("failed to encrypt password: %w", err)
 	}
@@ -268,6 +293,9 @@ func (a *Autoseller) approveSingleResponse(ctx context.Context, r AutosellTokenI
 }
 
 func (a *Autoseller) finalize(ctx context.Context, tokenId *big.Int) error {
+	ctx, cancel := context.WithTimeout(ctx, 180*time.Second)
+	defer cancel()
+
 	header, err := a.ethClient.HeaderByNumber(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("failed to get header: %w", err)
