@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/filebunniesCollection"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/publicCollection"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/service/realtime_notification"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
@@ -113,24 +114,26 @@ type Currency interface {
 }
 
 type service struct {
-	repository          repository.Repository
-	healthNotifier      healthnotifier.HealthNotifyer
-	cfg                 *config.ServiceConfig
-	ethClient           ethclient2.EthClient
-	sequencer           *sequencer.Sequencer
-	accessTokenAddress  common.Address
-	accessTokenInstance *access_token.Mark3dAccessTokenV2
-	exchangeAddress     common.Address
-	exchangeInstance    *exchange.FilemarketExchangeV2
-	currencyConverter   currencyconversion.CurrencyConversionProvider
-	commonSigner        *ethsigner.EthSigner
-	uncommonSigner      *ethsigner.EthSigner
-	closeCh             chan struct{}
+	repository                  repository.Repository
+	healthNotifier              healthnotifier.HealthNotifyer
+	cfg                         *config.ServiceConfig
+	ethClient                   ethclient2.EthClient
+	realTimeNotificationService *realtime_notification.RealTimeNotificationService
+	sequencer                   *sequencer.Sequencer
+	accessTokenAddress          common.Address
+	accessTokenInstance         *access_token.Mark3dAccessTokenV2
+	exchangeAddress             common.Address
+	exchangeInstance            *exchange.FilemarketExchangeV2
+	currencyConverter           currencyconversion.CurrencyConversionProvider
+	commonSigner                *ethsigner.EthSigner
+	uncommonSigner              *ethsigner.EthSigner
+	closeCh                     chan struct{}
 }
 
 func NewService(
 	repo repository.Repository,
 	ethClient ethclient2.EthClient,
+	realTimeNotificationService *realtime_notification.RealTimeNotificationService,
 	sequencer *sequencer.Sequencer,
 	healthNotifier healthnotifier.HealthNotifyer,
 	currencyConverter currencyconversion.CurrencyConversionProvider,
@@ -149,19 +152,20 @@ func NewService(
 	}
 
 	return &service{
-		ethClient:           ethClient,
-		repository:          repo,
-		healthNotifier:      healthNotifier,
-		sequencer:           sequencer,
-		cfg:                 cfg,
-		accessTokenAddress:  cfg.AccessTokenAddress,
-		accessTokenInstance: accessTokenInstance,
-		exchangeAddress:     cfg.ExchangeAddress,
-		exchangeInstance:    exchangeInstance,
-		currencyConverter:   currencyConverter,
-		commonSigner:        commonSigner,
-		uncommonSigner:      uncommonSigner,
-		closeCh:             make(chan struct{}),
+		ethClient:                   ethClient,
+		realTimeNotificationService: realTimeNotificationService,
+		repository:                  repo,
+		healthNotifier:              healthNotifier,
+		sequencer:                   sequencer,
+		cfg:                         cfg,
+		accessTokenAddress:          cfg.AccessTokenAddress,
+		accessTokenInstance:         accessTokenInstance,
+		exchangeAddress:             cfg.ExchangeAddress,
+		exchangeInstance:            exchangeInstance,
+		currencyConverter:           currencyConverter,
+		commonSigner:                commonSigner,
+		uncommonSigner:              uncommonSigner,
+		closeCh:                     make(chan struct{}),
 	}, nil
 }
 
@@ -1384,6 +1388,13 @@ func (s *service) ListenBlockchain() error {
 				}
 			}
 			lastBlock = current
+
+			// broadcast last block number to subscribers
+			lastBlockMessage, err := json.Marshal(map[string]any{"last_block_number": lastBlock.String()})
+			if err != nil {
+				logger.Warnf("failed to marshal last block number for broadcast: %v", err)
+			}
+			s.realTimeNotificationService.BroadcastMessage(realtime_notification.LastBlockNumberTopic, lastBlockMessage)
 		case <-s.closeCh:
 			return nil
 		}

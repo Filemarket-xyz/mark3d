@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/service/realtime_notification"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
 	log "github.com/mark3d-xyz/mark3d/indexer/pkg/log"
@@ -98,9 +99,12 @@ func main() {
 		logger.Fatal("failed to create uncommonSigner", log.Fields{"error": err})
 	}
 
+	realtimeNotificationService := realtime_notification.New()
+
 	indexService, err := service.NewService(
 		repository.NewRepository(pool, rdb, repositoryCfg),
 		client,
+		realtimeNotificationService,
 		seq,
 		healthNotifier,
 		currencyConverterCache,
@@ -111,9 +115,9 @@ func main() {
 	if err != nil {
 		logger.WithFields(log.Fields{"error": err}).Fatal("failed to create service", nil)
 	}
-	indexHandler := handler.NewHandler(cfg.Handler, indexService) // handler who interact with a service and hashManager
-	router := indexHandler.Init()                                 // gorilla mux here
-	srv := server.NewServer(cfg.Server, router)                   // basically http.Server with config here
+	indexHandler := handler.NewHandler(cfg.Handler, indexService, realtimeNotificationService) // handler who interact with a service and hashManager
+	router := indexHandler.Init()                                                              // gorilla mux here
+	srv := server.NewServer(cfg.Server, router)                                                // basically http.Server with config here
 
 	// goroutine in which server running
 	go func() {
