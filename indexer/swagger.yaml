@@ -735,6 +735,21 @@ paths:
           description: Ошибка
           schema:
             $ref: '#/definitions/ErrorResponse'
+  /subscribe/block_number:
+    get:
+      summary: Subscribe to last block updates
+      description: | 
+        This is **WebSocket** handler, once connection is established you will receive:
+        ```json
+        {
+          "last_block_number": "string",
+        }
+        ```
+      responses:
+        '101':
+          description: ws upgrade
+        default:
+          description: Ошибка
 definitions:
   ErrorResponse:
     type: object
