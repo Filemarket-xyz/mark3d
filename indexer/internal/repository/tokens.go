@@ -28,7 +28,9 @@ func (p *postgres) GetCollectionTokens(
 		    c.name
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
-		WHERE t.collection_address=$1 AND t.token_id > $2
+		WHERE t.collection_address=$1 AND 
+		      t.token_id > $2 AND
+		      t.meta_uri != ''
 		ORDER BY t.token_id
 		LIMIT $3
 	`
@@ -114,7 +116,8 @@ func (p *postgres) GetCollectionTokensTotal(
 		SELECT COUNT(*) as total
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
-		WHERE t.collection_address=$1
+		WHERE t.collection_address=$1 AND
+		      t.meta_uri != ''
 	`
 	var total uint64
 	row := tx.QueryRow(ctx, query, strings.ToLower(collectionAddress.String()))
@@ -141,7 +144,9 @@ func (p *postgres) GetTokensByAddress(
 		    c.name
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
-		WHERE t.owner=$1 AND (t.collection_address, t.token_id) > ($2, $3)
+		WHERE t.owner=$1 AND 
+		      (t.collection_address, t.token_id) > ($2, $3) AND
+		      t.meta_uri!=''
 		ORDER BY t.collection_address, t.token_id
 		LIMIT $4
 	`
@@ -235,7 +240,7 @@ func (p *postgres) GetTokensByAddressTotal(
 		SELECT COUNT(*) AS total
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
-		WHERE t.owner=$1
+		WHERE t.owner=$1 AND t.meta_uri != ''
 	`
 	var total uint64
 	row := tx.QueryRow(ctx, query, strings.ToLower(ownerAddress.String()))
