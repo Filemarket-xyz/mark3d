@@ -1,6 +1,4 @@
 
-import { NavLink } from 'react-router-dom'
-
 import { styled } from '../../../../../styles'
 import { NavButton } from '../../../Button'
 import { Txt } from '../../../Txt'
@@ -78,13 +76,14 @@ export const StyledCardBorder = styled('div', {
   transition: 'all 0.25s ease-in-out',
 })
 
-export const StyledCard = styled(NavLink, {
+export const StyledCard = styled('span', {
   height: 'fit-content',
   color: '$black',
   border: '1px solid $gray100',
   borderRadius: '$3',
   position: 'relative',
   transition: 'all 0.25s ease-in-out',
+  cursor: 'pointer',
   background: 'transparent',
   '&:hover': {
     background: '$blue500',

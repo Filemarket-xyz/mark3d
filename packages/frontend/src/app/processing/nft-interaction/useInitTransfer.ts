@@ -5,14 +5,21 @@ import { useCallback } from 'react'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
-import { TokenFullId } from '../types'
 import { callContract, nullAddress } from '../utils'
 import { assertContract, assertSigner } from '../utils/assert'
 
-export function useInitTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}, to?: string) {
+interface IInitTransfer {
+  collectionAddress?: string
+  tokenId?: string
+  to?: string
+  callBack?: () => void
+}
+
+export function useInitTransfer({ collectionAddress, callBack }: IInitTransfer = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt>()
-  const initTransfer = useCallback(wrapPromise(async () => {
+  const { wrapPromise, statuses } = useStatusState<ContractReceipt, IInitTransfer>()
+
+  const initTransfer = useCallback(wrapPromise(async ({ tokenId, to }: IInitTransfer) => {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     assert(to, 'receiver address ("to") is undefined')
@@ -25,7 +32,7 @@ export function useInitTransfer({ collectionAddress, tokenId }: Partial<TokenFul
       nullAddress,
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }), [contract, signer, wrapPromise, collectionAddress, tokenId, to])
+  }, callBack), [contract, signer, wrapPromise])
 
   return {
     ...statuses,

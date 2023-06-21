@@ -24,7 +24,7 @@ interface WhitelistCardProps {
   price?: number
   variant: 'whitelist' | 'mint'
   buttonProps: Omit<WhitelistCardButtonProps, 'variant'> & {
-    variant: 'free' | 'check'
+    variant: 'free' | 'check' | 'mint' | 'notWl'
   }
   rarityButtonProps: ButtonProps
 }
@@ -122,7 +122,7 @@ export const WhitelistCard: React.FC<WhitelistCardProps> = ({
             </StyledValueList>
             <Flex w100 justifyContent='center'>
               <StyledRarityButton {...rarityButtonProps}>
-                FileBunnies Rarities
+                Rarity info
               </StyledRarityButton>
             </Flex>
           </StyledDescription>

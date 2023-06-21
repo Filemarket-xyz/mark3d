@@ -25,6 +25,7 @@ export const StyledButton = styled(Button, {
       free: { $$color: '#8EFDB5' },
       mint: { $$color: '#01E3F8' },
       check: { $$color: '#DD5FEA' },
+      notWl: { $$color: '$colors$white' },
     },
   },
 })

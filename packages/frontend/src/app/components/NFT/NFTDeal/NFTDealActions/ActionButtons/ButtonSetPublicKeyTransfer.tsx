@@ -4,18 +4,18 @@ import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useSetPublicKey } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
-import MintModal from '../../../../Modal/Modal'
+import BaseModal from '../../../../Modal/Modal'
 
 export interface ButtonSetPublicKeyTransferProps {
   tokenFullId: TokenFullId
-  callback?: () => void
+  callBack?: () => void
 }
 
 export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = ({
   tokenFullId,
-  callback,
+  callBack,
 }) => {
-  const { setPublicKey, ...statuses } = useSetPublicKey(tokenFullId)
+  const { setPublicKey, ...statuses } = useSetPublicKey({ ...tokenFullId, callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -24,13 +24,12 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
   })
 
   const onPress = async () => {
-    await setPublicKey()
-    callback?.()
+    await setPublicKey(tokenFullId)
   }
 
   return (
     <>
-      <MintModal {...modalProps} />
+      <BaseModal {...modalProps} />
       <Button
         primary
         fullWidth

@@ -7,8 +7,9 @@ import { formatNumber } from '../number'
 export const formatCurrency = (value: BigNumberish) => {
   const decimals = mark3dConfig.chain.nativeCurrency?.decimals ?? 18
   const symbol = mark3dConfig.chain.nativeCurrency?.symbol ?? 'BNB'
+  const computedValue = utils.formatUnits(value, decimals)
 
-  return `${utils.formatUnits(value, decimals)} ${symbol}`
+  return `${parseFloat(computedValue) > 0.0000001 ? computedValue : '~0'} ${symbol}`
 }
 
 export const toCurrency = (value: BigNumber): number => {
