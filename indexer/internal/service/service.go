@@ -1413,7 +1413,7 @@ func (s *service) ListenBlockchain() error {
 			lastBlock = current
 
 			// broadcast last block number to subscribers
-			lastBlockMessage, err := json.Marshal(map[string]any{"last_block_number": lastBlock.String()})
+			lastBlockMessage, err := json.Marshal(map[string]any{"last_block_number": lastBlock.Int64() - 1}) // 1 conformation
 			if err != nil {
 				logger.Warnf("failed to marshal last block number for broadcast: %v", err)
 			}

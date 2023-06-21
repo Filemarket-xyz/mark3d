@@ -742,7 +742,7 @@ paths:
         This is **WebSocket** handler, once connection is established you will receive:
         ```json
         {
-          "last_block_number": "string",
+          "last_block_number": int64,
         }
         ```
       responses:
