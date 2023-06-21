@@ -73,7 +73,7 @@ const FileBunniesSection = observer(() => {
         <FileBunniesLayout>
           <Title>
             <img src={FileBunniesLogo} />
-            <span>
+            <span style={{ marginTop: '30px' }}>
               <a
                 style={{ color: 'white', textDecoration: 'underline' }}
                 href={'https://filebunnies.xyz/'}
@@ -102,14 +102,14 @@ const FileBunniesSection = observer(() => {
                   List spot for all content built on FileMarket.
                 </LeftBlockText>
               </LeftTextBlock>
-              <ToolTipBlock first>
-                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { rarityModalOpen() }}>FileBunnies Rarities</Txt>
+              <ToolTipBlock first onClick={() => { rarityModalOpen() }}>
+                <Txt style={{ borderBottom: '1px dashed' }}>FileBunnies Rarities</Txt>
               </ToolTipBlock>
-              <ToolTipBlock second>
-                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToWorkModalOpen() }}>How EFT (Encrypted FileToken) works?</Txt>
+              <ToolTipBlock second onClick={() => { howToWorkModalOpen() }}>
+                <Txt style={{ borderBottom: '1px dashed' }}>How EFT (Encrypted FileToken) works?</Txt>
               </ToolTipBlock>
-              <ToolTipBlock last>
-                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToMintModalOpen() }}>How to MINT FileBunnies?</Txt>
+              <ToolTipBlock last onClick={() => { howToMintModalOpen() }}>
+                <Txt style={{ borderBottom: '1px dashed' }}>How to MINT FileBunnies?</Txt>
               </ToolTipBlock>
             </LeftBlock>
             <CardsBlock>

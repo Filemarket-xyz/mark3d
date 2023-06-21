@@ -99,7 +99,7 @@ export const WhitelistCard: React.FC<WhitelistCardProps> = ({
             </Flex>
             <Flex w100 justifyContent='space-between'>
               <Txt primary1>Total EFTs:</Txt>
-              <Txt primary1>{total}</Txt>
+              <Txt primary1 style={{ color: '#E9E9EA' }}>{total}</Txt>
             </Flex>
           </StyledCardInfo>
           <StyledDescription

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { styled } from '../../../../styles'
 import { Button, Container, Link, LinkButton, textVariant } from '../../../UIkit'
 import { MainBlock } from '../../GetAccessPage/GetAccessPage'
+import FileBunniesBanner from '../components/FileBunniesBanner/FileBunniesBanner'
 import HowToGetStart from '../components/HowToGetStart/HowToGetStart'
 import bgStorage from '../img/bgStorage.svg'
 import greenCircles from '../img/GreenCircles.svg'
@@ -15,12 +16,22 @@ const BackgroundContainer = styled('section', {
 })
 
 const WelcomeScreenWrapper = styled('section', {
-  background: `url(${bgStorage}), url(${greenCircles}), url(${greenSun})`,
+  background: `url(${bgStorage}), url(${greenCircles})`,
   width: '100%',
   backgroundSize: '480px',
   backgroundRepeat: 'no-repeat',
   $$topPad: '260px',
-  backgroundPosition: 'top $$topPad right 1.5%, top 188px right 0, top -68px left -20px',
+  backgroundPosition: 'top $$topPad right 1.5%, top 188px right 0',
+  position: 'relative',
+  '& .greenSun': {
+    zIndex: '1',
+    position: 'absolute',
+    top: '-50px',
+    left: '-10px',
+    '@lg': {
+      display: 'none',
+    },
+  },
   '@xl': {
     backgroundPosition: 'top $$topPad right 2.5%, top 188px right 0, top -68px left -10px',
   },
@@ -134,6 +145,14 @@ const NavigateTitle = styled('h4', {
 const WelcomeInfo = styled(Container, {
   paddingTop: 'calc($layout$navBarHeight + 44px)',
   paddingBottom: '140px',
+  zIndex: '2',
+  position: 'relative',
+  '@lg': {
+    paddingTop: 'calc($layout$navBarHeight - 44px)',
+  },
+  '@md': {
+    paddingTop: 'calc($layout$navBarHeight - 60px)',
+  },
   '@sm': {
     paddingBottom: '$5',
   },
@@ -144,7 +163,9 @@ export default function WelcomeBlock() {
 
   return (
     <BackgroundContainer>
+      <FileBunniesBanner />
       <WelcomeScreenWrapper>
+        <img src={greenSun} className={'greenSun'} />
         <WelcomeInfo>
           <Title>
             No code NFT shop builder with privacy layer & perpetual decentralized storage
