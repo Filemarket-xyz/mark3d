@@ -4,7 +4,7 @@ import { Outlet } from 'react-router'
 import { styled } from '../../../styles'
 import { useOpenOrderListStore } from '../../hooks/useOrdersListStore'
 import { PageLayout, Tabs } from '../../UIkit'
-import FileBunniesSection from './FileBunnies/FileBunniesSection/FileBunniesSection'
+// import FileBunniesSection from './FileBunnies/FileBunniesSection/FileBunniesSection'
 
 const TabsContainer = styled('div', {
   marginBottom: '$4',
@@ -15,7 +15,7 @@ const MarketPage = observer(() => {
 
   return (
     <>
-      <FileBunniesSection />
+      {/* <FileBunniesSection /> */}
       <PageLayout style={{ paddingTop: '102px' }}>
         <TabsContainer>
           <Tabs
