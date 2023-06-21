@@ -24,6 +24,12 @@ export interface MintNFTForm {
   tags?: string[] // required
   subcategories?: string[]
   royalty?: number
+  callBack?: () => void
+}
+
+type IUseMintNft = MintNFTForm & {
+  isPublicCollection?: boolean
+  callBack?: () => void
 }
 
 interface MintNFTResult {
@@ -31,25 +37,25 @@ interface MintNFTResult {
   receipt: ContractReceipt // вся инфа о транзе
 }
 
-export function useMintNFT(form: MintNFTForm = {}, options?: { isPublicCollection?: boolean }) {
-  const { contract, signer } = useCollectionContract(form.collectionAddress)
+export function useMintNFT({ collectionAddress, callBack }: IUseMintNft = {}) {
+  const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
-  const { wrapPromise, ...statuses } = useStatusState<MintNFTResult>()
+  const { wrapPromise, ...statuses } = useStatusState<MintNFTResult, IUseMintNft>()
   const factory = useHiddenFileProcessorFactory()
   const upload = useUploadLighthouse()
 
-  const mintNFT = useCallback(wrapPromise(async () => {
+  const mintNFT = useCallback(wrapPromise(async (form) => {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     assertAccount(address)
 
-    const { name, description = '', image, hiddenFile, collectionAddress, license, tags, subcategories, categories, royalty } = form
+    const { name, description = '', image, hiddenFile, collectionAddress, license, tags, subcategories, categories, royalty, isPublicCollection } = form
     if (!name || !collectionAddress || !image || !hiddenFile || royalty === undefined) {
       throw Error('CreateCollection form is not filled')
     }
 
     let tokenIdBN: BigNumber
-    if (options?.isPublicCollection) {
+    if (isPublicCollection) {
       const { data } = await api.sequencer.acquireDetail(collectionAddress)
       tokenIdBN = BigNumber.from(data.tokenId)
     } else {
@@ -89,7 +95,7 @@ export function useMintNFT(form: MintNFTForm = {}, options?: { isPublicCollectio
       tokenId: tokenIdBN.toString(),
       receipt,
     }
-  }), [contract, signer, address, factory, form, wrapPromise, options])
+  }, callBack), [contract, signer, address, factory, wrapPromise])
 
   return { ...statuses, mintNFT }
 }

@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi'
 import { useMediaMui } from '../../../hooks/useMediaMui'
 import { useSeedProvider } from '../../../processing'
 import { ButtonGlowing, Txt } from '../../../UIkit'
-import { FWIcon, Modal, ModalBanner, ModalBody, ModalButtonContainer, ModalTitle } from '../../../UIkit/Modal/Modal'
+import { Modal, ModalBanner, ModalBody, ModalButtonContainer, ModalIcon, ModalTitle } from '../../../UIkit/Modal/Modal'
 import { AppDialogProps } from '../../../utils/dialog'
 import { UnlockSection } from '../ConnectFileWalletDialog/sections/UnlockSection'
 import ViewMnemonicSection from './ViewMnemonicSection/ViewMnemonicSection'
@@ -30,7 +30,7 @@ export function ViewMnemonicDialog({ open, onClose }: AppDialogProps<{}>): JSX.E
     >
       <ModalTitle style={{ marginBottom: 0 }}>
         {' '}
-        <FWIcon />
+        <ModalIcon />
         {' '}
         {canWatch ? 'FileWallet seed phrases' : 'Show FileWallet seed phrase'}
       </ModalTitle>

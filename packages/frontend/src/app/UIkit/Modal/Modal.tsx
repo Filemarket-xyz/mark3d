@@ -5,6 +5,7 @@ import CloseButtonImg from '../../../assets/img/CloseButton.svg'
 import FWIconImg from '../../../assets/img/FWicon.svg'
 import { styled } from '../../../styles'
 import { useMediaMui } from '../../hooks/useMediaMui'
+import FileBunniesLogo from '../../pages/MarketPage/img/FileBunniesLogoModal.svg'
 import { FormControl } from '../Form/FormControl'
 import { textVariant } from '../Txt'
 
@@ -23,7 +24,7 @@ const CloseButton = styled('div', {
   },
 })
 
-export const FWIcon = styled('div', {
+export const ModalIcon = styled('div', {
   position: 'absolute',
   top: '0',
   left: '0',
@@ -32,6 +33,15 @@ export const FWIcon = styled('div', {
   width: '100%',
   backgroundSize: 'contain',
   backgroundRepeat: 'no-repeat',
+  variants: {
+    fileBunnies: {
+      true: {
+        background: `url(${FileBunniesLogo}) no-repeat`,
+        height: '50px',
+        top: '-6px',
+      },
+    },
+  },
 })
 
 export const modalStyle = {
@@ -57,27 +67,29 @@ export const FormControlModal = styled(FormControl, {
 
 export const Modal = (props: ComponentProps<typeof ModalBase> & { isError?: boolean }) => {
   const { adaptive } = useMediaMui()
+  const { isError, width, ...modalProps } = props
 
   return (
     <ModalBase
-      {...props}
+      {...modalProps}
       closeButton={false}
+      width={width}
       css={{
         ...modalStyle,
         ...props.css,
         color: '#232528',
-        borderColor: props.isError ? '#C54B5C' : '#232528',
+        borderColor: isError ? '#C54B5C' : '#232528',
         padding: adaptive({
           sm: '20px',
           defaultValue: '32px',
         }),
       }}
     >
-      {props.children}
-      {props.closeButton && (
+      {modalProps.children}
+      {modalProps.closeButton && (
         <CloseButton onClick={() => {
-          props.onClose?.()
-          props.onCloseButtonClick?.()
+          modalProps.onClose?.()
+          modalProps.onCloseButtonClick?.()
         }}
         >
           <img src={CloseButtonImg} />

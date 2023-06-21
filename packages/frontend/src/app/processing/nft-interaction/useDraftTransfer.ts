@@ -4,14 +4,19 @@ import { useCallback } from 'react'
 import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useCollectionContract } from '../contracts'
-import { TokenFullId } from '../types'
 import { assertCollection, assertContract, assertSigner, assertTokenId, callContract, nullAddress } from '../utils'
 
-export function useDraftTransfer({ collectionAddress, tokenId }: Partial<TokenFullId> = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt>()
+interface IDraftTransfer {
+  collectionAddress?: string
+  tokenId?: string
+  callBack?: () => void
+}
 
-  const draftTransfer = useCallback(wrapPromise(async () => {
+export function useDraftTransfer({ callBack }: IDraftTransfer = {}) {
+  const { contract, signer } = useCollectionContract()
+  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IDraftTransfer>()
+
+  const draftTransfer = useCallback(wrapPromise(async ({ collectionAddress, tokenId }: IDraftTransfer) => {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     assertCollection(collectionAddress)
@@ -23,7 +28,7 @@ export function useDraftTransfer({ collectionAddress, tokenId }: Partial<TokenFu
       nullAddress,
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }), [contract, signer, wrapPromise])
+  }, callBack), [contract, signer, wrapPromise])
 
   return {
     ...statuses,
