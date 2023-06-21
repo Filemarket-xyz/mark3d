@@ -24,6 +24,7 @@ func (p *postgres) GetCollectionTokens(
 	query := `
 		SELECT 
 		    t.token_id, t.owner, t.meta_uri, t.creator, t.royalty, t.mint_transaction_timestamp, t.mint_transaction_hash,
+		    t.block_number,
 		    c.name
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
@@ -63,6 +64,7 @@ func (p *postgres) GetCollectionTokens(
 				&t.Royalty,
 				&t.MintTxTimestamp,
 				&mintTxHash,
+				&t.BlockNumber,
 				&t.CollectionName,
 			); err != nil {
 				return err
@@ -135,7 +137,7 @@ func (p *postgres) GetTokensByAddress(
 	query := `
 		SELECT 
 		    t.collection_address, t.token_id, t.meta_uri, t.creator, t.royalty, 
-		    t.mint_transaction_timestamp, t.mint_transaction_hash,
+		    t.mint_transaction_timestamp, t.mint_transaction_hash, t.block_number,
 		    c.name
 		FROM tokens t
 		INNER JOIN collections c ON c.address = t.collection_address
@@ -183,6 +185,7 @@ func (p *postgres) GetTokensByAddress(
 				&t.Royalty,
 				&t.MintTxTimestamp,
 				&mintTxHash,
+				&t.BlockNumber,
 				&t.CollectionName,
 			); err != nil {
 				return err
@@ -253,6 +256,7 @@ func (p *postgres) GetToken(
 	query := `
 		SELECT 
 		    t.owner, t.meta_uri, t.creator, t.royalty, t.mint_transaction_timestamp, t.mint_transaction_hash,
+		    t.block_number,
 		    c.name
 		FROM tokens t
 		INNER JOIN collections c ON t.collection_address = c.address
@@ -274,6 +278,7 @@ func (p *postgres) GetToken(
 		&t.Royalty,
 		&t.MintTxTimestamp,
 		&mintTxHash,
+		&t.BlockNumber,
 		&t.CollectionName,
 	)
 	if err != nil {
@@ -303,9 +308,10 @@ func (p *postgres) InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Tok
 	// language=PostgreSQL
 	query := `
 		INSERT INTO tokens (
-		    collection_address, token_id, owner, meta_uri, creator, royalty, mint_transaction_timestamp, mint_transaction_hash
+		    collection_address, token_id, owner, meta_uri, creator, royalty, mint_transaction_timestamp, 
+		    mint_transaction_hash, block_number
 		)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8) 
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) 
 		ON CONFLICT ON CONSTRAINT tokens_pkey DO NOTHING
 	`
 	_, err := tx.Exec(ctx, query,
@@ -317,6 +323,7 @@ func (p *postgres) InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Tok
 		token.Royalty,
 		token.MintTxTimestamp,
 		strings.ToLower(token.MintTxHash.Hex()),
+		token.BlockNumber,
 	)
 	if err != nil {
 		return err
@@ -333,8 +340,8 @@ func (p *postgres) InsertToken(ctx context.Context, tx pgx.Tx, token *domain.Tok
 
 func (p *postgres) UpdateToken(ctx context.Context, tx pgx.Tx, token *domain.Token) error {
 	// language=PostgreSQL
-	if _, err := tx.Exec(ctx, `UPDATE tokens SET owner=$1,meta_uri=$2 WHERE collection_address=$3 AND token_id=$4`,
-		strings.ToLower(token.Owner.String()), token.MetaUri,
+	if _, err := tx.Exec(ctx, `UPDATE tokens SET owner=$1,meta_uri=$2,block_number=$3 WHERE collection_address=$4 AND token_id=$5`,
+		strings.ToLower(token.Owner.String()), token.MetaUri, token.BlockNumber,
 		strings.ToLower(token.CollectionAddress.String()), token.TokenId.String()); err != nil {
 		return err
 	}
@@ -746,11 +753,20 @@ func (p *postgres) GetTokensForAutosell(
 	return res, nil
 }
 
-func (p *postgres) UpdateTokenTxData(ctx context.Context, tx pgx.Tx, tokenId *big.Int, collectionAddress common.Address, txTimestamp uint64, hash common.Hash) error {
+func (p *postgres) UpdateTokenTxData(
+	ctx context.Context,
+	tx pgx.Tx,
+	tokenId *big.Int,
+	collectionAddress common.Address,
+	txTimestamp uint64,
+	hash common.Hash,
+	blockNumber *big.Int,
+) error {
 	// language=PostgreSQL
-	if _, err := tx.Exec(ctx, `UPDATE tokens SET mint_transaction_timestamp=$1,mint_transaction_hash=$2 WHERE collection_address=$3 AND token_id=$4`,
+	if _, err := tx.Exec(ctx, `UPDATE tokens SET mint_transaction_timestamp=$1,mint_transaction_hash=$2,block_number=$3 WHERE collection_address=$4 AND token_id=$5`,
 		txTimestamp,
 		strings.ToLower(hash.Hex()),
+		blockNumber.Int64(),
 		strings.ToLower(collectionAddress.String()),
 		tokenId.String(),
 	); err != nil {

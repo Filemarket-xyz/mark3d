@@ -968,6 +968,18 @@ definitions:
         description: Статы коллекции, присутствует только у зайцев
         items:
           $ref: "#/definitions/CollectionStat"
+      block:
+        type: object
+        description: Информация о блоке с актуальной информацией о сущности
+        properties:
+          number:
+            type: number
+            format: int64
+            description: Номер блока
+          confirmationsCount:
+            type: number
+            format: int64
+            description: Hardcoded 1
   CollectionStat:
     type: object
     properties:
@@ -1073,6 +1085,18 @@ definitions:
         type: integer
         format: int64
         description: id ордера, находящегося в процессе
+      block:
+        type: object
+        description: Информация о блоке с актуальной информацией о сущности
+        properties:
+          number:
+            type: number
+            format: int64
+            description: Номер блока
+          confirmationsCount:
+            type: number
+            format: int64
+            description: Hardcoded 1
   TransferWithData:
     type: object
     description: Данные трансфера (Трансфер, токен, ордер если есть)
@@ -1132,6 +1156,18 @@ definitions:
       number:
         type: string
         description: Порядковый номер трансфера
+      block:
+        type: object
+        description: Информация о блоке с актуальной информацией о сущности
+        properties:
+          number:
+            type: number
+            format: int64
+            description: Номер блока
+          confirmationsCount:
+            type: number
+            format: int64
+            description: Hardcoded 1
   Order:
     type: object
     description: Ордер
@@ -1165,6 +1201,18 @@ definitions:
         description: Статусы ордера
         items:
           $ref: "#/definitions/OrderStatusInfo"
+      block:
+        type: object
+        description: Информация о блоке с актуальной информацией о сущности
+        properties:
+          number:
+            type: number
+            format: int64
+            description: Номер блока
+          confirmationsCount:
+            type: number
+            format: int64
+            description: Hardcoded 1
   TransferStatusInfo:
     type: object
     description: Изменение статуса трансфера
