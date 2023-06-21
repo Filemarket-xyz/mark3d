@@ -25,6 +25,11 @@ export const FileBunniesSectionStyle = styled('div', {
     bottom: '96px',
     right: '0',
   },
+  '@xl': {
+    '& .rightPl': {
+      right: '-46px',
+    },
+  },
   '@lg': {
     background: `url(${FBBgLg})`,
   },
@@ -172,6 +177,11 @@ export const ToolTipBlock = styled('div', {
   justifyContent: 'center',
   position: 'relative',
   background: '#353559',
+  cursor: 'pointer',
+  transition: '0.5s',
+  '&:hover': {
+    filter: 'brightness(115%)',
+  },
   '&:before': {
     content: '',
     width: '100%',
