@@ -17,7 +17,7 @@ export const AppNav: FC = () => {
   const scrollY = useScrollWindow()
 
   const isMarketPage: boolean = useMemo(() => {
-    return location.pathname.includes('/market25')
+    return location.pathname.includes('/market')
   }, [location.pathname])
 
   const isTransparent = useMemo(() => {
