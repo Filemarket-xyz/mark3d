@@ -30,9 +30,6 @@ func (s *service) GetToken(ctx context.Context, address common.Address,
 		return nil, internalError
 	}
 
-	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress && token.MetaUri == "" {
-		token.Metadata = domain.NewFileBunniesPlaceholder()
-	}
 	return domain.TokenToModel(token), nil
 }
 
@@ -125,12 +122,6 @@ func (s *service) GetTokensByAddress(
 	if err != nil {
 		log.Println("get tokens by address failed: ", err)
 		return nil, internalError
-	}
-
-	for _, t := range tokens {
-		if t.CollectionAddress == s.cfg.FileBunniesCollectionAddress && t.MetaUri == "" {
-			t.Metadata = domain.NewFileBunniesPlaceholder()
-		}
 	}
 
 	tokensRes := domain.MapSlice(tokens, domain.TokenToModel)

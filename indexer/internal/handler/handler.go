@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/service/realtime_notification"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -14,14 +15,20 @@ type Handler interface {
 }
 
 type handler struct {
-	cfg     *config.HandlerConfig
-	service service.Service
+	cfg                         *config.HandlerConfig
+	service                     service.Service
+	realTimeNotificationService *realtime_notification.RealTimeNotificationService
 }
 
-func NewHandler(cfg *config.HandlerConfig, service service.Service) Handler {
+func NewHandler(
+	cfg *config.HandlerConfig,
+	service service.Service,
+	realTimeNotificationService *realtime_notification.RealTimeNotificationService,
+) Handler {
 	return &handler{
-		cfg:     cfg,
-		service: service,
+		cfg:                         cfg,
+		service:                     service,
+		realTimeNotificationService: realTimeNotificationService,
 	}
 }
 
@@ -52,6 +59,8 @@ func (h *handler) Init() http.Handler {
 	router.HandleFunc("/currency/conversion_rate", h.handleGetCurrencyConversionRate)
 	router.HandleFunc("/healthcheck", h.handleHealthCheck)
 	router.HandleFunc("/tokens/file-bunnies/to_autosell", h.handleGetFileBunniesTokensForAutosell)
+	router.HandleFunc("/subscribe/block_number", h.subscribeToBlockNumber).Methods("POST")
+
 	router.Use(h.corsMiddleware)
 
 	return router
