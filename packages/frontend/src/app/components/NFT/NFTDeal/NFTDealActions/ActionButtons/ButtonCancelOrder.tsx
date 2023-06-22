@@ -9,9 +9,10 @@ import BaseModal from '../../../../Modal/Modal'
 export interface ButtonCancelOrderProps {
   tokenFullId: TokenFullId
   callBack?: () => void
+  isDisabled?: boolean
 }
 
-export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, callBack }) => {
+export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, callBack, isDisabled }) => {
   const { cancelOrder, ...statuses } = useCancelOrder({ callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -27,7 +28,7 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, cal
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={async () => {
           await cancelOrder(tokenFullId)
         }}

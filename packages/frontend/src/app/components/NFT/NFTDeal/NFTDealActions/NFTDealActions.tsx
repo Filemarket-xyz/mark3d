@@ -1,13 +1,29 @@
+import { Tooltip } from '@nextui-org/react'
 import { observer } from 'mobx-react-lite'
 import React, { FC } from 'react'
 
+import { styled } from '../../../../../styles'
 import { Order, Transfer } from '../../../../../swagger/Api'
+import { useStores } from '../../../../hooks'
 import { useStatusModal } from '../../../../hooks/useStatusModal'
 import { useIsOwner } from '../../../../processing'
 import { TokenFullId } from '../../../../processing/types'
 import BaseModal from '../../../Modal/Modal'
 import { NFTDealActionsBuyer } from './NFTDealActionsBuyer'
 import { NFTDealActionOwner } from './NFTDealActionsOwner'
+
+const ButtonsContainer = styled(Tooltip, {
+  display: 'flex',
+  justifyContent: 'stretch',
+  gap: '$3',
+  width: '100%',
+  flexDirection: 'column',
+  padding: '0 16px',
+  '@sm': {
+    flexDirection: 'column',
+    gap: '$3',
+  },
+})
 
 export interface NFTDealActionsProps {
   tokenFullId: TokenFullId
@@ -29,7 +45,7 @@ export const funcTimeout = (func: any) => {
       }
       countReload++
       data = await func()
-    }, 1000)
+    }, 5000)
   }, 2000)
 }
 
@@ -40,7 +56,7 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   reFetchOrder,
 }) => {
   const { isOwner, error, refetch } = useIsOwner(tokenFullId)
-
+  const { blockStore } = useStores()
   const { modalProps } = useStatusModal({
     statuses: { result: undefined, isLoading: false, error: error as unknown as string },
     okMsg: '',
@@ -53,22 +69,30 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
 
   if (isOwner) {
     return (
-      <NFTDealActionOwner
-        transfer={transfer}
-        tokenFullId={tokenFullId}
-        ownerStatusChanged={() => { funcTimeout(refetch) }}
-        reFetchOrder={() => { funcTimeout(reFetchOrder) }}
-      />
+      <ButtonsContainer content={blockStore.canContinue ? ''
+        : `Confirmations: ${blockStore.currentBlockNumber - blockStore.lastCurrentBlockNumber}/${blockStore.receiptBlockNumber - blockStore.lastCurrentBlockNumber}`}
+      >
+        <NFTDealActionOwner
+          transfer={transfer}
+          tokenFullId={tokenFullId}
+          ownerStatusChanged={() => { funcTimeout(refetch) }}
+          reFetchOrder={() => { funcTimeout(reFetchOrder) }}
+        />
+      </ButtonsContainer>
     )
   }
 
   return (
-    <NFTDealActionsBuyer
-      transfer={transfer}
-      order={order}
-      tokenFullId={tokenFullId}
-      ownerStatusChanged={refetch}
-      reFetchOrder={reFetchOrder}
-    />
+    <ButtonsContainer content={blockStore.canContinue ? ''
+      : `Confirmations: ${blockStore.currentBlockNumber - blockStore.lastCurrentBlockNumber}/${blockStore.receiptBlockNumber - blockStore.lastCurrentBlockNumber}`}
+    >
+      <NFTDealActionsBuyer
+        transfer={transfer}
+        order={order}
+        tokenFullId={tokenFullId}
+        ownerStatusChanged={refetch}
+        reFetchOrder={reFetchOrder}
+      />
+    </ButtonsContainer>
   )
 })

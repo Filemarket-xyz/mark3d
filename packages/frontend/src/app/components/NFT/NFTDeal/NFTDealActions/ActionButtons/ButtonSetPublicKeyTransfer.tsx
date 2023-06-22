@@ -9,11 +9,13 @@ import BaseModal from '../../../../Modal/Modal'
 export interface ButtonSetPublicKeyTransferProps {
   tokenFullId: TokenFullId
   callBack?: () => void
+  isDisabled?: boolean
 }
 
 export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = ({
   tokenFullId,
   callBack,
+  isDisabled,
 }) => {
   const { setPublicKey, ...statuses } = useSetPublicKey({ ...tokenFullId, callBack })
   const { isLoading } = statuses
@@ -34,7 +36,7 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={onPress}
       >
         Accept transfer

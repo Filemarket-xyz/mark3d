@@ -2,6 +2,7 @@ import { observer } from 'mobx-react-lite'
 import { FC } from 'react'
 
 import { Order, Transfer } from '../../../../../swagger/Api'
+import { useStores } from '../../../../hooks'
 import { useIsBuyer } from '../../../../processing'
 import { TokenFullId } from '../../../../processing/types'
 import { Button } from '../../../../UIkit'
@@ -31,6 +32,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
   reFetchOrder,
 }) => {
   const isBuyer = useIsBuyer(transfer)
+  const { blockStore } = useStores()
 
   return (
     <>
@@ -45,10 +47,10 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
         </Button>
       </HideAction>
       <HideAction hide={!transfer || !permissions.canFulfillOrder(transfer)}>
-        <ButtonFulfillOrder tokenFullId={tokenFullId} order={order} />
+        <ButtonFulfillOrder tokenFullId={tokenFullId} order={order} isDisabled={!blockStore.canContinue} />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canSetPublicKey(transfer)}>
-        <ButtonSetPublicKeyTransfer tokenFullId={tokenFullId} />
+        <ButtonSetPublicKeyTransfer tokenFullId={tokenFullId} isDisabled={!blockStore.canContinue} />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canFinalize(transfer)}>
         <ButtonFinalizeTransfer
@@ -57,13 +59,14 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
             ownerStatusChanged?.()
             reFetchOrder?.()
           }}
+          isDisabled={!blockStore.canContinue}
         />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canReportFraud(transfer)}>
-        <ButtonReportFraudTransfer tokenFullId={tokenFullId} />
+        <ButtonReportFraudTransfer tokenFullId={tokenFullId} isDisabled={!blockStore.canContinue} />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canCancel(transfer)}>
-        <ButtonCancelTransfer tokenFullId={tokenFullId} callBack={reFetchOrder} />
+        <ButtonCancelTransfer tokenFullId={tokenFullId} callBack={reFetchOrder} isDisabled={!blockStore.canContinue} />
       </HideAction>
     </>
   )

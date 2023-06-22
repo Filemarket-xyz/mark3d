@@ -12,12 +12,14 @@ export interface ButtonFulfillOrderProps {
   tokenFullId: TokenFullId
   order?: Order
   callBack?: () => void
+  isDisabled?: boolean
 }
 
 export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
   tokenFullId,
   order,
   callBack,
+  isDisabled,
 }) => {
   const { fulfillOrder, ...statuses } = useFulfillOrder({ callBack })
   const { isLoading } = statuses
@@ -42,7 +44,7 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={onPress}
       >
         Buy now

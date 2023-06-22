@@ -9,9 +9,10 @@ import BaseModal from '../../../../Modal/Modal'
 export interface ButtonFinalizeTransferProps {
   tokenFullId: TokenFullId
   callBack?: () => void
+  isDisabled?: boolean
 }
 
-export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenFullId, callBack }) => {
+export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenFullId, callBack, isDisabled }) => {
   const { finalizeTransfer, ...statuses } = useFinalizeTransfer({ ...tokenFullId, callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -27,7 +28,7 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={async () => {
           await finalizeTransfer(tokenFullId)
         }}

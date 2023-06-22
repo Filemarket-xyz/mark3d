@@ -9,9 +9,10 @@ import BaseModal from '../../../../Modal/Modal'
 export interface ButtonCancelTransferProps {
   tokenFullId: TokenFullId
   callBack?: () => void
+  isDisabled?: boolean
 }
 
-export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullId, callBack }) => {
+export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullId, callBack, isDisabled }) => {
   const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId, callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -27,7 +28,7 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullI
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={async () => {
           await cancelTransfer(tokenFullId)
         }}

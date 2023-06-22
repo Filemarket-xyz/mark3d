@@ -12,9 +12,10 @@ import { TransferForm } from '../../TransferForm'
 
 export interface ButtonInitTransferProps {
   tokenFullId: TokenFullId
+  isDisabled?: boolean
 }
 
-export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId }) => {
+export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, isDisabled }) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
   const { initTransfer, ...statuses } = useInitTransfer(tokenFullId)
   const { isLoading } = statuses
@@ -49,7 +50,7 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId })
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={openModal}
       >
         Gift

@@ -9,9 +9,10 @@ import BaseModal from '../../../../Modal/Modal'
 export interface ButtonApproveExchangeProps {
   tokenFullId: TokenFullId
   callBack?: () => void
+  isDisabled?: boolean
 }
 
-export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callBack }) => {
+export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callBack, isDisabled }) => {
   const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId, callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -27,7 +28,7 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={async () => {
           await approveExchange(tokenFullId)
         }}

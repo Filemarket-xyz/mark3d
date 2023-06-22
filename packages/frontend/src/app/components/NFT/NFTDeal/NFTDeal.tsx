@@ -52,19 +52,6 @@ const DealContainerInfo = styled('div', {
   },
 })
 
-const ButtonsContainer = styled('div', {
-  display: 'flex',
-  justifyContent: 'stretch',
-  gap: '$3',
-  width: '100%',
-  flexDirection: 'column',
-  padding: '0 16px',
-  '@sm': {
-    flexDirection: 'column',
-    gap: '$3',
-  },
-})
-
 const IsNotListedContainer = styled('div', {
   width: '100%',
   height: '100%',
@@ -101,14 +88,12 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
           )}
         </DealContainerInfo>
       )}
-      <ButtonsContainer>
-        <NFTDealActions
-          transfer={transfer}
-          order={order}
-          tokenFullId={tokenFullId}
-          reFetchOrder={reFetchOrder}
-        />
-      </ButtonsContainer>
+      <NFTDealActions
+        transfer={transfer}
+        order={order}
+        tokenFullId={tokenFullId}
+        reFetchOrder={reFetchOrder}
+      />
       {(!transfer && !isOwner) && (
         <IsNotListedContainer>
           <Txt primary1 style={{ fontSize: '24px', color: '#A7A8A9' }}> EFT is not listed</Txt>

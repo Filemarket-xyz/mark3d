@@ -11,9 +11,10 @@ export interface ButtonApproveTransferProps {
   tokenFullId: TokenFullId
   transfer?: Transfer
   callBack?: () => void
+  isDisabled?: boolean
 }
 
-export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFullId, transfer, callBack }) => {
+export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFullId, transfer, callBack, isDisabled }) => {
   const { approveTransfer, ...statuses } = useApproveTransfer({ ...tokenFullId, callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -29,7 +30,7 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={async () => {
           await approveTransfer({
             tokenId: tokenFullId.tokenId,

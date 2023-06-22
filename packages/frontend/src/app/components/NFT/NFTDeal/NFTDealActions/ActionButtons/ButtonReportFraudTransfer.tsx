@@ -9,9 +9,10 @@ import BaseModal from '../../../../Modal/Modal'
 export interface ButtonReportFraudTransferProps {
   tokenFullId: TokenFullId
   callBack?: () => void
+  isDisabled?: boolean
 }
 
-export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ tokenFullId, callBack }) => {
+export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ tokenFullId, callBack, isDisabled }) => {
   const { reportFraud, ...statuses } = useReportFraud({ ...tokenFullId, callBack })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -27,7 +28,7 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ 
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={async () => {
           await reportFraud(tokenFullId)
         }}

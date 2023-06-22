@@ -51,7 +51,7 @@ export class SocketStore {
     if (this.socket) {
       this.socket.onmessage = (event) => {
         const data = JSON.parse(event.data)
-        this.blockStore.setCurrentBlock(data)
+        this.blockStore.setCurrentBlock(+data.last_block_number as number)
       }
     }
   }

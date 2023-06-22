@@ -12,9 +12,10 @@ import { OrderForm, OrderFormValue } from '../../OrderForm'
 export interface ButtonPlaceOrderProps {
   tokenFullId: TokenFullId
   callBack?: () => void
+  isDisabled?: boolean
 }
 
-export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId, callBack }) => {
+export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId, callBack, isDisabled }) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
   const { placeOrder, ...statuses } = usePlaceOrder({ ...tokenFullId, callBack })
   const { isLoading } = statuses
@@ -53,7 +54,7 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId,
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={openModal}
       >
         Put on sale
