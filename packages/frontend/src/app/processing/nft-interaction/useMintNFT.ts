@@ -91,6 +91,8 @@ export function useMintNFT({ collectionAddress, callBack }: IUseMintNft = {}) {
       '0x00',
     )
 
+    console.log(receipt)
+
     return {
       tokenId: tokenIdBN.toString(),
       receipt,

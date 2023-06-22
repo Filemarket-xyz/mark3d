@@ -17,6 +17,12 @@ export default defineConfig({
         target: 'https://dev.filemarket.xyz/',
         changeOrigin: true,
       },
+      '/ws': {
+        target: 'wss://dev.filemarket.xyz/',
+        secure: false,
+        changeOrigin: true,
+        ws: true,
+      }
     },
   },
 })

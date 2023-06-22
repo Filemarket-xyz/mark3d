@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useAfterDidMountEffect } from '../../../hooks/useDidMountEffect'
 import {
@@ -49,6 +49,10 @@ export const useCreateNft = () => {
       ...options,
     })
   }, [formToTransfer, options])
+
+  useEffect(() => {
+    if (result) console.log(result)
+  }, [result])
 
   return {
     createNft: (form: CreateNFTForm, options?: { isPublicCollection?: boolean }) => {

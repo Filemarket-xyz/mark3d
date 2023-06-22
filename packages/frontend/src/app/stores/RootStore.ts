@@ -1,3 +1,4 @@
+import { BlockStore } from './BlockStore/BlockStore'
 import { CollectionStore } from './Collection/CollectionStore'
 import { CollectionAndTokenListStore } from './CollectionAndTokenList/CollectionAndTokenListStore'
 import { CollectionTokenListStore } from './CollectionTokenList/CollectionTokenListStore'
@@ -7,6 +8,7 @@ import { ErrorStore } from './Error/ErrorStore'
 import { OrderStore } from './Order/OrderStore'
 import { OpenOrderListStore } from './OrderList/OrderListStore'
 import { PublicCollectionStore } from './PublicCollectionStore/PublicCollectionStore'
+import { SocketStore } from './Socket/SocketStore'
 import { TokenMetaStore } from './Token/TokenMetaStore'
 import { TokenStore } from './Token/TokenStore'
 import { TransferListStore } from './Transfer/TransferListStore'
@@ -17,6 +19,7 @@ import { WhiteListStore } from './WhiteList/WhiteListStore'
 
 export class RootStore {
   dialogStore: DialogStore
+  blockStore: BlockStore
   errorStore: ErrorStore
   collectionAndTokenList: CollectionAndTokenListStore
   transferListStore: TransferListStore
@@ -32,9 +35,11 @@ export class RootStore {
   publicCollectionStore: PublicCollectionStore
   conversionRateStore: ConversionRateStore
   whitelistStore: WhiteListStore
+  socketStore: SocketStore
 
   constructor() {
     this.dialogStore = new DialogStore()
+    this.blockStore = new BlockStore()
     this.errorStore = new ErrorStore(this)
     this.collectionAndTokenList = new CollectionAndTokenListStore(this)
     this.transferListStore = new TransferListStore(this)
@@ -49,6 +54,7 @@ export class RootStore {
     this.userTransferStore = new UserTransferStore(this)
     this.publicCollectionStore = new PublicCollectionStore(this)
     this.conversionRateStore = new ConversionRateStore(this)
+    this.socketStore = new SocketStore(this)
     this.whitelistStore = new WhiteListStore(this)
   }
 }
