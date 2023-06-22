@@ -1410,14 +1410,15 @@ func (s *service) ListenBlockchain() error {
 					}
 				}
 			}
-			lastBlock = current
-
-			// broadcast last block number to subscribers
-			lastBlockMessage, err := json.Marshal(map[string]any{"last_block_number": lastBlock.Int64() - 1}) // 1 conformation
-			if err != nil {
-				logger.Warnf("failed to marshal last block number for broadcast: %v", err)
+			if lastBlock.Cmp(current) != 0 {
+				// broadcast last block number to subscribers
+				lastBlockMessage, err := json.Marshal(map[string]any{"last_block_number": current.Int64() - 1}) // 1 conformation
+				if err != nil {
+					logger.Warnf("failed to marshal last block number for broadcast: %v", err)
+				}
+				s.realTimeNotificationService.BroadcastMessage(realtime_notification.LastBlockNumberTopic, lastBlockMessage)
 			}
-			s.realTimeNotificationService.BroadcastMessage(realtime_notification.LastBlockNumberTopic, lastBlockMessage)
+			lastBlock = current
 		case <-s.closeCh:
 			return nil
 		}
