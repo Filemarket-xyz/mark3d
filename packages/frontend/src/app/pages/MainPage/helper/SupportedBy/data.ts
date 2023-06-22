@@ -11,7 +11,7 @@ export const supportedByData: Array<{ src: string, url: string }> = [
   },
   {
     src: item2,
-    url: 'https://filecoin.io/',
+    url: 'https://filecoin.io/blog/posts/filecoin-virtual-machine-fvm-builder-cohort-launches-to-mainnet/',
   },
   {
     src: item3,
