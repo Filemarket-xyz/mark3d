@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/filebunniesCollection"
 	"github.com/mark3d-xyz/mark3d/indexer/contracts/publicCollection"
+	"github.com/mark3d-xyz/mark3d/indexer/internal/service/realtime_notification"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/currencyconversion"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/ethsigner"
 	"github.com/mark3d-xyz/mark3d/indexer/pkg/retry"
@@ -113,24 +114,26 @@ type Currency interface {
 }
 
 type service struct {
-	repository          repository.Repository
-	healthNotifier      healthnotifier.HealthNotifyer
-	cfg                 *config.ServiceConfig
-	ethClient           ethclient2.EthClient
-	sequencer           *sequencer.Sequencer
-	accessTokenAddress  common.Address
-	accessTokenInstance *access_token.Mark3dAccessTokenV2
-	exchangeAddress     common.Address
-	exchangeInstance    *exchange.FilemarketExchangeV2
-	currencyConverter   currencyconversion.CurrencyConversionProvider
-	commonSigner        *ethsigner.EthSigner
-	uncommonSigner      *ethsigner.EthSigner
-	closeCh             chan struct{}
+	repository                  repository.Repository
+	healthNotifier              healthnotifier.HealthNotifyer
+	cfg                         *config.ServiceConfig
+	ethClient                   ethclient2.EthClient
+	realTimeNotificationService *realtime_notification.RealTimeNotificationService
+	sequencer                   *sequencer.Sequencer
+	accessTokenAddress          common.Address
+	accessTokenInstance         *access_token.Mark3dAccessTokenV2
+	exchangeAddress             common.Address
+	exchangeInstance            *exchange.FilemarketExchangeV2
+	currencyConverter           currencyconversion.CurrencyConversionProvider
+	commonSigner                *ethsigner.EthSigner
+	uncommonSigner              *ethsigner.EthSigner
+	closeCh                     chan struct{}
 }
 
 func NewService(
 	repo repository.Repository,
 	ethClient ethclient2.EthClient,
+	realTimeNotificationService *realtime_notification.RealTimeNotificationService,
 	sequencer *sequencer.Sequencer,
 	healthNotifier healthnotifier.HealthNotifyer,
 	currencyConverter currencyconversion.CurrencyConversionProvider,
@@ -149,19 +152,20 @@ func NewService(
 	}
 
 	return &service{
-		ethClient:           ethClient,
-		repository:          repo,
-		healthNotifier:      healthNotifier,
-		sequencer:           sequencer,
-		cfg:                 cfg,
-		accessTokenAddress:  cfg.AccessTokenAddress,
-		accessTokenInstance: accessTokenInstance,
-		exchangeAddress:     cfg.ExchangeAddress,
-		exchangeInstance:    exchangeInstance,
-		currencyConverter:   currencyConverter,
-		commonSigner:        commonSigner,
-		uncommonSigner:      uncommonSigner,
-		closeCh:             make(chan struct{}),
+		ethClient:                   ethClient,
+		realTimeNotificationService: realTimeNotificationService,
+		repository:                  repo,
+		healthNotifier:              healthNotifier,
+		sequencer:                   sequencer,
+		cfg:                         cfg,
+		accessTokenAddress:          cfg.AccessTokenAddress,
+		accessTokenInstance:         accessTokenInstance,
+		exchangeAddress:             cfg.ExchangeAddress,
+		exchangeInstance:            exchangeInstance,
+		currencyConverter:           currencyConverter,
+		commonSigner:                commonSigner,
+		uncommonSigner:              uncommonSigner,
+		closeCh:                     make(chan struct{}),
 	}, nil
 }
 
@@ -440,7 +444,7 @@ func (s *service) processCollectionCreation(
 	ctx context.Context,
 	tx pgx.Tx,
 	t *types.Transaction,
-	blockNumber uint64,
+	blockNumber *big.Int,
 	ev *access_token.Mark3dAccessTokenV2CollectionCreation,
 ) error {
 	from, err := types.Sender(types.LatestSignerForChainID(t.ChainId()), t)
@@ -474,7 +478,7 @@ func (s *service) processCollectionCreation(
 			return s.tokenURI(ctx, blockNum, tokenId)
 		},
 		FnArgs: []any{
-			big.NewInt(0).SetUint64(blockNumber),
+			blockNumber,
 			ev.TokenId,
 		},
 		RetryOnAnyError: true,
@@ -532,6 +536,7 @@ func (s *service) processCollectionCreation(
 	c.Name = meta.Name
 	c.Description = meta.Description
 	c.Image = meta.Image
+	c.BlockNumber = blockNumber.Int64()
 
 	if err := s.repository.InsertCollection(ctx, tx, &c); err != nil {
 		return err
@@ -549,7 +554,7 @@ func (s *service) processCollectionCreation(
 }
 
 func (s *service) processCollectionTransfer(ctx context.Context, tx pgx.Tx,
-	t *types.Transaction, ev *access_token.Mark3dAccessTokenV2Transfer) error {
+	t *types.Transaction, ev *access_token.Mark3dAccessTokenV2Transfer, blockNumber *big.Int) error {
 	c, err := s.repository.GetCollectionByTokenId(ctx, tx, ev.TokenId)
 	if err != nil {
 		return err
@@ -562,6 +567,7 @@ func (s *service) processCollectionTransfer(ctx context.Context, tx pgx.Tx,
 		return nil
 	}
 	c.Owner = ev.To
+	c.BlockNumber = blockNumber.Int64()
 	if err := s.repository.UpdateCollection(ctx, tx, c); err != nil {
 		return err
 	}
@@ -594,7 +600,7 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 			if transfer.From == common.HexToAddress(zeroAddress) {
 				continue
 			}
-			if err := s.processCollectionTransfer(ctx, tx, t, transfer); err != nil {
+			if err := s.processCollectionTransfer(ctx, tx, t, transfer, receipt.BlockNumber); err != nil {
 				return err
 			}
 			continue
@@ -606,7 +612,7 @@ func (s *service) processAccessTokenTx(ctx context.Context, tx pgx.Tx, t *types.
 		if err != nil && err != pgx.ErrNoRows {
 			return err
 		}
-		if err := s.processCollectionCreation(ctx, tx, t, l.BlockNumber, creation); err != nil {
+		if err := s.processCollectionCreation(ctx, tx, t, receipt.BlockNumber, creation); err != nil {
 			return err
 		}
 	}
@@ -701,12 +707,13 @@ func (s *service) tryProcessFileBunniesTransferInit(
 	instance *filebunniesCollection.FileBunniesCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	initEv, err := instance.ParseTransferInit(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onCollectionTransferInitEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.To, initEv.TransferNumber); err != nil {
+	if err := s.onCollectionTransferInitEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.To, initEv.TransferNumber, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -718,12 +725,13 @@ func (s *service) tryProcessTransferInit(
 	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	initEv, err := instance.ParseTransferInit(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onCollectionTransferInitEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.To, initEv.TransferNumber); err != nil {
+	if err := s.onCollectionTransferInitEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.To, initEv.TransferNumber, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -735,12 +743,13 @@ func (s *service) tryProcessPublicCollectionTransferInit(
 	instance *publicCollection.PublicCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	initEv, err := instance.ParseTransferInit(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onCollectionTransferInitEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.To, initEv.TransferNumber); err != nil {
+	if err := s.onCollectionTransferInitEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.To, initEv.TransferNumber, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -752,12 +761,13 @@ func (s *service) tryProcessFileBunniesTransferDraft(
 	instance *filebunniesCollection.FileBunniesCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	initEv, err := instance.ParseTransferDraft(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onTransferDraftEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.TransferNumber); err != nil {
+	if err := s.onTransferDraftEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.TransferNumber, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -769,12 +779,13 @@ func (s *service) tryProcessPublicCollectionTransferDraft(
 	instance *publicCollection.PublicCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	initEv, err := instance.ParseTransferDraft(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onTransferDraftEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.TransferNumber); err != nil {
+	if err := s.onTransferDraftEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.TransferNumber, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -786,12 +797,13 @@ func (s *service) tryProcessTransferDraft(
 	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	initEv, err := instance.ParseTransferDraft(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onTransferDraftEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.TransferNumber); err != nil {
+	if err := s.onTransferDraftEvent(ctx, tx, t, l, initEv.TokenId, initEv.From, initEv.TransferNumber, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -803,12 +815,13 @@ func (s *service) tryProcessFileBunniesTransferDraftCompletion(
 	instance *filebunniesCollection.FileBunniesCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferDraftCompletion(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onTransferDraftCompletionEvent(ctx, tx, t, l, ev.TokenId, ev.To); err != nil {
+	if err := s.onTransferDraftCompletionEvent(ctx, tx, t, l, ev.TokenId, ev.To, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -820,12 +833,13 @@ func (s *service) tryProcessPublicCollectionTransferDraftCompletion(
 	instance *publicCollection.PublicCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferDraftCompletion(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onTransferDraftCompletionEvent(ctx, tx, t, l, ev.TokenId, ev.To); err != nil {
+	if err := s.onTransferDraftCompletionEvent(ctx, tx, t, l, ev.TokenId, ev.To, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -837,12 +851,13 @@ func (s *service) tryProcessTransferDraftCompletion(
 	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferDraftCompletion(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onTransferDraftCompletionEvent(ctx, tx, t, l, ev.TokenId, ev.To); err != nil {
+	if err := s.onTransferDraftCompletionEvent(ctx, tx, t, l, ev.TokenId, ev.To, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -854,12 +869,13 @@ func (s *service) tryProcessFileBunniesPublicKeySet(
 	instance *filebunniesCollection.FileBunniesCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferPublicKeySet(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onPublicKeySetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.PublicKey)); err != nil {
+	if err := s.onPublicKeySetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.PublicKey), blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -871,12 +887,13 @@ func (s *service) tryProcessPublicCollectionPublicKeySet(
 	instance *publicCollection.PublicCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferPublicKeySet(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onPublicKeySetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.PublicKey)); err != nil {
+	if err := s.onPublicKeySetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.PublicKey), blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -888,12 +905,13 @@ func (s *service) tryProcessPublicKeySet(
 	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferPublicKeySet(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onPublicKeySetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.PublicKey)); err != nil {
+	if err := s.onPublicKeySetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.PublicKey), blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -905,12 +923,13 @@ func (s *service) tryProcessFileBunniesPasswordSet(
 	instance *filebunniesCollection.FileBunniesCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferPasswordSet(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onPasswordSetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.EncryptedPassword)); err != nil {
+	if err := s.onPasswordSetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.EncryptedPassword), blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -922,12 +941,13 @@ func (s *service) tryProcessPublicCollectionPasswordSet(
 	instance *publicCollection.PublicCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferPasswordSet(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onPasswordSetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.EncryptedPassword)); err != nil {
+	if err := s.onPasswordSetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.EncryptedPassword), blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -939,12 +959,13 @@ func (s *service) tryProcessPasswordSet(
 	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferPasswordSet(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onPasswordSetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.EncryptedPassword)); err != nil {
+	if err := s.onPasswordSetEvent(ctx, tx, t, l, ev.TokenId, hex.EncodeToString(ev.EncryptedPassword), blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -956,12 +977,13 @@ func (s *service) tryProcessFileBunniesTransferFinish(
 	instance *filebunniesCollection.FileBunniesCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferFinished(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onTransferFinishEvent(ctx, tx, t, l, ev.TokenId); err != nil {
+	if err := s.onTransferFinishEvent(ctx, tx, t, l, ev.TokenId, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -973,12 +995,13 @@ func (s *service) tryProcessPublicCollectionTransferFinish(
 	instance *publicCollection.PublicCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferFinished(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onTransferFinishEvent(ctx, tx, t, l, ev.TokenId); err != nil {
+	if err := s.onTransferFinishEvent(ctx, tx, t, l, ev.TokenId, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -990,12 +1013,13 @@ func (s *service) tryProcessTransferFinish(
 	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferFinished(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onTransferFinishEvent(ctx, tx, t, l, ev.TokenId); err != nil {
+	if err := s.onTransferFinishEvent(ctx, tx, t, l, ev.TokenId, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -1058,12 +1082,13 @@ func (s *service) tryProcessFileBunniesTransferFraudDecided(
 	instance *filebunniesCollection.FileBunniesCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferFraudDecided(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onTransferFraudDecidedEvent(ctx, tx, t, l, ev.TokenId, ev.Approved); err != nil {
+	if err := s.onTransferFraudDecidedEvent(ctx, tx, t, l, ev.TokenId, ev.Approved, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -1075,12 +1100,13 @@ func (s *service) tryProcessPublicCollectionTransferFraudDecided(
 	instance *publicCollection.PublicCollection,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferFraudDecided(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onTransferFraudDecidedEvent(ctx, tx, t, l, ev.TokenId, ev.Approved); err != nil {
+	if err := s.onTransferFraudDecidedEvent(ctx, tx, t, l, ev.TokenId, ev.Approved, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -1092,12 +1118,13 @@ func (s *service) tryProcessTransferFraudDecided(
 	instance *collection.FilemarketCollectionV2,
 	t *types.Transaction,
 	l *types.Log,
+	blockNumber *big.Int,
 ) error {
 	ev, err := instance.ParseTransferFraudDecided(*l)
 	if err != nil {
 		return nil
 	}
-	if err := s.onTransferFraudDecidedEvent(ctx, tx, t, l, ev.TokenId, ev.Approved); err != nil {
+	if err := s.onTransferFraudDecidedEvent(ctx, tx, t, l, ev.TokenId, ev.Approved, blockNumber); err != nil {
 		return err
 	}
 	return nil
@@ -1217,28 +1244,28 @@ func (s *service) processFileBunniesCollectionEvents(ctx context.Context, tx pgx
 	if err := s.tryProcessFileBunniesTransferEvent(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process file bunnies collection transfer: %w", err)
 	}
-	if err := s.tryProcessFileBunniesTransferInit(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessFileBunniesTransferInit(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process file bunnies collection transfer init: %w", err)
 	}
-	if err := s.tryProcessFileBunniesTransferDraft(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessFileBunniesTransferDraft(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process file bunnies collection transfer draft: %w", err)
 	}
-	if err := s.tryProcessFileBunniesTransferDraftCompletion(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessFileBunniesTransferDraftCompletion(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process file bunnies collection draft completion: %w", err)
 	}
-	if err := s.tryProcessFileBunniesPublicKeySet(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessFileBunniesPublicKeySet(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process file bunnies collection public key set: %w", err)
 	}
-	if err := s.tryProcessFileBunniesPasswordSet(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessFileBunniesPasswordSet(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process file bunnies collection password set: %w", err)
 	}
-	if err := s.tryProcessFileBunniesTransferFinish(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessFileBunniesTransferFinish(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process file bunnies collection transfer finish: %w", err)
 	}
 	if err := s.tryProcessFileBunniesTransferFraudReported(ctx, tx, instance, t, l); err != nil {
 		return fmt.Errorf("process file bunnies collection fraud reported: %w", err)
 	}
-	if err := s.tryProcessFileBunniesTransferFraudDecided(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessFileBunniesTransferFraudDecided(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process file bunnies collection fraud decided: %w", err)
 	}
 	if err := s.tryProcessFileBunniesTransferCancel(ctx, tx, instance, t, l); err != nil {
@@ -1251,28 +1278,28 @@ func (s *service) processPublicCollectionEvents(ctx context.Context, tx pgx.Tx, 
 	if err := s.tryProcessPublicCollectionTransferEvent(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process public collection transfer: %w", err)
 	}
-	if err := s.tryProcessPublicCollectionTransferInit(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessPublicCollectionTransferInit(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process public collection transfer init: %w", err)
 	}
-	if err := s.tryProcessPublicCollectionTransferDraft(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessPublicCollectionTransferDraft(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process public collection transfer draft: %w", err)
 	}
-	if err := s.tryProcessPublicCollectionTransferDraftCompletion(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessPublicCollectionTransferDraftCompletion(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process public collection draft completion: %w", err)
 	}
-	if err := s.tryProcessPublicCollectionPublicKeySet(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessPublicCollectionPublicKeySet(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process public collection public key set: %w", err)
 	}
-	if err := s.tryProcessPublicCollectionPasswordSet(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessPublicCollectionPasswordSet(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process public collection password set: %w", err)
 	}
-	if err := s.tryProcessPublicCollectionTransferFinish(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessPublicCollectionTransferFinish(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process public collection transfer finish: %w", err)
 	}
 	if err := s.tryProcessPublicCollectionTransferFraudReported(ctx, tx, instance, t, l); err != nil {
 		return fmt.Errorf("process public collection fraud reported: %w", err)
 	}
-	if err := s.tryProcessPublicCollectionTransferFraudDecided(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessPublicCollectionTransferFraudDecided(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process public collection fraud decided: %w", err)
 	}
 	if err := s.tryProcessPublicCollectionTransferCancel(ctx, tx, instance, t, l); err != nil {
@@ -1285,28 +1312,28 @@ func (s *service) processFileMarketCollectionEvents(ctx context.Context, tx pgx.
 	if err := s.tryProcessCollectionTransferEvent(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process collection transfer: %w", err)
 	}
-	if err := s.tryProcessTransferInit(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessTransferInit(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process transfer init: %w", err)
 	}
-	if err := s.tryProcessTransferDraft(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessTransferDraft(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process transfer draft: %w", err)
 	}
-	if err := s.tryProcessTransferDraftCompletion(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessTransferDraftCompletion(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process draft completion: %w", err)
 	}
-	if err := s.tryProcessPublicKeySet(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessPublicKeySet(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process public key set: %w", err)
 	}
-	if err := s.tryProcessPasswordSet(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessPasswordSet(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process password set: %w", err)
 	}
-	if err := s.tryProcessTransferFinish(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessTransferFinish(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process transfer finish: %w", err)
 	}
 	if err := s.tryProcessTransferFraudReported(ctx, tx, instance, t, l); err != nil {
 		return fmt.Errorf("process fraud reported: %w", err)
 	}
-	if err := s.tryProcessTransferFraudDecided(ctx, tx, instance, t, l); err != nil {
+	if err := s.tryProcessTransferFraudDecided(ctx, tx, instance, t, l, blockNumber); err != nil {
 		return fmt.Errorf("process fraud decided: %w", err)
 	}
 	if err := s.tryProcessTransferCancel(ctx, tx, instance, t, l); err != nil {
@@ -1384,6 +1411,13 @@ func (s *service) ListenBlockchain() error {
 				}
 			}
 			lastBlock = current
+
+			// broadcast last block number to subscribers
+			lastBlockMessage, err := json.Marshal(map[string]any{"last_block_number": lastBlock.Int64() - 1}) // 1 conformation
+			if err != nil {
+				logger.Warnf("failed to marshal last block number for broadcast: %v", err)
+			}
+			s.realTimeNotificationService.BroadcastMessage(realtime_notification.LastBlockNumberTopic, lastBlockMessage)
 		case <-s.closeCh:
 			return nil
 		}

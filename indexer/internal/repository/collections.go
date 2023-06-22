@@ -21,7 +21,7 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 ) ([]*domain.Collection, error) {
 	// language=PostgreSQL
 	query := `
-		SELECT address,creator,owner,name,token_id,meta_uri,description,image
+		SELECT address,creator,owner,name,token_id,meta_uri,description,image,block_number
 		FROM collections AS c 
 		WHERE (owner=$1 OR 
             EXISTS (SELECT 1 FROM tokens AS t WHERE t.collection_address=c.address AND t.owner=$1) OR 
@@ -54,7 +54,7 @@ func (p *postgres) GetCollectionsByOwnerAddress(
 		var collectionAddress, creator, owner, tokenId string
 		c := &domain.Collection{}
 		if err := rows.Scan(&collectionAddress, &creator, &owner, &c.Name,
-			&tokenId, &c.MetaUri, &c.Description, &c.Image); err != nil {
+			&tokenId, &c.MetaUri, &c.Description, &c.Image, &c.BlockNumber); err != nil {
 			return nil, err
 		}
 
@@ -110,11 +110,11 @@ func (p *postgres) GetCollection(ctx context.Context,
 	tx pgx.Tx, contractAddress common.Address) (*domain.Collection, error) {
 	// language=PostgreSQL
 	row := tx.QueryRow(ctx, `SELECT address,creator,owner,name,token_id,meta_uri,description,
-       image FROM collections WHERE address=$1`, strings.ToLower(contractAddress.String()))
+       image, block_number FROM collections WHERE address=$1`, strings.ToLower(contractAddress.String()))
 	var collectionAddress, creator, owner, tokenId string
 	c := &domain.Collection{}
 	if err := row.Scan(&collectionAddress, &creator, &owner, &c.Name, &tokenId,
-		&c.MetaUri, &c.Description, &c.Image); err != nil {
+		&c.MetaUri, &c.Description, &c.Image, &c.BlockNumber); err != nil {
 		return nil, err
 	}
 	c.Address, c.Owner, c.Creator = contractAddress, common.HexToAddress(creator), common.HexToAddress(owner)
@@ -142,7 +142,7 @@ func (p *postgres) GetCollectionByTokenId(
 ) (*domain.Collection, error) {
 	// language=PostgreSQL
 	query := `
-	SELECT address,creator,owner,name,meta_uri,description,image 
+	SELECT address,creator,owner,name,meta_uri,description,image,block_number
 	FROM collections 
 	WHERE token_id=$1
 	`
@@ -160,6 +160,7 @@ func (p *postgres) GetCollectionByTokenId(
 		&c.MetaUri,
 		&c.Description,
 		&c.Image,
+		&c.BlockNumber,
 	); err != nil {
 		return nil, err
 	}
@@ -182,10 +183,17 @@ func (p *postgres) GetCollectionByTokenId(
 func (p *postgres) InsertCollection(ctx context.Context, tx pgx.Tx,
 	collection *domain.Collection) error {
 	// language=PostgreSQL
-	if _, err := tx.Exec(ctx, `INSERT INTO collections VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-		strings.ToLower(collection.Address.String()), strings.ToLower(collection.Creator.String()),
-		strings.ToLower(collection.Owner.String()), collection.Name, collection.TokenId.String(),
-		collection.MetaUri, collection.Description, collection.Image); err != nil {
+	if _, err := tx.Exec(ctx, `INSERT INTO collections VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+		strings.ToLower(collection.Address.String()),
+		strings.ToLower(collection.Creator.String()),
+		strings.ToLower(collection.Owner.String()),
+		collection.Name,
+		collection.TokenId.String(),
+		collection.MetaUri,
+		collection.Description,
+		collection.Image,
+		collection.BlockNumber,
+	); err != nil {
 		return err
 	}
 	return nil
@@ -206,8 +214,8 @@ func (p *postgres) InsertCollectionTransfer(ctx context.Context, tx pgx.Tx,
 func (p *postgres) UpdateCollection(ctx context.Context, tx pgx.Tx,
 	collection *domain.Collection) error {
 	// language=PostgreSQL
-	if _, err := tx.Exec(ctx, `UPDATE collections SET owner=$1,name=$2,meta_uri=$3 WHERE address=$4`,
-		strings.ToLower(collection.Owner.String()), collection.Name, collection.MetaUri,
+	if _, err := tx.Exec(ctx, `UPDATE collections SET owner=$1,name=$2,meta_uri=$3,block_number=$4 WHERE address=$5`,
+		strings.ToLower(collection.Owner.String()), collection.Name, collection.MetaUri, collection.BlockNumber,
 		strings.ToLower(collection.Address.String())); err != nil {
 		return err
 	}

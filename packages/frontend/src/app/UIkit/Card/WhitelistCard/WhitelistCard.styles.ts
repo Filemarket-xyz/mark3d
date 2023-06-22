@@ -41,7 +41,7 @@ export const StyledCardInner = styled(Flex, {
   zIndex: 1,
   margin: 4,
   padding: 20,
-  background: '#191c29',
+  background: '#1C1C45',
   borderRadius: 16,
   color: 'rgb(88 199 250 / 100%)',
   height: 'calc(100% - 8px)',
@@ -60,7 +60,7 @@ export const StyledDescription = styled(StyledCardInfo, {
   position: 'absolute',
   color: '$gray300',
   height: '100%',
-  background: '#191c29',
+  background: '#1C1C45',
   transition: 'opacity 0.25s',
   '& span': {
     fontWeight: 600,

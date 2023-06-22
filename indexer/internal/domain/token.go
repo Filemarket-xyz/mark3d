@@ -18,6 +18,7 @@ type Token struct {
 	MintTxHash        common.Hash
 	MetaUri           string
 	Metadata          *TokenMetadata
+	BlockNumber       int64
 }
 
 func TokenToModel(t *Token) *models.Token {
@@ -49,5 +50,9 @@ func TokenToModel(t *Token) *models.Token {
 		Subcategories:   t.Metadata.Subcategories,
 		Tags:            t.Metadata.Tags,
 		TokenID:         t.TokenId.String(),
+		Block: &models.TokenBlock{
+			ConfirmationsCount: 1,
+			Number:             t.BlockNumber,
+		},
 	}
 }
