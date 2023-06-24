@@ -8,15 +8,17 @@ import { assertCollection, assertContract, assertSigner, assertTokenId, callCont
 
 interface IUseCancelTransfer {
   collectionAddress?: string
-  tokenId?: string
-  callBack?: () => void
 }
 
-export function useCancelTransfer({ collectionAddress, callBack }: IUseCancelTransfer = {}) {
-  const { contract, signer } = useCollectionContract(collectionAddress)
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IUseCancelTransfer>()
+interface ICancelTransfer {
+  tokenId?: string
+}
 
-  const cancelTransfer = useCallback(wrapPromise(async ({ collectionAddress, tokenId }) => {
+export function useCancelTransfer({ collectionAddress }: IUseCancelTransfer = {}) {
+  const { contract, signer } = useCollectionContract(collectionAddress)
+  const { statuses, wrapPromise } = useStatusState<ContractReceipt, ICancelTransfer>()
+
+  const cancelTransfer = useCallback(wrapPromise(async ({ tokenId }) => {
     assertContract(contract, mark3dConfig.collectionToken.name)
     assertSigner(signer)
     assertCollection(collectionAddress)
@@ -27,7 +29,7 @@ export function useCancelTransfer({ collectionAddress, callBack }: IUseCancelTra
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }, callBack), [contract, signer, wrapPromise])
+  }), [contract, signer, wrapPromise])
 
   return {
     ...statuses,

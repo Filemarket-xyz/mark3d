@@ -12,7 +12,7 @@ export interface ButtonCancelOrderProps {
 }
 
 export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, callBack }) => {
-  const { cancelOrder, ...statuses } = useCancelOrder({ callBack })
+  const { cancelOrder, ...statuses } = useCancelOrder()
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -30,6 +30,7 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, cal
         isDisabled={isLoading}
         onPress={async () => {
           await cancelOrder(tokenFullId)
+          callBack?.()
         }}
       >
         Cancel order

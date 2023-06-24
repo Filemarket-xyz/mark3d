@@ -8,14 +8,16 @@ import { useCollectionContract } from '../contracts'
 import { callContract, nullAddress } from '../utils'
 import { assertContract, assertSigner } from '../utils/assert'
 
-interface IInitTransfer {
+interface IUseInitTransfer {
   collectionAddress?: string
-  tokenId?: string
-  to?: string
-  callBack?: () => void
 }
 
-export function useInitTransfer({ collectionAddress, callBack }: IInitTransfer = {}) {
+interface IInitTransfer {
+  tokenId?: string
+  to?: string
+}
+
+export function useInitTransfer({ collectionAddress }: IUseInitTransfer = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { wrapPromise, statuses } = useStatusState<ContractReceipt, IInitTransfer>()
 
@@ -32,7 +34,7 @@ export function useInitTransfer({ collectionAddress, callBack }: IInitTransfer =
       nullAddress,
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }, callBack), [contract, signer, wrapPromise])
+  }), [contract, signer, wrapPromise])
 
   return {
     ...statuses,

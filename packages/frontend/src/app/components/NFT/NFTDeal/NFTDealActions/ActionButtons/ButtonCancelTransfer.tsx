@@ -12,7 +12,7 @@ export interface ButtonCancelTransferProps {
 }
 
 export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullId, callBack }) => {
-  const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId, callBack })
+  const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -30,6 +30,7 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullI
         isDisabled={isLoading}
         onPress={async () => {
           await cancelTransfer(tokenFullId)
+          callBack?.()
         }}
       >
         Cancel deal

@@ -16,7 +16,7 @@ export interface ButtonPlaceOrderProps {
 
 export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId, callBack }) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
-  const { placeOrder, ...statuses } = usePlaceOrder({ ...tokenFullId, callBack })
+  const { placeOrder, ...statuses } = usePlaceOrder()
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -24,12 +24,13 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId,
     loadingMsg: 'Placing order',
   })
 
-  const onSubmit = ({ price }: OrderFormValue) => {
+  const onSubmit = async ({ price }: OrderFormValue) => {
     closeModal()
-    placeOrder({
+    await placeOrder({
       ...tokenFullId,
       price,
     })
+    callBack?.()
   }
 
   return (

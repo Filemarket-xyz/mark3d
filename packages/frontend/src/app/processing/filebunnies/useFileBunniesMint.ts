@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { api } from '../../config/api'
@@ -7,7 +7,6 @@ import { useStatusState } from '../../hooks'
 import { useAuth } from '../../hooks/useAuth'
 import { useCheckWhiteListStore } from '../../hooks/useCheckWhiteListStore'
 import { useComputedMemo } from '../../hooks/useComputedMemo'
-import { useStatusModal } from '../../hooks/useStatusModal'
 import { wrapRequest } from '../../utils/error/wrapRequest'
 import { fromCurrency } from '../../utils/web3'
 import { useFulfillOrder } from '../nft-interaction'
@@ -95,18 +94,17 @@ export const useFileBunniesMint = () => {
     return isLoadingFulFill || whiteListStore.isLoading || isLoadingReq
   }, [whiteListStore.isLoading, isLoadingReq, isLoadingFulFill])
 
-  const { modalProps } = useStatusModal({
-    statuses: {
+  const statusesFulFill = useMemo(() => {
+    return {
       ...statuses,
       error: statuses.error ?? statusesReq.error,
-    },
-    okMsg: 'Order is fulfilled! Now you need to wait 4 minutes until it appears in your profile and you can continue the actions',
-    loadingMsg: 'Fulfilling order',
-  })
+      isLoading: statusesReq.isLoading ?? statuses.isLoading,
+    }
+  }, [statusesReq, statuses])
 
   return {
     isLoading,
-    modalProps,
+    statusesFulFill,
     payedMint,
     freeMint,
     whiteList: whiteListStore.data?.whitelist,

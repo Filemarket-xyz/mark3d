@@ -7,7 +7,7 @@ export function useStatusState<ResultType, Arguments extends any = void>() {
   const [error, setError] = useState<string>()
   const [result, setResult] = useState<ResultType>()
 
-  const wrapPromise = useCallback((call: (args: Arguments) => Promise<ResultType>, callBack?: () => void) => {
+  const wrapPromise = useCallback((call: (args: Arguments) => Promise<ResultType>) => {
     return async (args: Arguments) => {
       setIsLoading(true)
       setError(undefined)
@@ -16,7 +16,6 @@ export function useStatusState<ResultType, Arguments extends any = void>() {
         const result = await call(args)
         setIsLoading(false)
         setResult(result)
-        callBack?.()
       } catch (err) {
         setIsLoading(false)
         setError(stringifyError(err))
