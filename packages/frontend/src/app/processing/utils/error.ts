@@ -2,7 +2,6 @@ import { JsonRpcError, serializeError } from '@metamask/rpc-errors'
 import { BigNumber, Contract, ContractTransaction, Signer } from 'ethers'
 
 import { wagmiClient } from '../../config/web3Modal'
-import { rootStore } from '../../stores/RootStore'
 
 const FIVE_MINUTES = 300_000
 const fallbackError = { code: 500, message: 'unknown' }
@@ -84,7 +83,6 @@ export const callContract = async ({
 ...args: any[]
 ) => {
   try {
-    let data: any
     if (signer) {
       const balance = await signer.getBalance()
       // equality anyway throws an error because of gas
@@ -97,18 +95,10 @@ export const callContract = async ({
     const tx: ContractTransaction = await contract[method](...args)
 
     if (ignoreTxFailture) {
-      data = await tx.wait()
-      console.log(data)
-      rootStore.blockStore.setRecieptBlock(data.blockNumber)
-
-      return data
+      return await tx.wait()
     }
 
-    data = await getTxReceipt(tx)
-    console.log(data)
-    rootStore.blockStore.setRecieptBlock(data.blockNumber)
-
-    return data
+    return await getTxReceipt(tx)
   } catch (error: any) {
     console.error(error)
 

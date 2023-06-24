@@ -1,5 +1,6 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 
+import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useCancelTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
@@ -14,12 +15,17 @@ export interface ButtonCancelTransferProps {
 
 export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullId, callBack, isDisabled }) => {
   const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId, callBack })
+  const { blockStore } = useStores()
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Transfer cancelled',
     loadingMsg: 'Cancelling transfer',
   })
+
+  useEffect(() => {
+    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
+  }, [statuses.result])
 
   return (
     <>

@@ -1,29 +1,30 @@
+import { BigNumber } from 'ethers'
 import { makeAutoObservable } from 'mobx'
 
 export class BlockStore {
-  currentBlockNumber: number // Dynamic block number from the socket
-  receiptBlockNumber: number // Block number from transaction
-  lastCurrentBlockNumber: number // A block number that is equal to the value of currentBlockNumber at the time of the transaction
+  currentBlockNumber: BigNumber // Dynamic block number from the socket
+  receiptBlockNumber: BigNumber // Block number from transaction
+  lastCurrentBlockNumber: BigNumber // A block number that is equal to the value of currentBlockNumber at the time of the transaction
 
   constructor() {
-    this.receiptBlockNumber = 0
-    this.currentBlockNumber = 1
-    this.lastCurrentBlockNumber = 0
+    this.receiptBlockNumber = BigNumber.from(0)
+    this.currentBlockNumber = BigNumber.from(1)
+    this.lastCurrentBlockNumber = BigNumber.from(1)
     makeAutoObservable(this)
   }
 
-  setCurrentBlock = (currentBlock: number) => {
+  setCurrentBlock = (currentBlock: BigNumber) => {
     this.currentBlockNumber = currentBlock
     console.log(currentBlock)
   }
 
-  setRecieptBlock = (recieptBlock: number) => {
-    this.receiptBlockNumber = recieptBlock
+  setRecieptBlock = (recieptBlock: BigNumber | number) => {
+    this.receiptBlockNumber = BigNumber.from(recieptBlock)
     this.lastCurrentBlockNumber = this.currentBlockNumber
-    console.log(recieptBlock)
+    console.log(this.receiptBlockNumber)
   }
 
   get canContinue() {
-    return this.currentBlockNumber >= this.receiptBlockNumber
+    return this.currentBlockNumber.gte(this.receiptBlockNumber)
   }
 }

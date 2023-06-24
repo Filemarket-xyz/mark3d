@@ -26,7 +26,6 @@ const ControlSection = () => {
           tokenFullId={tokenFullId}
           reFetchOrder={() => {
             orderStore.reload()
-            transferStore.reload()
           }}
         />
       )}

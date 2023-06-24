@@ -1,5 +1,6 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 
+import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useApproveExchange } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
@@ -14,12 +15,17 @@ export interface ButtonApproveExchangeProps {
 
 export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callBack, isDisabled }) => {
   const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId, callBack })
+  const { blockStore } = useStores()
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'You have approved FileMarket to list your EFT. You can now place an order',
     loadingMsg: 'At first, you need to approve FileMarket to list your EFT. After that you can place an order.',
   })
+
+  useEffect(() => {
+    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
+  }, [statuses.result])
 
   return (
     <>

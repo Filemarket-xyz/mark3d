@@ -70,13 +70,13 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   if (isOwner) {
     return (
       <ButtonsContainer content={blockStore.canContinue ? ''
-        : `Confirmations: ${blockStore.currentBlockNumber - blockStore.lastCurrentBlockNumber}/${blockStore.receiptBlockNumber - blockStore.lastCurrentBlockNumber}`}
+        : `Confirmations: ${blockStore.currentBlockNumber.sub(blockStore.lastCurrentBlockNumber).toString()}/${blockStore.receiptBlockNumber.sub(blockStore.lastCurrentBlockNumber).toString()}`}
       >
         <NFTDealActionOwner
           transfer={transfer}
           tokenFullId={tokenFullId}
-          ownerStatusChanged={() => { funcTimeout(refetch) }}
-          reFetchOrder={() => { funcTimeout(reFetchOrder) }}
+          ownerStatusChanged={() => {}}
+          reFetchOrder={() => { }}
         />
       </ButtonsContainer>
     )
@@ -84,14 +84,14 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
 
   return (
     <ButtonsContainer content={blockStore.canContinue ? ''
-      : `Confirmations: ${blockStore.currentBlockNumber - blockStore.lastCurrentBlockNumber}/${blockStore.receiptBlockNumber - blockStore.lastCurrentBlockNumber}`}
+      : `Confirmations: ${blockStore.currentBlockNumber.sub(blockStore.lastCurrentBlockNumber).toString()}/${blockStore.receiptBlockNumber.sub(blockStore.lastCurrentBlockNumber).toString()}`}
     >
       <NFTDealActionsBuyer
         transfer={transfer}
         order={order}
         tokenFullId={tokenFullId}
-        ownerStatusChanged={refetch}
-        reFetchOrder={reFetchOrder}
+        ownerStatusChanged={() => {}}
+        reFetchOrder={ () => {} }
       />
     </ButtonsContainer>
   )

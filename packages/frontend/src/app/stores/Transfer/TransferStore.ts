@@ -7,6 +7,7 @@ import { IHiddenFilesTokenEventsListener } from '../../processing'
 import { TokenFullId } from '../../processing/types'
 import { normalizeCounterId } from '../../processing/utils/id'
 import { IActivateDeactivate, IStoreRequester, RequestContext, storeRequest, storeReset } from '../../utils/store'
+import { BlockStore } from '../BlockStore/BlockStore'
 import { ErrorStore } from '../Error/ErrorStore'
 
 /**
@@ -24,11 +25,13 @@ export class TransferStore implements IStoreRequester,
 
   data?: Transfer = undefined
   tokenFullId?: TokenFullId = undefined
-
-  constructor({ errorStore }: { errorStore: ErrorStore }) {
+  blockStore: BlockStore
+  constructor({ errorStore, blockStore }: { errorStore: ErrorStore, blockStore: BlockStore }) {
     this.errorStore = errorStore
+    this.blockStore = blockStore
     makeAutoObservable(this, {
       errorStore: false,
+      blockStore: false,
     })
   }
 
@@ -38,6 +41,7 @@ export class TransferStore implements IStoreRequester,
       api.transfers.transfersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
       resp => {
         this.data = resp ?? undefined
+        this.blockStore.setRecieptBlock(BigNumber.from(resp?.block?.number))
       })
   }
 
@@ -82,6 +86,7 @@ export class TransferStore implements IStoreRequester,
   // This store is supposed to be used only on existing transfers (TransferStatus.Drafted or TransferStatus.Created)
 
   onTransferInit(tokenId: BigNumber, from: string, to: string) {
+    console.log('onTransferInit')
     this.checkActivation(tokenId, (tokenFullId) => {
       this.data = {
         collection: tokenFullId.collectionAddress,
@@ -93,10 +98,12 @@ export class TransferStore implements IStoreRequester,
           timestamp: Date.now(),
         }],
       }
+      this.reload()
     })
   }
 
   onTransferDraft(tokenId: BigNumber, from: string) {
+    console.log('onTransferDraft')
     this.checkActivation(tokenId, (tokenFullId) => {
       this.data = {
         collection: tokenFullId.collectionAddress,
@@ -107,47 +114,58 @@ export class TransferStore implements IStoreRequester,
           timestamp: Date.now(),
         }],
       }
+      this.reload()
     })
   }
 
   onTransferDraftCompletion(tokenId: BigNumber, to: string) {
+    console.log('onTransferCompletion')
     this.checkData(tokenId, data => {
       data.to = to
+      this.reload()
     })
   }
 
   onTransferPublicKeySet(tokenId: BigNumber, publicKeyHex: string) {
+    console.log('onTransferPublicKeySet')
     this.checkData(tokenId, data => {
       data.publicKey = publicKeyHex
       data.statuses?.unshift({
         status: TransferStatus.PublicKeySet,
         timestamp: Date.now(),
       })
+      this.reload()
     })
   }
 
   onTransferPasswordSet(tokenId: BigNumber, encryptedPasswordHex: string) {
+    console.log('onTransferPasswordSet')
     this.checkData(tokenId, data => {
       data.encryptedPassword = encryptedPasswordHex
       data.statuses?.unshift({
         status: TransferStatus.PasswordSet,
         timestamp: Date.now(),
       })
+      this.reload()
     })
   }
 
   onTransferFinished(tokenId: BigNumber) {
+    console.log('onTransferFinished')
     this.checkActivation(tokenId, () => {
       this.data = undefined
+      this.reload()
     })
   }
 
   onTransferFraudReported(tokenId: BigNumber) {
+    console.log('onTransferFraud')
     this.checkData(tokenId, data => {
       data.statuses?.unshift({
         status: TransferStatus.FraudReported,
         timestamp: Date.now(),
       })
+      this.reload()
     })
   }
 
@@ -158,12 +176,15 @@ export class TransferStore implements IStoreRequester,
         status: TransferStatus.Finished,
         timestamp: Date.now(),
       })
+      this.reload()
     })
   }
 
   onTransferCancellation(tokenId: BigNumber) {
+    console.log('onTransferCancel')
     this.checkActivation(tokenId, () => {
       this.data = undefined
+      this.reload()
     })
   }
 }
