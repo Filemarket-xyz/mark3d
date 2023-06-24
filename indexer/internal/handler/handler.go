@@ -59,7 +59,7 @@ func (h *handler) Init() http.Handler {
 	router.HandleFunc("/currency/conversion_rate", h.handleGetCurrencyConversionRate)
 	router.HandleFunc("/healthcheck", h.handleHealthCheck)
 	router.HandleFunc("/tokens/file-bunnies/to_autosell", h.handleGetFileBunniesTokensForAutosell)
-	router.HandleFunc("/subscribe/block_number", h.subscribeToBlockNumber).Methods("POST")
+	router.HandleFunc("/ws/subscribe/block_number", h.subscribeToBlockNumber)
 
 	router.Use(h.corsMiddleware)
 

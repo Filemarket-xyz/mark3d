@@ -14,13 +14,15 @@ import { assertCollection, assertContract, assertSigner, assertTokenId, callCont
 
 interface IUseApproveExchange {
   collectionAddress?: string
-  tokenId?: string
-  callBack?: () => void
 }
 
-export function useApproveExchange({ collectionAddress, callBack }: IUseApproveExchange = {}) {
+interface IApproveExchange {
+  tokenId?: string
+}
+
+export function useApproveExchange({ collectionAddress }: IUseApproveExchange = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
-  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IUseApproveExchange>()
+  const { statuses, wrapPromise } = useStatusState<ContractReceipt, IApproveExchange>()
   const approveExchange = useCallback(wrapPromise(async ({ tokenId }) => {
     assertContract(contract, 'Mark3dCollection')
     assertSigner(signer)
@@ -34,7 +36,7 @@ export function useApproveExchange({ collectionAddress, callBack }: IUseApproveE
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }, callBack), [wrapPromise, contract, signer])
+  }), [wrapPromise, contract, signer])
 
   return {
     ...statuses,

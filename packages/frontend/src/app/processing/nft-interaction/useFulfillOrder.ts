@@ -23,18 +23,17 @@ import {
  * @param price an integer price
  */
 
-interface IUseFulFillOrder {
+interface IFulFillOrder {
   price?: BigNumberish
   collectionAddress?: string
   tokenId?: string
   signature?: string
-  callBack?: () => void
 }
 
-export function useFulfillOrder({ callBack }: IUseFulFillOrder = {}) {
+export function useFulfillOrder() {
   const { contract, signer } = useExchangeContract()
   const { address } = useAccount()
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt, IUseFulFillOrder>()
+  const { wrapPromise, statuses } = useStatusState<ContractReceipt, IFulFillOrder>()
   const factory = useHiddenFileProcessorFactory()
 
   const fulfillOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId, price, signature }) => {
@@ -60,7 +59,7 @@ export function useFulfillOrder({ callBack }: IUseFulFillOrder = {}) {
         gasPrice: mark3dConfig.gasPrice,
       },
     )
-  }, callBack), [contract, address, wrapPromise, signer])
+  }), [contract, address, wrapPromise, signer])
 
   return { ...statuses, fulfillOrder }
 }

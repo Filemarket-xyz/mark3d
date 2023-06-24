@@ -21,7 +21,7 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
   callBack,
   isDisabled,
 }) => {
-  const { fulfillOrder, ...statuses } = useFulfillOrder({ callBack })
+  const { fulfillOrder, ...statuses } = useFulfillOrder()
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -35,6 +35,7 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
       ...tokenFullId,
       price: order?.price,
     })
+    callBack?.()
   }
 
   return (

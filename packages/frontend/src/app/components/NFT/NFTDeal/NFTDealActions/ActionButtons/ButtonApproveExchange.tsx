@@ -14,7 +14,7 @@ export interface ButtonApproveExchangeProps {
 }
 
 export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callBack, isDisabled }) => {
-  const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId, callBack })
+  const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId })
   const { blockStore } = useStores()
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -37,6 +37,7 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
           await approveExchange(tokenFullId)
+          callBack?.()
         }}
       >
         Prepare for sale

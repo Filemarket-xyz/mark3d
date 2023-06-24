@@ -735,7 +735,7 @@ paths:
           description: Ошибка
           schema:
             $ref: '#/definitions/ErrorResponse'
-  /subscribe/block_number:
+  /ws/subscribe/block_number:
     get:
       summary: Subscribe to last block updates
       description: | 

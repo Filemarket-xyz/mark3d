@@ -14,9 +14,9 @@ export interface ButtonCancelTransferProps {
 }
 
 export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullId, callBack, isDisabled }) => {
-  const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId, callBack })
-  const { blockStore } = useStores()
+  const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId })
   const { isLoading } = statuses
+  const { blockStore } = useStores()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Transfer cancelled',
@@ -37,6 +37,7 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullI
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
           await cancelTransfer(tokenFullId)
+          callBack?.()
         }}
       >
         Cancel deal

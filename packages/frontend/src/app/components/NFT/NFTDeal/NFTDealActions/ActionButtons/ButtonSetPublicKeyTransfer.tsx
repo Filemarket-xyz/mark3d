@@ -17,7 +17,7 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
   callBack,
   isDisabled,
 }) => {
-  const { setPublicKey, ...statuses } = useSetPublicKey({ ...tokenFullId, callBack })
+  const { setPublicKey, ...statuses } = useSetPublicKey({ ...tokenFullId })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -27,6 +27,7 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
 
   const onPress = async () => {
     await setPublicKey(tokenFullId)
+    callBack?.()
   }
 
   return (

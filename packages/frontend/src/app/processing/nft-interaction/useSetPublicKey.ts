@@ -12,18 +12,20 @@ import { assertAccount, assertCollection, assertContract, assertSigner, assertTo
 
 interface IUseSetPublicKey {
   collectionAddress?: string
-  tokenId?: string
-  callBack?: () => void
 }
 
-export function useSetPublicKey({ collectionAddress, callBack }: IUseSetPublicKey = {}) {
+interface ISetPublicKey {
+  tokenId?: string
+}
+
+export function useSetPublicKey({ collectionAddress }: IUseSetPublicKey = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt, IUseSetPublicKey>()
+  const { wrapPromise, statuses } = useStatusState<ContractReceipt, ISetPublicKey>()
   const factory = useHiddenFileProcessorFactory()
   const blockchainDataProvider = useBlockchainDataProvider()
 
-  const setPublicKey = useCallback(wrapPromise(async ({ collectionAddress, tokenId }) => {
+  const setPublicKey = useCallback(wrapPromise(async ({ tokenId }) => {
     assertContract(contract, mark3dConfig.exchangeToken.name)
     assertSigner(signer)
     assertAccount(address)
@@ -42,7 +44,7 @@ export function useSetPublicKey({ collectionAddress, callBack }: IUseSetPublicKe
       BigNumber.from(dealNumber),
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }, callBack), [contract, signer, address, wrapPromise])
+  }), [contract, signer, address, wrapPromise])
 
   return { ...statuses, setPublicKey }
 }

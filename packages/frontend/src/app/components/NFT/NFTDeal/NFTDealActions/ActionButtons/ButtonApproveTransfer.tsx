@@ -15,7 +15,7 @@ export interface ButtonApproveTransferProps {
 }
 
 export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFullId, transfer, callBack, isDisabled }) => {
-  const { approveTransfer, ...statuses } = useApproveTransfer({ ...tokenFullId, callBack })
+  const { approveTransfer, ...statuses } = useApproveTransfer({ ...tokenFullId })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -36,6 +36,7 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
             tokenId: tokenFullId.tokenId,
             publicKey: transfer?.publicKey,
           })
+          callBack?.()
         }}
       >
         Transfer hidden file
