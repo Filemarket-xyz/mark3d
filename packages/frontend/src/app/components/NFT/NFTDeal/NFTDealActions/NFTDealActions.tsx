@@ -32,36 +32,27 @@ export interface NFTDealActionsProps {
   reFetchOrder?: () => void
 }
 
-// Ну это временное решение, ибо пока долго думать времени нету))
-
-export const funcTimeout = (func: any) => {
-  setTimeout(async () => {
-    let countReload = 0
-    let data = await func()
-    const interval = setInterval(async () => {
-      const tempData = await func()
-      if (tempData !== data || countReload > 5) {
-        clearInterval(interval)
-      }
-      countReload++
-      data = await func()
-    }, 5000)
-  }, 2000)
-}
-
 export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   tokenFullId,
   transfer,
   order,
   reFetchOrder,
 }) => {
-  const { isOwner, error, refetch } = useIsOwner(tokenFullId)
-  const { blockStore } = useStores()
+  const { isOwner, error } = useIsOwner(tokenFullId)
+  const { blockStore, transferStore } = useStores()
   const { modalProps } = useStatusModal({
     statuses: { result: undefined, isLoading: false, error: error as unknown as string },
     okMsg: '',
     loadingMsg: '',
   })
+
+  const callBackAfterApproveTrans = () => {
+    transferStore.setIsLoading(true) // It's need to show loading screen before approve transaction and until contract event
+  }
+
+  const onErrorButtons = () => {
+    transferStore.setIsLoading(false)
+  }
 
   if (error) {
     return <BaseModal {...modalProps} />
@@ -75,8 +66,8 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
         <NFTDealActionOwner
           transfer={transfer}
           tokenFullId={tokenFullId}
-          ownerStatusChanged={() => {}}
-          reFetchOrder={() => { }}
+          callBack={callBackAfterApproveTrans}
+          onError={onErrorButtons}
         />
       </ButtonsContainer>
     )
@@ -90,8 +81,8 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
         transfer={transfer}
         order={order}
         tokenFullId={tokenFullId}
-        ownerStatusChanged={() => {}}
-        reFetchOrder={ () => {} }
+        callBack={callBackAfterApproveTrans}
+        onError={onErrorButtons}
       />
     </ButtonsContainer>
   )

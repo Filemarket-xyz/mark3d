@@ -18,8 +18,8 @@ export interface NFTDealActionsBuyerProps {
   tokenFullId: TokenFullId
   transfer?: Transfer
   order?: Order
-  ownerStatusChanged?: () => void
-  reFetchOrder?: () => void
+  callBack?: () => void
+  onError?: () => void
 }
 
 const permissions = transferPermissions.buyer
@@ -28,8 +28,8 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
   transfer,
   order,
   tokenFullId,
-  ownerStatusChanged,
-  reFetchOrder,
+  callBack,
+  onError,
 }) => {
   const isBuyer = useIsBuyer(transfer)
   const { blockStore } = useStores()
@@ -47,26 +47,45 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
         </Button>
       </HideAction>
       <HideAction hide={!transfer || !permissions.canFulfillOrder(transfer)}>
-        <ButtonFulfillOrder tokenFullId={tokenFullId} order={order} isDisabled={!blockStore.canContinue} />
+        <ButtonFulfillOrder
+          tokenFullId={tokenFullId}
+          order={order}
+          isDisabled={!blockStore.canContinue}
+          callBack={callBack}
+          onError={onError}
+        />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canSetPublicKey(transfer)}>
-        <ButtonSetPublicKeyTransfer tokenFullId={tokenFullId} isDisabled={!blockStore.canContinue} />
+        <ButtonSetPublicKeyTransfer
+          tokenFullId={tokenFullId}
+          isDisabled={!blockStore.canContinue}
+          callBack={callBack}
+          onError={onError}
+        />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canFinalize(transfer)}>
         <ButtonFinalizeTransfer
           tokenFullId={tokenFullId}
-          callBack={() => {
-            ownerStatusChanged?.()
-            reFetchOrder?.()
-          }}
+          callBack={callBack}
           isDisabled={!blockStore.canContinue}
+          onError={onError}
         />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canReportFraud(transfer)}>
-        <ButtonReportFraudTransfer tokenFullId={tokenFullId} isDisabled={!blockStore.canContinue} />
+        <ButtonReportFraudTransfer
+          tokenFullId={tokenFullId}
+          callBack={callBack}
+          isDisabled={!blockStore.canContinue}
+          onError={onError}
+        />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canCancel(transfer)}>
-        <ButtonCancelTransfer tokenFullId={tokenFullId} callBack={reFetchOrder} isDisabled={!blockStore.canContinue} />
+        <ButtonCancelTransfer
+          tokenFullId={tokenFullId}
+          callBack={callBack}
+          isDisabled={!blockStore.canContinue}
+          onError={onError}
+        />
       </HideAction>
     </>
   )

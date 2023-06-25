@@ -1,11 +1,13 @@
+import { BigNumber } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import React, { FC, PropsWithChildren } from 'react'
 
 import { styled } from '../../../../styles'
 import { Order, Transfer } from '../../../../swagger/Api'
+import { useStores } from '../../../hooks'
 import { useIsOwner } from '../../../processing'
 import { TokenFullId } from '../../../processing/types'
-import { PriceBadge, Txt } from '../../../UIkit'
+import { Loading, PriceBadge, Txt } from '../../../UIkit'
 import { formatCurrency, formatUsd } from '../../../utils/web3'
 import { NFTDealActions } from './NFTDealActions/NFTDealActions'
 
@@ -71,34 +73,37 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
   children,
 }) => {
   const { isOwner } = useIsOwner(tokenFullId)
+  const { transferStore } = useStores()
 
   return (
     <NFTDealStyle isNotListed={!transfer && !isOwner}>
-      {(children || order) && (
-        <DealContainerInfo>
-          {children}
-          {order && (
-            <PriceBadge
-              title="Price"
-              left={formatCurrency(order.price ?? 0)}
-              right={`~${formatUsd(order.priceUsd ?? 0)}`}
-              size='lg'
-              background='secondary'
-            />
-          )}
-        </DealContainerInfo>
-      )}
-      <NFTDealActions
-        transfer={transfer}
-        order={order}
-        tokenFullId={tokenFullId}
-        reFetchOrder={reFetchOrder}
-      />
-      {(!transfer && !isOwner) && (
-        <IsNotListedContainer>
-          <Txt primary1 style={{ fontSize: '24px', color: '#A7A8A9' }}> EFT is not listed</Txt>
-        </IsNotListedContainer>
-      )}
+      <Loading isLoading={transferStore.isLoading}>
+        {(children || transfer) && (
+          <DealContainerInfo>
+            {children}
+            {transfer && (
+              <PriceBadge
+                title="Price"
+                left={formatCurrency(BigNumber.from(localStorage.getItem('priceEFT')))}
+                right={`~${formatUsd(localStorage.getItem('priceEFTUSD') ?? '')}`}
+                size='lg'
+                background='secondary'
+              />
+            )}
+          </DealContainerInfo>
+        )}
+        <NFTDealActions
+          transfer={transfer}
+          order={order}
+          tokenFullId={tokenFullId}
+          reFetchOrder={reFetchOrder}
+        />
+        {(!transfer && !isOwner) && (
+          <IsNotListedContainer>
+            <Txt primary1 style={{ fontSize: '24px', color: '#A7A8A9' }}> EFT is not listed</Txt>
+          </IsNotListedContainer>
+        )}
+      </Loading>
     </NFTDealStyle>
   )
 })

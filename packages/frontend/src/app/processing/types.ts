@@ -80,7 +80,6 @@ export enum Mark3dAccessTokenEventNames {
 }
 
 export enum HiddenFilesTokenEventNames {
-  Approval = 'Approval',
   TransferInit = 'TransferInit',
   TransferDraft = 'TransferDraft',
   TransferDraftCompletion = 'TransferDraftCompletion',
@@ -90,6 +89,10 @@ export enum HiddenFilesTokenEventNames {
   TransferFraudReported = 'TransferFraudReported',
   TransferFraudDecided = 'TransferFraudDecided',
   TransferCancellation = 'TransferCancellation',
+}
+
+export enum Mark3dCollectionEventNames {
+  Approval = 'Approval',
 }
 
 export enum HiddenFilesTokenEventSignatures {

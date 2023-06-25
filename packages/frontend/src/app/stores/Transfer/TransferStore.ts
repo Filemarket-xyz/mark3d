@@ -82,6 +82,11 @@ export class TransferStore implements IStoreRequester,
     }
   }
 
+  setIsLoading = (isLoading: boolean) => {
+    console.log(`IS LOADING: ${isLoading}`)
+    this.isLoading = isLoading
+  }
+
   // We listen to only events related to transfer change, not transfer initialization
   // This store is supposed to be used only on existing transfers (TransferStatus.Drafted or TransferStatus.Created)
 
@@ -99,6 +104,7 @@ export class TransferStore implements IStoreRequester,
         }],
       }
       this.reload()
+      this.setIsLoading(false)
     })
   }
 
@@ -115,6 +121,7 @@ export class TransferStore implements IStoreRequester,
         }],
       }
       this.reload()
+      this.setIsLoading(false)
     })
   }
 
@@ -123,6 +130,7 @@ export class TransferStore implements IStoreRequester,
     this.checkData(tokenId, data => {
       data.to = to
       this.reload()
+      this.setIsLoading(false)
     })
   }
 
@@ -135,6 +143,7 @@ export class TransferStore implements IStoreRequester,
         timestamp: Date.now(),
       })
       this.reload()
+      this.setIsLoading(false)
     })
   }
 
@@ -147,6 +156,7 @@ export class TransferStore implements IStoreRequester,
         timestamp: Date.now(),
       })
       this.reload()
+      this.setIsLoading(false)
     })
   }
 
@@ -155,6 +165,7 @@ export class TransferStore implements IStoreRequester,
     this.checkActivation(tokenId, () => {
       this.data = undefined
       this.reload()
+      this.setIsLoading(false)
     })
   }
 
@@ -166,6 +177,7 @@ export class TransferStore implements IStoreRequester,
         timestamp: Date.now(),
       })
       this.reload()
+      this.setIsLoading(false)
     })
   }
 
@@ -177,6 +189,7 @@ export class TransferStore implements IStoreRequester,
         timestamp: Date.now(),
       })
       this.reload()
+      this.setIsLoading(false)
     })
   }
 
@@ -185,6 +198,7 @@ export class TransferStore implements IStoreRequester,
     this.checkActivation(tokenId, () => {
       this.data = undefined
       this.reload()
+      this.setIsLoading(false)
     })
   }
 }

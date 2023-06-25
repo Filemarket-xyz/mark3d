@@ -1,18 +1,18 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 
+import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useFinalizeTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { ActionButtonProps } from './types/types'
 
-export interface ButtonFinalizeTransferProps {
+export type ButtonFinalizeTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
-  callBack?: () => void
-  isDisabled?: boolean
 }
 
-export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenFullId, callBack, isDisabled }) => {
+export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
   const { finalizeTransfer, ...statuses } = useFinalizeTransfer({ ...tokenFullId })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -20,6 +20,11 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
     okMsg: 'The deal is finished!',
     loadingMsg: 'Finalizing the deal',
   })
+
+  const { blockStore } = useStores()
+  useEffect(() => {
+    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
+  }, [statuses.result])
 
   return (
     <>
@@ -30,7 +35,9 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await finalizeTransfer(tokenFullId)
+          await finalizeTransfer(tokenFullId).catch(() => {
+            onError?.()
+          })
           callBack?.()
         }}
       >

@@ -6,14 +6,13 @@ import { useCancelTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { ActionButtonProps } from './types/types'
 
-export interface ButtonCancelTransferProps {
+export type ButtonCancelTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
-  callBack?: () => void
-  isDisabled?: boolean
 }
 
-export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullId, callBack, isDisabled }) => {
+export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
   const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId })
   const { isLoading } = statuses
   const { blockStore } = useStores()
@@ -36,7 +35,9 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullI
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await cancelTransfer(tokenFullId)
+          await cancelTransfer(tokenFullId).catch(() => {
+            onError?.()
+          })
           callBack?.()
         }}
       >

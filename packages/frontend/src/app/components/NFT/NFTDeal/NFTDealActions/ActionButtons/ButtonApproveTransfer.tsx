@@ -1,20 +1,20 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 
 import { Transfer } from '../../../../../../swagger/Api'
+import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useApproveTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { ActionButtonProps } from './types/types'
 
-export interface ButtonApproveTransferProps {
+export type ButtonApproveTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
   transfer?: Transfer
-  callBack?: () => void
-  isDisabled?: boolean
 }
 
-export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFullId, transfer, callBack, isDisabled }) => {
+export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFullId, transfer, callBack, isDisabled, onError }) => {
   const { approveTransfer, ...statuses } = useApproveTransfer({ ...tokenFullId })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -22,6 +22,10 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
     okMsg: 'You have granted hidden file access to the buyer',
     loadingMsg: 'Sending an encrypted encryption password',
   })
+  const { blockStore } = useStores()
+  useEffect(() => {
+    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
+  }, [statuses.result])
 
   return (
     <>
@@ -35,6 +39,8 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
           await approveTransfer({
             tokenId: tokenFullId.tokenId,
             publicKey: transfer?.publicKey,
+          }).catch(() => {
+            onError?.()
           })
           callBack?.()
         }}

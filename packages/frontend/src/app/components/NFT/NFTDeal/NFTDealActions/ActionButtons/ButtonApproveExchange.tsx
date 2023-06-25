@@ -6,14 +6,13 @@ import { useApproveExchange } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { ActionButtonProps } from './types/types'
 
-export interface ButtonApproveExchangeProps {
+export type ButtonApproveExchangeProps = ActionButtonProps & {
   tokenFullId: TokenFullId
-  callBack?: () => void
-  isDisabled?: boolean
 }
 
-export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callBack, isDisabled }) => {
+export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
   const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId })
   const { blockStore } = useStores()
   const { isLoading } = statuses
@@ -36,7 +35,9 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await approveExchange(tokenFullId)
+          await approveExchange(tokenFullId).catch(() => {
+            onError?.()
+          })
           callBack?.()
         }}
       >
