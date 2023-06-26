@@ -3,12 +3,15 @@ import { Button } from '../../Button'
 import { Flex } from '../../Flex'
 import { textVariant } from '../../Txt'
 
-CSS.registerProperty({
-  name: '--rotate',
-  syntax: '<angle>',
-  inherits: false,
-  initialValue: '132deg',
-})
+const isFirefox = navigator.userAgent.includes('Firefox')
+if (!isFirefox) {
+  CSS.registerProperty({
+    name: '--rotate',
+    syntax: '<angle>',
+    inherits: false,
+    initialValue: '132deg',
+  })
+}
 
 const spin = keyframes({
   '0%': {
@@ -80,7 +83,7 @@ export const StyledCard = styled('div', {
   position: 'relative',
   zIndex: 1,
   borderRadius: 16,
-  backgroundImage: 'linear-gradient(var(--rotate), #8efdb5, #028fff, #01e3f8)',
+  backgroundImage: 'linear-gradient(var(--rotate, 132deg), #8efdb5, #028fff, #01e3f8)',
   animation: `${spin} 2.5s linear infinite`,
   '&:hover': {
     animation: 'none',
