@@ -35,6 +35,7 @@ const NavBarStyled = styled('nav', {
   color: '$gray600 !important',
   background: 'rgba(249, 249, 249, 0.75)',
   backdropFilter: 'blur(14px)',
+  transition: 'all 0.5s',
   variants: {
     isTransparent: {
       true: {

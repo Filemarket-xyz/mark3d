@@ -8,6 +8,7 @@ import Setka from '../../img/FileBunniesBanner/Setka.svg'
 
 export const FileBunniesBannerStyled = styled('div', {
   width: '100%',
+  cursor: 'pointer',
   marginTop: 'calc($layout$navBarHeight - 85px)',
   background: `url(${Setka})`,
   backgroundSize: 'contain',

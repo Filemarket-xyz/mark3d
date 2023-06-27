@@ -3,13 +3,11 @@ import React from 'react'
 
 import { BaseModal } from '../../../../components'
 import { useStores } from '../../../../hooks'
-import { useStatusModal } from '../../../../hooks/useStatusModal'
 import { useFileBunniesMint } from '../../../../processing/filebunnies/useFileBunniesMint'
-import { Txt, WhitelistCard } from '../../../../UIkit'
+import { Link, Txt, WhitelistCard } from '../../../../UIkit'
 import FileBunniesLogo from '../../img/FileBunniesLogo.svg'
 import LeftBottomPl from '../../img/LeftBottomPlanet.png'
 import LeftTopPl from '../../img/LeftTopPlanet.png'
-import RightPl from '../../img/RightTopPl.png'
 import {
   FileBunniesModal,
   HowMintModalBody,
@@ -35,14 +33,7 @@ import {
 
 const FileBunniesSection = observer(() => {
   const { dialogStore } = useStores()
-  const { payedMint, statusesFulFill, isLoading, freeMint, whiteList } = useFileBunniesMint()
-
-  const { modalProps } = useStatusModal({
-    statuses: statusesFulFill,
-    okMsg: 'Order is fulfilled! Now you need to wait 4 minutes until it appears in your profile and you can continue the actions',
-    loadingMsg: 'Fulfilling order',
-  })
-
+  const { payedMint, isLoading, freeMint, whiteList, modalProps } = useFileBunniesMint()
   const rarityModalOpen = () => {
     dialogStore.openDialog({
       component: FileBunniesModal,
@@ -52,7 +43,6 @@ const FileBunniesSection = observer(() => {
       },
     })
   }
-
   const howToMintModalOpen = () => {
     dialogStore.openDialog({
       component: FileBunniesModal,
@@ -77,19 +67,19 @@ const FileBunniesSection = observer(() => {
       <FileBunniesSectionStyle>
         <img className={'leftTopPl'} src={LeftTopPl} />
         <img className={'leftBottomPl'} src={LeftBottomPl} />
-        <img className={'rightPl'} src={RightPl} />
         <FileBunniesLayout>
           <Title>
             <img src={FileBunniesLogo} />
-            <span style={{ marginTop: '30px' }}>
-              <a
-                style={{ color: 'white', textDecoration: 'underline' }}
+            <span style={{ marginTop: '18px' }}>
+              <Link
                 href={'https://filebunnies.xyz/'}
                 target={'_blank'}
                 rel="noreferrer"
+                underlined
+                fileBunniesTitle
               >
                 FileBunnies
-              </a>
+              </Link>
               <span>
                 {' '}
                 Minting
@@ -152,5 +142,4 @@ const FileBunniesSection = observer(() => {
     </>
   )
 })
-
 export default FileBunniesSection

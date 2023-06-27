@@ -87,7 +87,7 @@ export const StyledCard = styled('div', {
   animation: `${spin} 2.5s linear infinite`,
   '&:hover': {
     animation: 'none',
-    background: 'transparent',
+    background: 'rgba(255,255,255, 0.25)',
   },
   [`&:hover ${StyledCardBackground.selector}`]: {
     animation: 'none',

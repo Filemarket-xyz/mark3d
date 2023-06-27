@@ -98,5 +98,21 @@ export const linkStyled = <Type extends keyof JSX.IntrinsicElements | React.Comp
           },
         },
       },
+      fileBunniesTitle: {
+        true: {
+          color: 'white',
+          ...textVariant('h1').true,
+          fontSize: '48px',
+          '&:hover': {
+            filter: 'brightness(0.9)',
+          },
+          '@lg': {
+            fontSize: '40px',
+          },
+          '@sm': {
+            fontSize: '24px',
+          },
+        },
+      },
     },
   })
