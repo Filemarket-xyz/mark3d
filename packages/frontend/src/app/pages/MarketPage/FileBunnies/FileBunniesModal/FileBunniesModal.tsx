@@ -30,24 +30,27 @@ export const RarityModalBody = () => {
 export const HowMintModalBody = () => {
   return (
     <FileBunniesModalBody>
-      1. Connect your crypto wallet via Wallet Connect.
-      {' '}
+      1. Top up your crypto wallet with FIL tokens
+      (https://medium.com/filemarket-xyz/how-to-buy-fil-and-use-fil-in-the-filecoin-virtual-machine-d67fa90764d5)
+      to pay for the network fee during Free Mint or to pay for Mint of other rarities.
       <br />
-      2. Create or connect your FileWallet.
-      {' '}
+      2. Connect your crypto wallet via Wallet Connect
       <br />
-      3. if you&apos;re on the list, the Free Mint button will be active.
-      {' '}
+      3. Create or connect your FileWallet
       <br />
-      4. Click Free Mint or Mint if you want to swap your FIL for EFT with higher rarity (the chances of getting any rarity are random).
-      {' '}
+      4. Check if you&quot;re on the White List (if you&quot;re on the list, the Free Mint button will be active)
       <br />
-      5. Wait for the transaction to appear and then sign it.
-      {' '}
+      5. Click Free Mint or Mint if you want to swap your FIL for EFT with higher rarity (the chances of getting any rarity are random)
       <br />
-      6. After a successful transaction, you will be able to see your eft on profile page after 4 minutes.
-      {' '}
+      6. Wait for the transaction to appear and then sign it
       <br />
+      7. In the popped-up window, wait for the &quot;Show my FileBunny&quot; button to appear
+      <br />
+      8. Wait for the automatic transfer of the hidden file with gifts on your FileBunny EFT page (after the transfer, the file will become available for download)
+      <br />
+      9. Complete the transaction on EFT page by clicking the &quot;Send payment&quot; button
+      <br />
+      10. Congratulations! You have become the lucky owner of your FileBunny! Download the file and enjoy the content. This is the NFT with real value inside!
     </FileBunniesModalBody>
   )
 }

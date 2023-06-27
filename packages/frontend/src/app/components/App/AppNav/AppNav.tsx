@@ -21,8 +21,8 @@ export const AppNav: FC = () => {
   }, [location.pathname])
 
   const isTransparent = useMemo(() => {
-    if (smValue) return scrollY < 1825
-    if (mdValue) return scrollY < 1316
+    if (smValue) return scrollY < -1
+    if (mdValue) return scrollY < -1
     if (lgValue) return scrollY < 1284
     if (xlValue) return scrollY < 783
 
@@ -31,12 +31,8 @@ export const AppNav: FC = () => {
 
   const noneBlurShadow = useMemo(() => {
     console.log(scrollY)
-    if (smValue) return scrollY < 42
-    if (mdValue) return scrollY < 58
-    if (lgValue) return scrollY < 76
-    if (xlValue) return scrollY < 76
 
-    return scrollY < 76
+    return scrollY < 1
   }, [scrollY])
 
   return (

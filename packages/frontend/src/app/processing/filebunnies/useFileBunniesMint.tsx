@@ -2,6 +2,7 @@ import { BigNumber } from 'ethers'
 import { useState } from 'react'
 import { useAccount } from 'wagmi'
 
+import { SuccessNavBody } from '../../components/Modal/Modal'
 import { api } from '../../config/api'
 import { useStatusState } from '../../hooks'
 import { useAuth } from '../../hooks/useAuth'
@@ -30,6 +31,16 @@ export const useFileBunniesMint = () => {
   const { fulfillOrder, ...statuses } = useFulfillOrder()
 
   const { wrapPromise, statuses: statusesReq } = useStatusState()
+
+  const { modalProps, setModalBody, setModalOpen } = useStatusModal({
+    statuses: {
+      ...statuses,
+      result: '',
+      error: statuses.error ?? statusesReq.error,
+    },
+    okMsg: 'Order is fulfilled! Now you need to wait 4 minutes until it appears in your profile and you can continue the actions',
+    loadingMsg: 'Fulfilling order',
+  })
 
   const collectionAddressReq = async () => {
     const response = await wrapRequest(async () => api.collections.fullFileBunniesList())
@@ -66,6 +77,13 @@ export const useFileBunniesMint = () => {
       price: fromCurrency(0.01),
     })
     setIsLoadingReq(false)
+    setModalBody(<SuccessNavBody
+      buttonText='Show my FileBunny'
+      link={`/collection/${collectionAddress}/${tokenId}`}
+      onPress={() => {
+        setModalOpen(false)
+      }}
+    />)
   })
 
   const freeMint = wrapPromise(async () => {
@@ -85,6 +103,13 @@ export const useFileBunniesMint = () => {
       signature: sign,
     })
     setIsLoadingReq(false)
+    setModalBody(<SuccessNavBody
+      buttonText='Show my FileBunny'
+      link={`/collection/${collectionAddress}/${tokenId}`}
+      onPress={() => {
+        setModalOpen(false)
+      }}
+    />)
   })
 
   const { isLoading: isLoadingFulFill } = statuses
@@ -94,15 +119,6 @@ export const useFileBunniesMint = () => {
 
     return isLoadingFulFill || whiteListStore.isLoading || isLoadingReq
   }, [whiteListStore.isLoading, isLoadingReq, isLoadingFulFill])
-
-  const { modalProps } = useStatusModal({
-    statuses: {
-      ...statuses,
-      error: statuses.error ?? statusesReq.error,
-    },
-    okMsg: 'Order is fulfilled! Now you need to wait 4 minutes until it appears in your profile and you can continue the actions',
-    loadingMsg: 'Fulfilling order',
-  })
 
   return {
     isLoading,

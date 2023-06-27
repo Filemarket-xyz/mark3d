@@ -85,7 +85,7 @@ export const WhitelistCard: React.FC<WhitelistCardProps> = ({
               justifyContent='space-between'
               gap={4}
             >
-              <Txt primary1>Rarity:</Txt>
+              <Txt primary1>Rarities:</Txt>
               <div>
                 {rarities.map((rarity, i) => (
                   <Fragment key={rarity}>
