@@ -3,7 +3,6 @@ import React from 'react'
 
 import { BaseModal } from '../../../../components'
 import { useStores } from '../../../../hooks'
-import { useStatusModal } from '../../../../hooks/useStatusModal'
 import { useFileBunniesMint } from '../../../../processing/filebunnies/useFileBunniesMint'
 import { Link, Txt, WhitelistCard } from '../../../../UIkit'
 import FileBunniesLogo from '../../img/FileBunniesLogo.svg'
@@ -34,14 +33,7 @@ import {
 
 const FileBunniesSection = observer(() => {
   const { dialogStore } = useStores()
-  const { payedMint, statusesFulFill, isLoading, freeMint, whiteList } = useFileBunniesMint()
-
-  const { modalProps } = useStatusModal({
-    statuses: statusesFulFill,
-    okMsg: 'Order is fulfilled! Now you need to wait 4 minutes until it appears in your profile and you can continue the actions',
-    loadingMsg: 'Fulfilling order',
-  })
-
+  const { payedMint, isLoading, freeMint, whiteList, modalProps } = useFileBunniesMint()
   const rarityModalOpen = () => {
     dialogStore.openDialog({
       component: FileBunniesModal,
@@ -51,7 +43,6 @@ const FileBunniesSection = observer(() => {
       },
     })
   }
-
   const howToMintModalOpen = () => {
     dialogStore.openDialog({
       component: FileBunniesModal,
@@ -151,5 +142,4 @@ const FileBunniesSection = observer(() => {
     </>
   )
 })
-
 export default FileBunniesSection

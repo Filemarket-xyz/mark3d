@@ -30,8 +30,17 @@ export const RarityModalBody = () => {
 export const HowMintModalBody = () => {
   return (
     <FileBunniesModalBody>
-      1. Top up your crypto wallet with FIL tokens
-      (https://medium.com/filemarket-xyz/how-to-buy-fil-and-use-fil-in-the-filecoin-virtual-machine-d67fa90764d5)
+      1.
+      {' '}
+      <a
+        target={'_blank'}
+        href={'https://medium.com/filemarket-xyz/how-to-buy-fil-and-use-fil-in-the-filecoin-virtual-machine-d67fa90764d5'}
+        rel="noreferrer"
+        style={{ textDecoration: 'underline', color: 'inherit' }}
+      >
+        Top up your crypto wallet with FIL tokens
+      </a>
+      {' '}
       to pay for the network fee during Free Mint or to pay for Mint of other rarities.
       <br />
       2. Connect your crypto wallet via Wallet Connect

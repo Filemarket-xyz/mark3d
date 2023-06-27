@@ -17,12 +17,10 @@ interface ISequencerReq {
   suffix?: string
   collectionAddress?: string
 }
-
 interface IGetSignWhiteList {
   address?: `0x${string}`
   whiteList?: string
 }
-
 export const useFileBunniesMint = () => {
   const { address, isConnected } = useAccount()
   const whiteListStore = useCheckWhiteListStore(address)
@@ -47,21 +45,18 @@ export const useFileBunniesMint = () => {
 
     return response?.data.collection?.address
   }
-
   const sequencerReq = async ({ suffix, collectionAddress }: ISequencerReq) => {
     if (!(collectionAddress && suffix)) return
     const tokenResp = await wrapRequest(async () => api.sequencer.acquireDetail(collectionAddress, { suffix }))
 
     return tokenResp?.data.tokenId
   }
-
   const getSignWhiteList = async({ whiteList, address }: IGetSignWhiteList) => {
     if (!(whiteList && address)) return
     const sign = await wrapRequest(async () => api.collections.fileBunniesWhitelistSignDetail(whiteList, address))
 
     return sign?.data.signature
   }
-
   const payedMint = wrapPromise(async () => {
     if (!isConnected) {
       connect()
@@ -113,7 +108,6 @@ export const useFileBunniesMint = () => {
   })
 
   const { isLoading: isLoadingFulFill } = statuses
-
   const isLoading = useComputedMemo(() => {
     console.log(whiteListStore.isLoading)
 
