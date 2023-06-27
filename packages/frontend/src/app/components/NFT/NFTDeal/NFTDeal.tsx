@@ -77,15 +77,15 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
 
   return (
     <NFTDealStyle isNotListed={!transfer && !isOwner}>
-      <Loading isLoading={transferStore.isLoading}>
+      <Loading isLoading={transferStore.isLoadingTransition}>
         {(children || transfer) && (
           <DealContainerInfo>
             {children}
             {transfer && (
               <PriceBadge
                 title="Price"
-                left={formatCurrency(BigNumber.from(localStorage.getItem('priceEFT')))}
-                right={`~${formatUsd(localStorage.getItem('priceEFTUSD') ?? '')}`}
+                left={formatCurrency(BigNumber.from(order?.price ?? 0))}
+                right={`~${formatUsd(order?.priceUsd ?? '')}`}
                 size='lg'
                 background='secondary'
               />

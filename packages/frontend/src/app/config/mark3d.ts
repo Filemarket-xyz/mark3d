@@ -16,7 +16,7 @@ const filecoinCalibration: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ['https://api.calibration.node.glif.io/rpc/v1'],
+      http: ['https://rpc.ankr.com/filecoin_testnet'],
     },
     public: {
       http: ['https://filecoin-calibration.chainup.net/rpc/v1'],

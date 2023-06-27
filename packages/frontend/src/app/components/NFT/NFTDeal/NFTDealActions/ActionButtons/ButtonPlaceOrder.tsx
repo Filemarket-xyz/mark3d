@@ -1,13 +1,16 @@
 import React, { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { useStores } from '../../../../../hooks'
 import { useConversionRateStore } from '../../../../../hooks/useConversionRateStore'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
+import { useOrderStore } from '../../../../../hooks/useOrderStore'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { usePlaceOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import { Modal, ModalBody, ModalTitle } from '../../../../../UIkit/Modal/Modal'
+import { Params } from '../../../../../utils/router'
 import { toCurrency } from '../../../../../utils/web3'
 import BaseModal from '../../../../Modal/Modal'
 import { OrderForm, OrderFormValue } from '../../OrderForm'
@@ -21,6 +24,9 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId,
   const { modalOpen, openModal, closeModal } = useModalOpen()
   const { placeOrder, ...statuses } = usePlaceOrder()
   const conversionRateStore = useConversionRateStore()
+  const { collectionAddress, tokenId } = useParams<Params>()
+  const orderStore = useOrderStore(collectionAddress, tokenId)
+
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -36,8 +42,7 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId,
     }).catch(() => {
       onError?.()
     })
-    localStorage.setItem('priceEFT', price.toString())
-    conversionRateStore.data?.rate && localStorage.setItem('priceEFTUSD', (conversionRateStore.data?.rate * toCurrency(price)).toString())
+    conversionRateStore.data?.rate && orderStore.setDataPrice(price.toString(), (conversionRateStore.data?.rate * toCurrency(price)).toString())
     callBack?.()
   }
 

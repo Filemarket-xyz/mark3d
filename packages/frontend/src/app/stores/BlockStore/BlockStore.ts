@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers'
 import { makeAutoObservable } from 'mobx'
 
 export class BlockStore {
-  currentBlockNumber: BigNumber // Dynamic block number from the socket
+  currentBlockNumber: BigNumber // Dynamic block number from the rpc
   receiptBlockNumber: BigNumber // Block number from transaction
   lastCurrentBlockNumber: BigNumber // A block number that is equal to the value of currentBlockNumber at the time of the transaction
 
@@ -19,6 +19,7 @@ export class BlockStore {
   }
 
   setRecieptBlock = (recieptBlock: BigNumber | number) => {
+    console.log(recieptBlock)
     this.receiptBlockNumber = BigNumber.from(recieptBlock)
     this.lastCurrentBlockNumber = this.currentBlockNumber
     console.log(this.receiptBlockNumber)

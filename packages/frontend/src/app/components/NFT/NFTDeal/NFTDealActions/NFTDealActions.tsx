@@ -36,7 +36,6 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   tokenFullId,
   transfer,
   order,
-  reFetchOrder,
 }) => {
   const { isOwner, error } = useIsOwner(tokenFullId)
   const { blockStore, transferStore } = useStores()
@@ -47,11 +46,11 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   })
 
   const callBackAfterApproveTrans = () => {
-    transferStore.setIsLoading(true) // It's need to show loading screen before approve transaction and until contract event
+    transferStore.setIsLoadingTransition(true) // It's need to show loading screen before approve transaction and until contract event
   }
 
   const onErrorButtons = () => {
-    transferStore.setIsLoading(false)
+    transferStore.setIsLoadingTransition(false)
   }
 
   if (error) {

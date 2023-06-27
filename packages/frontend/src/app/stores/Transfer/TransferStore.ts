@@ -23,6 +23,7 @@ export class TransferStore implements IStoreRequester,
   isLoading = false
   isActivated = false
 
+  isLoadingTransition: boolean = false
   data?: Transfer = undefined
   tokenFullId?: TokenFullId = undefined
   blockStore: BlockStore
@@ -82,15 +83,15 @@ export class TransferStore implements IStoreRequester,
     }
   }
 
-  setIsLoading = (isLoading: boolean) => {
+  setIsLoadingTransition = (isLoading: boolean) => {
     console.log(`IS LOADING: ${isLoading}`)
-    this.isLoading = isLoading
+    this.isLoadingTransition = isLoading
   }
 
   // We listen to only events related to transfer change, not transfer initialization
   // This store is supposed to be used only on existing transfers (TransferStatus.Drafted or TransferStatus.Created)
 
-  onTransferInit(tokenId: BigNumber, from: string, to: string) {
+  onTransferInit(tokenId: BigNumber, from: string, to: string, transferNumber: BigNumber) {
     console.log('onTransferInit')
     this.checkActivation(tokenId, (tokenFullId) => {
       this.data = {
@@ -103,12 +104,12 @@ export class TransferStore implements IStoreRequester,
           timestamp: Date.now(),
         }],
       }
+      this.setIsLoadingTransition(false)
       this.reload()
-      this.setIsLoading(false)
     })
   }
 
-  onTransferDraft(tokenId: BigNumber, from: string) {
+  onTransferDraft(tokenId: BigNumber, from: string, transferNumber: BigNumber) {
     console.log('onTransferDraft')
     this.checkActivation(tokenId, (tokenFullId) => {
       this.data = {
@@ -120,21 +121,21 @@ export class TransferStore implements IStoreRequester,
           timestamp: Date.now(),
         }],
       }
+      this.setIsLoadingTransition(false)
       this.reload()
-      this.setIsLoading(false)
     })
   }
 
-  onTransferDraftCompletion(tokenId: BigNumber, to: string) {
+  onTransferDraftCompletion(tokenId: BigNumber, to: string, transferNumber: BigNumber) {
     console.log('onTransferCompletion')
     this.checkData(tokenId, data => {
       data.to = to
+      this.setIsLoadingTransition(false)
       this.reload()
-      this.setIsLoading(false)
     })
   }
 
-  onTransferPublicKeySet(tokenId: BigNumber, publicKeyHex: string) {
+  onTransferPublicKeySet(tokenId: BigNumber, publicKeyHex: string, transferNumber: BigNumber) {
     console.log('onTransferPublicKeySet')
     this.checkData(tokenId, data => {
       data.publicKey = publicKeyHex
@@ -143,11 +144,11 @@ export class TransferStore implements IStoreRequester,
         timestamp: Date.now(),
       })
       this.reload()
-      this.setIsLoading(false)
+      this.setIsLoadingTransition(false)
     })
   }
 
-  onTransferPasswordSet(tokenId: BigNumber, encryptedPasswordHex: string) {
+  onTransferPasswordSet(tokenId: BigNumber, encryptedPasswordHex: string, transferNumber: BigNumber) {
     console.log('onTransferPasswordSet')
     this.checkData(tokenId, data => {
       data.encryptedPassword = encryptedPasswordHex
@@ -156,32 +157,32 @@ export class TransferStore implements IStoreRequester,
         timestamp: Date.now(),
       })
       this.reload()
-      this.setIsLoading(false)
+      this.setIsLoadingTransition(false)
     })
   }
 
-  onTransferFinished(tokenId: BigNumber) {
+  onTransferFinished(tokenId: BigNumber, transferNumber: BigNumber) {
     console.log('onTransferFinished')
     this.checkActivation(tokenId, () => {
       this.data = undefined
       this.reload()
-      this.setIsLoading(false)
+      this.setIsLoadingTransition(false)
     })
   }
 
-  onTransferFraudReported(tokenId: BigNumber) {
+  onTransferFraudReported(tokenId: BigNumber, transferNumber: BigNumber) {
     console.log('onTransferFraud')
     this.checkData(tokenId, data => {
       data.statuses?.unshift({
         status: TransferStatus.FraudReported,
         timestamp: Date.now(),
       })
+      this.setIsLoadingTransition(false)
       this.reload()
-      this.setIsLoading(false)
     })
   }
 
-  onTransferFraudDecided(tokenId: BigNumber, approved: boolean) {
+  onTransferFraudDecided(tokenId: BigNumber, approved: boolean, transferNumber: BigNumber) {
     this.checkData(tokenId, data => {
       data.fraudApproved = approved
       data.statuses?.unshift({
@@ -189,16 +190,16 @@ export class TransferStore implements IStoreRequester,
         timestamp: Date.now(),
       })
       this.reload()
-      this.setIsLoading(false)
+      this.setIsLoadingTransition(false)
     })
   }
 
-  onTransferCancellation(tokenId: BigNumber) {
+  onTransferCancellation(tokenId: BigNumber, transferNumber: BigNumber) {
     console.log('onTransferCancel')
     this.checkActivation(tokenId, () => {
       this.data = undefined
       this.reload()
-      this.setIsLoading(false)
+      this.setIsLoadingTransition(false)
     })
   }
 }

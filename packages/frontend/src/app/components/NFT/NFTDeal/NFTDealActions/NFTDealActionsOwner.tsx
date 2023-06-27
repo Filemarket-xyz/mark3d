@@ -48,7 +48,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
         const tempData = await refetch()
         if (data.data !== tempData.data || countReload > 8) {
           clearInterval(interval)
-          transferStore.setIsLoading(false)
+          transferStore.setIsLoadingTransition(false)
         }
         countReload++
         data = await refetch()
