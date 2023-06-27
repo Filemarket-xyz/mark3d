@@ -12,15 +12,14 @@ import { assertCollection, assertContract, assertSigner, assertTokenId, callCont
  * @param tokenId assigned to a token by the mint function
  */
 
-interface IUseCancelOrder {
+interface ICancelOrder {
   collectionAddress?: string
   tokenId?: string
-  callBack?: () => void
 }
 
-export function useCancelOrder({ callBack }: IUseCancelOrder = {}) {
+export function useCancelOrder() {
   const { contract, signer } = useExchangeContract()
-  const { wrapPromise, statuses } = useStatusState<ContractReceipt, IUseCancelOrder>()
+  const { wrapPromise, statuses } = useStatusState<ContractReceipt, ICancelOrder>()
   const cancelOrder = useCallback(wrapPromise(async ({ collectionAddress, tokenId }) => {
     assertCollection(collectionAddress)
     assertTokenId(tokenId)
@@ -33,7 +32,7 @@ export function useCancelOrder({ callBack }: IUseCancelOrder = {}) {
       BigNumber.from(tokenId),
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }, callBack), [contract, signer, wrapPromise])
+  }), [contract, signer, wrapPromise])
 
   return {
     ...statuses,

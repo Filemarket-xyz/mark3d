@@ -9,10 +9,9 @@ import { assertCollection, assertContract, assertSigner, assertTokenId, callCont
 interface IDraftTransfer {
   collectionAddress?: string
   tokenId?: string
-  callBack?: () => void
 }
 
-export function useDraftTransfer({ callBack }: IDraftTransfer = {}) {
+export function useDraftTransfer() {
   const { contract, signer } = useCollectionContract()
   const { statuses, wrapPromise } = useStatusState<ContractReceipt, IDraftTransfer>()
 
@@ -28,7 +27,7 @@ export function useDraftTransfer({ callBack }: IDraftTransfer = {}) {
       nullAddress,
       { gasPrice: mark3dConfig.gasPrice },
     )
-  }, callBack), [contract, signer, wrapPromise])
+  }), [contract, signer, wrapPromise])
 
   return {
     ...statuses,

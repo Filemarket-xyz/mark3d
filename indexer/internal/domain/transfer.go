@@ -19,6 +19,7 @@ type Transfer struct {
 	PublicKey         string
 	EncryptedPassword string
 	Number            *big.Int
+	BlockNumber       int64
 }
 
 type TransferStatus struct {
@@ -40,6 +41,10 @@ func TransferToModel(t *Transfer) *models.Transfer {
 		PublicKey:         t.PublicKey,
 		EncryptedPassword: t.EncryptedPassword,
 		Number:            t.Number.String(),
+		Block: &models.TransferBlock{
+			ConfirmationsCount: 1,
+			Number:             t.BlockNumber,
+		},
 	}
 }
 
