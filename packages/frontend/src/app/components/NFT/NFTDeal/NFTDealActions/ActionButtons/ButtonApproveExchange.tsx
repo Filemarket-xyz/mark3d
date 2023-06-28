@@ -1,24 +1,30 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 
+import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useApproveExchange } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { ActionButtonProps } from './types/types'
 
-export interface ButtonApproveExchangeProps {
+export type ButtonApproveExchangeProps = ActionButtonProps & {
   tokenFullId: TokenFullId
-  callBack?: () => void
 }
 
-export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callBack }) => {
+export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
   const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId })
+  const { blockStore } = useStores()
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'You have approved FileMarket to list your EFT. You can now place an order',
     loadingMsg: 'At first, you need to approve FileMarket to list your EFT. After that you can place an order.',
   })
+
+  useEffect(() => {
+    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
+  }, [statuses.result])
 
   return (
     <>
@@ -27,9 +33,11 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await approveExchange(tokenFullId)
+          await approveExchange(tokenFullId).catch(() => {
+            onError?.()
+          })
           callBack?.()
         }}
       >

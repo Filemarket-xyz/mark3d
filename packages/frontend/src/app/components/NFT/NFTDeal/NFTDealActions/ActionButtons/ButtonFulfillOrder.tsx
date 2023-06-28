@@ -1,23 +1,26 @@
 import { observer } from 'mobx-react-lite'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 
 import { Order } from '../../../../../../swagger/Api'
+import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useFulfillOrder } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { ActionButtonProps } from './types/types'
 
-export interface ButtonFulfillOrderProps {
+export type ButtonFulfillOrderProps = ActionButtonProps & {
   tokenFullId: TokenFullId
   order?: Order
-  callBack?: () => void
 }
 
 export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
   tokenFullId,
   order,
   callBack,
+  isDisabled,
+  onError,
 }) => {
   const { fulfillOrder, ...statuses } = useFulfillOrder()
   const { isLoading } = statuses
@@ -28,10 +31,17 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
     loadingMsg: 'Fulfilling order',
   })
 
+  const { blockStore } = useStores()
+  useEffect(() => {
+    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
+  }, [statuses.result])
+
   const onPress = async () => {
     await fulfillOrder({
       ...tokenFullId,
       price: order?.price,
+    }).catch(() => {
+      onError?.()
     })
     callBack?.()
   }
@@ -43,7 +53,7 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={onPress}
       >
         Buy now

@@ -33,7 +33,6 @@ export const useCreateNft = () => {
     name: '',
   })
   const [options, setOptions] = useState<{ isPublicCollection?: boolean }>()
-
   const {
     mintNFT,
     setError,

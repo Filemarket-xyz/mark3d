@@ -1,17 +1,18 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 
+import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useReportFraud } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { ActionButtonProps } from './types/types'
 
-export interface ButtonReportFraudTransferProps {
+export type ButtonReportFraudTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
-  callBack?: () => void
 }
 
-export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ tokenFullId, callBack }) => {
+export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
   const { reportFraud, ...statuses } = useReportFraud({ ...tokenFullId })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -20,6 +21,11 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ 
     loadingMsg: 'Reporting fraud',
   })
 
+  const { blockStore } = useStores()
+  useEffect(() => {
+    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
+  }, [statuses.result])
+
   return (
     <>
       <BaseModal {...modalProps} />
@@ -27,9 +33,11 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ 
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await reportFraud(tokenFullId)
+          await reportFraud(tokenFullId).catch(() => {
+            onError?.()
+          })
           callBack?.()
         }}
       >

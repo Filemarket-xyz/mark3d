@@ -37,6 +37,8 @@ export class OrderStore implements IStoreRequester,
       resp => {
         console.log(resp)
         this.data = resp ?? undefined
+        resp?.price && localStorage.setItem('priceEFT', resp.price)
+        resp?.priceUsd && localStorage.setItem('priceEFTUSD', resp.priceUsd)
       })
   }
 
@@ -58,6 +60,18 @@ export class OrderStore implements IStoreRequester,
   reload(): void {
     if (this.tokenFullId) {
       this.request(this.tokenFullId)
+    }
+  }
+
+  setDataPrice = (price: string, priceUsd: string) => {
+    if (this.data) {
+      this.data.price = price
+      this.data.priceUsd = priceUsd
+    } else {
+      this.data = {
+        price,
+        priceUsd,
+      }
     }
   }
 }
