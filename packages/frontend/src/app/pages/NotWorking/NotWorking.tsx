@@ -110,7 +110,7 @@ const NotWorking = () => {
             <br />
             Due to technical issues with FileBunnies Smart Contract setup the minting is postponed to
             {' '}
-            <span style={{ color: '#0090FF' }}>5 PM UTC</span>
+            <span style={{ color: '#0090FF' }}>6 PM UTC</span>
             .
             <br />
             Minting will be available at this page
