@@ -82,7 +82,7 @@ export const useFileBunniesMint = () => {
         '        transaction is not yet complete. On your FileBunny page,\n' +
         '        you need to wait until the hidden file with gifts is\n' +
         '        transferred and becomes available for download. After\n' +
-        '        this, you need to confirm the completion of the deal by clicking the "Send payment" button.'}
+        '        this, you need to confirm the completion of the deal by clicking the "Send payment" or "Finalize the deal" button.'}
     />)
   })
 
@@ -109,6 +109,11 @@ export const useFileBunniesMint = () => {
       onPress={() => {
         setModalOpen(false)
       }}
+      underText={'Your EFT has been generated, but the purchase\n' +
+        '        transaction is not yet complete. On your FileBunny page,\n' +
+        '        you need to wait until the hidden file with gifts is\n' +
+        '        transferred and becomes available for download. After\n' +
+        '        this, you need to confirm the completion of the deal by clicking the "Send payment" or "Finalize the deal" button.'}
     />)
   })
 

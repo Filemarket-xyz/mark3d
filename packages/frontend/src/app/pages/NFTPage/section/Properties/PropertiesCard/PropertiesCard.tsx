@@ -46,7 +46,7 @@ const PropertiesCard: FC<PropertiesCardProps> = ({ type, rare, chance, maxValue,
       {type && <TopText>{type}</TopText>}
       <RareText>{rare}</RareText>
       <ChanceText>
-        {(minValue && maxValue) && `${((minValue / maxValue) * 100).toFixed(2)}% have this property`}
+        {(minValue && maxValue) && `${parseFloat(((minValue / maxValue) * 100).toFixed(2)).toString()}% have this property`}
       </ChanceText>
     </PropertiesCardStyle>
   )

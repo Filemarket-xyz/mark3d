@@ -1,19 +1,23 @@
+import { BigNumber } from 'ethers'
 import { FC } from 'react'
 
+import { Order } from '../../../../../../swagger/Api'
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useFinalizeTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
+import { toCurrency } from '../../../../../utils/web3'
 import BaseModal from '../../../../Modal/Modal'
 import { ActionButtonProps } from './types/types'
 
 export type ButtonFinalizeTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
+  order?: Order
 }
 
 export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({
-  tokenFullId, onStart, onEnd, isDisabled, onError,
+  tokenFullId, onStart, onEnd, isDisabled, onError, order,
 }) => {
   const { finalizeTransfer, ...statuses } = useFinalizeTransfer({ ...tokenFullId })
   const { isLoading } = statuses
@@ -45,7 +49,7 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({
           onEnd?.()
         }}
       >
-        Send payment
+        {toCurrency(BigNumber.from(order?.price ?? '0')) > 0.000001 ? 'Send payment' : 'Finalize the deal'}
       </Button>
     </>
   )

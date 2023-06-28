@@ -69,6 +69,7 @@ export const NFTDealActionsBuyer: FC<NFTDealActionsBuyerProps> = observer(({
           isDisabled={isDisabled}
           onStart={onStart}
           onError={onError}
+          order={order}
         />
       </HideAction>
       <HideAction hide={!isBuyer || !transfer || !permissions.canReportFraud(transfer)}>
