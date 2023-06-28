@@ -30,8 +30,6 @@ export const AppNav: FC = () => {
   }, [scrollY])
 
   const noneBlurShadow = useMemo(() => {
-    console.log(scrollY)
-
     return scrollY < 1
   }, [scrollY])
 
