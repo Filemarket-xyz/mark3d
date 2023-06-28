@@ -44,6 +44,7 @@ export class BlockStore {
   }
 
   get canContinue() {
-    return this.currentBlockNumber.gte(this.receiptBlockNumber.add(extraConfirmations))
+    return this.lastCurrentBlockNumber.eq(1) || // to prevent accidental 324233/324234
+      this.currentBlockNumber.gte(this.receiptBlockNumber.add(extraConfirmations))
   }
 }

@@ -4,13 +4,13 @@ import { useAccount } from 'wagmi'
 
 import { SuccessNavBody } from '../../components/Modal/Modal'
 import { api } from '../../config/api'
+import { mark3dConfig } from '../../config/mark3d'
 import { useStatusState } from '../../hooks'
 import { useAuth } from '../../hooks/useAuth'
 import { useCheckWhiteListStore } from '../../hooks/useCheckWhiteListStore'
 import { useComputedMemo } from '../../hooks/useComputedMemo'
 import { useStatusModal } from '../../hooks/useStatusModal'
 import { wrapRequest } from '../../utils/error/wrapRequest'
-import { fromCurrency } from '../../utils/web3'
 import { useFulfillOrder } from '../nft-interaction'
 
 interface ISequencerReq {
@@ -69,7 +69,7 @@ export const useFileBunniesMint = () => {
     await fulfillOrder({
       collectionAddress,
       tokenId,
-      price: fromCurrency(0.01),
+      price: mark3dConfig.fileBunniesPrice,
     })
     setIsLoadingReq(false)
     setModalBody(<SuccessNavBody
@@ -82,7 +82,7 @@ export const useFileBunniesMint = () => {
         '        transaction is not yet complete. On your FileBunny page,\n' +
         '        you need to wait until the hidden file with gifts is\n' +
         '        transferred and becomes available for download. After\n' +
-        '        this, you need to confirm the completion of the deal by clicking the "Send payment" button.'}
+        '        this, you need to confirm the completion of the deal by clicking the "Send payment" or "Finalize the deal" button.'}
     />)
   })
 
@@ -109,6 +109,11 @@ export const useFileBunniesMint = () => {
       onPress={() => {
         setModalOpen(false)
       }}
+      underText={'Your EFT has been generated, but the purchase\n' +
+        '        transaction is not yet complete. On your FileBunny page,\n' +
+        '        you need to wait until the hidden file with gifts is\n' +
+        '        transferred and becomes available for download. After\n' +
+        '        this, you need to confirm the completion of the deal by clicking the "Send payment" or "Finalize the deal" button.'}
     />)
   })
 
