@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { Order } from '../../../../../../swagger/Api'
 import { useStores } from '../../../../../hooks'
@@ -33,19 +33,19 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
   })
 
   const { blockStore } = useStores()
-  useEffect(() => {
-    if (statuses.result) blockStore.setReceiptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
 
   const onPress = async () => {
     onStart?.()
-    await fulfillOrder({
+    const receipt = await fulfillOrder({
       ...tokenFullId,
       price: order?.price,
     }).catch(e => {
       onError?.()
       throw e
     })
+    if (receipt?.blockNumber) {
+      blockStore.setReceiptBlock(receipt.blockNumber)
+    }
     onEnd?.()
   }
 

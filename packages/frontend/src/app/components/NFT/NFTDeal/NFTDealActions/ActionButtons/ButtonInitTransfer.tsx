@@ -1,5 +1,5 @@
 import { Modal } from '@nextui-org/react'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
@@ -29,9 +29,6 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({
   })
 
   const { blockStore } = useStores()
-  useEffect(() => {
-    if (statuses.result) blockStore.setReceiptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
 
   return (
     <>
@@ -46,13 +43,16 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({
             onSubmit={async (form) => {
               closeModal()
               onStart?.()
-              await initTransfer({
+              const receipt = await initTransfer({
                 tokenId: tokenFullId.tokenId,
                 to: form.address,
               }).catch(e => {
                 onError?.()
                 throw e
               })
+              if (receipt?.blockNumber) {
+                blockStore.setReceiptBlock(receipt.blockNumber)
+              }
               onEnd?.()
             }}
           />

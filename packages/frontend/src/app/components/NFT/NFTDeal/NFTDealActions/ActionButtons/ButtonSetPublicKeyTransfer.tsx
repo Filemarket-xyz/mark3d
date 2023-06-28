@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
@@ -28,16 +28,16 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
   })
 
   const { blockStore } = useStores()
-  useEffect(() => {
-    if (statuses.result) blockStore.setReceiptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
 
   const onPress = async () => {
     onStart?.()
-    await setPublicKey(tokenFullId).catch(e => {
+    const receipt = await setPublicKey(tokenFullId).catch(e => {
       onError?.()
       throw e
     })
+    if (receipt?.blockNumber) {
+      blockStore.setReceiptBlock(receipt.blockNumber)
+    }
     onEnd?.()
   }
 

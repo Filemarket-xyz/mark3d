@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
@@ -22,10 +22,6 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, onS
     loadingMsg: 'Cancelling order',
   })
 
-  useEffect(() => {
-    if (statuses.result) blockStore.setReceiptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
-
   return (
     <>
       <BaseModal {...modalProps} />
@@ -36,10 +32,13 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, onS
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
           onStart?.()
-          await cancelOrder(tokenFullId).catch(e => {
+          const receipt = await cancelOrder(tokenFullId).catch(e => {
             onError?.()
             throw e
           })
+          if (receipt?.blockNumber) {
+            blockStore.setReceiptBlock(receipt.blockNumber)
+          }
           onEnd?.()
         }}
       >

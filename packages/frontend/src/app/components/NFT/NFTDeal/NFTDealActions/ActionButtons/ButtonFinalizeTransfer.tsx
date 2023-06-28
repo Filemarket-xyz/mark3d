@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
@@ -24,9 +24,6 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({
   })
 
   const { blockStore } = useStores()
-  useEffect(() => {
-    if (statuses.result) blockStore.setReceiptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
 
   return (
     <>
@@ -38,10 +35,13 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
           onStart?.()
-          await finalizeTransfer(tokenFullId).catch(e => {
+          const receipt = await finalizeTransfer(tokenFullId).catch(e => {
             onError?.()
             throw e
           })
+          if (receipt?.blockNumber) {
+            blockStore.setReceiptBlock(receipt.blockNumber)
+          }
           onEnd?.()
         }}
       >

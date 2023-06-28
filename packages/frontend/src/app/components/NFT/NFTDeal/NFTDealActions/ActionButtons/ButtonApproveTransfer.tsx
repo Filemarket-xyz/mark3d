@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { Transfer } from '../../../../../../swagger/Api'
 import { useStores } from '../../../../../hooks'
@@ -25,9 +25,6 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
     loadingMsg: 'Sending an encrypted encryption password',
   })
   const { blockStore } = useStores()
-  useEffect(() => {
-    if (statuses.result) blockStore.setReceiptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
 
   return (
     <>
@@ -39,13 +36,16 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
           onStart?.()
-          await approveTransfer({
+          const receipt = await approveTransfer({
             tokenId: tokenFullId.tokenId,
             publicKey: transfer?.publicKey,
           }).catch(e => {
             onError?.()
             throw e
           })
+          if (receipt?.blockNumber) {
+            blockStore.setReceiptBlock(receipt.blockNumber)
+          }
           onEnd?.()
         }}
       >

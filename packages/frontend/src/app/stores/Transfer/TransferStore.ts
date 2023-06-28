@@ -11,7 +11,7 @@ import { BlockStore } from '../BlockStore/BlockStore'
 import { ErrorStore } from '../Error/ErrorStore'
 
 // frontend rpc might be ahead of indexer, but not too much
-const indexerProbableDelay = 10 * 1000
+const indexerProbableDelay = 8 * 1000
 
 /**
  * Stores only ACTIVE (i.e. created and not finished/cancelled) transfer state
@@ -45,7 +45,9 @@ export class TransferStore implements IStoreRequester,
       api.transfers.transfersDetail2(tokenFullId?.collectionAddress, tokenFullId?.tokenId),
       resp => {
         this.data = resp ?? undefined
-        this.blockStore.setReceiptBlock(BigNumber.from(resp?.block?.number))
+        if (resp?.block?.number) {
+          this.blockStore.setReceiptBlock(BigNumber.from(resp?.block?.number))
+        }
         onSuccess?.()
       })
   }
@@ -87,8 +89,8 @@ export class TransferStore implements IStoreRequester,
     }
   }
 
-  setIsWaitingForEvent = (isLoading: boolean) => {
-    this.isWaitingForEvent = isLoading
+  setIsWaitingForEvent = (isWaiting: boolean) => {
+    this.isWaitingForEvent = isWaiting
   }
 
   gotEvent(): void {

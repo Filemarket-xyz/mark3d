@@ -54,7 +54,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
         }
         countReload++
         data = await refetch()
-      }, 2000)
+      }, 5000)
     }, 6000)
   }
 

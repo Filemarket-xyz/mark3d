@@ -18,6 +18,12 @@ export class BlockStore {
     makeAutoObservable(this)
   }
 
+  reset(): void {
+    this.receiptBlockNumber = BigNumber.from(0)
+    this.currentBlockNumber = BigNumber.from(1)
+    this.lastCurrentBlockNumber = BigNumber.from(1)
+  }
+
   setCurrentBlock = (currentBlock: BigNumber) => {
     this.currentBlockNumber = currentBlock
     console.log(currentBlock)
@@ -27,7 +33,6 @@ export class BlockStore {
     console.log(recieptBlock)
     this.receiptBlockNumber = BigNumber.from(recieptBlock)
     this.lastCurrentBlockNumber = this.currentBlockNumber
-    console.log('receipt block', this.receiptBlockNumber, 'current block', this.currentBlockNumber, 'delta', this.receiptBlockNumber.sub(this.lastCurrentBlockNumber))
   }
 
   get confirmationsText(): string {

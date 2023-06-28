@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
@@ -24,10 +24,6 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({
     loadingMsg: 'At first, you need to approve FileMarket to list your EFT. After that you can place an order.',
   })
 
-  useEffect(() => {
-    if (statuses.result) blockStore.setReceiptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
-
   return (
     <>
       <BaseModal {...modalProps} />
@@ -38,10 +34,13 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
           onStart?.()
-          await approveExchange(tokenFullId).catch(e => {
+          const receipt = await approveExchange(tokenFullId).catch(e => {
             onError?.()
             throw e
           })
+          if (receipt?.blockNumber) {
+            blockStore.setReceiptBlock(receipt.blockNumber)
+          }
           onEnd?.()
         }}
       >
