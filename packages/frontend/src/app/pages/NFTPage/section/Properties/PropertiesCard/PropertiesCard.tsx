@@ -36,8 +36,8 @@ export interface PropertiesCardProps {
   type?: string
   rare?: string
   chance?: string
-  maxValue?: string
-  minValue?: string
+  maxValue?: number
+  minValue?: number
 }
 
 const PropertiesCard: FC<PropertiesCardProps> = ({ type, rare, chance, maxValue, minValue }) => {
@@ -46,8 +46,7 @@ const PropertiesCard: FC<PropertiesCardProps> = ({ type, rare, chance, maxValue,
       {type && <TopText>{type}</TopText>}
       <RareText>{rare}</RareText>
       <ChanceText>
-        {chance && `${chance}% have this property`}
-        {(minValue && maxValue) && `${minValue} of ${maxValue} level`}
+        {(minValue && maxValue) && `${((minValue / maxValue) * 100).toFixed(2)}% have this property`}
       </ChanceText>
     </PropertiesCardStyle>
   )

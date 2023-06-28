@@ -165,7 +165,7 @@ const NFTPage: React.FC = observer(() => {
               categories={categories}
             />
             <DescriptionSection />
-            <PropertiesSection properties={tokenStore.data?.properties} rankings={tokenStore.data?.rankings} />
+            <PropertiesSection properties={tokenStore.data?.properties} />
           </MainInfoSectionWrapper>
           <ControlFileSection style={{ gridArea: 'Control' }}>
             <ControlStickyBlock>

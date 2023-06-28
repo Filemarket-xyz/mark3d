@@ -30,13 +30,12 @@ const PropertiesStyle = styled('div', {
 
 interface PropertiesProps {
   properties?: MetadataProperty[]
-  rankings?: MetadataProperty[]
 }
 
-const PropertiesSection: FC<PropertiesProps> = ({ properties, rankings }) => {
+const PropertiesSection: FC<PropertiesProps> = ({ properties }) => {
   return (
     <>
-      {((properties && properties.length > 0) || (rankings && rankings.length > 0)) && (
+      {(properties && properties.length > 0) && (
         <GridBlock style={{ gridArea: 'Properties' }}>
           <PropertyTitle>Properties</PropertyTitle>
           <PropertiesStyle>
@@ -47,18 +46,8 @@ const PropertiesSection: FC<PropertiesProps> = ({ properties, rankings }) => {
                     key={property.traitType}
                     type={property.traitType ?? ''}
                     rare={property.value ?? ''}
-                    maxValue={property.traitTotal.toString()}
-                    minValue={property.traitValueCount?.toString()}
-                  />
-                )
-              })}
-              {rankings?.map((property) => {
-                return (
-                  <PropertiesCard
-                    key={property.traitType}
-                    rare={property.traitType ?? ''}
-                    maxValue={property.max_value?.includes(',') ? parseFloat(property.max_value ?? '0').toFixed(2) : parseInt(property.max_value ?? '0').toString()}
-                    minValue={property.value?.includes(',') ? parseFloat(property.value ?? '0').toFixed(2) : parseInt(property.value ?? '0').toString()}
+                    maxValue={property.traitTotal}
+                    minValue={property.traitValueCount}
                   />
                 )
               })}
