@@ -29,12 +29,14 @@ interface SuccessNavBodyProps {
   buttonText: string
   link: string
   onPress: () => void
+  underText?: string
 }
-export const SuccessNavBody = ({ buttonText, link, onPress }: SuccessNavBodyProps) => {
+export const SuccessNavBody = ({ buttonText, link, onPress, underText }: SuccessNavBodyProps) => {
   return (
     <>
       <ModalTitle style={{ marginBottom: '40px' }}><img src={SuccessfullImg} /></ModalTitle>
       <ModalP style={{ marginBottom: '40px' }}>Success</ModalP>
+      {underText && <ModalP style={{ marginBottom: '40px', fontSize: '18px' }}>{underText}</ModalP>}
       <ModalButtonContainer style={{ justifyContent: 'center' }}>
         <ButtonNavGlowing
           whiteWithBlue

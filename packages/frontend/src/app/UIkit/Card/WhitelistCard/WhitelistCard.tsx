@@ -39,7 +39,7 @@ export const WhitelistCard: React.FC<WhitelistCardProps> = ({
     if (variant === 'whitelist') {
       return {
         img: BunnyPurple,
-        text: 'Only for WL owners',
+        text: buttonProps.variant === 'notWl' ? 'You’re not in WL' : 'Only for WL owners',
         rarities: rarityList.slice(0, 2),
         total: 7000,
         _buttonProps: buttonProps,

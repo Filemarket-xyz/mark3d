@@ -36,7 +36,7 @@ export const HowMintModalBody = () => {
         target={'_blank'}
         href={'https://medium.com/filemarket-xyz/how-to-buy-fil-and-use-fil-in-the-filecoin-virtual-machine-d67fa90764d5'}
         rel="noreferrer"
-        style={{ textDecoration: 'underline', color: 'inherit' }}
+        style={{ textDecoration: 'underline', color: '#0090FF' }}
       >
         Top up your crypto wallet with FIL tokens
       </a>
@@ -67,10 +67,24 @@ export const HowMintModalBody = () => {
 export const HowWorkModalBody = () => {
   return (
     <FileBunniesModalBody>
-      FileBunnies holders will be granted exclusive
-      access to all future NFT mints that occur on the FileMarket platform.
-      This unique utility will allow the holder a White List spot for
-      all content built on FileMarket.
+      FileMarket Labs company has created a new NFT standard and protocol
+      for secure storage and transfer of files stored on the decentralized Filecoin storage. It&apos;s called Encrypted FileToken (EFT).
+      <br />
+      When someone creates an EFT, besides a link to a public file available
+      to everyone, there&apos;s another link to a file that gets encrypted with
+      a special cryptographic key before being uploaded to Filecoin. Only
+      the EFT owner has this key. Access to this key is stored inside FileWallet, which is created when first using the FileMarket platform.
+      <br />
+      The EFT protocol allows a decentralized and completely secure transfer
+      of the file encryption key to a new EFT owner, whether they get it as
+      a gift or through a purchase in the marketplace.
+      <br />
+      To do this, the EFT owner has to perform an additional transaction to
+      transfer the hidden file, effectively passing the encrypted key to the
+      file. After the file transfer, the buyer must finalize the deal on
+      their end, confirming that the file has been received.
+      <br />
+      The mechanics are similar to familiar p2p exchanges, but here you&apos;re trading file access for tokens.
     </FileBunniesModalBody>
   )
 }
