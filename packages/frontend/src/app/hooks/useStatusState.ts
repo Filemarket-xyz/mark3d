@@ -16,9 +16,12 @@ export function useStatusState<ResultType, Arguments extends any = void>() {
         const result = await call(args)
         setIsLoading(false)
         setResult(result)
+
+        return result
       } catch (err) {
         setIsLoading(false)
         setError(stringifyError(err))
+        throw err
       }
     }
   }, [])

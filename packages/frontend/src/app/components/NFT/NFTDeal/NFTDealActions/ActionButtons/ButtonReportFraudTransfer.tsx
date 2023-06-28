@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
@@ -12,7 +12,13 @@ export type ButtonReportFraudTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
+export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({
+  tokenFullId,
+  onStart,
+  onEnd,
+  isDisabled,
+  onError,
+}) => {
   const { reportFraud, ...statuses } = useReportFraud({ ...tokenFullId })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -22,9 +28,6 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ 
   })
 
   const { blockStore } = useStores()
-  useEffect(() => {
-    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
 
   return (
     <>
@@ -35,10 +38,15 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ 
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await reportFraud(tokenFullId).catch(() => {
+          onStart?.()
+          const receipt = await reportFraud(tokenFullId).catch(e => {
             onError?.()
+            throw e
           })
-          callBack?.()
+          if (receipt?.blockNumber) {
+            blockStore.setReceiptBlock(receipt.blockNumber)
+          }
+          onEnd?.()
         }}
       >
         Report fraud

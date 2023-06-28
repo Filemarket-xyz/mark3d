@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 
 import { useStores } from '../../../../../hooks'
@@ -20,7 +20,9 @@ export type ButtonPlaceOrderProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
+export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({
+  tokenFullId, onStart, onEnd, isDisabled, onError,
+}) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
   const { placeOrder, ...statuses } = usePlaceOrder()
   const conversionRateStore = useConversionRateStore()
@@ -34,22 +36,24 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId,
     loadingMsg: 'Placing order',
   })
 
+  const { blockStore } = useStores()
   const onSubmit = async ({ price }: OrderFormValue) => {
     closeModal()
-    await placeOrder({
+    onStart?.()
+    const receipt = await placeOrder({
       ...tokenFullId,
       price,
-    }).catch(() => {
+    }).catch(e => {
       onError?.()
+      throw e
     })
-    conversionRateStore.data?.rate && orderStore.setDataPrice(price.toString(), (conversionRateStore.data?.rate * toCurrency(price)).toString())
-    callBack?.()
+    conversionRateStore.data?.rate &&
+    orderStore.setDataPrice(price.toString(), (conversionRateStore.data?.rate * toCurrency(price)).toString())
+    if (receipt?.blockNumber) {
+      blockStore.setReceiptBlock(receipt.blockNumber)
+    }
+    onEnd?.()
   }
-
-  const { blockStore } = useStores()
-  useEffect(() => {
-    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
 
   return (
     <>

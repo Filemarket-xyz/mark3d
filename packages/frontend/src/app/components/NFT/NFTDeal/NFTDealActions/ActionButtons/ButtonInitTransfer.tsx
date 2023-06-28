@@ -1,5 +1,5 @@
 import { Modal } from '@nextui-org/react'
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
@@ -16,7 +16,9 @@ export type ButtonInitTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, isDisabled, callBack, onError }) => {
+export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({
+  tokenFullId, isDisabled, onStart, onEnd, onError,
+}) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
   const { initTransfer, ...statuses } = useInitTransfer(tokenFullId)
   const { isLoading } = statuses
@@ -27,9 +29,6 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, i
   })
 
   const { blockStore } = useStores()
-  useEffect(() => {
-    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
 
   return (
     <>
@@ -43,13 +42,18 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, i
           <TransferForm
             onSubmit={async (form) => {
               closeModal()
-              await initTransfer({
+              onStart?.()
+              const receipt = await initTransfer({
                 tokenId: tokenFullId.tokenId,
                 to: form.address,
-              }).catch(() => {
+              }).catch(e => {
                 onError?.()
+                throw e
               })
-              callBack?.()
+              if (receipt?.blockNumber) {
+                blockStore.setReceiptBlock(receipt.blockNumber)
+              }
+              onEnd?.()
             }}
           />
         </Modal.Body>

@@ -1,5 +1,6 @@
 export interface ActionButtonProps {
-  callBack?: () => void
+  onStart?: () => void
+  onEnd?: () => void
   isDisabled?: boolean
   onError?: () => void
 }

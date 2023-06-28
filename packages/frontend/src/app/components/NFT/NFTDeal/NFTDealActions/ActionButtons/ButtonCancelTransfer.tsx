@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
@@ -12,7 +12,9 @@ export type ButtonCancelTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
+export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({
+  tokenFullId, onStart, onEnd, isDisabled, onError,
+}) => {
   const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId })
   const { isLoading } = statuses
   const { blockStore } = useStores()
@@ -21,10 +23,6 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullI
     okMsg: 'Transfer cancelled',
     loadingMsg: 'Cancelling transfer',
   })
-
-  useEffect(() => {
-    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
 
   return (
     <>
@@ -35,10 +33,15 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullI
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await cancelTransfer(tokenFullId).catch(() => {
+          onStart?.()
+          const receipt = await cancelTransfer(tokenFullId).catch(e => {
             onError?.()
+            throw e
           })
-          callBack?.()
+          if (receipt?.blockNumber) {
+            blockStore.setReceiptBlock(receipt.blockNumber)
+          }
+          onEnd?.()
         }}
       >
         Cancel deal

@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
@@ -12,7 +12,9 @@ export type ButtonFinalizeTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
+export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({
+  tokenFullId, onStart, onEnd, isDisabled, onError,
+}) => {
   const { finalizeTransfer, ...statuses } = useFinalizeTransfer({ ...tokenFullId })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -22,9 +24,6 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
   })
 
   const { blockStore } = useStores()
-  useEffect(() => {
-    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
 
   return (
     <>
@@ -35,10 +34,15 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await finalizeTransfer(tokenFullId).catch(() => {
+          onStart?.()
+          const receipt = await finalizeTransfer(tokenFullId).catch(e => {
             onError?.()
+            throw e
           })
-          callBack?.()
+          if (receipt?.blockNumber) {
+            blockStore.setReceiptBlock(receipt.blockNumber)
+          }
+          onEnd?.()
         }}
       >
         Send payment

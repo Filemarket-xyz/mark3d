@@ -37,8 +37,6 @@ export class OrderStore implements IStoreRequester,
       resp => {
         console.log(resp)
         this.data = resp ?? undefined
-        resp?.price && localStorage.setItem('priceEFT', resp.price)
-        resp?.priceUsd && localStorage.setItem('priceEFTUSD', resp.priceUsd)
       })
   }
 

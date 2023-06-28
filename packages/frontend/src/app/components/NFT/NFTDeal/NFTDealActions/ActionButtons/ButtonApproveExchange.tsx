@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
@@ -12,7 +12,9 @@ export type ButtonApproveExchangeProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
+export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({
+  tokenFullId, onStart, onEnd, isDisabled, onError,
+}) => {
   const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId })
   const { blockStore } = useStores()
   const { isLoading } = statuses
@@ -21,10 +23,6 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
     okMsg: 'You have approved FileMarket to list your EFT. You can now place an order',
     loadingMsg: 'At first, you need to approve FileMarket to list your EFT. After that you can place an order.',
   })
-
-  useEffect(() => {
-    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
 
   return (
     <>
@@ -35,10 +33,15 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await approveExchange(tokenFullId).catch(() => {
+          onStart?.()
+          const receipt = await approveExchange(tokenFullId).catch(e => {
             onError?.()
+            throw e
           })
-          callBack?.()
+          if (receipt?.blockNumber) {
+            blockStore.setReceiptBlock(receipt.blockNumber)
+          }
+          onEnd?.()
         }}
       >
         Prepare for sale

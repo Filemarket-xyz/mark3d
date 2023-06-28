@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
@@ -12,7 +12,7 @@ export type ButtonCancelOrderProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
+export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, onStart, onEnd, isDisabled, onError }) => {
   const { cancelOrder, ...statuses } = useCancelOrder()
   const { isLoading } = statuses
   const { blockStore } = useStores()
@@ -21,10 +21,6 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, cal
     okMsg: 'Order cancelled',
     loadingMsg: 'Cancelling order',
   })
-
-  useEffect(() => {
-    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
 
   return (
     <>
@@ -35,10 +31,15 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, cal
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await cancelOrder(tokenFullId).catch(() => {
+          onStart?.()
+          const receipt = await cancelOrder(tokenFullId).catch(e => {
             onError?.()
+            throw e
           })
-          callBack?.()
+          if (receipt?.blockNumber) {
+            blockStore.setReceiptBlock(receipt.blockNumber)
+          }
+          onEnd?.()
         }}
       >
         Cancel order

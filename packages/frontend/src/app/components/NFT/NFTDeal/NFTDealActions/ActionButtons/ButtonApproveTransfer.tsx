@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 
 import { Transfer } from '../../../../../../swagger/Api'
 import { useStores } from '../../../../../hooks'
@@ -14,7 +14,9 @@ export type ButtonApproveTransferProps = ActionButtonProps & {
   transfer?: Transfer
 }
 
-export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFullId, transfer, callBack, isDisabled, onError }) => {
+export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
+  tokenFullId, transfer, onStart, onEnd, isDisabled, onError,
+}) => {
   const { approveTransfer, ...statuses } = useApproveTransfer({ ...tokenFullId })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -23,9 +25,6 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
     loadingMsg: 'Sending an encrypted encryption password',
   })
   const { blockStore } = useStores()
-  useEffect(() => {
-    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
-  }, [statuses.result])
 
   return (
     <>
@@ -36,13 +35,18 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await approveTransfer({
+          onStart?.()
+          const receipt = await approveTransfer({
             tokenId: tokenFullId.tokenId,
             publicKey: transfer?.publicKey,
-          }).catch(() => {
+          }).catch(e => {
             onError?.()
+            throw e
           })
-          callBack?.()
+          if (receipt?.blockNumber) {
+            blockStore.setReceiptBlock(receipt.blockNumber)
+          }
+          onEnd?.()
         }}
       >
         Transfer hidden file

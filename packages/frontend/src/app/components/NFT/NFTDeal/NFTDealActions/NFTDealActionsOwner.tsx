@@ -21,8 +21,9 @@ import { HideAction } from './HideAction'
 export interface NFTDealActionsOwnerProps {
   tokenFullId: TokenFullId
   transfer?: Transfer
-  callBack?: () => void
+  onStart?: () => void
   onError?: () => void
+  isDisabled?: boolean
 }
 
 const permissions = transferPermissions.owner
@@ -30,8 +31,9 @@ const permissions = transferPermissions.owner
 export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   transfer,
   tokenFullId,
-  callBack,
+  onStart,
   onError,
+  isDisabled,
 }) => {
   const { isApprovedExchange, error: isApprovedExchangeError, refetch } = useIsApprovedExchange(tokenFullId)
   const error = isApprovedExchangeError
@@ -39,7 +41,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
   // useWatchCollectionEvents({
   //   onApproval: () => { refetch(); transferStore.setIsLoading(false) },
   // }, collectionAddress)
-  const { blockStore, transferStore } = useStores()
+  const { transferStore } = useStores()
   const refetchFunc = () => {
     setTimeout(async () => {
       let countReload = 0
@@ -48,11 +50,11 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
         const tempData = await refetch()
         if (data.data !== tempData.data || countReload > 8) {
           clearInterval(interval)
-          transferStore.setIsLoadingTransition(false)
+          transferStore.setIsWaitingForEvent(false)
         }
         countReload++
         data = await refetch()
-      }, 2000)
+      }, 5000)
     }, 6000)
   }
 
@@ -81,57 +83,58 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
       <HideAction hide={!transfer || !permissions.canApprove(transfer)}>
         <ButtonApproveTransfer
           tokenFullId={tokenFullId}
-          callBack={callBack}
+          onStart={onStart}
           transfer={transfer}
-          isDisabled={!blockStore.canContinue}
+          isDisabled={isDisabled}
           onError={onError}
         />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canFinalize(transfer)}>
         <ButtonFinalizeTransfer
           tokenFullId={tokenFullId}
-          callBack={callBack}
-          isDisabled={!blockStore.canContinue}
+          onStart={onStart}
+          isDisabled={isDisabled}
           onError={onError}
         />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canCancelOrder(transfer)}>
         <ButtonCancelOrder
           tokenFullId={tokenFullId}
-          callBack={callBack}
-          isDisabled={!blockStore.canContinue}
+          onStart={onStart}
+          isDisabled={isDisabled}
           onError={onError}
         />
       </HideAction>
       <HideAction hide={!transfer || !permissions.canCancel(transfer)}>
         <ButtonCancelTransfer
           tokenFullId={tokenFullId}
-          callBack={callBack}
-          isDisabled={!blockStore.canContinue}
+          onStart={onStart}
+          isDisabled={isDisabled}
           onError={onError}
         />
       </HideAction>
       <HideAction hide={!!transfer || !isApprovedExchange}>
         <ButtonPlaceOrder
           tokenFullId={tokenFullId}
-          callBack={callBack}
-          isDisabled={!blockStore.canContinue}
+          onStart={onStart}
+          isDisabled={isDisabled}
           onError={onError}
         />
       </HideAction>
       <HideAction hide={!!transfer || isApprovedExchange}>
         <ButtonApproveExchange
           tokenFullId={tokenFullId}
-          isDisabled={!blockStore.canContinue}
+          isDisabled={isDisabled}
           onError={onError}
-          callBack={ () => { callBack?.(); refetchFunc() }}
+          onStart={onStart}
+          onEnd={() => refetchFunc()}
         />
       </HideAction>
       <HideAction hide={!!transfer}>
         <ButtonInitTransfer
           tokenFullId={tokenFullId}
-          callBack={callBack}
-          isDisabled={!blockStore.canContinue}
+          onStart={onStart}
+          isDisabled={isDisabled}
           onError={onError}
         />
       </HideAction>
