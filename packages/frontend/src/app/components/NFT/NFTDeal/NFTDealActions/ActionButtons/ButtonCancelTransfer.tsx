@@ -12,7 +12,9 @@ export type ButtonCancelTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
+export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({
+  tokenFullId, onStart, onEnd, isDisabled, onError,
+}) => {
   const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId })
   const { isLoading } = statuses
   const { blockStore } = useStores()
@@ -35,11 +37,12 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullI
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
+          onStart?.()
           await cancelTransfer(tokenFullId).catch(e => {
             onError?.()
             throw e
           })
-          callBack?.()
+          onEnd?.()
         }}
       >
         Cancel deal

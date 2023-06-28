@@ -14,7 +14,8 @@ export type ButtonSetPublicKeyTransferProps = ActionButtonProps & {
 
 export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = ({
   tokenFullId,
-  callBack,
+  onStart,
+  onEnd,
   isDisabled,
   onError,
 }) => {
@@ -32,11 +33,12 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
   }, [statuses.result])
 
   const onPress = async () => {
+    onStart?.()
     await setPublicKey(tokenFullId).catch(e => {
       onError?.()
       throw e
     })
-    callBack?.()
+    onEnd?.()
   }
 
   return (

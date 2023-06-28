@@ -12,7 +12,9 @@ export type ButtonFinalizeTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
+export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({
+  tokenFullId, onStart, onEnd, isDisabled, onError,
+}) => {
   const { finalizeTransfer, ...statuses } = useFinalizeTransfer({ ...tokenFullId })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -35,11 +37,12 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
+          onStart?.()
           await finalizeTransfer(tokenFullId).catch(e => {
             onError?.()
             throw e
           })
-          callBack?.()
+          onEnd?.()
         }}
       >
         Send payment

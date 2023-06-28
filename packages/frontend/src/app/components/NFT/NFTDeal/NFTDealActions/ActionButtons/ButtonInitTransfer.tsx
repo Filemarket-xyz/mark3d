@@ -16,7 +16,9 @@ export type ButtonInitTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, isDisabled, callBack, onError }) => {
+export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({
+  tokenFullId, isDisabled, onStart, onEnd, onError,
+}) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
   const { initTransfer, ...statuses } = useInitTransfer(tokenFullId)
   const { isLoading } = statuses
@@ -43,6 +45,7 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, i
           <TransferForm
             onSubmit={async (form) => {
               closeModal()
+              onStart?.()
               await initTransfer({
                 tokenId: tokenFullId.tokenId,
                 to: form.address,
@@ -50,7 +53,7 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, i
                 onError?.()
                 throw e
               })
-              callBack?.()
+              onEnd?.()
             }}
           />
         </Modal.Body>

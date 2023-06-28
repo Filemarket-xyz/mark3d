@@ -20,7 +20,7 @@ export type ButtonPlaceOrderProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
+export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId, onStart, onEnd, isDisabled, onError }) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
   const { placeOrder, ...statuses } = usePlaceOrder()
   const conversionRateStore = useConversionRateStore()
@@ -36,6 +36,7 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId,
 
   const onSubmit = async ({ price }: OrderFormValue) => {
     closeModal()
+    onStart?.()
     await placeOrder({
       ...tokenFullId,
       price,
@@ -43,10 +44,9 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId,
       onError?.()
       throw e
     })
-    console.log('order placed')
     conversionRateStore.data?.rate &&
     orderStore.setDataPrice(price.toString(), (conversionRateStore.data?.rate * toCurrency(price)).toString())
-    callBack?.()
+    onEnd?.()
   }
 
   const { blockStore } = useStores()

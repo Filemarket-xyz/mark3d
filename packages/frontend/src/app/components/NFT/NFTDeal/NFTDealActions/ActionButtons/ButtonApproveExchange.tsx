@@ -12,7 +12,9 @@ export type ButtonApproveExchangeProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
+export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({
+  tokenFullId, onStart, onEnd, isDisabled, onError,
+}) => {
   const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId })
   const { blockStore } = useStores()
   const { isLoading } = statuses
@@ -35,11 +37,12 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
+          onStart?.()
           await approveExchange(tokenFullId).catch(e => {
             onError?.()
             throw e
           })
-          callBack?.()
+          onEnd?.()
         }}
       >
         Prepare for sale

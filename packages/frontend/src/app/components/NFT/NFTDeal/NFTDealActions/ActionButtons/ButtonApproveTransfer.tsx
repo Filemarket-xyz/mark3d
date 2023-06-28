@@ -14,7 +14,9 @@ export type ButtonApproveTransferProps = ActionButtonProps & {
   transfer?: Transfer
 }
 
-export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFullId, transfer, callBack, isDisabled, onError }) => {
+export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({
+  tokenFullId, transfer, onStart, onEnd, isDisabled, onError,
+}) => {
   const { approveTransfer, ...statuses } = useApproveTransfer({ ...tokenFullId })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -36,6 +38,7 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
+          onStart?.()
           await approveTransfer({
             tokenId: tokenFullId.tokenId,
             publicKey: transfer?.publicKey,
@@ -43,7 +46,7 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
             onError?.()
             throw e
           })
-          callBack?.()
+          onEnd?.()
         }}
       >
         Transfer hidden file

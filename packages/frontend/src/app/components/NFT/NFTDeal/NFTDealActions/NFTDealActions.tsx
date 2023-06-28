@@ -45,44 +45,43 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
     loadingMsg: '',
   })
 
-  const callBackAfterApproveTrans = () => {
-    transferStore.setIsLoadingTransition(true) // It's need to show loading screen before approve transaction and until contract event
+  const onActionStart = () => {
+    // we disable buttons when user starts contract interaction, and enable back when event arrives
+    transferStore.setIsWaitingForEvent(true)
   }
 
-  const onErrorButtons = () => {
-    transferStore.setIsLoadingTransition(false)
+  const onActionError = () => {
+    transferStore.setIsWaitingForEvent(false)
   }
 
   if (error) {
     return <BaseModal {...modalProps} />
   }
 
-  if (isOwner) {
-    return (
-      <ButtonsContainer content={blockStore.canContinue ? ''
-        : `Confirmations: ${blockStore.currentBlockNumber.sub(blockStore.lastCurrentBlockNumber).toString()}/${blockStore.receiptBlockNumber.sub(blockStore.lastCurrentBlockNumber).toString()}`}
-      >
-        <NFTDealActionOwner
-          transfer={transfer}
-          tokenFullId={tokenFullId}
-          callBack={callBackAfterApproveTrans}
-          onError={onErrorButtons}
-        />
-      </ButtonsContainer>
-    )
-  }
+  const isDisabled = !blockStore.canContinue || transferStore.isWaitingForEvent
 
   return (
     <ButtonsContainer content={blockStore.canContinue ? ''
       : `Confirmations: ${blockStore.currentBlockNumber.sub(blockStore.lastCurrentBlockNumber).toString()}/${blockStore.receiptBlockNumber.sub(blockStore.lastCurrentBlockNumber).toString()}`}
     >
-      <NFTDealActionsBuyer
-        transfer={transfer}
-        order={order}
-        tokenFullId={tokenFullId}
-        callBack={callBackAfterApproveTrans}
-        onError={onErrorButtons}
-      />
+      {isOwner ? (
+        <NFTDealActionOwner
+          transfer={transfer}
+          tokenFullId={tokenFullId}
+          onStart={onActionStart}
+          onError={onActionError}
+          isDisabled={isDisabled}
+        />
+      ) : (
+        <NFTDealActionsBuyer
+          transfer={transfer}
+          order={order}
+          tokenFullId={tokenFullId}
+          onStart={onActionStart}
+          onError={onActionError}
+          isDisabled={isDisabled}
+        />
+      )}
     </ButtonsContainer>
   )
 })

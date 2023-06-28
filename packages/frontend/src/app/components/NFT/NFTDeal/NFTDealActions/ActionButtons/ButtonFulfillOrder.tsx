@@ -18,7 +18,8 @@ export type ButtonFulfillOrderProps = ActionButtonProps & {
 export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
   tokenFullId,
   order,
-  callBack,
+  onStart,
+  onEnd,
   isDisabled,
   onError,
 }) => {
@@ -37,6 +38,7 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
   }, [statuses.result])
 
   const onPress = async () => {
+    onStart?.()
     await fulfillOrder({
       ...tokenFullId,
       price: order?.price,
@@ -44,7 +46,7 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
       onError?.()
       throw e
     })
-    callBack?.()
+    onEnd?.()
   }
 
   return (

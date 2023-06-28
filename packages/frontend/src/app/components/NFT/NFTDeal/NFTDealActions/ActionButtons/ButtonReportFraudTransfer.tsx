@@ -12,7 +12,9 @@ export type ButtonReportFraudTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ tokenFullId, callBack, isDisabled, onError }) => {
+export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({
+  tokenFullId, onStart, onEnd, isDisabled, onError,
+}) => {
   const { reportFraud, ...statuses } = useReportFraud({ ...tokenFullId })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
@@ -35,11 +37,12 @@ export const ButtonReportFraudTransfer: FC<ButtonReportFraudTransferProps> = ({ 
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
+          onStart?.()
           await reportFraud(tokenFullId).catch(e => {
             onError?.()
             throw e
           })
-          callBack?.()
+          onEnd?.()
         }}
       >
         Report fraud
