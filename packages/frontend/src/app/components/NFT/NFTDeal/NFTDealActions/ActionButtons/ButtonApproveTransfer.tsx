@@ -39,8 +39,9 @@ export const ButtonApproveTransfer: FC<ButtonApproveTransferProps> = ({ tokenFul
           await approveTransfer({
             tokenId: tokenFullId.tokenId,
             publicKey: transfer?.publicKey,
-          }).catch(() => {
+          }).catch(e => {
             onError?.()
+            throw e
           })
           callBack?.()
         }}

@@ -40,8 +40,9 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
     await fulfillOrder({
       ...tokenFullId,
       price: order?.price,
-    }).catch(() => {
+    }).catch(e => {
       onError?.()
+      throw e
     })
     callBack?.()
   }

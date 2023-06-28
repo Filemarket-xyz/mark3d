@@ -35,8 +35,9 @@ export const ButtonFinalizeTransfer: FC<ButtonFinalizeTransferProps> = ({ tokenF
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await finalizeTransfer(tokenFullId).catch(() => {
+          await finalizeTransfer(tokenFullId).catch(e => {
             onError?.()
+            throw e
           })
           callBack?.()
         }}

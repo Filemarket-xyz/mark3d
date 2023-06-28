@@ -35,8 +35,9 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
         borderRadiusSecond
         isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await approveExchange(tokenFullId).catch(() => {
+          await approveExchange(tokenFullId).catch(e => {
             onError?.()
+            throw e
           })
           callBack?.()
         }}

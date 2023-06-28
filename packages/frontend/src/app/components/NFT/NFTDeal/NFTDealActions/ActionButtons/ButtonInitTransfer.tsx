@@ -46,8 +46,9 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId, i
               await initTransfer({
                 tokenId: tokenFullId.tokenId,
                 to: form.address,
-              }).catch(() => {
+              }).catch(e => {
                 onError?.()
+                throw e
               })
               callBack?.()
             }}

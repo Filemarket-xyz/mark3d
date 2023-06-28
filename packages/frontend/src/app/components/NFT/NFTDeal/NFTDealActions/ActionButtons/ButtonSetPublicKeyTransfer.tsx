@@ -32,8 +32,9 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
   }, [statuses.result])
 
   const onPress = async () => {
-    await setPublicKey(tokenFullId).catch(() => {
+    await setPublicKey(tokenFullId).catch(e => {
       onError?.()
+      throw e
     })
     callBack?.()
   }

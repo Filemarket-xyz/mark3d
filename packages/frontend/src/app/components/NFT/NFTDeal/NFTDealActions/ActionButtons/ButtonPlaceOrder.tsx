@@ -39,10 +39,13 @@ export const ButtonPlaceOrder: React.FC<ButtonPlaceOrderProps> = ({ tokenFullId,
     await placeOrder({
       ...tokenFullId,
       price,
-    }).catch(() => {
+    }).catch(e => {
       onError?.()
+      throw e
     })
-    conversionRateStore.data?.rate && orderStore.setDataPrice(price.toString(), (conversionRateStore.data?.rate * toCurrency(price)).toString())
+    console.log('order placed')
+    conversionRateStore.data?.rate &&
+    orderStore.setDataPrice(price.toString(), (conversionRateStore.data?.rate * toCurrency(price)).toString())
     callBack?.()
   }
 

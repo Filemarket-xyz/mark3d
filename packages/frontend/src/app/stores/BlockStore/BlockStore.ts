@@ -22,7 +22,7 @@ export class BlockStore {
     console.log(recieptBlock)
     this.receiptBlockNumber = BigNumber.from(recieptBlock)
     this.lastCurrentBlockNumber = this.currentBlockNumber
-    console.log(this.receiptBlockNumber)
+    console.log('receipt block', this.receiptBlockNumber, 'current block', this.currentBlockNumber, 'delta', this.receiptBlockNumber.sub(this.lastCurrentBlockNumber))
   }
 
   get canContinue() {
