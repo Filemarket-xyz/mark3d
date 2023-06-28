@@ -4,7 +4,8 @@ import { Flex } from '../../Flex'
 import { textVariant } from '../../Txt'
 
 const isFirefox = navigator.userAgent.includes('Firefox')
-if (!isFirefox) {
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+if (!isFirefox && !isIOS) {
   CSS.registerProperty({
     name: '--rotate',
     syntax: '<angle>',
