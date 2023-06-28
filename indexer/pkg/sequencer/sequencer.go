@@ -89,12 +89,11 @@ func (s *Sequencer) DeleteTokenID(ctx context.Context, key string, tokenId int64
 }
 
 func (s *Sequencer) Count(ctx context.Context, key string) int64 {
-	key = fmt.Sprint(s.Cfg.KeyPrefix, key)
-
 	if err := s.releaseTokens(ctx, key); err != nil {
 		log.Println("failed to releaseTokens in sequencer: ", err)
 	}
-
+	
+	key = fmt.Sprint(s.Cfg.KeyPrefix, key)
 	length, err := s.client.SCard(ctx, key).Result()
 	if err != nil {
 		return 0
