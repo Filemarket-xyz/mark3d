@@ -69,7 +69,7 @@ export const useFileBunniesMint = () => {
     await fulfillOrder({
       collectionAddress,
       tokenId,
-      price: fromCurrency(0.01),
+      price: fromCurrency(12),
     })
     setIsLoadingReq(false)
     setModalBody(<SuccessNavBody
