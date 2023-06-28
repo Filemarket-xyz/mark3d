@@ -25,7 +25,7 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({
   })
 
   useEffect(() => {
-    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
+    if (statuses.result) blockStore.setReceiptBlock(statuses.result.blockNumber)
   }, [statuses.result])
 
   return (

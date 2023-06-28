@@ -34,7 +34,7 @@ export const ButtonFulfillOrder: FC<ButtonFulfillOrderProps> = observer(({
 
   const { blockStore } = useStores()
   useEffect(() => {
-    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
+    if (statuses.result) blockStore.setReceiptBlock(statuses.result.blockNumber)
   }, [statuses.result])
 
   const onPress = async () => {

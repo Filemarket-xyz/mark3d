@@ -61,9 +61,7 @@ export const NFTDealActions: FC<NFTDealActionsProps> = observer(({
   const isDisabled = !blockStore.canContinue || transferStore.isWaitingForEvent
 
   return (
-    <ButtonsContainer content={blockStore.canContinue ? ''
-      : `Confirmations: ${blockStore.currentBlockNumber.sub(blockStore.lastCurrentBlockNumber).toString()}/${blockStore.receiptBlockNumber.sub(blockStore.lastCurrentBlockNumber).toString()}`}
-    >
+    <ButtonsContainer content={blockStore.confirmationsText}>
       {isOwner ? (
         <NFTDealActionOwner
           transfer={transfer}

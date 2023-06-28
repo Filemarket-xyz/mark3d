@@ -23,7 +23,7 @@ export const ButtonCancelOrder: FC<ButtonCancelOrderProps> = ({ tokenFullId, onS
   })
 
   useEffect(() => {
-    if (statuses.result) blockStore.setRecieptBlock(statuses.result.blockNumber)
+    if (statuses.result) blockStore.setReceiptBlock(statuses.result.blockNumber)
   }, [statuses.result])
 
   return (
