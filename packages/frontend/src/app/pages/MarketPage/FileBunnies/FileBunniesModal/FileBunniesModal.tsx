@@ -57,7 +57,7 @@ export const HowMintModalBody = () => {
       <br />
       8. Wait for the automatic transfer of the hidden file with gifts on your FileBunny EFT page (after the transfer, the file will become available for download)
       <br />
-      9. Complete the transaction on EFT page by clicking the &quot;Send payment&quot; button
+      9. Complete the transaction on the EFT page by clicking the &quot;Send payment&quot; or &quot;Finalize the deal&quot; button;
       <br />
       10. Congratulations! You have become the lucky owner of your FileBunny! Download the file and enjoy the content. This is the NFT with real value inside!
     </FileBunniesModalBody>
