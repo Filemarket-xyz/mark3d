@@ -8,11 +8,10 @@ const PropertiesCardStyle = styled('div', {
   height: '108px',
   border: '1px solid #eaeaea',
   borderRadius: '16px',
-  padding: '16px 0',
+  padding: '16px',
   display: 'flex',
   flexDirection: 'column',
-  gap: '8px',
-  justifyContent: 'center',
+  justifyContent: 'space-between',
   alignItems: 'center',
 })
 
@@ -24,6 +23,8 @@ const TopText = styled('h5', {
 const RareText = styled('h5', {
   ...textVariant('primary2').true,
   color: '$gray800',
+  textAlign: 'center',
+  whiteSpace: 'break-spaces',
 })
 
 const ChanceText = styled('h5', {
@@ -32,19 +33,21 @@ const ChanceText = styled('h5', {
 })
 
 export interface PropertiesCardProps {
-  type: string
-  rare: string
-  chance: string
+  type?: string
+  rare?: string
+  chance?: string
+  maxValue?: string
+  minValue?: string
 }
 
-const PropertiesCard: FC<PropertiesCardProps> = ({ type, rare, chance }) => {
+const PropertiesCard: FC<PropertiesCardProps> = ({ type, rare, chance, maxValue, minValue }) => {
   return (
     <PropertiesCardStyle>
-      <TopText>{type}</TopText>
+      {type && <TopText>{type}</TopText>}
       <RareText>{rare}</RareText>
       <ChanceText>
-        {chance}
-        % have this property
+        {chance && `${chance}% have this property`}
+        {(minValue && maxValue) && `${minValue} of ${maxValue} level`}
       </ChanceText>
     </PropertiesCardStyle>
   )
