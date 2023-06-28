@@ -18,8 +18,7 @@ export const WhitelistCardButton = React.forwardRef<HTMLButtonElement, Whitelist
   const { buttonRef, buttonProps } = useButton(props, ref)
 
   const text = useMemo(() => {
-    if (variant === 'notWl') return 'You’re not in WL'
-    if (variant === 'free') return 'FREE MINT'
+    if (variant === 'free' || variant === 'notWl') return 'FREE MINT'
     if (variant === 'check') return 'CHECK WL'
 
     return variant.toUpperCase()
