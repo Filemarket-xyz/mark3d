@@ -1,21 +1,25 @@
 import { FC } from 'react'
 
+import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useSetPublicKey } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { ActionButtonProps } from './types/types'
 
-export interface ButtonSetPublicKeyTransferProps {
+export type ButtonSetPublicKeyTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
-  callBack?: () => void
 }
 
 export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = ({
   tokenFullId,
-  callBack,
+  onStart,
+  onEnd,
+  isDisabled,
+  onError,
 }) => {
-  const { setPublicKey, ...statuses } = useSetPublicKey({ ...tokenFullId, callBack })
+  const { setPublicKey, ...statuses } = useSetPublicKey({ ...tokenFullId })
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -23,8 +27,18 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
     loadingMsg: 'Sending keys, so owner could encrypt the file password and transfer it to you',
   })
 
+  const { blockStore } = useStores()
+
   const onPress = async () => {
-    await setPublicKey(tokenFullId)
+    onStart?.()
+    const receipt = await setPublicKey(tokenFullId).catch(e => {
+      onError?.()
+      throw e
+    })
+    if (receipt?.blockNumber) {
+      blockStore.setReceiptBlock(receipt.blockNumber)
+    }
+    onEnd?.()
   }
 
   return (
@@ -34,7 +48,7 @@ export const ButtonSetPublicKeyTransfer: FC<ButtonSetPublicKeyTransferProps> = (
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={onPress}
       >
         Accept transfer

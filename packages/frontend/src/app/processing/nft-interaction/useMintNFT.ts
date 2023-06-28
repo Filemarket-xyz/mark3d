@@ -24,12 +24,14 @@ export interface MintNFTForm {
   tags?: string[] // required
   subcategories?: string[]
   royalty?: number
-  callBack?: () => void
 }
 
-type IUseMintNft = MintNFTForm & {
+type IMintNft = MintNFTForm & {
   isPublicCollection?: boolean
-  callBack?: () => void
+}
+
+interface IUseMintNft {
+  collectionAddress?: string
 }
 
 interface MintNFTResult {
@@ -37,10 +39,10 @@ interface MintNFTResult {
   receipt: ContractReceipt // вся инфа о транзе
 }
 
-export function useMintNFT({ collectionAddress, callBack }: IUseMintNft = {}) {
+export function useMintNFT({ collectionAddress }: IUseMintNft = {}) {
   const { contract, signer } = useCollectionContract(collectionAddress)
   const { address } = useAccount()
-  const { wrapPromise, ...statuses } = useStatusState<MintNFTResult, IUseMintNft>()
+  const { wrapPromise, ...statuses } = useStatusState<MintNFTResult, IMintNft>()
   const factory = useHiddenFileProcessorFactory()
   const upload = useUploadLighthouse()
 
@@ -91,11 +93,13 @@ export function useMintNFT({ collectionAddress, callBack }: IUseMintNft = {}) {
       '0x00',
     )
 
+    console.log(receipt)
+
     return {
       tokenId: tokenIdBN.toString(),
       receipt,
     }
-  }, callBack), [contract, signer, address, factory, wrapPromise])
+  }), [contract, signer, address, factory, wrapPromise])
 
   return { ...statuses, mintNFT }
 }

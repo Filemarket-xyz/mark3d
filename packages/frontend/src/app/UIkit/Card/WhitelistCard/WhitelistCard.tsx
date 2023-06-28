@@ -39,7 +39,7 @@ export const WhitelistCard: React.FC<WhitelistCardProps> = ({
     if (variant === 'whitelist') {
       return {
         img: BunnyPurple,
-        text: 'Only for WL owners',
+        text: buttonProps.variant === 'notWl' ? 'You’re not in WL' : 'Only for WL owners',
         rarities: rarityList.slice(0, 2),
         total: 7000,
         _buttonProps: buttonProps,
@@ -85,7 +85,7 @@ export const WhitelistCard: React.FC<WhitelistCardProps> = ({
               justifyContent='space-between'
               gap={4}
             >
-              <Txt primary1>Rarity:</Txt>
+              <Txt primary1>Rarities:</Txt>
               <div>
                 {rarities.map((rarity, i) => (
                   <Fragment key={rarity}>
@@ -99,7 +99,7 @@ export const WhitelistCard: React.FC<WhitelistCardProps> = ({
             </Flex>
             <Flex w100 justifyContent='space-between'>
               <Txt primary1>Total EFTs:</Txt>
-              <Txt primary1>{total}</Txt>
+              <Txt primary1 style={{ color: '#E9E9EA' }}>{total}</Txt>
             </Flex>
           </StyledCardInfo>
           <StyledDescription

@@ -2,6 +2,7 @@ import { BigNumber } from 'ethers'
 import { useState } from 'react'
 import { useAccount } from 'wagmi'
 
+import { SuccessNavBody } from '../../components/Modal/Modal'
 import { api } from '../../config/api'
 import { useStatusState } from '../../hooks'
 import { useAuth } from '../../hooks/useAuth'
@@ -16,12 +17,10 @@ interface ISequencerReq {
   suffix?: string
   collectionAddress?: string
 }
-
 interface IGetSignWhiteList {
   address?: `0x${string}`
   whiteList?: string
 }
-
 export const useFileBunniesMint = () => {
   const { address, isConnected } = useAccount()
   const whiteListStore = useCheckWhiteListStore(address)
@@ -31,26 +30,33 @@ export const useFileBunniesMint = () => {
 
   const { wrapPromise, statuses: statusesReq } = useStatusState()
 
+  const { modalProps, setModalBody, setModalOpen } = useStatusModal({
+    statuses: {
+      ...statuses,
+      result: '',
+      error: statuses.error ?? statusesReq.error,
+    },
+    okMsg: 'Order is fulfilled! Now you need to wait 4 minutes until it appears in your profile and you can continue the actions',
+    loadingMsg: 'Fulfilling order',
+  })
+
   const collectionAddressReq = async () => {
     const response = await wrapRequest(async () => api.collections.fullFileBunniesList())
 
     return response?.data.collection?.address
   }
-
   const sequencerReq = async ({ suffix, collectionAddress }: ISequencerReq) => {
     if (!(collectionAddress && suffix)) return
     const tokenResp = await wrapRequest(async () => api.sequencer.acquireDetail(collectionAddress, { suffix }))
 
     return tokenResp?.data.tokenId
   }
-
   const getSignWhiteList = async({ whiteList, address }: IGetSignWhiteList) => {
     if (!(whiteList && address)) return
     const sign = await wrapRequest(async () => api.collections.fileBunniesWhitelistSignDetail(whiteList, address))
 
     return sign?.data.signature
   }
-
   const payedMint = wrapPromise(async () => {
     if (!isConnected) {
       connect()
@@ -66,6 +72,18 @@ export const useFileBunniesMint = () => {
       price: fromCurrency(0.01),
     })
     setIsLoadingReq(false)
+    setModalBody(<SuccessNavBody
+      buttonText='Show my FileBunny'
+      link={`/collection/${collectionAddress}/${tokenId}`}
+      onPress={() => {
+        setModalOpen(false)
+      }}
+      underText={'Your EFT has been generated, but the purchase\n' +
+        '        transaction is not yet complete. On your FileBunny page,\n' +
+        '        you need to wait until the hidden file with gifts is\n' +
+        '        transferred and becomes available for download. After\n' +
+        '        this, you need to confirm the completion of the deal by clicking the "Send payment" button.'}
+    />)
   })
 
   const freeMint = wrapPromise(async () => {
@@ -85,24 +103,21 @@ export const useFileBunniesMint = () => {
       signature: sign,
     })
     setIsLoadingReq(false)
+    setModalBody(<SuccessNavBody
+      buttonText='Show my FileBunny'
+      link={`/collection/${collectionAddress}/${tokenId}`}
+      onPress={() => {
+        setModalOpen(false)
+      }}
+    />)
   })
 
   const { isLoading: isLoadingFulFill } = statuses
-
   const isLoading = useComputedMemo(() => {
     console.log(whiteListStore.isLoading)
 
-    return isLoadingFulFill || whiteListStore.isLoading || isLoadingReq
-  }, [whiteListStore.isLoading, isLoadingReq, isLoadingFulFill])
-
-  const { modalProps } = useStatusModal({
-    statuses: {
-      ...statuses,
-      error: statuses.error ?? statusesReq.error,
-    },
-    okMsg: 'Order is fulfilled! Now you need to wait 4 minutes until it appears in your profile and you can continue the actions',
-    loadingMsg: 'Fulfilling order',
-  })
+    return (isLoadingFulFill || whiteListStore.isLoading || isLoadingReq) && (!statuses.error && !statusesReq.error)
+  }, [whiteListStore.isLoading, isLoadingReq, isLoadingFulFill, statuses.error, statusesReq.error])
 
   return {
     isLoading,

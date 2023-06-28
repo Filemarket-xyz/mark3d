@@ -1,18 +1,22 @@
 import { FC } from 'react'
 
+import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useApproveExchange } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { ActionButtonProps } from './types/types'
 
-export interface ButtonApproveExchangeProps {
+export type ButtonApproveExchangeProps = ActionButtonProps & {
   tokenFullId: TokenFullId
-  callBack?: () => void
 }
 
-export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFullId, callBack }) => {
-  const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId, callBack })
+export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({
+  tokenFullId, onStart, onEnd, isDisabled, onError,
+}) => {
+  const { approveExchange, ...statuses } = useApproveExchange({ ...tokenFullId })
+  const { blockStore } = useStores()
   const { isLoading } = statuses
   const { modalProps } = useStatusModal({
     statuses,
@@ -27,9 +31,17 @@ export const ButtonApproveExchange: FC<ButtonApproveExchangeProps> = ({ tokenFul
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await approveExchange(tokenFullId)
+          onStart?.()
+          const receipt = await approveExchange(tokenFullId).catch(e => {
+            onError?.()
+            throw e
+          })
+          if (receipt?.blockNumber) {
+            blockStore.setReceiptBlock(receipt.blockNumber)
+          }
+          onEnd?.()
         }}
       >
         Prepare for sale

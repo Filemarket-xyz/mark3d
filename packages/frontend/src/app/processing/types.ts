@@ -91,6 +91,10 @@ export enum HiddenFilesTokenEventNames {
   TransferCancellation = 'TransferCancellation',
 }
 
+export enum Mark3dCollectionEventNames {
+  Approval = 'Approval',
+}
+
 export enum HiddenFilesTokenEventSignatures {
   TransferInit = 'TransferInit(uint256,address,address)',
   TransferDraft = 'TransferDraft(uint256,address)',

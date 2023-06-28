@@ -1,6 +1,7 @@
 import { Modal } from '@nextui-org/react'
 import { FC } from 'react'
 
+import { useStores } from '../../../../../hooks'
 import { useModalOpen } from '../../../../../hooks/useModalOpen'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useInitTransfer } from '../../../../../processing'
@@ -9,12 +10,15 @@ import { Button } from '../../../../../UIkit'
 import { ModalTitle } from '../../../../../UIkit/Modal/Modal'
 import BaseModal from '../../../../Modal/Modal'
 import { TransferForm } from '../../TransferForm'
+import { ActionButtonProps } from './types/types'
 
-export interface ButtonInitTransferProps {
+export type ButtonInitTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
 }
 
-export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId }) => {
+export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({
+  tokenFullId, isDisabled, onStart, onEnd, onError,
+}) => {
   const { modalOpen, openModal, closeModal } = useModalOpen()
   const { initTransfer, ...statuses } = useInitTransfer(tokenFullId)
   const { isLoading } = statuses
@@ -23,6 +27,8 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId })
     okMsg: 'Transfer initialized. Recipient should now accept it.',
     loadingMsg: 'Initializing transfer',
   })
+
+  const { blockStore } = useStores()
 
   return (
     <>
@@ -34,12 +40,20 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId })
         <ModalTitle>Gift</ModalTitle>
         <Modal.Body>
           <TransferForm
-            onSubmit={form => {
+            onSubmit={async (form) => {
               closeModal()
-              initTransfer({
+              onStart?.()
+              const receipt = await initTransfer({
                 tokenId: tokenFullId.tokenId,
                 to: form.address,
+              }).catch(e => {
+                onError?.()
+                throw e
               })
+              if (receipt?.blockNumber) {
+                blockStore.setReceiptBlock(receipt.blockNumber)
+              }
+              onEnd?.()
             }}
           />
         </Modal.Body>
@@ -49,7 +63,7 @@ export const ButtonInitTransfer: FC<ButtonInitTransferProps> = ({ tokenFullId })
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={openModal}
       >
         Gift

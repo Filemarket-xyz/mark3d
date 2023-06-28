@@ -31,7 +31,8 @@ func (p *postgres) GetIncomingTransfersByAddress(
 			COALESCE(o.id, 0),
 			t.public_key,
 			t.encrypted_password,
-			t.number
+			t.number,
+			t.block_number
 		FROM transfers AS t 
         LEFT JOIN orders o on t.id = o.transfer_id
         WHERE t.to_address=$1 AND t.id < $2
@@ -75,6 +76,7 @@ func (p *postgres) GetIncomingTransfersByAddress(
 			&t.PublicKey,
 			&t.EncryptedPassword,
 			&number,
+			&t.BlockNumber,
 		)
 		if err != nil {
 			return nil, err
@@ -148,7 +150,8 @@ func (p *postgres) GetOutgoingTransfersByAddress(
 			COALESCE(o.id, 0),
 			t.public_key,
 			t.encrypted_password,
-			t.number
+			t.number,
+			t.block_number
 		FROM transfers AS t 
         LEFT JOIN orders o on t.id = o.transfer_id 
 		WHERE t.from_address=$1 AND t.id < $2
@@ -193,6 +196,7 @@ func (p *postgres) GetOutgoingTransfersByAddress(
 			&t.PublicKey,
 			&t.EncryptedPassword,
 			&number,
+			&t.BlockNumber,
 		)
 		if err != nil {
 			return nil, err
@@ -268,7 +272,8 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 			COALESCE(o.id, 0), 
 			t.public_key, 
 			t.encrypted_password,
-			t.number
+			t.number,
+			t.block_number
 		FROM transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
 		WHERE 
@@ -329,6 +334,7 @@ func (p *postgres) GetActiveIncomingTransfersByAddress(
 			&t.PublicKey,
 			&t.EncryptedPassword,
 			&number,
+			&t.BlockNumber,
 		); err != nil {
 			return nil, err
 		}
@@ -417,7 +423,8 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(
 			COALESCE(o.id, 0), 
 			t.public_key, 
 			t.encrypted_password,
-			t.number
+			t.number,
+			t.block_number
 		FROM 
 			transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
@@ -479,6 +486,7 @@ func (p *postgres) GetActiveOutgoingTransfersByAddress(
 			&t.PublicKey,
 			&t.EncryptedPassword,
 			&number,
+			&t.BlockNumber,
 		)
 		if err != nil {
 			return nil, err
@@ -609,7 +617,8 @@ func (p *postgres) GetTransfer(ctx context.Context, tx pgx.Tx, id int64) (*domai
 			COALESCE(o.id, 0), 
 			t.public_key, 
 			t.encrypted_password,
-			t.number
+			t.number,
+			t.block_number
 		FROM transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
 		WHERE t.id = $1
@@ -630,6 +639,7 @@ func (p *postgres) GetTransfer(ctx context.Context, tx pgx.Tx, id int64) (*domai
 		&t.PublicKey,
 		&t.EncryptedPassword,
 		&number,
+		&t.BlockNumber,
 	)
 	if err != nil {
 		return nil, err
@@ -668,7 +678,7 @@ func (p *postgres) GetActiveTransfer(
 	query := `
 		SELECT 
 			t.id, t.from_address, t.to_address, t.fraud_approved, t.public_key, 
-			t.encrypted_password, t.number,
+			t.encrypted_password, t.number,t.block_number,
 			COALESCE(o.id, 0)
 		FROM transfers AS t 
 		LEFT JOIN orders o on t.id = o.transfer_id 
@@ -701,6 +711,7 @@ func (p *postgres) GetActiveTransfer(
 		&t.PublicKey,
 		&t.EncryptedPassword,
 		&number,
+		&t.BlockNumber,
 		&t.OrderId,
 	)
 	if err != nil {
@@ -726,7 +737,7 @@ func (p *postgres) GetActiveTransfer(
 
 func (p *postgres) InsertTransfer(ctx context.Context, tx pgx.Tx, transfer *domain.Transfer) (int64, error) {
 	// language=PostgreSQL
-	row := tx.QueryRow(ctx, `INSERT INTO transfers VALUES (DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
+	row := tx.QueryRow(ctx, `INSERT INTO transfers VALUES (DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id`,
 		strings.ToLower(transfer.CollectionAddress.String()),
 		transfer.TokenId.String(),
 		strings.ToLower(transfer.FromAddress.String()),
@@ -735,6 +746,7 @@ func (p *postgres) InsertTransfer(ctx context.Context, tx pgx.Tx, transfer *doma
 		transfer.PublicKey,
 		transfer.EncryptedPassword,
 		transfer.Number.String(),
+		transfer.BlockNumber,
 	)
 	var id int64
 	if err := row.Scan(&id); err != nil {
@@ -752,8 +764,9 @@ func (p *postgres) UpdateTransfer(ctx context.Context, tx pgx.Tx, transfer *doma
 			fraud_approved=$2,
             public_key=$3,
 			encrypted_password=$4,
-			number=$5
-		WHERE id=$6
+			number=$5,
+			block_number=$6
+		WHERE id=$7
 	`
 	_, err := tx.Exec(
 		ctx,
@@ -763,6 +776,7 @@ func (p *postgres) UpdateTransfer(ctx context.Context, tx pgx.Tx, transfer *doma
 		transfer.PublicKey,
 		transfer.EncryptedPassword,
 		transfer.Number.String(),
+		transfer.BlockNumber,
 		transfer.Id,
 	)
 	if err != nil {
@@ -829,7 +843,6 @@ func (p *postgres) GetTokenEncryptedPassword(
 		FROM transfers t
 		JOIN latest_transfer_statuses lts ON t.id = lts.transfer_id;
 	`
-
 	row := tx.QueryRow(
 		ctx,
 		query,
@@ -838,10 +851,7 @@ func (p *postgres) GetTokenEncryptedPassword(
 	)
 
 	var pwd, number string
-
-	err := row.Scan(&number, &pwd)
-
-	if err != nil {
+	if err := row.Scan(&number, &pwd); err != nil {
 		return "", "", err
 	}
 

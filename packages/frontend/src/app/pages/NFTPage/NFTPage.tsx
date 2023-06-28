@@ -21,6 +21,7 @@ import ControlSection from './section/Contol/ControlSection'
 import DescriptionSection from './section/Description/DescriptionSection'
 import FileInfoSection from './section/FileInfo/FileInfoSection'
 import HomeLandSection from './section/HomeLand/HomeLandSection'
+import PropertiesSection from './section/Properties/PropertiesSection'
 import TagsSection from './section/Tags/TagsSection'
 
 const NFTPreviewContainer = styled('div', {
@@ -77,7 +78,7 @@ const GridLayout = styled('div', {
   // eslint-disable-next-line
   gridTemplateAreas: "'GridBlock Control'",
   '@md': {
-    gridTemplateAreas: "'BaseInfo' 'Control' 'HomeLand' 'Tags' 'Description'",
+    gridTemplateAreas: "'BaseInfo' 'Control' 'HomeLand' 'Tags' 'Description' 'Properties'",
     gridTemplateColumns: 'unset',
   },
 })
@@ -164,6 +165,7 @@ const NFTPage: React.FC = observer(() => {
               categories={categories}
             />
             <DescriptionSection />
+            <PropertiesSection properties={tokenStore.data?.properties} />
           </MainInfoSectionWrapper>
           <ControlFileSection style={{ gridArea: 'Control' }}>
             <ControlStickyBlock>

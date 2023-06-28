@@ -35,6 +35,7 @@ const NavBarStyled = styled('nav', {
   color: '$gray600 !important',
   background: 'rgba(249, 249, 249, 0.75)',
   backdropFilter: 'blur(14px)',
+  transition: 'all 0.5s',
   variants: {
     isTransparent: {
       true: {
@@ -44,7 +45,7 @@ const NavBarStyled = styled('nav', {
     },
     noneBlurShadow: {
       true: {
-        // backdropFilter: 'none',
+        backdropFilter: 'none',
         boxShadow: 'none',
       },
     },
@@ -74,7 +75,7 @@ const NavBarVerticalSpacer = styled('div', {
   gap: '$3',
 })
 const itemTo = (item: NavBarItemData) =>
-  item.isMock ? '/abracadabra1337' : item.to
+  item.isMock ? '/capibebra1337' : item.to
 export const NavBar: FC<NavBarProps> = ({
   brand,
   items,

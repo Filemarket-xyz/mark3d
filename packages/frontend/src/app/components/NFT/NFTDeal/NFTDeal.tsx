@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers'
 import { observer } from 'mobx-react-lite'
 import React, { FC, PropsWithChildren } from 'react'
 
@@ -52,19 +53,6 @@ const DealContainerInfo = styled('div', {
   },
 })
 
-const ButtonsContainer = styled('div', {
-  display: 'flex',
-  justifyContent: 'stretch',
-  gap: '$3',
-  width: '100%',
-  flexDirection: 'column',
-  padding: '0 16px',
-  '@sm': {
-    flexDirection: 'column',
-    gap: '$3',
-  },
-})
-
 const IsNotListedContainer = styled('div', {
   width: '100%',
   height: '100%',
@@ -87,28 +75,26 @@ export const NFTDeal: FC<NFTDealProps> = observer(({
 
   return (
     <NFTDealStyle isNotListed={!transfer && !isOwner}>
-      {(children || order) && (
+      {(children || transfer) && (
         <DealContainerInfo>
           {children}
-          {order && (
+          {transfer && (
             <PriceBadge
               title="Price"
-              left={formatCurrency(order.price ?? 0)}
-              right={`~${formatUsd(order.priceUsd ?? 0)}`}
+              left={formatCurrency(BigNumber.from(order?.price ?? 0))}
+              right={`~${formatUsd(order?.priceUsd ?? '')}`}
               size='lg'
               background='secondary'
             />
           )}
         </DealContainerInfo>
       )}
-      <ButtonsContainer>
-        <NFTDealActions
-          transfer={transfer}
-          order={order}
-          tokenFullId={tokenFullId}
-          reFetchOrder={reFetchOrder}
-        />
-      </ButtonsContainer>
+      <NFTDealActions
+        transfer={transfer}
+        order={order}
+        tokenFullId={tokenFullId}
+        reFetchOrder={reFetchOrder}
+      />
       {(!transfer && !isOwner) && (
         <IsNotListedContainer>
           <Txt primary1 style={{ fontSize: '24px', color: '#A7A8A9' }}> EFT is not listed</Txt>

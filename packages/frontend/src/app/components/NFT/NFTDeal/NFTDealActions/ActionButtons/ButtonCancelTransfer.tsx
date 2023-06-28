@@ -1,19 +1,23 @@
 import { FC } from 'react'
 
+import { useStores } from '../../../../../hooks'
 import { useStatusModal } from '../../../../../hooks/useStatusModal'
 import { useCancelTransfer } from '../../../../../processing'
 import { TokenFullId } from '../../../../../processing/types'
 import { Button } from '../../../../../UIkit'
 import BaseModal from '../../../../Modal/Modal'
+import { ActionButtonProps } from './types/types'
 
-export interface ButtonCancelTransferProps {
+export type ButtonCancelTransferProps = ActionButtonProps & {
   tokenFullId: TokenFullId
-  callBack?: () => void
 }
 
-export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullId, callBack }) => {
-  const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId, callBack })
+export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({
+  tokenFullId, onStart, onEnd, isDisabled, onError,
+}) => {
+  const { cancelTransfer, ...statuses } = useCancelTransfer({ ...tokenFullId })
   const { isLoading } = statuses
+  const { blockStore } = useStores()
   const { modalProps } = useStatusModal({
     statuses,
     okMsg: 'Transfer cancelled',
@@ -27,9 +31,17 @@ export const ButtonCancelTransfer: FC<ButtonCancelTransferProps> = ({ tokenFullI
         primary
         fullWidth
         borderRadiusSecond
-        isDisabled={isLoading}
+        isDisabled={isLoading || isDisabled}
         onPress={async () => {
-          await cancelTransfer(tokenFullId)
+          onStart?.()
+          const receipt = await cancelTransfer(tokenFullId).catch(e => {
+            onError?.()
+            throw e
+          })
+          if (receipt?.blockNumber) {
+            blockStore.setReceiptBlock(receipt.blockNumber)
+          }
+          onEnd?.()
         }}
       >
         Cancel deal

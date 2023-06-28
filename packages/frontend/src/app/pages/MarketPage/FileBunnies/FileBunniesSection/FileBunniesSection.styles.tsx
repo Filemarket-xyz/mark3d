@@ -5,10 +5,14 @@ import FBBgLg from '../../img/FBBgLg.png'
 import FBBgMd from '../../img/FBBgMd.png'
 import FBBgSm from '../../img/FBBgSm.png'
 import FileBunniesBgXl from '../../img/FileBunniesBg.png'
+import RightPl from '../../img/RightTopPl.png'
 
 export const FileBunniesSectionStyle = styled('div', {
-  background: `url(${FileBunniesBgXl})`,
+  backgroundImage: `url(${RightPl}), url(${FileBunniesBgXl})`,
   width: '100%',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'top 50px right 0, top 0 right 0',
+  backgroundSize: '215px, cover',
   color: 'white',
   position: 'relative',
   '& .leftBottomPl, .rightPl, .leftTopPl': {
@@ -25,14 +29,26 @@ export const FileBunniesSectionStyle = styled('div', {
     bottom: '96px',
     right: '0',
   },
+  '@xl': {
+    '& .rightPl': {
+      right: '-46px',
+    },
+    backgroundPosition: 'top 50px right -56px, top 0 right 0',
+    backgroundRepeat: 'no-repeat',
+  },
   '@lg': {
-    background: `url(${FBBgLg})`,
+    background: `url(${RightPl}), url(${FBBgLg})`,
+    backgroundPosition: 'top 50px right -56px, top 0 right 0',
+    backgroundRepeat: 'no-repeat',
   },
   '@md': {
-    background: `url(${FBBgMd})`,
+    background: `url(${RightPl}), url(${FBBgMd})`,
+    backgroundPosition: 'top 50px right -80px, top 0 right 0',
+    backgroundRepeat: 'no-repeat',
   },
   '@sm': {
     background: `url(${FBBgSm})`,
+    backgroundRepeat: 'no-repeat',
     backgroundSize: '103%',
     backgroundPositionX: '-6px',
     '& .leftBottomPl, .rightPl, .leftTopPl': {
@@ -66,7 +82,7 @@ export const FileBunniesLayout = styled(PageLayout, {
   zIndex: '1',
   position: 'relative',
   margin: '0px auto',
-  maxWidth: '1238px',
+  maxWidth: '1350px',
   paddingLeft: '0',
   paddingRight: '0',
   '@xl': {
@@ -93,7 +109,10 @@ export const FileBunniesLayout = styled(PageLayout, {
 export const MainContent = styled('div', {
   marginTop: '32px',
   display: 'flex',
-  gap: '20px',
+  gap: '80px',
+  '@xl': {
+    gap: '20px',
+  },
   '@lg': {
     flexDirection: 'column-reverse',
     gap: '48px',
@@ -172,6 +191,11 @@ export const ToolTipBlock = styled('div', {
   justifyContent: 'center',
   position: 'relative',
   background: '#353559',
+  cursor: 'pointer',
+  transition: '0.5s',
+  '&:hover': {
+    filter: 'brightness(115%)',
+  },
   '&:before': {
     content: '',
     width: '100%',
@@ -222,7 +246,10 @@ export const BottomBanner = styled('div', {
 
 export const CardsBlock = styled('div', {
   display: 'flex',
-  gap: '20px',
+  gap: '80px',
+  '@xl': {
+    gap: '20px',
+  },
   '@lg': {
     justifyContent: 'space-between',
     height: '476px',

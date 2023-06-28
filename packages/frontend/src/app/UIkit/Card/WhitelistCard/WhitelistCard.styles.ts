@@ -3,12 +3,16 @@ import { Button } from '../../Button'
 import { Flex } from '../../Flex'
 import { textVariant } from '../../Txt'
 
-CSS.registerProperty({
-  name: '--rotate',
-  syntax: '<angle>',
-  inherits: false,
-  initialValue: '132deg',
-})
+const isFirefox = navigator.userAgent.includes('Firefox')
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+if (!isFirefox && !isIOS) {
+  CSS.registerProperty({
+    name: '--rotate',
+    syntax: '<angle>',
+    inherits: false,
+    initialValue: '132deg',
+  })
+}
 
 const spin = keyframes({
   '0%': {
@@ -41,7 +45,7 @@ export const StyledCardInner = styled(Flex, {
   zIndex: 1,
   margin: 4,
   padding: 20,
-  background: '#191c29',
+  background: '#1C1C45',
   borderRadius: 16,
   color: 'rgb(88 199 250 / 100%)',
   height: 'calc(100% - 8px)',
@@ -60,7 +64,7 @@ export const StyledDescription = styled(StyledCardInfo, {
   position: 'absolute',
   color: '$gray300',
   height: '100%',
-  background: '#191c29',
+  background: '#1C1C45',
   transition: 'opacity 0.25s',
   '& span': {
     fontWeight: 600,
@@ -80,11 +84,11 @@ export const StyledCard = styled('div', {
   position: 'relative',
   zIndex: 1,
   borderRadius: 16,
-  backgroundImage: 'linear-gradient(var(--rotate), #8efdb5, #028fff, #01e3f8)',
+  backgroundImage: 'linear-gradient(var(--rotate, 132deg), #8efdb5, #028fff, #01e3f8)',
   animation: `${spin} 2.5s linear infinite`,
   '&:hover': {
     animation: 'none',
-    background: 'transparent',
+    background: 'rgba(255,255,255, 0.25)',
   },
   [`&:hover ${StyledCardBackground.selector}`]: {
     animation: 'none',

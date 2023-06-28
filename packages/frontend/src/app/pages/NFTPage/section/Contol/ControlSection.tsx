@@ -1,16 +1,16 @@
 import React, { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { NFTDeal } from '../../../../components/NFT'
+import { NFTDeal } from '../../../../components'
 import { useOrderStore } from '../../../../hooks/useOrderStore'
-import { useTransferStoreWatchEvents } from '../../../../hooks/useTransferStoreWatchEvents'
-import { makeTokenFullId } from '../../../../processing/utils/id'
+import { useTransferStore } from '../../../../hooks/useTransferStore'
+import { makeTokenFullId } from '../../../../processing'
 import { Params } from '../../../../utils/router'
 import { GridBlock } from '../../helper/styles/style'
 
 const ControlSection = () => {
   const { collectionAddress, tokenId } = useParams<Params>()
-  const transferStore = useTransferStoreWatchEvents(collectionAddress, tokenId)
+  const transferStore = useTransferStore(collectionAddress, tokenId) // watch events is called inside nft page
   const orderStore = useOrderStore(collectionAddress, tokenId)
   const tokenFullId = useMemo(
     () => makeTokenFullId(collectionAddress, tokenId),

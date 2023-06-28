@@ -4,11 +4,10 @@ import React from 'react'
 import { BaseModal } from '../../../../components'
 import { useStores } from '../../../../hooks'
 import { useFileBunniesMint } from '../../../../processing/filebunnies/useFileBunniesMint'
-import { Txt, WhitelistCard } from '../../../../UIkit'
+import { Link, Txt, WhitelistCard } from '../../../../UIkit'
 import FileBunniesLogo from '../../img/FileBunniesLogo.svg'
 import LeftBottomPl from '../../img/LeftBottomPlanet.png'
 import LeftTopPl from '../../img/LeftTopPlanet.png'
-import RightPl from '../../img/RightTopPl.png'
 import {
   FileBunniesModal,
   HowMintModalBody,
@@ -34,7 +33,7 @@ import {
 
 const FileBunniesSection = observer(() => {
   const { dialogStore } = useStores()
-  const { payedMint, modalProps, isLoading, freeMint, whiteList } = useFileBunniesMint()
+  const { payedMint, isLoading, freeMint, whiteList, modalProps } = useFileBunniesMint()
   const rarityModalOpen = () => {
     dialogStore.openDialog({
       component: FileBunniesModal,
@@ -44,7 +43,6 @@ const FileBunniesSection = observer(() => {
       },
     })
   }
-
   const howToMintModalOpen = () => {
     dialogStore.openDialog({
       component: FileBunniesModal,
@@ -69,19 +67,19 @@ const FileBunniesSection = observer(() => {
       <FileBunniesSectionStyle>
         <img className={'leftTopPl'} src={LeftTopPl} />
         <img className={'leftBottomPl'} src={LeftBottomPl} />
-        <img className={'rightPl'} src={RightPl} />
         <FileBunniesLayout>
           <Title>
             <img src={FileBunniesLogo} />
-            <span>
-              <a
-                style={{ color: 'white', textDecoration: 'underline' }}
+            <span style={{ marginTop: '18px' }}>
+              <Link
                 href={'https://filebunnies.xyz/'}
                 target={'_blank'}
                 rel="noreferrer"
+                underlined
+                fileBunniesTitle
               >
                 FileBunnies
-              </a>
+              </Link>
               <span>
                 {' '}
                 Minting
@@ -102,14 +100,14 @@ const FileBunniesSection = observer(() => {
                   List spot for all content built on FileMarket.
                 </LeftBlockText>
               </LeftTextBlock>
-              <ToolTipBlock first>
-                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { rarityModalOpen() }}>FileBunnies Rarities</Txt>
+              <ToolTipBlock first onClick={() => { rarityModalOpen() }}>
+                <Txt style={{ borderBottom: '1px dashed', fontSize: '14px' }}>FileBunnies Rarities</Txt>
               </ToolTipBlock>
-              <ToolTipBlock second>
-                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToWorkModalOpen() }}>How EFT (Encrypted FileToken) works?</Txt>
+              <ToolTipBlock second onClick={() => { howToWorkModalOpen() }}>
+                <Txt style={{ borderBottom: '1px dashed', fontSize: '14px' }}>How EFT (Encrypted FileToken) works?</Txt>
               </ToolTipBlock>
-              <ToolTipBlock last>
-                <Txt style={{ borderBottom: '1px dashed', cursor: 'pointer' }} onClick={() => { howToMintModalOpen() }}>How to MINT FileBunnies?</Txt>
+              <ToolTipBlock last onClick={() => { howToMintModalOpen() }}>
+                <Txt style={{ borderBottom: '1px dashed', fontSize: '14px' }}>How to MINT FileBunnies?</Txt>
               </ToolTipBlock>
             </LeftBlock>
             <CardsBlock>
@@ -144,5 +142,4 @@ const FileBunniesSection = observer(() => {
     </>
   )
 })
-
 export default FileBunniesSection

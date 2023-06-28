@@ -17,6 +17,7 @@ type Collection struct {
 	Description string
 	Image       string
 	Type        string
+	BlockNumber int64
 }
 
 type CollectionTransfer struct {
@@ -37,6 +38,10 @@ func CollectionToModel(c *Collection) *models.Collection {
 		Description: c.Description,
 		Image:       c.Image,
 		Type:        c.Type,
+		Block: &models.CollectionBlock{
+			ConfirmationsCount: 1,
+			Number:             c.BlockNumber,
+		},
 	}
 }
 

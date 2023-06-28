@@ -47,6 +47,7 @@ func (s *service) onCollectionTransferEvent(
 	token.Metadata = meta
 	token.MetaUri = metaUri
 	token.Royalty = royalty.Uint64()
+	token.BlockNumber = block.Number().Int64()
 
 	if err := s.repository.InsertToken(ctx, tx, token); err != nil {
 		return err
@@ -72,7 +73,7 @@ func (s *service) onFileBunniesCollectionTransferEvent(
 	tokenId *big.Int,
 ) error {
 	collectionAddress := *t.To()
-	if err := s.repository.UpdateTokenTxData(ctx, tx, tokenId, collectionAddress, block.Time(), t.Hash()); err != nil {
+	if err := s.repository.UpdateTokenTxData(ctx, tx, tokenId, collectionAddress, block.Time(), t.Hash(), block.Number()); err != nil {
 		return err
 	}
 
@@ -211,6 +212,7 @@ func (s *service) onCollectionTransferInitEvent(
 	from common.Address,
 	to common.Address,
 	transferNumber *big.Int,
+	blockNumber *big.Int,
 ) error {
 	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusCreated))
 	if err != nil {
@@ -232,6 +234,7 @@ func (s *service) onCollectionTransferInitEvent(
 		FromAddress:       from,
 		ToAddress:         to,
 		Number:            transferNumber,
+		BlockNumber:       blockNumber.Int64(),
 	}
 	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
 	if err != nil {
@@ -256,6 +259,7 @@ func (s *service) onTransferDraftEvent(
 	tokenId *big.Int,
 	from common.Address,
 	transferNumber *big.Int,
+	blockNumber *big.Int,
 ) error {
 	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusDrafted))
 	if err != nil {
@@ -350,6 +354,7 @@ func (s *service) onTransferDraftEvent(
 		TokenId:           tokenId,
 		FromAddress:       from,
 		Number:            transferNumber,
+		BlockNumber:       blockNumber.Int64(),
 	}
 	id, err := s.repository.InsertTransfer(ctx, tx, transfer)
 	if err != nil {
@@ -369,6 +374,7 @@ func (s *service) onTransferDraftEvent(
 		Price:           order.Price,
 		Currency:        order.Currency,
 		ExchangeAddress: order.ExchangeAddress,
+		BlockNumber:     blockNumber.Int64(),
 	}
 	orderId, err := s.repository.InsertOrder(ctx, tx, o)
 	if err != nil {
@@ -391,6 +397,7 @@ func (s *service) onTransferDraftCompletionEvent(
 	l *types.Log,
 	tokenId *big.Int,
 	to common.Address,
+	blockNumber *big.Int,
 ) error {
 	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusCreated))
 	if err != nil {
@@ -406,6 +413,9 @@ func (s *service) onTransferDraftCompletionEvent(
 		}
 		return err
 	}
+
+	token.BlockNumber = blockNumber.Int64()
+
 	if token.CollectionAddress == s.cfg.FileBunniesCollectionAddress {
 		metadata, metaUri, err := s.processMetadata(ctx, token)
 		if err != nil {
@@ -431,6 +441,7 @@ func (s *service) onTransferDraftCompletionEvent(
 	}
 	timestamp := now.Now().UnixMilli()
 	transfer.ToAddress = to
+	transfer.BlockNumber = blockNumber.Int64()
 	if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
 		return err
 	}
@@ -474,6 +485,7 @@ func (s *service) onPublicKeySetEvent(
 	l *types.Log,
 	tokenId *big.Int,
 	publicKey string,
+	blockNumber *big.Int,
 ) error {
 	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusPublicKeySet))
 	if err != nil {
@@ -501,6 +513,7 @@ func (s *service) onPublicKeySetEvent(
 		return err
 	}
 	transfer.PublicKey = publicKey
+	transfer.BlockNumber = blockNumber.Int64()
 	if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
 		return err
 	}
@@ -514,6 +527,7 @@ func (s *service) onPasswordSetEvent(
 	l *types.Log,
 	tokenId *big.Int,
 	encryptedPassword string,
+	blockNumber *big.Int,
 ) error {
 	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusPasswordSet))
 	if err != nil {
@@ -541,6 +555,7 @@ func (s *service) onPasswordSetEvent(
 		return err
 	}
 	transfer.EncryptedPassword = encryptedPassword
+	transfer.BlockNumber = blockNumber.Int64()
 	if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
 		return err
 	}
@@ -553,6 +568,7 @@ func (s *service) onTransferFinishEvent(
 	t *types.Transaction,
 	l *types.Log,
 	tokenId *big.Int,
+	blockNumber *big.Int,
 ) error {
 	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusFinished))
 	if err != nil {
@@ -589,11 +605,13 @@ func (s *service) onTransferFinishEvent(
 			return err
 		}
 	}
+
 	token, err := s.repository.GetToken(ctx, tx, l.Address, tokenId)
 	if err != nil {
 		return err
 	}
 	token.Owner = transfer.ToAddress
+	token.BlockNumber = blockNumber.Int64()
 	if err := s.repository.UpdateToken(ctx, tx, token); err != nil {
 		return err
 	}
@@ -644,6 +662,7 @@ func (s *service) onTransferFraudDecidedEvent(
 	l *types.Log,
 	tokenId *big.Int,
 	approved bool,
+	blockNumber *big.Int,
 ) error {
 	exists, err := s.repository.TransferTxExists(ctx, tx, tokenId, t.Hash(), string(models.TransferStatusFinished))
 	if err != nil {
@@ -688,6 +707,7 @@ func (s *service) onTransferFraudDecidedEvent(
 	}
 	if approved {
 		transfer.FraudApproved = true
+		transfer.BlockNumber = blockNumber.Int64()
 		if err := s.repository.UpdateTransfer(ctx, tx, transfer); err != nil {
 			return err
 		}
@@ -697,6 +717,7 @@ func (s *service) onTransferFraudDecidedEvent(
 			return err
 		}
 		token.Owner = transfer.ToAddress
+		token.BlockNumber = blockNumber.Int64()
 		if err := s.repository.UpdateToken(ctx, tx, token); err != nil {
 			return err
 		}
