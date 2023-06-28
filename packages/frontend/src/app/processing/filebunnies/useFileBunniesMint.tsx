@@ -41,7 +41,7 @@ export const useFileBunniesMint = () => {
   })
 
   const collectionAddressReq = async () => {
-    const response = await wrapRequest(async () => api.collections.fullFileBunniesList())
+    const response = await wrapRequest(async () => api.collections.fullFileBunniesList({ limit: 1 }))
 
     return response?.data.collection?.address
   }
