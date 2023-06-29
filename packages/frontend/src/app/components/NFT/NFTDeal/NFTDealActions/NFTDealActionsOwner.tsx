@@ -126,7 +126,7 @@ export const NFTDealActionOwner: FC<NFTDealActionsOwnerProps> = observer(({
           onError={onError}
         />
       </HideAction>
-      <HideAction hide={!!transfer || isApprovedExchange}>
+      <HideAction hide={!!transfer || isApprovedExchange || isFileBunnies}>
         <ButtonApproveExchange
           tokenFullId={tokenFullId}
           isDisabled={isDisabled}
