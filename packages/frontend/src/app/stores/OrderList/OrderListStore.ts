@@ -45,7 +45,10 @@ export class OpenOrderListStore implements IStoreRequester, IActivateDeactivate 
   }
 
   addData(data: OrdersAllActiveResponse) {
-    this.data.items?.push(...(data?.items ?? []))
+    if (!this.data.items) {
+      this.data.items = []
+    }
+    this.data.items.push(...(data?.items ?? []))
     this.data.total = data.total
   }
 
