@@ -38,12 +38,12 @@ func New(cfg *Config, client *redis.Client, initialAddresses map[string]Range) *
 			log.Printf("set with this key already exists: %s", key)
 			continue
 		}
-		for i := rng.From; i < rng.To; i++ {
-			err := client.SAdd(context.TODO(), key, i).Err()
-			if err != nil {
-				log.Fatalf("failed to append to Redis: %v", err)
-			}
-		}
+		//for i := rng.From; i < rng.To; i++ {
+		//	err := client.SAdd(context.TODO(), key, i).Err()
+		//	if err != nil {
+		//		log.Fatalf("failed to append to Redis: %v", err)
+		//	}
+		//}
 	}
 
 	return &Sequencer{
@@ -92,7 +92,7 @@ func (s *Sequencer) Count(ctx context.Context, key string) int64 {
 	if err := s.releaseTokens(ctx, key); err != nil {
 		log.Println("failed to releaseTokens in sequencer: ", err)
 	}
-	
+
 	key = fmt.Sprint(s.Cfg.KeyPrefix, key)
 	length, err := s.client.SCard(ctx, key).Result()
 	if err != nil {
