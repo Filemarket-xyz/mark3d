@@ -26,12 +26,16 @@ export const useFileBunniesMint = () => {
   const whiteListStore = useCheckWhiteListStore(address)
   const { connect } = useAuth()
   const [isLoadingReq, setIsLoadingReq] = useState<boolean>(false)
-  const { fulfillOrder } = useFulfillOrder()
+  const { fulfillOrder, ...statuses } = useFulfillOrder()
 
-  const { wrapPromise, statuses } = useStatusState()
+  const { wrapPromise, statuses: statusesReq } = useStatusState()
 
   const { modalProps, setModalBody, setModalOpen } = useStatusModal({
-    statuses,
+    statuses: {
+      ...statuses,
+      result: '',
+      error: statuses.error ?? statusesReq.error,
+    },
     okMsg: 'Order is fulfilled! Now you need to wait 4 minutes until it appears in your profile and you can continue the actions',
     loadingMsg: 'Fulfilling order',
   })
@@ -117,8 +121,8 @@ export const useFileBunniesMint = () => {
   const isLoading = useComputedMemo(() => {
     console.log(whiteListStore.isLoading)
 
-    return (isLoadingFulFill || whiteListStore.isLoading || isLoadingReq) && (!statuses.error)
-  }, [whiteListStore.isLoading, isLoadingReq, isLoadingFulFill, statuses.error])
+    return (isLoadingFulFill || whiteListStore.isLoading || isLoadingReq) && (!statuses.error && !statusesReq.error)
+  }, [whiteListStore.isLoading, isLoadingReq, isLoadingFulFill, statuses.error, statusesReq.error])
 
   return {
     isLoading,
