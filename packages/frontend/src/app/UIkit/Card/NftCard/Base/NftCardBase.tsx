@@ -65,7 +65,12 @@ export const NftCardBase: React.FC<NftCardProps> = ({
           </CardImg>
           <StyledInfoWrapper>
             <Flex flexDirection='column' gap="$2" alignItems='start'>
-              <Flex flexDirection='column' gap="$1" alignItems='start'>
+              <Flex
+                flexDirection='column'
+                gap="$1"
+                alignItems='start'
+                w100
+              >
                 {title && <StyledTitle primary2>{title}</StyledTitle>}
                 {collectionName && <StyledCollectionName primary3>{collectionName}</StyledCollectionName>}
               </Flex>
