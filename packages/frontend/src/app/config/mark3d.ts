@@ -91,6 +91,6 @@ export const mark3dConfig = {
     address: '0xBc3a4453Dd52D3820EaB1498c4673C694c5c6F09',
   },
   externalLink: 'https://filemarket.xyz/',
-  transferTimeout: 24 * 60 * 60 * 1000,
+  transferTimeout: 72 * 60 * 60 * 1000,
   fileBunniesPrice: isMainnet ? parseUnits('12.0', 'ether') : parseUnits('0.01', 'ether'),
 } as const
