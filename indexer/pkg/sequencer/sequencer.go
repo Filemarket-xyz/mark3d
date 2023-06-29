@@ -32,19 +32,19 @@ type Sequencer struct {
 
 func New(cfg *Config, client *redis.Client, initialAddresses map[string]Range) *Sequencer {
 	// Populating sets
-	for addr, rng := range initialAddresses {
-		key := fmt.Sprint(cfg.KeyPrefix, addr)
-		if client.Exists(context.TODO(), key).Val() != 0 {
-			log.Printf("set with this key already exists: %s", key)
-			continue
-		}
-		//for i := rng.From; i < rng.To; i++ {
-		//	err := client.SAdd(context.TODO(), key, i).Err()
-		//	if err != nil {
-		//		log.Fatalf("failed to append to Redis: %v", err)
-		//	}
-		//}
-	}
+	//for addr, rng := range initialAddresses {
+	//	key := fmt.Sprint(cfg.KeyPrefix, addr)
+	//	if client.Exists(context.TODO(), key).Val() != 0 {
+	//		log.Printf("set with this key already exists: %s", key)
+	//		continue
+	//	}
+	//	//for i := rng.From; i < rng.To; i++ {
+	//	//	err := client.SAdd(context.TODO(), key, i).Err()
+	//	//	if err != nil {
+	//	//		log.Fatalf("failed to append to Redis: %v", err)
+	//	//	}
+	//	//}
+	//}
 
 	return &Sequencer{
 		Cfg:    cfg,
