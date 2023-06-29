@@ -31,5 +31,5 @@ export function errorResponseToMessage(error?: ErrorResponse): string {
     return 'received nullish error from the backend, but request was not successful'
   }
 
-  return `${error.message}: ${error.detail}`
+  return (error.message || 'Unknown Error') + (error.detail ? `: ${error.detail}` : '') + ' Please try again'
 }

@@ -26,16 +26,12 @@ export const useFileBunniesMint = () => {
   const whiteListStore = useCheckWhiteListStore(address)
   const { connect } = useAuth()
   const [isLoadingReq, setIsLoadingReq] = useState<boolean>(false)
-  const { fulfillOrder, ...statuses } = useFulfillOrder()
+  const { fulfillOrder } = useFulfillOrder()
 
-  const { wrapPromise, statuses: statusesReq } = useStatusState()
+  const { wrapPromise, statuses } = useStatusState()
 
   const { modalProps, setModalBody, setModalOpen } = useStatusModal({
-    statuses: {
-      ...statuses,
-      result: '',
-      error: statuses.error ?? statusesReq.error,
-    },
+    statuses,
     okMsg: 'Order is fulfilled! Now you need to wait 4 minutes until it appears in your profile and you can continue the actions',
     loadingMsg: 'Fulfilling order',
   })
@@ -43,19 +39,19 @@ export const useFileBunniesMint = () => {
   const collectionAddressReq = async () => {
     const response = await wrapRequest(async () => api.collections.fullFileBunniesList({ limit: 1 }))
 
-    return response?.data.collection?.address
+    return response.collection?.address
   }
   const sequencerReq = async ({ suffix, collectionAddress }: ISequencerReq) => {
     if (!(collectionAddress && suffix)) return
     const tokenResp = await wrapRequest(async () => api.sequencer.acquireDetail(collectionAddress, { suffix }))
 
-    return tokenResp?.data.tokenId
+    return tokenResp?.tokenId
   }
   const getSignWhiteList = async({ whiteList, address }: IGetSignWhiteList) => {
     if (!(whiteList && address)) return
     const sign = await wrapRequest(async () => api.collections.fileBunniesWhitelistSignDetail(whiteList, address))
 
-    return sign?.data.signature
+    return sign?.signature
   }
   const payedMint = wrapPromise(async () => {
     if (!isConnected) {
@@ -121,8 +117,8 @@ export const useFileBunniesMint = () => {
   const isLoading = useComputedMemo(() => {
     console.log(whiteListStore.isLoading)
 
-    return (isLoadingFulFill || whiteListStore.isLoading || isLoadingReq) && (!statuses.error && !statusesReq.error)
-  }, [whiteListStore.isLoading, isLoadingReq, isLoadingFulFill, statuses.error, statusesReq.error])
+    return (isLoadingFulFill || whiteListStore.isLoading || isLoadingReq) && (!statuses.error)
+  }, [whiteListStore.isLoading, isLoadingReq, isLoadingFulFill, statuses.error])
 
   return {
     isLoading,

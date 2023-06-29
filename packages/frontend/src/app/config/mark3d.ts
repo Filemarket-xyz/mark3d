@@ -2,6 +2,7 @@ import { Chain } from '@web3modal/ethereum'
 import { utils } from 'ethers'
 import { parseUnits } from 'ethers/lib.esm/utils'
 
+import fileBunniesCollection from '../../abi/FileBunniesCollection'
 import collectionToken from '../../abi/FilemarketCollectionV2'
 import exchangeToken from '../../abi/FilemarketExchangeV2'
 import accessToken from '../../abi/Mark3dAccessTokenV2'
@@ -83,6 +84,11 @@ export const mark3dConfig = {
     // address is created when a new collection is minted
     abi: collectionToken.abi,
     name: collectionToken.contractName,
+  },
+  fileBunniesCollectionToken: {
+    abi: fileBunniesCollection.abi,
+    name: fileBunniesCollection.contractName,
+    address: '0xBc3a4453Dd52D3820EaB1498c4673C694c5c6F09',
   },
   externalLink: 'https://filemarket.xyz/',
   transferTimeout: 24 * 60 * 60 * 1000,
