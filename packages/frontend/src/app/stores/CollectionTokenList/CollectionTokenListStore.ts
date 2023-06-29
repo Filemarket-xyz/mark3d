@@ -43,7 +43,10 @@ export class CollectionTokenListStore implements IActivateDeactivate<[string]>, 
   }
 
   addData(data: CollectionData) {
-    this.data.tokens?.push(...(data?.tokens ?? []))
+    if (!this.data.tokens) {
+      this.data.tokens = []
+    }
+    this.data.tokens.push(...(data?.tokens ?? []))
     this.data.total = data.total
   }
 

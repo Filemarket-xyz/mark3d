@@ -67,10 +67,16 @@ export class UserTransferStore implements IActivateDeactivate<[string]>, IStoreR
   }
 
   addData(data: TransfersResponseV2) {
-    this.data.incoming?.push(...(data.incoming ?? []))
+    if (!this.data.incoming) {
+      this.data.incoming = []
+    }
+    this.data.incoming.push(...(data.incoming ?? []))
     this.data.incomingTotal = data.incomingTotal
 
-    this.data.outgoing?.push(...(data.outgoing ?? []))
+    if (!this.data.outgoing) {
+      this.data.outgoing = []
+    }
+    this.data.outgoing.push(...(data.outgoing ?? []))
     this.data.outgoingTotal = data.outgoingTotal
   }
 
