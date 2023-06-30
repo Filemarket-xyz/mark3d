@@ -732,6 +732,7 @@ func (p *postgres) GetTokensForAutosell(
 			  lt.encrypted_password='' AND -- means that we haven't already start autoselling
 			  los.rank = 1 AND
 			  los.status = 'Fulfilled'
+     		LIMIT 20
 	`
 	rows, err := tx.Query(ctx, query,
 		strings.ToLower(collectionAddress.String()),
