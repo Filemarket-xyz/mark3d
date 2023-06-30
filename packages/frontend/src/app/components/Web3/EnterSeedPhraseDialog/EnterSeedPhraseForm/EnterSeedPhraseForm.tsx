@@ -1,6 +1,6 @@
 import { mnemonicToEntropy } from 'bip39'
 import { sha256 } from 'ethers/lib/utils'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useAccount } from 'wagmi'
 
@@ -35,6 +35,7 @@ const ButtonContainer = styled('div', {
 
 export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit, isReset }) => {
   const { handleSubmit, formState: { errors }, watch, control } = useForm<EnterSeedPhraseValue>()
+  const [isAppliedWrongPhrase, setAppliesWrongPhrase] = useState<boolean>(false)
   const { address } = useAccount()
   const { seedProvider } = useSeedProvider(address)
 
@@ -59,8 +60,10 @@ export const EnterSeedPhraseForm: FC<EnterSeedPhraseProps> = ({ onSubmit, isRese
               required: true,
               validate: (p) => {
                 if (!!validateImportMnemonic(p)) return validateImportMnemonic(p)
-                if (isReset && seedProvider?.hashSeed !== sha256(Buffer.from(mnemonicToEntropy((p)), 'hex'))) {
-                  return 'Seed phrase not matching'
+                if (isReset && seedProvider?.hashSeed !== sha256(Buffer.from(mnemonicToEntropy((p)), 'hex')) && !isAppliedWrongPhrase) {
+                  setAppliesWrongPhrase(true)
+
+                  return 'You probably made a mistake. This phrase is not suitable for your eft. Click the Connect button again to ignore'
                 }
               },
             },
