@@ -101,13 +101,13 @@ const FileBunniesSection = observer(() => {
                 </LeftBlockText>
               </LeftTextBlock>
               <ToolTipBlock first onClick={() => { rarityModalOpen() }}>
-                <Txt style={{ borderBottom: '1px dashed', fontSize: '14px' }}>FileBunnies Rarities</Txt>
+                <Txt style={{ borderBottom: '1px dashed', fontSize: '16px' }}>FileBunnies Rarities</Txt>
               </ToolTipBlock>
               <ToolTipBlock second onClick={() => { howToWorkModalOpen() }}>
-                <Txt style={{ borderBottom: '1px dashed', fontSize: '14px' }}>How EFT (Encrypted FileToken) works?</Txt>
+                <Txt style={{ borderBottom: '1px dashed', fontSize: '16px' }}>How EFT (Encrypted FileToken) works?</Txt>
               </ToolTipBlock>
               <ToolTipBlock last onClick={() => { howToMintModalOpen() }}>
-                <Txt style={{ borderBottom: '1px dashed', fontSize: '14px' }}>How to MINT FileBunnies?</Txt>
+                <Txt style={{ borderBottom: '1px dashed', fontSize: '16px' }}>How to MINT FileBunnies?</Txt>
               </ToolTipBlock>
             </LeftBlock>
             <CardsBlock>
