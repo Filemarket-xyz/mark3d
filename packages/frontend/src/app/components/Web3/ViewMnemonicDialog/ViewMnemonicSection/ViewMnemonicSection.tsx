@@ -4,6 +4,7 @@ import CopyImg from '../../../../../assets/img/Copy.svg'
 import DownloadImg from '../../../../../assets/img/Download.svg'
 import { styled } from '../../../../../styles'
 import { Button } from '../../../../UIkit'
+import { copyToClipboard } from '../../../../utils/clipboard/clipboard'
 import ViewMnemonicCard from './ViewMnemonicCard/ViewMnemonicCard'
 
 const ViewMnemonicSectionStyle = styled('div', {
@@ -59,7 +60,7 @@ const ViewMnemonicSection = ({ mnemonic }: ViewMnemonicSectionProps) => {
           whiteWithBlue
           style={{ borderWidth: '1px', fontSize: '16px', height: '56px' }}
           onClick={() => {
-            navigator.clipboard.writeText(mnemonic)
+            copyToClipboard(mnemonic)
           }}
         >
           Copy seed phrase
