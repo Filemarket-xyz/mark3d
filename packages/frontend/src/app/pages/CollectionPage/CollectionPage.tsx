@@ -57,6 +57,18 @@ const Badges = styled('div', {
   display: 'flex',
   gap: '$2',
   marginBottom: '$4',
+  flexWrap: 'wrap',
+  '& .firstLink': {
+    width: '400px',
+  },
+  '@sm': {
+    '& a': {
+      width: '100%',
+    },
+    '& .firstLink': {
+      width: '100%',
+    },
+  },
 })
 
 const GrayOverlay = styled('div', {
@@ -120,12 +132,12 @@ const CollectionPage = observer(() => {
             </ProfileHeader>
             <Badges>
               <NavLink
-                style={{ width: '400px' }}
                 to={
                   collectionAndNfts.collection?.owner
                     ? `/profile/${collectionAndNfts.collection.owner}`
                     : currentPath
                 }
+                className={'firstLink'}
               >
                 <Badge
                   wrapperProps={{
