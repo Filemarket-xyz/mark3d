@@ -5,7 +5,7 @@ import { useMediaMui } from '../../../../hooks/useMediaMui'
 import { ButtonGlowing, textVariant } from '../../../../UIkit'
 import { Modal, ModalButtonContainer, ModalIcon, ModalTitle } from '../../../../UIkit/Modal/Modal'
 import { AppDialogProps } from '../../../../utils/dialog'
-import RarityModalImg from '../../img/RarityModal.png'
+import RarityModalImg from '../../img/RarityModal.svg'
 
 const FileBunniesModalBody = styled('div', {
   marginTop: '16px',
