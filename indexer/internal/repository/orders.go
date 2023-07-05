@@ -39,6 +39,7 @@ func (p *postgres) GetAllActiveOrders(
 			WHERE lts.rank = 1 AND 
 			      lts.status NOT IN ('Finished', 'Cancelled') AND 
 			      NOT (t.collection_address=$3 AND t.number=1) AND 
+			      o.exchange_address != '0x' AND
 			      o.id < $1
 		)
 		SELECT fo.id, fo.transfer_id, fo.price, fo.currency, fo.exchange_address, fo.block_number,
@@ -126,6 +127,7 @@ func (p *postgres) GetAllActiveOrdersTotal(
 			JOIN latest_transfer_statuses lts on lts.transfer_id = t.id
 			WHERE lts.rank = 1 AND 
 			      lts.status NOT IN ('Finished', 'Cancelled') AND 
+			      o.exchange_address != '0x' AND
 			      NOT (t.collection_address=$1 AND t.number=1)
 			
 		)

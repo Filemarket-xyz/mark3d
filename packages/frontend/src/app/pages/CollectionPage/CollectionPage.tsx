@@ -75,9 +75,10 @@ const GrayOverlay = styled('div', {
   backgroundColor: '$gray100',
 })
 
-const ProfileDescription = styled('p', {
-  ...textVariant('body3'),
+const ProfileDescription = styled('pre', {
+  ...textVariant('body3').true,
   maxWidth: 540,
+  whiteSpace: 'break-spaces',
   color: '$gray500',
 })
 

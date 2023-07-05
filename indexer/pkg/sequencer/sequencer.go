@@ -32,19 +32,19 @@ type Sequencer struct {
 
 func New(cfg *Config, client *redis.Client, initialAddresses map[string]Range) *Sequencer {
 	// Populating sets
-	for addr, rng := range initialAddresses {
-		key := fmt.Sprint(cfg.KeyPrefix, addr)
-		if client.Exists(context.TODO(), key).Val() != 0 {
-			log.Printf("set with this key already exists: %s", key)
-			continue
-		}
-		for i := rng.From; i < rng.To; i++ {
-			err := client.SAdd(context.TODO(), key, i).Err()
-			if err != nil {
-				log.Fatalf("failed to append to Redis: %v", err)
-			}
-		}
-	}
+	//for addr, rng := range initialAddresses {
+	//	key := fmt.Sprint(cfg.KeyPrefix, addr)
+	//	if client.Exists(context.TODO(), key).Val() != 0 {
+	//		log.Printf("set with this key already exists: %s", key)
+	//		continue
+	//	}
+	//	//for i := rng.From; i < rng.To; i++ {
+	//	//	err := client.SAdd(context.TODO(), key, i).Err()
+	//	//	if err != nil {
+	//	//		log.Fatalf("failed to append to Redis: %v", err)
+	//	//	}
+	//	//}
+	//}
 
 	return &Sequencer{
 		Cfg:    cfg,
@@ -89,12 +89,11 @@ func (s *Sequencer) DeleteTokenID(ctx context.Context, key string, tokenId int64
 }
 
 func (s *Sequencer) Count(ctx context.Context, key string) int64 {
-	key = fmt.Sprint(s.Cfg.KeyPrefix, key)
-
 	if err := s.releaseTokens(ctx, key); err != nil {
 		log.Println("failed to releaseTokens in sequencer: ", err)
 	}
 
+	key = fmt.Sprint(s.Cfg.KeyPrefix, key)
 	length, err := s.client.SCard(ctx, key).Result()
 	if err != nil {
 		return 0

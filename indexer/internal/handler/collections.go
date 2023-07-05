@@ -70,7 +70,7 @@ func (h *handler) handleGetFullFileBunniesCollection(w http.ResponseWriter, r *h
 		sendResponse(w, err.Code, err)
 		return
 	}
-	limit, err := parseLimitParam(r, "limit", 10000, 10000)
+	limit, err := parseLimitParam(r, "limit", 1, 10000)
 	if err != nil {
 		sendResponse(w, err.Code, err)
 		return

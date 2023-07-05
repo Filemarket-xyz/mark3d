@@ -34,6 +34,9 @@ func (s *service) onCollectionTransferEvent(
 		MintTxTimestamp:   block.Time(),
 		MintTxHash:        t.Hash(),
 	}
+	if _, err := s.repository.GetToken(ctx, tx, collectionAddress, tokenId); err == nil {
+		return nil
+	}
 
 	// Get token metadata
 	meta, metaUri, err := s.processMetadata(ctx, token)

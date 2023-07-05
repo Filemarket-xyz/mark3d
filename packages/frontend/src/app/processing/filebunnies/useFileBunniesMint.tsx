@@ -41,21 +41,21 @@ export const useFileBunniesMint = () => {
   })
 
   const collectionAddressReq = async () => {
-    const response = await wrapRequest(async () => api.collections.fullFileBunniesList())
+    const response = await wrapRequest(async () => api.collections.fullFileBunniesList({ limit: 1 }))
 
-    return response?.data.collection?.address
+    return response.collection?.address
   }
   const sequencerReq = async ({ suffix, collectionAddress }: ISequencerReq) => {
     if (!(collectionAddress && suffix)) return
     const tokenResp = await wrapRequest(async () => api.sequencer.acquireDetail(collectionAddress, { suffix }))
 
-    return tokenResp?.data.tokenId
+    return tokenResp?.tokenId
   }
   const getSignWhiteList = async({ whiteList, address }: IGetSignWhiteList) => {
     if (!(whiteList && address)) return
     const sign = await wrapRequest(async () => api.collections.fileBunniesWhitelistSignDetail(whiteList, address))
 
-    return sign?.data.signature
+    return sign?.signature
   }
   const payedMint = wrapPromise(async () => {
     if (!isConnected) {

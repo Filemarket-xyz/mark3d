@@ -37,6 +37,7 @@ export const StyledInfoWrapper = styled('div', {
 })
 
 export const StyledTitle = styled(Txt, {
+  width: '100%',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
