@@ -35,6 +35,7 @@ export const {
       gray400: '#A7A8A9', // raisin + 60%
       gray500: '#59596C',
       gray600: '#656669', // raisin + 30%
+      gray700: '#2F3134',
       gray800: '#232528', // raisin
 
       green: '#00FF0A',

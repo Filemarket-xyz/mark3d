@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom'
 
 import { AppLayout } from '../components/App'
 import { Params } from '../utils/router/Params'
+import BrandingPage from './BrandingPage/BrandingPage'
 import CollectionPage from './CollectionPage/CollectionPage'
 import { collectionPageRoutes } from './CollectionPage/routes'
 import { createRoutes } from './CreatePage/routes'
@@ -17,6 +18,10 @@ const routes: RouteObject[] = [
   {
     path: 'explorer',
     element: <ExplorerPage />,
+  },
+  {
+    path: 'branding',
+    element: <BrandingPage />,
   },
   {
     path: '/',
