@@ -219,6 +219,11 @@ export const buttonStyled = <Type extends keyof JSX.IntrinsicElements | React.Co
           height: '56px',
         },
       },
+      bigHg: {
+        true: {
+          height: '64px',
+        },
+      },
       largeHg: {
         true: {
           height: '80px',

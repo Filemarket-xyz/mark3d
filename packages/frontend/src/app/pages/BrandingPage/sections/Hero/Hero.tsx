@@ -10,14 +10,28 @@ const HeroWrapper = styled('section', {
   '@xl': {
     marginBottom: '80px',
   },
+  '@lg': {
+    paddingTop: '16px',
+    paddingBottom: '16px',
+  },
+  '@sm': {
+    paddingTop: '40px',
+  },
 })
 
 const HeroTextWrapper = styled('div', {
+  position: 'relative',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
   rowGap: '16px',
   color: '$gray700',
+  zIndex: '2',
+  '@md': {
+    br: {
+      display: 'none',
+    },
+  },
 })
 
 const HeroTitle = styled('h1', {
@@ -27,6 +41,12 @@ const HeroTitle = styled('h1', {
   fontWeight: '$fourfold',
   lineHeight: '1',
   marginBottom: '48px',
+  '@md': {
+    fontSize: '3rem',
+  },
+  '@sm': {
+    fontSize: '2.5rem',
+  },
 })
 
 const HeroLogo = styled('img', {
@@ -35,10 +55,21 @@ const HeroLogo = styled('img', {
   top: '0',
   width: '500px',
   height: '500px',
+  zIndex: '1',
   '@xl': {
-    right: '0',
     height: '100%',
     width: 'auto',
+  },
+  '@md': {
+    right: '10%',
+    height: '160px',
+    width: '160px',
+  },
+  '@sm': {
+    right: '5%',
+  },
+  '@xs': {
+    right: '0',
   },
 })
 

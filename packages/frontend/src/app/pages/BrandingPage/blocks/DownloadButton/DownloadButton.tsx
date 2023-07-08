@@ -4,9 +4,11 @@ import DownloadIconSrc from '../../../../../assets/img/BrandingPage/download-ico
 import { LinkButton, Txt } from '../../../../UIkit'
 
 interface DownloadButtonProps {
+  class?: string
   children: string
   downloadHref: string
   bigIcon?: boolean
+  bigBtn?: boolean
 }
 
 const DownloadButtonIcon = styled('img', {
@@ -29,9 +31,11 @@ export default function DownloadButton (props: DownloadButtonProps) {
   return (
     <LinkButton
       whiteWithBlue
-      style={{ columnGap: '8px' }}
+      style={{ columnGap: '8px', minHeight: '100%' }}
       href={props.downloadHref}
       download
+      bigHg={props.bigBtn}
+      className={props.class}
     >
       <Txt body2 css={{ fontWeight: '$primary' }}>{props.children}</Txt>
       <DownloadButtonIcon src={DownloadIconSrc} iconSize={props.bigIcon ? 'big' : 'default'} />

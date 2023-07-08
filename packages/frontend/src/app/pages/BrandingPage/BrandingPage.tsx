@@ -14,6 +14,12 @@ const Title = styled('h2', {
   lineHeight: '1',
   color: '$gray700',
   marginBottom: '$4',
+  '@md': {
+    fontSize: '3rem',
+  },
+  '@sm': {
+    fontSize: '2.5rem',
+  },
 })
 
 const Branding = styled('div', {
@@ -28,10 +34,36 @@ const StyleGuidelines = styled('div', {
   borderRadius: '$4',
   border: '4px solid #A9ADB1',
   marginBottom: '160px',
+  '@md': {
+    padding: '35px',
+    marginBottom: '80px',
+  },
+  '@sm': {
+    flexDirection: 'column',
+    padding: '24px',
+    rowGap: '24px',
+    a: {
+      minWidth: '100%',
+    },
+  },
+})
+
+const StyleGuidelinesText = styled(Txt, {
+  fontFamily: '$fourfold',
+  fontSize: '$h2',
+  fontWeight: '$primary',
+  lineHeight: '1',
+  color: '$gray700',
+  '@sm': {
+    fontSize: '$h3',
+  },
 })
 
 const SectionWrapper = styled('div', {
   marginBottom: '160px',
+  '@md': {
+    marginBottom: '80px',
+  },
 })
 
 export default function BrandindPage() {
@@ -40,8 +72,8 @@ export default function BrandindPage() {
       <Branding>
         <Hero />
         <StyleGuidelines >
-          <Txt h2 css={{ fontFamily: '$fourfold', color: '$gray700' }}>Style Guidelines</Txt>
-          <DownloadButton downloadHref="#" bigIcon>Download</DownloadButton>
+          <StyleGuidelinesText>Style Guidelines</StyleGuidelinesText>
+          <DownloadButton downloadHref="#" bigIcon bigBtn>Download</DownloadButton>
         </StyleGuidelines>
         <SectionWrapper>
           <Title>Colors</Title>
